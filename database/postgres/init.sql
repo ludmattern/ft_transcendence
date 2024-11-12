@@ -12,3 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Indice pour la recherche rapide par email
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+-- Insertion d'un utilisateur d'exemple
+INSERT INTO users (username, email, password, is_2fa_enabled)
+VALUES ('exampleuser', 'example@example.com', '$2b$10$abcdefghijklmnopqrstuv', false);
