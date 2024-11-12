@@ -2,24 +2,23 @@
 import React, { useEffect, useState } from 'react';
 
 function DisplayTable() {
-  const [users, setUsers] = useState([]);       // État pour stocker les données des utilisateurs
-  const [loading, setLoading] = useState(true);  // État pour gérer le chargement
-  const [error, setError] = useState(null);      // État pour gérer les erreurs
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fonction pour récupérer les utilisateurs
     const fetchUsers = async () => {
       try {
-        const response = await fetch('/api/user-service/users'); // Endpoint du service backend
+        const response = await fetch('/api/auth-service/users');
         if (!response.ok) {
           throw new Error('Erreur lors de la récupération des données');
         }
         const data = await response.json();
-        setUsers(data); // Mise à jour de l'état des utilisateurs
+        setUsers(data);
       } catch (err) {
-        setError(err.message); // Gestion de l'erreur
+        setError(err.message);
       } finally {
-        setLoading(false); // Fin du chargement
+        setLoading(false);
       }
     };
 

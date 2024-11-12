@@ -14,11 +14,6 @@ services:
     container_name: user_service
     networks:
       - ft_network
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-
 
   auth-service:
     build:
@@ -27,6 +22,10 @@ services:
     container_name: auth_service
     networks:
       - ft_network
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
  
   chat-service:
     build:
@@ -77,8 +76,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - postgres_data:/var/lib/postgresql/data  # Volume pour persister les données
-      - ./database/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql  # Script d'initialisation
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     networks:
