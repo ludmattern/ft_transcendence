@@ -3,7 +3,6 @@ import React from 'react';
 import './App.css';
 import HelloServices from './components/HelloServices'; // Importer le composant
 import Authentification from './components/Auth'; // Importer le composant
-
 import DisplayTable from './components/DisplayTable';
 
 function App() {
