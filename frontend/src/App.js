@@ -2,12 +2,13 @@
 import React from 'react';
 import './App.css';
 import HelloServices from './components/HelloServices'; // Importer le composant
+import Authentification from './components/Auth'; // Importer le composant
+
 
 function App() {
   return (
-    <div className="App">
-      <h1>Hello, World!</h1>
-      <p>Welcome to my React application. Let's make it beautiful!</p>
+  <div className="App">
+    <Authentification/> {}
 	  <HelloServices /> {/* displays the message from all services */}
 	</div>
   );
