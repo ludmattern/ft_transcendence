@@ -66,4 +66,4 @@ ft_transcendence/
 │   └── tournament-service.log  # Logs pour le service de tournoi et matchmaking
 ├── Makefile                    # Makefile pour simplifier les commandes Docker (build, up, down, etc.)
 └── README.md                   # Documentation du projet (instructions, configuration, utilisation)
-```
+``` 
