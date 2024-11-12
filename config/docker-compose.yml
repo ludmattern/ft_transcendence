@@ -17,6 +17,42 @@ services:
       - "3001:3001"
     networks:
       - ft_network
+  
+  auth-service:
+    build:
+      context: ../backend/auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    networks:
+      - ft_network
+    
+  chat-service:
+    build:
+      context: ../backend/chat-service
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    networks:
+      - ft_network
+
+  game-service:
+    build:
+      context: ../backend/game-service
+      dockerfile: Dockerfile
+    ports:
+      - "3004:3004"
+    networks:
+      - ft_network
+  
+  tournament-service:
+    build:
+      context: ../backend/tournament-service
+      dockerfile: Dockerfile
+    ports:
+      - "3005:3005"
+    networks:
+      - ft_network
 
 networks:
   ft_network:
