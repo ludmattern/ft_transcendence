@@ -1,6 +1,8 @@
+
 # ft_transcendence
 ## Project structure and setup
 
+```
 ft_transcendence/
 ├── backend/                    # Code backend pour tous les microservices
 │   ├── auth-service/           # Microservice d'authentification
@@ -64,3 +66,4 @@ ft_transcendence/
 │   └── tournament-service.log  # Logs pour le service de tournoi et matchmaking
 ├── Makefile                    # Makefile pour simplifier les commandes Docker (build, up, down, etc.)
 └── README.md                   # Documentation du projet (instructions, configuration, utilisation)
+```
