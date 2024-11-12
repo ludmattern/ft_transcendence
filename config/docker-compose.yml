@@ -1,1 +1,23 @@
-# Docker Compose configuration file to orchestrate services
+version: '3'
+services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - ft_network
+
+  user-service:
+    build:
+      context: ../backend/user-service
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    networks:
+      - ft_network
+
+networks:
+  ft_network:
+    driver: bridge
