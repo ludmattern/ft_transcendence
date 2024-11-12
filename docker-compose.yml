@@ -1,56 +1,59 @@
-version: '3'
 services:
   frontend:
     build:
-      context: ../frontend
+      context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
     networks:
       - ft_network
 
   user-service:
     build:
-      context: ../backend/user-service
+      context: ./backend/user-service
       dockerfile: Dockerfile
-    ports:
-      - "3001:3001"
     networks:
       - ft_network
-  
+
   auth-service:
     build:
-      context: ../backend/auth-service
+      context: ./backend/auth-service
       dockerfile: Dockerfile
-    ports:
-      - "3002:3002"
     networks:
       - ft_network
     
   chat-service:
     build:
-      context: ../backend/chat-service
+      context: ./backend/chat-service
       dockerfile: Dockerfile
-    ports:
-      - "3003:3003"
     networks:
       - ft_network
 
   game-service:
     build:
-      context: ../backend/game-service
+      context: ./backend/game-service
       dockerfile: Dockerfile
-    ports:
-      - "3004:3004"
     networks:
       - ft_network
   
   tournament-service:
     build:
-      context: ../backend/tournament-service
+      context: ./backend/tournament-service
       dockerfile: Dockerfile
+    networks:
+      - ft_network
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "3005:3005"
+      - "8080:8080"    # Expose port 8080 for external access
+    depends_on:
+      - frontend
+      - user-service
+      - auth-service
+      - chat-service
+      - game-service
+      - tournament-service
     networks:
       - ft_network
 
