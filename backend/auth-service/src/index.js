@@ -1,10 +1,9 @@
-// backend/user-service/src/index.js
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 app.get('/', (req, res) => {
-  res.send("USER");
+  res.send("AUTHENTI");
 });
 
 app.listen(PORT, () => {

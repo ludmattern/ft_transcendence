@@ -1,1 +1,13 @@
-{ "name": "chat-service", "version": "1.0.0", "description": "Package file for chat-service" }
+{
+	"name": "chat-service",
+	"version": "1.0.0",
+	"description": "chat service backend for ft_transcendence",
+	"main": "src/index.js",
+	"scripts": {
+	  "start": "node src/index.js"
+	},
+	"dependencies": {
+	  "express": "^4.17.1"
+	}
+  }
+  
