@@ -128,7 +128,7 @@ h2 {
 }
 
 .error-message {
-  color: red;
+  color: rgb(167, 127, 20);
   font-weight: bold;
-  margin-top: 10px;
+  margin-top: 8px;
 }
