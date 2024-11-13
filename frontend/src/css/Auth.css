@@ -1,32 +1,4 @@
-/* App.css */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(135deg, #4c4c6d, #1e1e2f);
-    color: #f9f9f9;
-  }
-  
-  .App {
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    max-width: 500px;
-    width: 80%;
-  }
-  
-  h1 {
+h1 {
     font-size: 3rem;
     color: #ff8c00;
     margin-bottom: 20px;
@@ -125,4 +97,10 @@ h2 {
 
 .toggle-button:hover {
   color: #45a049;
+}
+
+.error-message {
+  color: rgb(167, 127, 20);
+  font-weight: bold;
+  margin-top: 8px;
 }
