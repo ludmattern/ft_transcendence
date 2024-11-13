@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { registerUser } from '../services/api';
-import '../App.css';
+import '../css/Auth.css';
 
 function Authentication() {
   const [showRegister, setShowRegister] = useState(false);
