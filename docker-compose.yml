@@ -96,8 +96,8 @@ services:
     container_name: redis
     volumes:
       - redis_data:/data
-      - ./database/redis/redis.conf:/usr/local/etc/redis/redis.conf # Configuration custom optionnelle
-    command: ["redis-server", "/usr/local/etc/redis/redis.conf"] # Lancer avec config personnalisée
+      - ./database/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     networks:
       - ft_network
 
