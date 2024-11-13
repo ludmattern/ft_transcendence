@@ -126,3 +126,9 @@ h2 {
 .toggle-button:hover {
   color: #45a049;
 }
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}

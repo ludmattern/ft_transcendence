@@ -34,32 +34,32 @@ app.use(express.json());
 
 app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
-  console.log("Received registration data:", req.body);
 
   try {
+    const checkQuery = 'SELECT * FROM users WHERE email = $1 OR username = $2';
+    const checkValues = [email, username];
+    const result = await pool.query(checkQuery, checkValues);
+
+    if (result.rows.length > 0) {
+      const existingUser = result.rows[0];
+      if (existingUser.email === email) {
+        return res.status(400).json({ message: 'Email is already in use' });
+      }
+      if (existingUser.username === username) {
+        return res.status(400).json({ message: 'Username is already taken' });
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)';
-    const values = [username, email, hashedPassword];
-    await pool.query(query, values);
+    const insertQuery = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)';
+    const insertValues = [username, email, hashedPassword];
+    await pool.query(insertQuery, insertValues);
 
     console.log("User registered successfully");
-    res.status(201).json({ message: 'Utilisateur enregistré avec succès' });
+    res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
-    console.error('error on register :', {
-      message: err.message,
-      autre : err.status,
-      autre : err.status,
-      autre : err.values,
-      stack: err.stack,
-      code: err.code,          // Code erreur SQL, s'il est disponible
-      detail: err.detail,      // Détails additionnels spécifiques à PostgreSQL
-      table: err.table,        // Nom de la table, si disponible
-      constraint: err.constraint, // Contrainte qui a échoué, si disponible
-    });
-    res.status(500).json({ 
-      message: 'error on register ',
-      error: err.message       // Optionnel : renvoyer le message d'erreur au client
-    });
+    console.error('Error during user registration:', err);
+    res.status(500).json({ message: 'Error during user registration' });
   }
 });
 

@@ -9,7 +9,7 @@ function App() {
   return (
   <div className="App">
     <Authentification/> {}
-	  <HelloServices /> {/* displays the message from all services */}
+	  <HelloServices /> {}
 	  <h1>Application Utilisateur</h1>
       <DisplayTable />
 	</div>
