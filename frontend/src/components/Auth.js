@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { registerUser } from '../services/api';
-import '../App.css';
+import '../css/Auth.css';
 
 function Authentication() {
   const [showRegister, setShowRegister] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [registerData, setRegisterData] = useState({
     username: '',
     email: '',
@@ -31,17 +32,26 @@ function Authentication() {
     });
   };
 
+
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     console.log('Registering with:', registerData);
-
+  
     try {
       const response = await registerUser(registerData);
-      console.log(' godd:', response);
+      console.log('Registration successful:', response);
+      setErrorMessage('');
     } catch (error) {
-      console.error('error :', error);
+      if (error.message.includes('Email')) {
+        setErrorMessage('This email is already in use. Please choose another one.');
+      } else if (error.message.includes('Username')) {
+        setErrorMessage('This username is already taken. Please choose another one.');
+      } else {
+        setErrorMessage('An error occurred during registration. Please try again.');
+      }
     }
   };
+  
 
   const handleLoginSubmit = async (e) => {
 	e.preventDefault();
@@ -71,6 +81,7 @@ function Authentication() {
 
   const toggleForm = () => {
     setShowRegister(!showRegister);
+    setErrorMessage('');
   };
 
   return (
@@ -109,9 +120,12 @@ function Authentication() {
                 name="password"
                 value={registerData.password}
                 onChange={handleRegisterChange}
-                required
+                minLength="6"
+                pattern="^(?=.*[A-Z])(?=.*\d).{6,}$"
+                title="Password must be at least 6 characters long, contain at least one uppercase letter, and one digit."                required
               />
             </div>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
             <button type="submit" className="submit-button">Sign Up</button>
           </form>
           <p className="toggle-text">

@@ -62,8 +62,9 @@ services:
     container_name: nginx_proxy
     volumes:
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx/certs:/etc/nginx/certs:ro
     ports:
-      - "8080:8080"
+      - "8443:443"
     depends_on:
       - frontend
       - user-service
@@ -73,6 +74,7 @@ services:
       - tournament-service
     networks:
       - ft_network
+
 
   postgres:
     image: postgres:latest
