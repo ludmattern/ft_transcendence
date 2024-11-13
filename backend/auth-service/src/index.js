@@ -85,71 +85,76 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    const user = userResult.rows[0];
-    if (!user) return res.status(400).json({ message: 'Utilisateur non trouvé' });
-
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ message: 'Mot de passe incorrect' });
-
-    const accessToken = jwt.sign({ id: user.id }, ACCESS_SECRET, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ id: user.id }, REFRESH_SECRET, { expiresIn: '7d' });
-    await redisClient.setex(user.id, 60 * 60 * 24 * 7, refreshToken); // Expire après 7 jours
-
-    res.cookie('auth_token', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Lax'
-    });
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Lax'
-    });
-    res.status(200).json({ message: 'Connexion réussie' });
-  } catch (err) {
-    console.error('Erreur lors de la connexion:', err);
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
+	const { email, password } = req.body;
+  
+	try {
+	  const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+	  const user = userResult.rows[0];
+	  if (!user) return res.status(400).json({ message: 'Utilisateur non trouvé' });
+  
+	  const match = await bcrypt.compare(password, user.password);
+	  if (!match) return res.status(400).json({ message: 'Mot de passe incorrect' });
+  
+	  const accessToken = jwt.sign({ id: user.id }, ACCESS_SECRET, { expiresIn: '15m' });
+	  const refreshToken = jwt.sign({ id: user.id }, REFRESH_SECRET, { expiresIn: '7d' });
+	  
+	  await redisClient.setex(user.id, 60 * 60 * 24 * 7, refreshToken); // Expire after 7 days
+  
+	  res.cookie('auth_token', accessToken, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === 'production',
+		sameSite: 'Lax'
+	  });
+	  res.status(200).json({ message: 'Connexion réussie' });
+	} catch (err) {
+	  console.error('Erreur lors de la connexion:', err);
+	  res.status(500).json({ message: 'Erreur serveur' });
+	}
 });
 
 app.post('/refresh-token', async (req, res) => {
-  const refreshToken = req.cookies.refresh_token;
-  if (!refreshToken) return res.sendStatus(401);
+	const { userId } = req.body;
+  
+	try {
+	  const storedToken = await redisClient.get(userId);
+	  if (!storedToken) return res.sendStatus(403);
+  
+	  const userData = jwt.verify(storedToken, REFRESH_SECRET);
+  
+	  const remainingTime = jwt.decode(storedToken).exp - Math.floor(Date.now() / 1000);
+	  if (remainingTime < 3600) {
+		const newRefreshToken = jwt.sign({ id: userData.id }, REFRESH_SECRET, { expiresIn: '7d' });
+		await redisClient.setex(userData.id, 60 * 60 * 24 * 7, newRefreshToken);
+	  }
+  
+	  const newAccessToken = jwt.sign({ id: userData.id }, ACCESS_SECRET, { expiresIn: '15m' });
+	  res.json({ accessToken: newAccessToken });
+	} catch (err) {
+	  res.sendStatus(403);
+	}
+  });
 
-  try {
-    const userData = jwt.verify(refreshToken, REFRESH_SECRET);
-    const storedToken = await redisClient.get(userData.id);
-    if (storedToken !== refreshToken) return res.sendStatus(403);
-
-    const remainingTime = jwt.decode(refreshToken).exp - Math.floor(Date.now() / 1000);
-    if (remainingTime < 3600) {
-      const newRefreshToken = jwt.sign({ id: userData.id }, REFRESH_SECRET, { expiresIn: '7d' });
-      await redisClient.setex(userData.id, 60 * 60 * 24 * 7, newRefreshToken);
-      res.cookie('refresh_token', newRefreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Lax'
-      });
-    }
-
-    const newAccessToken = jwt.sign({ id: userData.id }, ACCESS_SECRET, { expiresIn: '15m' });
-    res.json({ accessToken: newAccessToken });
-  } catch (err) {
-    res.sendStatus(403);
-  }
-});
-
-app.post('/logout', async (req, res) => {
-  const userId = req.user && req.user.id;
-  if (userId) await redisClient.del(userId);
-  res.clearCookie('auth_token');
-  res.clearCookie('refresh_token');
-  res.json({ message: 'Déconnexion réussie' });
-});
+  app.post('/logout', async (req, res) => {
+	const token = req.cookies.auth_token; // Récupérer le auth_token depuis les cookies
+  
+	if (!token) {
+	  return res.status(401).json({ message: 'Aucun token trouvé' });
+	}
+  
+	try {
+	  const decoded = jwt.verify(token, ACCESS_SECRET);
+	  const userId = decoded.id;
+  
+	  await redisClient.del(userId);
+  
+	  res.clearCookie('auth_token');
+	  res.json({ message: 'Déconnexion réussie' });
+	} catch (err) {
+	  console.error('Erreur lors de la déconnexion:', err);
+	  res.status(500).json({ message: 'Erreur serveur' });
+	}
+  });
+  
 
 app.listen(PORT, () => {
   console.log(`Auth Service running on port ${PORT}`);
