@@ -146,12 +146,11 @@ app.post('/refresh-token', async (req, res) => {
 	  const userId = decoded.id;
   
 	  await redisClient.del(userId);
-  
 	  res.clearCookie('auth_token');
-	  res.json({ message: 'Déconnexion réussie' });
+	  res.json({ message: 'logout successfull' });
 	} catch (err) {
-	  console.error('Erreur lors de la déconnexion:', err);
-	  res.status(500).json({ message: 'Erreur serveur' });
+	  console.error('error on logout:', err);
+	  res.status(500).json({ message: 'error on server' });
 	}
   });
   

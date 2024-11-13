@@ -62,3 +62,14 @@ export const loginUser = async (loginData) => {
   
 	return data;
   }
+
+  export async function logoutUser() {
+	const response = await fetch('/api/auth-service/logout', {
+	  method: 'POST',
+	  credentials: 'include',
+	});
+	if (!response.ok) {
+	  throw new Error('Failed to logout');
+	}
+	return response.json();
+  }

@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-
-import {
-	registerUser,
-	loginUser
- } from '../services/api';
-
+import { registerUser, loginUser, logoutUser } from '../services/api';
 import '../css/Auth.css';
 
 function Authentication() {
@@ -37,11 +32,10 @@ function Authentication() {
     });
   };
 
-
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     console.log('Registering with:', registerData);
-  
+
     try {
       const response = await registerUser(registerData);
       console.log('Registration successful:', response);
@@ -56,7 +50,6 @@ function Authentication() {
       }
     }
   };
-  
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -72,8 +65,17 @@ function Authentication() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      console.log('Logout successful');
+      setErrorMessage('');
+    } catch (error) {
+      console.error('Logout error:', error);
+      setErrorMessage('An error occurred during logout. Please try again.');
+    }
+  };
 
-  
   const toggleForm = () => {
     setShowRegister(!showRegister);
     setErrorMessage('');
@@ -117,7 +119,8 @@ function Authentication() {
                 onChange={handleRegisterChange}
                 minLength="6"
                 pattern="^(?=.*[A-Z])(?=.*\d).{6,}$"
-                title="Password must be at least 6 characters long, contain at least one uppercase letter, and one digit."                required
+                title="Password must be at least 6 characters long, contain at least one uppercase letter, and one digit."
+                required
               />
             </div>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
@@ -158,6 +161,7 @@ function Authentication() {
             </div>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
             <button type="submit" className="submit-button">Log In</button>
+            <button type="button" onClick={handleLogout}>Logout</button>
           </form>
           <p className="toggle-text">
             Don’t have an account?{' '}
