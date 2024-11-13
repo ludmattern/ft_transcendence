@@ -26,6 +26,12 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+      NODE_ENV: ${NODE_ENV}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    env_file:
+      - ./config/env/.env
  
   chat-service:
     build:
@@ -57,7 +63,7 @@ services:
     volumes:
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "8080:8080"    # Expose port 8080 for external access
+      - "8080:8080"
     depends_on:
       - frontend
       - user-service
@@ -83,9 +89,20 @@ services:
     networks:
       - ft_network
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    volumes:
+      - redis_data:/data
+      - ./database/redis/redis.conf:/usr/local/etc/redis/redis.conf # Configuration custom optionnelle
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"] # Lancer avec config personnalisée
+    networks:
+      - ft_network
+
 networks:
   ft_network:
     driver: bridge
 
 volumes:
   postgres_data:
+  redis_data:

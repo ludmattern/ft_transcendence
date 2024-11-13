@@ -43,11 +43,31 @@ function Authentication() {
     }
   };
 
-  const handleLoginSubmit = (e) => {
-    e.preventDefault();
-    console.log('Logging in with:', loginData);
-    // Appeler la fonction de connexion ici
+  const handleLoginSubmit = async (e) => {
+	e.preventDefault();
+	console.log('Logging in with:', loginData);
+  
+	try {
+	  const response = await fetch('/api/auth-service/login', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(loginData),
+		credentials: 'include'  // Assure que le cookie est inclus dans la requête
+	  });
+  
+	  const data = await response.json();
+  
+	  if (!response.ok) {
+		throw new Error(data.message || 'Erreur lors de la connexion');
+	  }
+  
+	  console.log('Connexion réussie:', data);
+	  // Mettre à jour l'état d'authentification dans le contexte ou via un state global
+	} catch (error) {
+	  console.error('Erreur de connexion:', error);
+	}
   };
+	
 
   const toggleForm = () => {
     setShowRegister(!showRegister);
