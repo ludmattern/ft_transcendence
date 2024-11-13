@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { registerUser, loginUser, logoutUser } from '../services/api';
+import { registerUser, loginUser, logoutUser, checkToken } from '../services/api';
 import '../css/Auth.css';
 
 function Authentication() {
@@ -74,6 +74,15 @@ function Authentication() {
       console.error('Logout error:', error);
       setErrorMessage('An error occurred during logout. Please try again.');
     }
+  };
+
+  const handleToken = async () => {
+	try {
+	  await checkToken();
+	  console.log('Token is valid');
+	} catch (error) {
+	  console.error('Token error:', error);
+	}
   };
 
   const toggleForm = () => {
@@ -162,6 +171,7 @@ function Authentication() {
             {errorMessage && <p className="error-message">{errorMessage}</p>}
             <button type="submit" className="submit-button">Log In</button>
             <button type="button" onClick={handleLogout}>Logout</button>
+            <button type="button" onClick={handleToken}>Check Token</button>
           </form>
           <p className="toggle-text">
             Don’t have an account?{' '}

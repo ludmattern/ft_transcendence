@@ -1,3 +1,4 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const redis = require('redis');
 
@@ -9,6 +10,7 @@ const redisClient = redis.createClient({
 
 const ACCESS_SECRET = process.env.ACCESS_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET;
+const ACCESS_EXPIRATION = process.env.ACCESS_EXPIRATION;
 
 async function checkToken(req, res, next) {
   const accessToken = req.cookies.auth_token;
@@ -18,6 +20,7 @@ async function checkToken(req, res, next) {
     try {
       const decoded = jwt.verify(accessToken, ACCESS_SECRET);
       req.user = decoded;
+	  console.log('Access token is valid');
       return next();
     } catch (err) {
       console.log('Access token expired or invalid');
@@ -34,7 +37,7 @@ async function checkToken(req, res, next) {
         return res.status(403).json({ message: 'Invalid session, please log in again' });
       }
 
-      const newAccessToken = jwt.sign({ id: userId }, ACCESS_SECRET, { expiresIn: '15m' });
+      const newAccessToken = jwt.sign({ id: userId }, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRATION });
       res.cookie('auth_token', newAccessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',

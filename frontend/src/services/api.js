@@ -29,6 +29,16 @@ export async function fetchAuthServiceHello() {
 	return data;
 }
 
+
+export async function checkToken() {
+	const response = await fetch('/api/auth-service/protected-route');
+	const data = await response.json();
+	if (!response.ok) {
+		throw new Error(data.message || 'error on check token');
+	}
+	return data;
+}
+
 export const registerUser = async (registerData) => {
   
 	const response = await fetch('/api/auth-service/register', {
