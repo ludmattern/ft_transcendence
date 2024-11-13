@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { registerUser } from '../services/api';
 import '../App.css';
 
 function Authentication() {
@@ -30,10 +31,16 @@ function Authentication() {
     });
   };
 
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     console.log('Registering with:', registerData);
-    // Appeler la fonction d'inscription ici
+
+    try {
+      const response = await registerUser(registerData);
+      console.log(' godd:', response);
+    } catch (error) {
+      console.error('error :', error);
+    }
   };
 
   const handleLoginSubmit = (e) => {
