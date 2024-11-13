@@ -12,7 +12,7 @@ function Authentication() {
   });
 
   const [loginData, setLoginData] = useState({
-    email: '',
+    username: '',
     password: '',
   });
 
@@ -140,12 +140,12 @@ function Authentication() {
           <h2>Login</h2>
           <form onSubmit={handleLoginSubmit}>
             <div className="form-group">
-              <label htmlFor="loginEmail">Email</label>
+              <label htmlFor="loginUsername">Username</label>
               <input
                 type="text"
-                id="loginEmail"
-                name="email"
-                value={loginData.email}
+                id="loginUsername"
+                name="username"
+                value={loginData.username}
                 onChange={handleLoginChange}
                 required
               />
