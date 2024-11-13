@@ -1,12 +1,11 @@
 require('dotenv').config();
-
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const cookieParser = require('cookie-parser');
 const redis = require('redis');
-
+const checkToken = require('./middlewares/checkToken'); // Import the middleware
 
 const app = express();
 const PORT = 3002;
@@ -15,10 +14,6 @@ const REFRESH_SECRET = process.env.REFRESH_SECRET;
 const REDIS_PORT = process.env.REDIS_PORT;
 const REDIS_HOST = process.env.REDIS_HOST;
 const REDIS_PASSWORD = process.env.REDIS_PASSWORD;
-
-console.log('REDIS_PORT:', REDIS_PORT);
-console.log('REDIS_HOST:', REDIS_HOST);
-console.log('REDIS_PASSWORD:', REDIS_PASSWORD);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -32,12 +27,18 @@ const pool = new Pool({
 });
 
 const redisClient = redis.createClient({
-	host: REDIS_HOST,
-	port: parseInt(REDIS_PORT, 10),
-	password: REDIS_PASSWORD
-  });
-  
+  host: REDIS_HOST,
+  port: parseInt(REDIS_PORT, 10),
+  password: REDIS_PASSWORD,
+});
+
 redisClient.on('error', (err) => console.error('Redis error:', err));
+
+// Example protected route
+app.get('/protected-route', checkToken, (req, res) => {
+  res.json({ message: 'You have access to this protected route' });
+});
+
 
 app.get('/hello', (req, res) => {
   res.send("Hello from Auth Service");
@@ -51,7 +52,7 @@ app.get('/users', async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server err');
+    res.status(500).send('Server error');
   }
 });
 
@@ -77,7 +78,7 @@ app.post('/register', async (req, res) => {
     const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)';
     const values = [username, email, hashedPassword];
     await pool.query(query, values);
-    res.status(201).json({ message: 'User successfully regestered' });
+    res.status(201).json({ message: 'User successfully registered' });
   } catch (err) {
     console.error('Error on register', err);
     res.status(500).json({ message: 'Error on register' });
@@ -96,7 +97,9 @@ app.post('/login', async (req, res) => {
 	  if (!match) return res.status(400).json({ message: 'Wrong password' });
   
 	  const accessToken = jwt.sign({ id: user.id }, ACCESS_SECRET, { expiresIn: '15m' });
+	  console.log('user.id :', user.id);
 	  const refreshToken = jwt.sign({ id: user.id }, REFRESH_SECRET, { expiresIn: '7d' });
+	  console.log('refreshToken :', refreshToken);
 	  
 	  await redisClient.setex(user.id, 60 * 60 * 24 * 7, refreshToken); // Expire after 7 days
   
@@ -153,7 +156,7 @@ app.post('/refresh-token', async (req, res) => {
 	  res.status(500).json({ message: 'error on server' });
 	}
   });
-  
+
 
 app.listen(PORT, () => {
   console.log(`Auth Service running on port ${PORT}`);
