@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { registerUser } from '../services/api';
+
+import {
+	registerUser,
+	loginUser
+ } from '../services/api';
+
 import '../css/Auth.css';
 
 function Authentication() {
