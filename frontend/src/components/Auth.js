@@ -59,17 +59,21 @@ function Authentication() {
   
 
   const handleLoginSubmit = async (e) => {
-	e.preventDefault();
-	console.log('Logging in with:', loginData);
-  
-	try {
-	  const response = await loginUser(loginData);
-	  console.log('Login successful:', response);
-	} catch (error) {
-	  console.error('Erreur de connexion:', error);
-	}
+    e.preventDefault();
+    console.log('Logging in with:', loginData);
+
+    try {
+      const response = await loginUser(loginData);
+      console.log('Login successful:', response);
+      setErrorMessage('');
+    } catch (error) {
+      console.error('login error:', error);
+      setErrorMessage('Wrong username or password');
+    }
   };
 
+
+  
   const toggleForm = () => {
     setShowRegister(!showRegister);
     setErrorMessage('');
@@ -152,6 +156,7 @@ function Authentication() {
                 required
               />
             </div>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
             <button type="submit" className="submit-button">Log In</button>
           </form>
           <p className="toggle-text">
