@@ -14,6 +14,8 @@ const REFRESH_SECRET = process.env.REFRESH_SECRET;
 const REDIS_PORT = process.env.REDIS_PORT;
 const REDIS_HOST = process.env.REDIS_HOST;
 const REDIS_PASSWORD = process.env.REDIS_PASSWORD;
+const ACCESS_EXPIRATION = process.env.ACCESS_EXPIRATION;
+const REFRESH_EXPIRATION = process.env.REFRESH_EXPIRATION;
 
 app.use(express.json());
 app.use(cookieParser());
@@ -34,11 +36,9 @@ const redisClient = redis.createClient({
 
 redisClient.on('error', (err) => console.error('Redis error:', err));
 
-// Example protected route
 app.get('/protected-route', checkToken, (req, res) => {
   res.json({ message: 'You have access to this protected route' });
 });
-
 
 app.get('/hello', (req, res) => {
   res.send("Hello from Auth Service");
@@ -96,9 +96,9 @@ app.post('/login', async (req, res) => {
 	  const match = await bcrypt.compare(password, user.password);
 	  if (!match) return res.status(400).json({ message: 'Wrong password' });
   
-	  const accessToken = jwt.sign({ id: user.id }, ACCESS_SECRET, { expiresIn: '15m' });
+	  const accessToken = jwt.sign({ id: user.id }, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRATION });
 	  console.log('user.id :', user.id);
-	  const refreshToken = jwt.sign({ id: user.id }, REFRESH_SECRET, { expiresIn: '7d' });
+	  const refreshToken = jwt.sign({ id: user.id }, REFRESH_SECRET, { expiresIn: REFRESH_EXPIRATION });
 	  console.log('refreshToken :', refreshToken);
 	  
 	  await redisClient.setex(user.id, 60 * 60 * 24 * 7, refreshToken); // Expire after 7 days
@@ -126,11 +126,11 @@ app.post('/refresh-token', async (req, res) => {
   
 	  const remainingTime = jwt.decode(storedToken).exp - Math.floor(Date.now() / 1000);
 	  if (remainingTime < 3600) {
-		const newRefreshToken = jwt.sign({ id: userData.id }, REFRESH_SECRET, { expiresIn: '7d' });
+		const newRefreshToken = jwt.sign({ id: userData.id }, REFRESH_SECRET, { expiresIn: REFRESH_EXPIRATION });
 		await redisClient.setex(userData.id, 60 * 60 * 24 * 7, newRefreshToken);
 	  }
   
-	  const newAccessToken = jwt.sign({ id: userData.id }, ACCESS_SECRET, { expiresIn: '15m' });
+	  const newAccessToken = jwt.sign({ id: userData.id }, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRATION });
 	  res.json({ accessToken: newAccessToken });
 	} catch (err) {
 	  res.sendStatus(403);
