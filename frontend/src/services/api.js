@@ -57,7 +57,7 @@ export const loginUser = async (loginData) => {
 	const data = await response.json();
   
 	if (!response.ok) {
-	  throw new Error(data.message || 'Erreur lors de la connexion');
+	  throw new Error(data.message || 'error on login');
 	}
   
 	return data;

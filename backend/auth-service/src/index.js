@@ -51,7 +51,7 @@ app.get('/users', async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Erreur du serveur');
+    res.status(500).send('Server err');
   }
 });
 
@@ -77,10 +77,10 @@ app.post('/register', async (req, res) => {
     const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)';
     const values = [username, email, hashedPassword];
     await pool.query(query, values);
-    res.status(201).json({ message: 'Utilisateur enregistré avec succès' });
+    res.status(201).json({ message: 'User successfully regestered' });
   } catch (err) {
-    console.error('Erreur lors de l\'enregistrement:', err);
-    res.status(500).json({ message: 'Erreur lors de l\'enregistrement' });
+    console.error('Error on register', err);
+    res.status(500).json({ message: 'Error on register' });
   }
 });
 
@@ -90,10 +90,10 @@ app.post('/login', async (req, res) => {
 	try {
 	  const userResult = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
 	  const user = userResult.rows[0];
-	  if (!user) return res.status(400).json({ message: 'Utilisateur non trouvé' });
+	  if (!user) return res.status(400).json({ message: 'User not find' });
   
 	  const match = await bcrypt.compare(password, user.password);
-	  if (!match) return res.status(400).json({ message: 'Mot de passe incorrect' });
+	  if (!match) return res.status(400).json({ message: 'Wrong password' });
   
 	  const accessToken = jwt.sign({ id: user.id }, ACCESS_SECRET, { expiresIn: '15m' });
 	  const refreshToken = jwt.sign({ id: user.id }, REFRESH_SECRET, { expiresIn: '7d' });
@@ -105,10 +105,10 @@ app.post('/login', async (req, res) => {
 		secure: process.env.NODE_ENV === 'production',
 		sameSite: 'Lax'
 	  });
-	  res.status(200).json({ message: 'Connexion réussie' });
+	  res.status(200).json({ message: 'Success on login' });
 	} catch (err) {
-	  console.error('Erreur lors de la connexion:', err);
-	  res.status(500).json({ message: 'Erreur serveur' });
+	  console.error('err on login :', err);
+	  res.status(500).json({ message: 'server error' });
 	}
 });
 
