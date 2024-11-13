@@ -29,7 +29,6 @@ export async function fetchAuthServiceHello() {
 	return data;
 }
 
-// frontend/src/services/api.js
 export const registerUser = async (registerData) => {
   
 	const response = await fetch('/api/auth-service/register', {
@@ -46,4 +45,20 @@ export const registerUser = async (registerData) => {
   
 	return await response.json();
   };
+
+export const loginUser = async (loginData) => {
+	const response = await fetch('/api/auth-service/login', {
+	  method: 'POST',
+	  headers: { 'Content-Type': 'application/json' },
+	  body: JSON.stringify(loginData),
+	  credentials: 'include',
+	});
   
+	const data = await response.json();
+  
+	if (!response.ok) {
+	  throw new Error(data.message || 'Erreur lors de la connexion');
+	}
+  
+	return data;
+  }
