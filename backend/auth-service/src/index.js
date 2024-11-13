@@ -1,4 +1,6 @@
+
 const express = require('express');
+const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 const app = express();
@@ -27,6 +29,41 @@ app.get('/users', async (req, res) => {
     res.status(500).send('Erreur du serveur');
   }
 });
+
+app.use(express.json());
+
+app.post('/register', async (req, res) => {
+  const { username, email, password } = req.body;
+  console.log("Received registration data:", req.body);
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const query = 'INSERT INTO users (username, email, password) VALUES ($1, $2, $3)';
+    const values = [username, email, hashedPassword];
+    await pool.query(query, values);
+
+    console.log("User registered successfully");
+    res.status(201).json({ message: 'Utilisateur enregistré avec succès' });
+  } catch (err) {
+    console.error('Erreur lors de l\'enregistrement de l\'utilisateur :', {
+      message: err.message,
+      autre : err.status,
+      autre : err.status,
+      autre : err.values,
+      stack: err.stack,
+      code: err.code,          // Code erreur SQL, s'il est disponible
+      detail: err.detail,      // Détails additionnels spécifiques à PostgreSQL
+      table: err.table,        // Nom de la table, si disponible
+      constraint: err.constraint, // Contrainte qui a échoué, si disponible
+    });
+    res.status(500).json({ 
+      message: 'Erreur lors de l\'enregistrement de l\'utilisateur',
+      error: err.message       // Optionnel : renvoyer le message d'erreur au client
+    });
+  }
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Auth Service running on port ${PORT}`);
