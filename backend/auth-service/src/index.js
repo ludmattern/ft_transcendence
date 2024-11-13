@@ -45,7 +45,7 @@ app.post('/register', async (req, res) => {
     console.log("User registered successfully");
     res.status(201).json({ message: 'Utilisateur enregistré avec succès' });
   } catch (err) {
-    console.error('Erreur lors de l\'enregistrement de l\'utilisateur :', {
+    console.error('error on register :', {
       message: err.message,
       autre : err.status,
       autre : err.status,
@@ -57,7 +57,7 @@ app.post('/register', async (req, res) => {
       constraint: err.constraint, // Contrainte qui a échoué, si disponible
     });
     res.status(500).json({ 
-      message: 'Erreur lors de l\'enregistrement de l\'utilisateur',
+      message: 'error on register ',
       error: err.message       // Optionnel : renvoyer le message d'erreur au client
     });
   }
