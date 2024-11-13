@@ -100,7 +100,9 @@ function Authentication() {
                 name="password"
                 value={registerData.password}
                 onChange={handleRegisterChange}
-                required
+                minLength="6"
+                pattern="^(?=.*[A-Z])(?=.*\d).{6,}$"
+                title="Password must be at least 6 characters long, contain at least one uppercase letter, and one digit."                required
               />
             </div>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
