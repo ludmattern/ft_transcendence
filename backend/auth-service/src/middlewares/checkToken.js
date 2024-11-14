@@ -16,7 +16,8 @@ async function checkToken(req, res, next) {
   const accessToken = req.cookies.auth_token;
   const refreshToken = req.cookies.refresh_token;
 
-  if (accessToken) {
+  if (accessToken) 
+  {
     try {
       const decoded = jwt.verify(accessToken, ACCESS_SECRET);
       req.user = decoded;
