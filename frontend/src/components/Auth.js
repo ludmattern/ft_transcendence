@@ -66,6 +66,7 @@ function Authentication({ onLogin }) {
     }
   };
 
+
   const handleToken = async () => {
 	try {
 	  await checkToken();
@@ -160,7 +161,6 @@ function Authentication({ onLogin }) {
             </div>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
             <button type="submit" className="submit-button">Log In</button>
-            <button type="button" onClick={handleLogout}>Logout</button>
             <button type="button" onClick={handleToken}>Check Token</button>
           </form>
           <p className="toggle-text">
