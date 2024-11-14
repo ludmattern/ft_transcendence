@@ -82,95 +82,97 @@ function Authentication({ onLogin }) {
   };
 
   return (
-    <div className="auth-container">
-      {showRegister ? (
-        <>
-          <h2>Registration</h2>
-          <form onSubmit={handleRegisterSubmit}>
-            <div className="form-group">
-              <label htmlFor="registerUsername">Username</label>
-              <input
-                type="text"
-                id="registerUsername"
-                name="username"
-                value={registerData.username}
-                onChange={handleRegisterChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="registerEmail">Email</label>
-              <input
-                type="email"
-                id="registerEmail"
-                name="email"
-                value={registerData.email}
-                onChange={handleRegisterChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="registerPassword">Password</label>
-              <input
-                type="password"
-                id="registerPassword"
-                name="password"
-                value={registerData.password}
-                onChange={handleRegisterChange}
-                minLength="6"
-                pattern="^(?=.*[A-Z])(?=.*\d).{6,}$"
-                title="Password must be at least 6 characters long, contain at least one uppercase letter, and one digit."
-                required
-              />
-            </div>
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
-            <button type="submit" className="submit-button">Sign Up</button>
-          </form>
-          <p className="toggle-text">
-            Already have an account?{' '}
-            <button className="toggle-button" onClick={toggleForm}>
-              Log In
-            </button>
-          </p>
-        </>
-      ) : (
-        <>
-          <h2>Login</h2>
-          <form onSubmit={handleLoginSubmit}>
-            <div className="form-group">
-              <label htmlFor="loginUsername">Username</label>
-              <input
-                type="text"
-                id="loginUsername"
-                name="username"
-                value={loginData.username}
-                onChange={handleLoginChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="loginPassword">Password</label>
-              <input
-                type="password"
-                id="loginPassword"
-                name="password"
-                value={loginData.password}
-                onChange={handleLoginChange}
-                required
-              />
-            </div>
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
-            <button type="submit" className="submit-button">Log In</button>
-            <button type="button" onClick={handleToken}>Check Token</button>
-          </form>
-          <p className="toggle-text">
-            Don’t have an account?{' '}
-            <button className="toggle-button" onClick={toggleForm}>
-              Sign Up
-            </button>
-          </p>
-        </>
-      )}
+    <div className='App'>
+      <div className="auth-container">
+        {showRegister ? (
+          <>
+            <h2>Registration</h2>
+            <form onSubmit={handleRegisterSubmit}>
+              <div className="form-group">
+                <label htmlFor="registerUsername">Username</label>
+                <input
+                  type="text"
+                  id="registerUsername"
+                  name="username"
+                  value={registerData.username}
+                  onChange={handleRegisterChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="registerEmail">Email</label>
+                <input
+                  type="email"
+                  id="registerEmail"
+                  name="email"
+                  value={registerData.email}
+                  onChange={handleRegisterChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="registerPassword">Password</label>
+                <input
+                  type="password"
+                  id="registerPassword"
+                  name="password"
+                  value={registerData.password}
+                  onChange={handleRegisterChange}
+                  minLength="6"
+                  pattern="^(?=.*[A-Z])(?=.*\d).{6,}$"
+                  title="Password must be at least 6 characters long, contain at least one uppercase letter, and one digit."
+                  required
+                />
+              </div>
+              {errorMessage && <p className="error-message">{errorMessage}</p>}
+              <button type="submit" className="submit-button">Sign Up</button>
+            </form>
+            <p className="toggle-text">
+              Already have an account?{' '}
+              <button className="toggle-button" onClick={toggleForm}>
+                Log In
+              </button>
+            </p>
+          </>
+        ) : (
+          <>
+            <h2>Login</h2>
+            <form onSubmit={handleLoginSubmit}>
+              <div className="form-group">
+                <label htmlFor="loginUsername">Username</label>
+                <input
+                  type="text"
+                  id="loginUsername"
+                  name="username"
+                  value={loginData.username}
+                  onChange={handleLoginChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="loginPassword">Password</label>
+                <input
+                  type="password"
+                  id="loginPassword"
+                  name="password"
+                  value={loginData.password}
+                  onChange={handleLoginChange}
+                  required
+                />
+              </div>
+              {errorMessage && <p className="error-message">{errorMessage}</p>}
+              <button type="submit" className="submit-button">Log In</button>
+              <button type="button" onClick={handleToken}>Check Token</button>
+            </form>
+            <p className="toggle-text">
+              Don’t have an account?{' '}
+              <button className="toggle-button" onClick={toggleForm}>
+                Sign Up
+              </button>
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 }

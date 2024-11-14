@@ -3,6 +3,7 @@ import './css/App.css';
 import HelloServices from './components/HelloServices';
 import Authentification from './components/Auth';
 import DisplayTable from './components/DisplayTable';
+import Pong from './components/Pong';
 import { checkToken, logoutUser } from './services/api';
 
 function App() {
@@ -26,27 +27,26 @@ function App() {
       await logoutUser();
       setIsAuthenticated(false);
       console.log('Logout successful');
-    } 
+    }
     catch (error) {
       console.error('Logout error:', error);
     }
   };
 
   return (
-    <div className="App">
+    <div>
       {isAuthenticated ? (
         <>
+          <Pong />
           <button onClick={handleLogout}>Logout</button>
-          <HelloServices />
         </>
       ) : (
         <>
           <Authentification onLogin={() => setIsAuthenticated(true)} />
-          <DisplayTable />
         </>
       )}
     </div>
   );
 }
 
-export default App;
+export default App; 
