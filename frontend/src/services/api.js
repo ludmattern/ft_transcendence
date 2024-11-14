@@ -29,15 +29,16 @@ export async function fetchAuthServiceHello() {
 	return data;
 }
 
-
 export async function checkToken() {
-	const response = await fetch('/api/auth-service/protected-route');
+	const response = await fetch('/api/auth-service/protected-route', {
+	  credentials: 'include',
+	});
 	const data = await response.json();
 	if (!response.ok) {
-		throw new Error(data.message || 'error on check token');
+	  throw new Error(data.message || 'Error checking token');
 	}
 	return data;
-}
+  }
 
 export const registerUser = async (registerData) => {
   
@@ -73,7 +74,7 @@ export const loginUser = async (loginData) => {
 	return data;
   }
 
-  export async function logoutUser() {
+  export const logoutUser = async () => {
 	const response = await fetch('/api/auth-service/logout', {
 	  method: 'POST',
 	  credentials: 'include',
@@ -82,4 +83,5 @@ export const loginUser = async (loginData) => {
 	  throw new Error('Failed to logout');
 	}
 	return response.json();
-  }
+  };
+  
