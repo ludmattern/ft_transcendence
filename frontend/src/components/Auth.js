@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { registerUser, loginUser, logoutUser, checkToken } from '../services/api';
 import '../css/Auth.css';
 
-function Authentication() {
+function Authentication({ onLogin }) {
   const [showRegister, setShowRegister] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [registerData, setRegisterData] = useState({
@@ -59,20 +59,10 @@ function Authentication() {
       const response = await loginUser(loginData);
       console.log('Login successful:', response);
       setErrorMessage('');
+      onLogin();
     } catch (error) {
       console.error('login error:', error);
       setErrorMessage('Wrong username or password');
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logoutUser();
-      console.log('Logout successful');
-      setErrorMessage('');
-    } catch (error) {
-      console.error('Logout error:', error);
-      setErrorMessage('An error occurred during logout. Please try again.');
     }
   };
 
