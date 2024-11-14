@@ -7,14 +7,6 @@ services:
     networks:
       - ft_network
 
-  user-service:
-    build:
-      context: ./backend/user-service
-      dockerfile: Dockerfile
-    container_name: user_service
-    networks:
-      - ft_network
-
   auth-service:
     build:
       context: ./backend/auth-service
@@ -33,30 +25,6 @@ services:
     env_file:
       - ./config/env/.env
  
-  chat-service:
-    build:
-      context: ./backend/chat-service
-      dockerfile: Dockerfile
-    container_name: chat_service
-    networks:
-      - ft_network
-
-  game-service:
-    build:
-      context: ./backend/game-service
-      dockerfile: Dockerfile
-    container_name: game_service
-    networks:
-      - ft_network
-
-  tournament-service:
-    build:
-      context: ./backend/tournament-service
-      dockerfile: Dockerfile
-    container_name: tournament_service
-    networks:
-      - ft_network
-
   nginx:
     image: nginx:latest
     container_name: nginx_proxy
@@ -67,11 +35,7 @@ services:
       - "8443:443"
     depends_on:
       - frontend
-      - user-service
       - auth-service
-      - chat-service
-      - game-service
-      - tournament-service
     networks:
       - ft_network
 

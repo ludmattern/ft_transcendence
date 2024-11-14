@@ -1,21 +1,19 @@
 # Dockerfile for auth-service microservice
-# Define base image, dependencies, and commands for the auth-service
+# Utiliser l'image Python slim
+FROM python:3.10
 
-# backend/user-service/Dockerfile
-FROM node:14
-
-# Set the working directory
+# Définir le répertoire de travail
 WORKDIR /usr/src/app
 
-# Copy package.json and install dependencies
-COPY package.json ./
-RUN npm install
+# Copier et installer les dépendances
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all other source files
-COPY src ./src
+# Copier le code source
+COPY . .
 
-# Expose the port for the user service
+# Exposer le port (ajuster selon le service)
 EXPOSE 3002
 
-# Start the Express server
-CMD ["npm", "start"]
+# Démarrer le serveur Django
+CMD ["python", "manage.py", "runserver", "0.0.0.0:3002"]
