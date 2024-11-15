@@ -1,0 +1,37 @@
+services:
+  auth-service:
+    build:
+      context: ./backend/auth-service
+    container_name: auth_service
+    env_file:
+      - ./secret/.env
+    networks:
+      - backend
+
+  postgres:
+    build:
+      context: ./database
+    container_name: postgres_db
+    env_file:
+      - ./secret/.env
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  traefik:
+    build:
+      context: ./traefik
+    container_name: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - backend
+      - frontend
+
+networks:
+  backend:
+  frontend:
