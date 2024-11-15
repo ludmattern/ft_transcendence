@@ -1,8 +1,8 @@
 [entryPoints]
   [entryPoints.web]
-    address = ":80"
+    address = ":8080"
   [entryPoints.websecure]
-    address = ":443"
+    address = ":8443"
 
 [api]
   insecure = true

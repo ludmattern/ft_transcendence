@@ -6,7 +6,10 @@ services:
     env_file:
       - ./secret/.env
     networks:
-      - backend
+      - backend_network
+      - frontend_network
+    volumes:
+      - auth_service_volume:/app
 
   postgres:
     build:
@@ -15,23 +18,30 @@ services:
     env_file:
       - ./secret/.env
     volumes:
-      - ./database/data:/var/lib/postgresql/data
+      - postgres_data_volume:/var/lib/postgresql/data
     networks:
-      - backend
+      - backend_network
 
   traefik:
     build:
       context: ./traefik
     container_name: traefik
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+      - "8443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - backend
-      - frontend
+      - frontend_network
 
 networks:
-  backend:
-  frontend:
+  backend_network:
+    name: backend_network
+  frontend_network:
+    name: frontend_network
+
+volumes:
+  auth_service_volume:
+    name: auth_service_volume
+  postgres_data_volume:
+    name: postgres_data_volume
