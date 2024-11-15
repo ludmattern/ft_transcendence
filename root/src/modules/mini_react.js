@@ -219,6 +219,12 @@ export function Link({ to, children }) {
     return createElement('a', { href: to, 'data-link': true }, ...children);
 }
 
+/*
+ * =======================================
+ * Examples of using the library
+ * =======================================
+ */
+
 /**
  * Example component using useState and useEffect.
  *
