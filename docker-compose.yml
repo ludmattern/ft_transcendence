@@ -22,17 +22,23 @@ services:
     networks:
       - backend_network
 
-  traefik:
+  nginx:
     build:
-      context: ./traefik
-    container_name: traefik
+      context: ./nginx
+    container_name: nginx_proxy
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./frontend:/usr/share/nginx/html/frontend:ro
     ports:
+    # a enlever pour passer en ssl :
       - "8080:80"
       - "8443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+    # depends_on:
+    #   - auth-service
     networks:
       - frontend_network
+      - backend_network
 
 networks:
   backend_network:
