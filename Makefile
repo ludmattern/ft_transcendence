@@ -11,15 +11,15 @@ up:
 
 down:
 	docker-compose -f docker-compose.yml down
-	rm -f $(CERT_KEY) $(CERT_CRT)
+	# rm -f $(CERT_KEY) $(CERT_CRT)
 
 down-v:
 	docker-compose --env-file ./secret/.env -f docker-compose.yml down -v
-	rm -f $(CERT_KEY) $(CERT_CRT)
+	# rm -f $(CERT_KEY) $(CERT_CRT)
 
 generate-cert:
 	mkdir -p $(CERT_DIR)
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 		-keyout $(CERT_KEY) \
 		-out $(CERT_CRT) \
-		-subj "/C=FR/ST=RHONE/L=LYON/O=trenscendance/CN=localhost"
+		-subj "/C=FR/ST=RHONE/L=LYON/O=transcendence/CN=localhost"
