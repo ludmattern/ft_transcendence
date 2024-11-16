@@ -22,4 +22,4 @@ generate-cert:
 	openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 		-keyout $(CERT_KEY) \
 		-out $(CERT_CRT) \
-		-subj "/C=FR/ST=RHONE/L=LYON/O=trenscendance/CN=localhost"
+		-subj "/C=FR/ST=RHONE/L=LYON/O=transcendence/CN=localhost"
