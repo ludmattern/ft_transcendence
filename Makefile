@@ -5,7 +5,8 @@ CERT_CRT=$(CERT_DIR)/selfsigned.crt
 
 .PHONY: up down down-v generate-cert
 
-up: generate-cert
+# up: generate-cert
+up:
 	docker-compose --env-file ./secret/.env -f docker-compose.yml up --build -d
 
 down:
