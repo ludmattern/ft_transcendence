@@ -11,11 +11,11 @@ up:
 
 down:
 	docker-compose -f docker-compose.yml down
-	rm -f $(CERT_KEY) $(CERT_CRT)
+	# rm -f $(CERT_KEY) $(CERT_CRT)
 
 down-v:
 	docker-compose --env-file ./secret/.env -f docker-compose.yml down -v
-	rm -f $(CERT_KEY) $(CERT_CRT)
+	# rm -f $(CERT_KEY) $(CERT_CRT)
 
 generate-cert:
 	mkdir -p $(CERT_DIR)
