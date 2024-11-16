@@ -38,5 +38,4 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-console.log('opsadasdas');
 animate();
