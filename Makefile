@@ -1,22 +1,24 @@
-# Build and start the Docker Compose services
-up:
-	docker-compose up -d
+# Makefile
+CERT_DIR=./nginx/certs
+CERT_KEY=$(CERT_DIR)/selfsigned.key
+CERT_CRT=$(CERT_DIR)/selfsigned.crt
 
-# Stop the Docker Compose services
+.PHONY: up down down-v generate-cert
+
+up: generate-cert
+	docker-compose --env-file ./secret/.env -f docker-compose.yml up --build -d
+
 down:
-	docker-compose down
+	docker-compose -f docker-compose.yml down
+	rm -f $(CERT_KEY) $(CERT_CRT)
 
-# Restart the Docker Compose services
-restart: down up
+down-v:
+	docker-compose --env-file ./secret/.env -f docker-compose.yml down -v
+	rm -f $(CERT_KEY) $(CERT_CRT)
 
-# View the logs of the Docker Compose services
-logs:
-	docker-compose logs -f
-
-# Build the Docker Compose services
-build:
-	docker-compose build
-
-# Remove stopped containers and unused images
-clean:
-	docker system prune -f
+generate-cert:
+	mkdir -p $(CERT_DIR)
+	openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+		-keyout $(CERT_KEY) \
+		-out $(CERT_CRT) \
+		-subj "/C=FR/ST=RHONE/L=LYON/O=trenscendance/CN=localhost"
