@@ -47,6 +47,16 @@ menuObject.position.set(-0.01, -0.30, 0.70);
 menuObject.rotation.set(0.49, 3.1, 0);
 menuObject.scale.set(0.001, 0.001, 0.001);
 
+const loginElement = document.getElementById('login');
+
+const loginObject = new CSS3DObject(loginElement);
+
+loginObject.position.set(-0.01, 0.04, 0.70); // Ajustez les coordonnées
+loginObject.rotation.set(-1.3, 3.1, 0);
+loginObject.scale.set(0.001, 0.001, 0.001); // Réduisez la taille si nécessaire
+scene.add(loginObject);
+loginElement.style.pointerEvents = 'auto';
+
 let onScreen = false;
 let screenObject;
 const loader = new GLTFLoader();
@@ -104,6 +114,12 @@ backButton.addEventListener('click', () => {
     animateCameraBackToInitialPosition();
 });
 
+const loginButton = document.getElementById('loginButton');
+loginButton.addEventListener('click', () => {
+
+    animateCameraBackToInitialPosition();
+});
+
 /*----------------------ANIMATON-------------------------*/
 
 function animateCameraToTarget() 
@@ -124,7 +140,7 @@ function animateCameraToTarget()
         ease: "power2.inOut",
         onUpdate: function () {
             const progress = this.progress();
-            THREE.Quaternion.slerp(startQuaternion, endQuaternion, camera.quaternion, progress);
+            camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, progress);
         },
         onComplete: function () 
         {
@@ -162,7 +178,7 @@ function animateCameraBackToInitialPosition() {
         onUpdate: function () {
             const t = dummy.t;
             camera.position.lerpVectors(startPosition, endPosition, t);
-            THREE.Quaternion.slerp(startQuaternion, endQuaternion, camera.quaternion, t);
+            camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, t);
         },
         onComplete: function () {
             camera.position.copy(endPosition);
@@ -170,10 +186,11 @@ function animateCameraBackToInitialPosition() {
             controls.enabled = true;
             scene.remove(menuObject);
             onScreen = false;
-            console.log('done')
+            console.log('done');
         }
     });
 }
+
 
 
 /*----------------------ANIMATE-------------------------*/
