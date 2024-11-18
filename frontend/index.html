@@ -7,8 +7,10 @@
 </head>
 <body>
     <div id="app"></div>
-    <script type="module" src="src/components/App.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
+    <script type="module" src="./src/components/App.js"></script>
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,21 +20,22 @@
         }
         .rotated-container {
             position: absolute;
-            top: 50px;
-            left: 50px;
-            transform: perspective(800px) rotate3d(0, 1, 0, 15deg);
+            top: 650px;
+            left: 450px;
+            transform: perspective(800px) rotate3d(0, 1, 0, 15deg) scale(2.5);
             transform-origin: center;
         }
         .rotated-container-right {
             position: absolute;
-            top: 50px;
-            right: 50px;
-            transform: perspective(800px) rotate3d(0, -1, 0, 15deg);
+            top: 650px;
+            right: 450px;
+            
+            transform: perspective(800px) rotate3d(0, -1, 0, 15deg) scale(2.5);
             transform-origin: center;
         }
         .menu {
             width: 400px;
-            background-color: #fff;
+            background-color: rgba(255,255,255,0.1);
             padding: 10px;
             display: flex;
             justify-content: space-around;
@@ -42,21 +45,22 @@
         }
         .menu a {
             text-decoration: none;
-            color: #000;
+            color: #ffffff;
             cursor: pointer;
             font-weight: bold;
             padding: 5px 10px;
             border: 1px solid #000;
         }
         .menu a.active {
-            background-color: #f0f0f0;
+            background-color: rgba(255,255,255,0.1);
         }
         .container {
+            color: #fff;
             width: 400px;
             height: 500px;
             border: 2px solid #000;
             padding: 20px;
-            background-color: #fff;
+            background-color: rgba(255,255,255,0.1);
             box-sizing: border-box;
             margin-top: 10px;
             overflow: auto;
@@ -179,6 +183,81 @@
             document.getElementById('info-link-right').classList.remove('active');
         });
     </script>
+
+
+
+<div id="menu">
+    <div class="box-2">
+        <div class="btn btn-two" id="backButton">
+            <span>Previous</span>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    #menu {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 140px;
+        height: 145px;
+        color: aliceblue;
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 10px;
+        border: 1px solid #ccc;
+        box-sizing: border-box; /* Inclure padding dans les dimensions */
+    }
+
+    .btn {
+        width: 100%;
+        max-width: 120px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-two {
+        color: #a2a2a2;
+        transition: all 0.5s;
+        position: relative; 
+    }
+
+    .btn-two span {
+        z-index: 2; 
+        display: block;
+        position: relative;
+        width: 100%;
+        height: 100%; 
+    }
+
+    .btn-two::before, .btn-two::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        transition: all 0.5s;
+        border: 1px solid rgba(255,255,255,0.2);
+        background-color: rgba(255,255,255,0.1);
+        box-sizing: border-box; /* Assure un bon comportement avec padding/border */
+    }
+
+    .btn-two:hover::before {
+        transform: rotate(-45deg);
+        background-color: rgba(255,255,255,0);
+    }
+
+    .btn-two:hover::after {
+        transform: rotate(45deg);
+        background-color: rgba(255,255,255,0);
+    }
+</style>
 
 </body>
 </html>

@@ -2,17 +2,50 @@ import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
 import { FlyControls } from 'https://cdn.skypack.dev/three@0.128.0/examples/jsm/controls/FlyControls.js';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/GLTFLoader.js';
 import { gsap } from 'https://cdn.skypack.dev/gsap';
+import { CSS3DRenderer, CSS3DObject } from 'https://cdn.skypack.dev/three@0.128.0/examples/jsm/renderers/CSS3DRenderer.js';
+
+
+/*----------------------INIT SCENE LOAD ELEMENT-------------------------*/
+
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+const camera = new THREE.PerspectiveCamera(
+    80,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+);
 camera.position.set(0, 0, 0);
+
 const lookBehindPosition = new THREE.Vector3(0, 0, 180);
 camera.lookAt(lookBehindPosition);
+
+
+
 const renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('app').appendChild(renderer.domElement);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
+const cssRenderer = new CSS3DRenderer();
+cssRenderer.setSize(window.innerWidth, window.innerHeight);
+cssRenderer.domElement.style.position = 'absolute';
+cssRenderer.domElement.style.top = '0';
+cssRenderer.domElement.style.left = '0';
+cssRenderer.domElement.style.pointerEvents = 'none';
+document.getElementById('app').appendChild(cssRenderer.domElement);
+
+const menuElement = document.getElementById('menu');
+menuElement.style.pointerEvents = 'auto';
+
+
+
+const menuObject = new CSS3DObject(menuElement);
+
+menuObject.position.set(-0.02, -0.31, 0.70); // Position X, Y, Z
+menuObject.rotation.set(0.49, 3.1, 0); // Rotation X, Y, Z en radians
+menuObject.scale.set(0.0009, 0.0009, 0.0009); // Échelle
 
 let onScreen = false;
 let screenObject;
@@ -40,8 +73,12 @@ scene.add(directionalLight);
 
 const controls = new FlyControls(camera, renderer.domElement);
 controls.movementSpeed = 10;
-controls.rollSpeed = Math.PI / 24;
+controls.rollSpeed = Math.PI / 2;
 controls.dragToLook = true;
+
+
+
+/*----------------------EVENT HANDLER-------------------------*/
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -60,6 +97,14 @@ window.addEventListener('click', (event) => {
         }
     }
 });
+
+const backButton = document.getElementById('backButton');
+backButton.addEventListener('click', () => {
+
+    animateCameraBackToInitialPosition();
+});
+
+/*----------------------ANIMATON-------------------------*/
 
 function animateCameraToTarget() 
 {
@@ -86,15 +131,58 @@ function animateCameraToTarget()
             camera.position.copy(endPosition);
             camera.quaternion.copy(endQuaternion);
             controls.enabled = true;
+            scene.add(menuObject);
         }
     });
-
     onScreen = true;
 }
+
+
+function animateCameraBackToInitialPosition() {
+    const startPosition = camera.position.clone();
+    const startQuaternion = camera.quaternion.clone();
+
+    const endPosition = new THREE.Vector3(0, 0, 0);
+    const lookBehindPosition = new THREE.Vector3(0, 0, 180);
+    camera.position.set(0, 0, 0);
+    camera.lookAt(lookBehindPosition);
+    const endQuaternion = camera.quaternion.clone();
+
+    camera.position.copy(startPosition);
+    camera.quaternion.copy(startQuaternion);
+
+    controls.enabled = false;
+
+    const dummy = { t: 0 };
+
+    gsap.to(dummy, {
+        duration: 2,
+        t: 1,
+        ease: 'power2.inOut',
+        onUpdate: function () {
+            const t = dummy.t;
+            camera.position.lerpVectors(startPosition, endPosition, t);
+            THREE.Quaternion.slerp(startQuaternion, endQuaternion, camera.quaternion, t);
+        },
+        onComplete: function () {
+            camera.position.copy(endPosition);
+            camera.quaternion.copy(endQuaternion);
+            controls.enabled = true;
+            scene.remove(menuObject);
+            onScreen = false;
+            console.log('done')
+        }
+    });
+}
+
+
+/*----------------------ANIMATE-------------------------*/
+
 
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
+    cssRenderer.setSize(window.innerWidth, window.innerHeight);
     camera.updateProjectionMatrix();
 });
 
@@ -102,6 +190,7 @@ function animate() {
     requestAnimationFrame(animate);
     controls.update(0.01);
     renderer.render(scene, camera);
+    cssRenderer.render(scene, camera);
 }
 
 animate();
