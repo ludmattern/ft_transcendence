@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu de Jeux</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Menu principal -->
+        <div class="d-flex justify-content-center mb-4">
+            <button class="btn btn-dark me-2" id="btn-jouer">Jouer</button>
+            <button class="btn btn-secondary" id="btn-classement">Classement</button>
+        </div>
+
+        <!-- Sous-menu pour Jouer -->
+        <div id="menu-jouer" class="hidden">
+            <div class="d-flex justify-content-center mb-4">
+                <button class="btn btn-primary me-2" id="btn-solo">Solo</button>
+                <button class="btn btn-primary me-2" id="btn-multiplayer">Multiplayer</button>
+                <button class="btn btn-primary" id="btn-tournament">Tournament</button>
+            </div>
+
+            <!-- Sous-menu Solo -->
+            <div id="menu-solo" class="hidden">
+                <div class="mb-3">
+                    <label for="map-select" class="form-label">Choisissez une map :</label>
+                    <select id="map-select" class="form-select">
+                        <option>Map 1</option>
+                        <option>Map 2</option>
+                        <option>Map 3</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="difficulty-select" class="form-label">Choisissez la difficulté :</label>
+                    <select id="difficulty-select" class="form-select">
+                        <option>Facile</option>
+                        <option>Moyenne</option>
+                        <option>Difficile</option>
+                    </select>
+                </div>
+                <button class="btn btn-success">Jouer</button>
+            </div>
+
+            <!-- Sous-menu Multiplayer -->
+            <div id="menu-multiplayer" class="hidden">
+                <div class="d-flex justify-content-center mb-4">
+                    <button class="btn btn-info me-2" id="btn-local">Local</button>
+                    <button class="btn btn-info me-2" id="btn-prive">Privé</button>
+                    <button class="btn btn-info" id="btn-matchmaking">Matchmaking</button>
+                </div>
+
+                <!-- Sous-menu Local -->
+                <div id="menu-local" class="hidden">
+                    <div class="mb-3">
+                        <label for="local-map-select" class="form-label">Choisissez une map :</label>
+                        <select id="local-map-select" class="form-select">
+                            <option>1 vs 1</option>
+                            <option>2 vs 2</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success">Lancer la partie</button>
+                </div>
+
+                <!-- Sous-menu Privé -->
+                <div id="menu-prive" class="hidden">
+                    <div class="mb-3">
+                        <label for="prive-map-select" class="form-label">Choisissez une map :</label>
+                        <select id="prive-map-select" class="form-select">
+                            <option>Map A</option>
+                            <option>Map B</option>
+                            <option>Map C</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prive-mode-select" class="form-label">Mode de jeu :</label>
+                        <select id="prive-mode-select" class="form-select">
+                            <option>1 vs 1</option>
+                            <option>2 vs 2</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-warning" id="btn-invite">Inviter des opposants</button>
+
+                    <!-- Zone de recherche de joueurs -->
+                    <div id="invite-section" class="hidden mt-3">
+                        <div class="mb-3">
+                            <label for="player-search" class="form-label">Rechercher un joueur :</label>
+                            <input type="text" id="player-search" class="form-control" placeholder="Nom du joueur">
+                        </div>
+                        <button class="btn btn-success">Envoyer l'invitation</button>
+                    </div>
+                </div>
+
+                <!-- Sous-menu Matchmaking -->
+                <div id="menu-matchmaking" class="hidden">
+                    <div class="mb-3">
+                        <label for="matchmaking-map-select" class="form-label">Choisissez une map :</label>
+                        <select id="matchmaking-map-select" class="form-select">
+                            <option>Map X</option>
+                            <option>Map Y</option>
+                            <option>Map Z</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="matchmaking-mode-select" class="form-label">Mode de jeu :</label>
+                        <select id="matchmaking-mode-select" class="form-select">
+                            <option>1 vs 1</option>
+                            <option>2 vs 2</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-success">Rechercher une partie</button>
+                </div>
+            </div>
+            <div id="menu-tournament" class="hidden">
+                <!-- Liste des tournois rejoints -->
+                <h4>Tournois Rejoints</h4>
+                <ul id="joined-tournaments" class="list-group mb-3">
+                    <!-- Exemple de tournois rejoints -->
+                    <li class="list-group-item">Tournoi 1</li>
+                    <li class="list-group-item">Tournoi 2</li>
+                </ul>
+            
+                <button class="btn btn-success" id="btn-new-tournament">Nouveau Tournoi</button>
+        
+                <div id="menu-new-tournament" class="hidden mt-3">
+                    <div class="d-flex justify-content-center mb-4">
+                        <button class="btn btn-warning me-2" id="btn-create-tournament">Créer</button>
+                        <button class="btn btn-warning" id="btn-join-tournament">Rejoindre</button>
+                    </div>
+                                <div id="create-tournament-form" class="hidden">
+                        <div class="mb-3">
+                            <label for="tournament-name" class="form-label">Nom du tournoi :</label>
+                            <input type="text" id="tournament-name" class="form-control" placeholder="Entrez le nom du tournoi">
+                        </div>
+                        <div class="mb-3">
+                            <label for="player-number" class="form-label">Nombre de joueurs :</label>
+                            <input type="number" id="player-number" class="form-control" min="2" max="16" value="4">
+                        </div>
+                        <button class="btn btn-primary">Créer le tournoi</button>
+                    </div>
+            
+                    <!-- Liste des tournois disponibles pour rejoindre -->
+                    <div id="join-tournament-list" class="hidden">
+                        <h5>Tournois disponibles :</h5>
+                        <ul id="available-tournaments" class="list-group">
+                            <!-- Exemple de tournois disponibles -->
+                            <li class="list-group-item">
+                                Tournoi A
+                                <button class="btn btn-sm btn-outline-primary float-end">Rejoindre</button>
+                            </li>
+                            <li class="list-group-item">
+                                Tournoi B
+                                <button class="btn btn-sm btn-outline-primary float-end">Rejoindre</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS et Script personnalisé -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Gestion des menus
+        const btnJouer = document.getElementById('btn-jouer');
+        const btnSolo = document.getElementById('btn-solo');
+        const btnMultiplayer = document.getElementById('btn-multiplayer');
+        const btnTournament = document.getElementById('btn-tournament');
+        const btnLocal = document.getElementById('btn-local');
+        const btnPrive = document.getElementById('btn-prive');
+        const btnMatchmaking = document.getElementById('btn-matchmaking');
+        const btnInvite = document.getElementById('btn-invite');
+        const btnNewTournament = document.getElementById('btn-new-tournament');
+        const btnCreateTournament = document.getElementById('btn-create-tournament');
+        const btnJoinTournament = document.getElementById('btn-join-tournament');
+
+        const menuJouer = document.getElementById('menu-jouer');
+        const menuSolo = document.getElementById('menu-solo');
+        const menuMultiplayer = document.getElementById('menu-multiplayer');
+        const menuLocal = document.getElementById('menu-local');
+        const menuPrive = document.getElementById('menu-prive');
+        const menuMatchmaking = document.getElementById('menu-matchmaking');
+        const menuTournament = document.getElementById('menu-tournament');
+        const menuNewTournament = document.getElementById('menu-new-tournament');
+        const createTournamentForm = document.getElementById('create-tournament-form');
+        const joinTournamentList = document.getElementById('join-tournament-list');
+        const inviteSection = document.getElementById('invite-section');
+
+        btnJouer.addEventListener('click', () => {
+            menuJouer.classList.toggle('hidden');
+            menuSolo.classList.add('hidden');
+            menuMultiplayer.classList.add('hidden');
+            menuTournament.classList.add('hidden');
+            menuLocal.classList.add('hidden');
+            menuPrive.classList.add('hidden');
+            menuMatchmaking.classList.add('hidden');
+            menuNewTournament.classList.add('hidden');
+            createTournamentForm.classList.add('hidden');
+            joinTournamentList.classList.add('hidden');
+            inviteSection.classList.add('hidden');
+        });
+
+        btnTournament.addEventListener('click', () => {
+            menuTournament.classList.toggle('hidden');
+            menuSolo.classList.add('hidden');
+            menuMultiplayer.classList.add('hidden');
+            menuLocal.classList.add('hidden');
+            menuPrive.classList.add('hidden');
+            menuMatchmaking.classList.add('hidden');
+            menuNewTournament.classList.add('hidden');
+            createTournamentForm.classList.add('hidden');
+            joinTournamentList.classList.add('hidden');
+            inviteSection.classList.add('hidden');
+        });
+
+        btnSolo.addEventListener('click', () => {
+            menuSolo.classList.toggle('hidden');
+            menuMultiplayer.classList.add('hidden');
+            menuLocal.classList.add('hidden');
+            menuPrive.classList.add('hidden');
+            menuTournament.classList.add('hidden');
+            menuMatchmaking.classList.add('hidden');
+            inviteSection.classList.add('hidden');
+        });
+
+        btnMultiplayer.addEventListener('click', () => {
+            menuMultiplayer.classList.toggle('hidden');
+            menuSolo.classList.add('hidden');
+            menuLocal.classList.add('hidden');
+            menuPrive.classList.add('hidden');
+            menuMatchmaking.classList.add('hidden');
+            inviteSection.classList.add('hidden');
+            menuTournament.classList.add('hidden');
+        });
+
+        btnLocal.addEventListener('click', () => {
+            menuLocal.classList.toggle('hidden');
+            menuPrive.classList.add('hidden');
+            menuMatchmaking.classList.add('hidden');
+            menuTournament.classList.add('hidden');
+
+            inviteSection.classList.add('hidden');
+        });
+
+        btnPrive.addEventListener('click', () => {
+            menuPrive.classList.toggle('hidden');
+            menuLocal.classList.add('hidden');
+            menuMatchmaking.classList.add('hidden');
+            menuTournament.classList.add('hidden');
+
+            inviteSection.classList.add('hidden');
+        });
+
+        btnMatchmaking.addEventListener('click', () => {
+            menuMatchmaking.classList.toggle('hidden');
+            menuLocal.classList.add('hidden');
+            menuTournament.classList.add('hidden');
+
+            menuPrive.classList.add('hidden');
+            inviteSection.classList.add('hidden');
+        });
+
+        btnInvite.addEventListener('click', () => {
+            inviteSection.classList.toggle('hidden');
+            menuTournament.classList.add('hidden');
+
+        });
+
+        btnCreateTournament.addEventListener('click', () => {
+            createTournamentForm.classList.toggle('hidden');
+            joinTournamentList.classList.add('hidden');
+        });
+
+        btnJoinTournament.addEventListener('click', () => {
+            joinTournamentList.classList.toggle('hidden');
+            createTournamentForm.classList.add('hidden');
+        });
+
+        btnNewTournament.addEventListener('click', () => {
+            menuNewTournament.classList.toggle('hidden');
+            createTournamentForm.classList.add('hidden');
+            joinTournamentList.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
