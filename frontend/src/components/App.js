@@ -43,9 +43,9 @@ menuElement.style.pointerEvents = 'auto';
 
 const menuObject = new CSS3DObject(menuElement);
 
-menuObject.position.set(-0.02, -0.31, 0.70); // Position X, Y, Z
-menuObject.rotation.set(0.49, 3.1, 0); // Rotation X, Y, Z en radians
-menuObject.scale.set(0.0009, 0.0009, 0.0009); // Échelle
+menuObject.position.set(-0.01, -0.30, 0.70);
+menuObject.rotation.set(0.49, 3.1, 0);
+menuObject.scale.set(0.001, 0.001, 0.001);
 
 let onScreen = false;
 let screenObject;
