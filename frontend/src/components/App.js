@@ -27,6 +27,7 @@ const renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('app').appendChild(renderer.domElement);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+const pixelRatio = window.devicePixelRatio || 1;
 
 const cssRenderer = new CSS3DRenderer();
 cssRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -34,12 +35,11 @@ cssRenderer.domElement.style.position = 'absolute';
 cssRenderer.domElement.style.top = '0';
 cssRenderer.domElement.style.left = '0';
 cssRenderer.domElement.style.pointerEvents = 'none';
+
 document.getElementById('app').appendChild(cssRenderer.domElement);
 
 const menuElement = document.getElementById('menu');
 menuElement.style.pointerEvents = 'auto';
-
-
 
 const menuObject = new CSS3DObject(menuElement);
 
