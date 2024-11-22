@@ -7,28 +7,293 @@
 </head>
 <body>
     <div id="app"></div>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+
+
+        <div class="menu-container" id="menu">
+            <div class="menu-panel">
+                <h1 class="menu-title">Space Pong</h1>
+                
+                <!-- Menu Principal -->
+                <div id="main-menu" class="menu-section">
+                    <div class="row g-1">
+                        <div class="col-6">
+                            <button class="space-btn w-100" onclick="showMenu('play-menu')">
+                                <i class="bi bi-controller"></i>
+                                Play
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="space-btn w-100" onclick="showMenu('leaderboard-menu')">
+                                <i class="bi bi-trophy"></i>
+                                Leaderboard
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Déplacer le bouton "Back" dans la grille -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button class="back-btn w-100" id="backButton">
+                                <i class="bi bi-arrow-left"></i> Back
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+    
+                <!-- Menu Jouer -->
+                <div id="play-menu" class="menu-section hidden">
+                    <div class="row g-1">
+                        <div class="col-4">
+                            <button class="space-btn w-100" onclick="showMenu('solo-menu')">
+                                <i class="bi bi-person"></i>
+                                Solo
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="space-btn w-100" onclick="showMenu('multiplayer-menu')">
+                                <i class="bi bi-people"></i>
+                                Multiplayer
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="space-btn w-100" onclick="showMenu('tournament-menu')">
+                                <i class="bi bi-award"></i>
+                                Tournament
+                            </button>
+                        </div>
+                    </div>
+                    <div id="back-button" class="mt-1">
+                        <button class="back-btn" onclick="goBack()">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Menu Solo -->
+                <div id="solo-menu" class="menu-section hidden">
+                    <div class="mb-1">
+                        <label class="form-label text-cyan">Select a map</label>
+                        <select class="space-select form-select">
+                            <option>Mars</option>
+                            <option>Pluton</option>
+                            <option>Orgasme</option>
+                        </select>
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label text-cyan">Difficulté</label>
+                        <select class="space-select form-select">
+                            <option>Easy</option>
+                            <option>Medium</option>
+                            <option>Hard</option>
+                        </select>
+                    </div>
+                    <button class="space-btn w-100">
+                        <i class="bi bi-rocket"></i>
+                        Launch
+                    </button>
+                    <div id="back-button" class="mt-1">
+                        <button class="back-btn" onclick="goBack()">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </div>
+                <!-- Menu Multijoueur -->
+                <div id="multiplayer-menu" class="menu-section hidden">
+                    <div class="row g-1 mb-1">
+                        <div class="col-4">
+                            <button class="space-btn w-100" onclick="showMenu('local-menu')">
+                                <i class="bi bi-people"></i>
+                                Local
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="space-btn w-100" onclick="showMenu('private-menu')">
+                                <i class="bi bi-shield"></i>
+                                Private
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button class="space-btn w-100" onclick="showMenu('matchmaking-menu')">
+                                <i class="bi bi-broadcast"></i>
+                                Matchmaking
+                            </button>
+                        </div>
+                    </div>
+                    <div id="back-button" class="mt-1 ">
+                        <button class="back-btn" onclick="goBack()">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </div>
+                <!-- Menu Local -->
+                <div id="local-menu" class="menu-section hidden">
+                    <div class="mb-1">
+                        <label class="form-label text-cyan">Gamemode</label>
+                        <select class="space-select form-select">
+                            <option>1 vs 1</option>
+                            <option>2 vs 2</option>
+                        </select>
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label text-cyan">Map</label>
+                        <select class="space-select form-select">
+                            <option>Mars</option>
+                            <option>Pluton</option>
+                            <option>Orgasme</option>
+                        </select>
+                    </div>
+                    <button class="space-btn w-100">Lanch</button>
+                    <div id="back-button" class="mt-1 ">
+                        <button class="back-btn" onclick="goBack()">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Menu Privé -->
+                <div id="private-menu" class="menu-section hidden">
+                    <div class="mb-1">
+                        <label class="form-label text-cyan">Gamemode</label>
+                        <select class="space-select form-select">
+                            <option>1 vs 1</option>
+                            <option>2 vs 2</option>
+                        </select>
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label text-cyan">Map</label>
+                        <select class="space-select form-select">
+                            <option>Mars</option>
+                            <option>Pluton</option>
+                            <option>Orgasme</option>
+                        </select>
+                    </div>
+                    <button class="space-btn mb-1" onclick="showMenu('invite-section')">
+                        <i class="bi bi-person-plus"></i>
+                        Invite players
+                    </button>
+                    <div id="invite-section" class="hidden">
+                        <div class="space-input-group mb-1">
+                            <label class="form-label text-cyan">Find a players</label>
+                            <input type="text" class="space-input form-control" placeholder="Nom du joueur">
+                        </div>
+                        <button class="space-btn w-100">Send invite</button>
+                    </div>
+                    <div id="back-button" class="mt-1">
+                        <button class="back-btn" onclick="goBack()">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Menu Matchmaking -->
+                <div id="matchmaking-menu" class="menu-section hidden">
+                    <div class="mb-1">
+                        <label class="form-label text-cyan">Gamemode</label>
+                        <select class="space-select form-select">
+                            <option>1 vs 1</option>
+                            <option>2 vs 2</option>
+                        </select>
+                    </div>
+                    <div class="mb-1">
+                    <button class="space-btn w-100">Find a game</button>
+                    <div id="back-button" class="mt-1 ">
+                        <button class="back-btn" onclick="goBack()">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Menu Tournoi -->
+                <div id="tournament-menu" class="menu-section hidden">
+                    <div class="tournament-list mb-1">
+                        <h3 class="text-cyan mb-1">Current Tournament</h3>
+                        <div class="tournament-item">
+                            <span>Galactique CHampionship</span>
+                            <span class="player-count">8/16 Players</span>
+                        </div>
+                        <div class="tournament-item">
+                            <span>Ligue Spatiale S1</span>
+                            <span class="player-count">4/8 Players</span>
+                        </div>
+                    </div>
+                    <div class="row g-1">
+                        <div class="col-6">
+                            <button class="space-btn w-100" onclick="showMenu('create-tournament')">
+                                <i class="bi bi-plus-lg"></i>
+                                Créer
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="space-btn w-100" onclick="showMenu('join-tournament')">
+                                <i class="bi bi-person-plus"></i>
+                                Rejoindre
+                            </button>
+                        </div>
+                    </div>
+                    <div id="back-button" class="mt-1 ">
+                        <button class="back-btn" onclick="goBack()">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Menu Créer Tournoi -->
+                <div id="create-tournament" class="menu-section hidden">
+                    <div class="mb-1">
+                        <label class="form-label text-cyan">Tournament name</label>
+                        <input type="text" class="space-input form-control" placeholder="Entrez le nom du tournoi">
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label text-cyan">Player count</label>
+                        <select class="space-select form-select">
+                            <option>4</option>
+                            <option>8</option>
+                            <option>16</option>
+                        </select>
+                    </div>
+                    <button class="space-btn w-100">Create Tournament</button>
+                    <div id="back-button" class="mt-1 ">
+                        <button class="back-btn" onclick="goBack()">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Menu Rejoindre Tournoi -->
+                <div id="join-tournament" class="menu-section hidden">
+                    <div class="tournament-list">
+                        <div class="tournament-item">
+                            <div>
+                                <span class="tournament-name">Interstellar</span>
+                                <span class="tournament-details">16 Players</span>
+                            </div>
+                            <button class="space-btn-small">Join</button>
+                        </div>
+                        <div class="tournament-item">
+                            <div>
+                                <span class="tournament-name">StarsCraft</span>
+                                <span class="tournament-details">8 players</span>
+                            </div>
+                            <button class="space-btn-small">Joir</button>
+                        </div>
+                    </div>
+                    <div id="back-button" class="mt-1 ">
+                        <button class="back-btn" onclick="goBack()">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <script type="module" src="./src/components/App.js"></script>
-
-    <div id="login">
-        <div>
-            <p>Username</p>
-            <input type="text">
-            <p>Password</p>
-            <input type="text">
-            <div class="btn btn-two" id="loginButton">
-                <span>Login</span>
-            </div>
-        </div>
-    </div>
-
-    <div id="menu">
-        <div class="box-2">
-            <div class="btn btn-two" id="backButton">
-                <span>Previous</span>
-            </div>
-        </div>
-    </div>
+    <script src="src/components/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
 </body>
 </html>

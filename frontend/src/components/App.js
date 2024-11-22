@@ -21,8 +21,6 @@ camera.position.set(0, 0, 0);
 const lookBehindPosition = new THREE.Vector3(0, 0, 180);
 camera.lookAt(lookBehindPosition);
 
-
-
 const renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('app').appendChild(renderer.domElement);
@@ -46,16 +44,7 @@ const menuObject = new CSS3DObject(menuElement);
 menuObject.position.set(-0.01, -0.30, 0.70);
 menuObject.rotation.set(0.49, 3.1, 0);
 menuObject.scale.set(0.001, 0.001, 0.001);
-
-const loginElement = document.getElementById('login');
-
-const loginObject = new CSS3DObject(loginElement);
-
-loginObject.position.set(-0.01, 0.04, 0.70); // Ajustez les coordonnées
-loginObject.rotation.set(-1.3, 3.1, 0);
-loginObject.scale.set(0.001, 0.001, 0.001); // Réduisez la taille si nécessaire
-scene.add(loginObject);
-loginElement.style.pointerEvents = 'auto';
+menuElement.style.display = 'none';
 
 let onScreen = false;
 let screenObject;
@@ -88,6 +77,35 @@ controls.dragToLook = true;
 
 
 
+function addStars() {
+    const starGeometry = new THREE.BufferGeometry();
+    const starCount = 5000;
+
+    const starVertices = [];
+
+    for (let i = 0; i < starCount; i++) {
+        const x = (Math.random() - 0.5) * 2000;
+        const y = (Math.random() - 0.5) * 2000;
+        const z = (Math.random() - 0.5) * 2000;
+        starVertices.push(x, y, z);
+    }
+
+    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+
+    const starMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 1,
+    });
+
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+}
+
+addStars();
+
+
+
+
 /*----------------------EVENT HANDLER-------------------------*/
 
 const raycaster = new THREE.Raycaster();
@@ -108,17 +126,8 @@ window.addEventListener('click', (event) => {
     }
 });
 
-const backButton = document.getElementById('backButton');
-backButton.addEventListener('click', () => {
 
-    animateCameraBackToInitialPosition();
-});
 
-const loginButton = document.getElementById('loginButton');
-loginButton.addEventListener('click', () => {
-
-    animateCameraBackToInitialPosition();
-});
 
 /*----------------------ANIMATON-------------------------*/
 
@@ -191,7 +200,11 @@ function animateCameraBackToInitialPosition() {
     });
 }
 
+const backButton = document.getElementById('backButton');
+backButton.addEventListener('click', () => {
 
+    animateCameraBackToInitialPosition();
+});
 
 /*----------------------ANIMATE-------------------------*/
 
