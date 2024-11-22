@@ -49,6 +49,8 @@ menuElement.style.display = 'none';
 let onScreen = false;
 let screenObject;
 const loader = new GLTFLoader();
+document.getElementById('loading-screen').style.display = 'block';
+
 loader.load(
     './src/assets/models/cockpit/cockpit.glb',
     (gltf) => {
@@ -62,6 +64,7 @@ loader.load(
         console.error('Erreur lors du chargement du modèle:', error);
     }
 );
+document.getElementById('loading-screen').style.display = 'none';
 
 const ambientLight = new THREE.AmbientLight(0x404040);
 scene.add(ambientLight);
