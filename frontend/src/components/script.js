@@ -1,6 +1,4 @@
 
-
-// Navigation entre les menus
 const menuStructure = {
     'main-menu': null,
     'play-menu': 'main-menu',
@@ -19,19 +17,16 @@ const menuStructure = {
 let currentMenu = 'main-menu';
 
 function showMenu(menuId) {
-    // Cacher tous les menus
     document.querySelectorAll('.menu-section, #invite-section').forEach(menu => {
         menu.classList.add('hidden');
     });
 
-    // Afficher le menu sélectionné
     const targetMenu = document.getElementById(menuId);
     if (targetMenu) {
         targetMenu.classList.remove('hidden');
         currentMenu = menuId;
     }
 
-    // Gérer le bouton retour
     const backButton = document.getElementById('back-button');
     if (menuId !== 'main-menu') {
         backButton.classList.remove('hidden');
@@ -39,7 +34,6 @@ function showMenu(menuId) {
         backButton.classList.add('hidden');
     }
 
-    // Si on ouvre un sous-menu, s'assurer que son parent est visible
     if (menuId === 'invite-section') {
         document.getElementById('private-menu').classList.remove('hidden');
     }
@@ -52,7 +46,6 @@ function goBack() {
     }
 }
 
-// Initialisation
 document.addEventListener('DOMContentLoaded', () => {
     showMenu('main-menu');
 });
