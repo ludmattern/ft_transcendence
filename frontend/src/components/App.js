@@ -66,9 +66,9 @@ loader.load(
 const ambientLight = new THREE.AmbientLight(0x404040);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.set(5, 10, 7.5);
-scene.add(directionalLight);
+const pointLight = new THREE.PointLight(0xffffff, 1.5, 500);
+pointLight.position.set(50, 50, 50);
+scene.add(pointLight);
 
 const controls = new FlyControls(camera, renderer.domElement);
 controls.movementSpeed = 10;
@@ -103,6 +103,24 @@ function addStars() {
 
 addStars();
 
+function addPlanet(position, texturePath, size) {
+    const textureLoader = new THREE.TextureLoader();
+    const planetTexture = textureLoader.load(texturePath);
+
+    const planetGeometry = new THREE.SphereGeometry(size, 32, 32);
+    const planetMaterial = new THREE.MeshStandardMaterial({
+        map: planetTexture,
+    });
+
+    const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+    planet.position.copy(position);
+    scene.add(planet);
+
+    return planet;
+}
+
+const planet1 = addPlanet(new THREE.Vector3(-25, 20, 50), './src/assets/img/2k_jupiter.jpg', 5);
+const planet2 = addPlanet(new THREE.Vector3(20, 10, 200), './src/assets/img/2k_mars.jpg', 8);
 
 
 
@@ -221,6 +239,16 @@ function animate() {
     controls.update(0.01);
     renderer.render(scene, camera);
     cssRenderer.render(scene, camera);
+
+    if (planet1) {
+        planet1.rotation.y += 0.0005;
+    }
+    if (planet2) {
+        planet2.rotation.y += 0.0006;
+    }
 }
+
+animate();
+
 
 animate();
