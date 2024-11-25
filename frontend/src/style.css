@@ -61,19 +61,27 @@ a {
   padding: 10px;
   height: 100%;
 }
+
 .notification {
   font-size: 0.9rem;
   color: #aaa;
   margin-top: 10px;
 }
+
 .central-window {
   min-height: 300px;
-  border: 2px dashed #555;
   height: 100%;
 }
+
+.central-window h5 {
+	border-top: 2px solid var(--secondary-hud-elements-color);
+	border-bottom: 2px solid var(--secondary-hud-elements-color);
+  }
+
 button {
   margin-top: 10px;
 }
+
 .full-height {
   height: 100%;
 }
