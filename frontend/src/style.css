@@ -24,6 +24,12 @@ body {
   color: #fff;
   font-family: var(--font-family);
 }
+
+a {
+  color: var(--menu-color);
+  text-decoration: none;
+}
+
 .container-fluid {
   height: 100%;
   display: flex;
