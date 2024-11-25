@@ -11,21 +11,23 @@ import { CSS3DRenderer, CSS3DObject } from 'https://cdn.skypack.dev/three@0.128.
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
-    50,
+    90,
     window.innerWidth / window.innerHeight,
     0.1,
     1000
 );
-camera.position.set(0.05, 0.08, 0.16);
-
+const cameraLight = new THREE.PointLight(0xffffff, 5, 100); // Crée une lumière ponctuelle
+cameraLight.position.set(0.05, 0.08, 0.16); // Position initiale relative à la caméra
+camera.add(cameraLight); // Ajoute la lumière à la caméra
+scene.add(camera); // Ajoute la caméra (et donc la lumière) à la scène
+camera.position.set(0,0,0);
 const lookBehindPosition = new THREE.Vector3(0, 0, 180);
-camera.lookAt(lookBehindPosition);
+camera.lookAt(0, 1000, 0)
 
 const renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('app').appendChild(renderer.domElement);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
-const pixelRatio = window.devicePixelRatio || 1;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 
 const cssRenderer = new CSS3DRenderer();
 cssRenderer.setSize(window.innerWidth, window.innerHeight);
@@ -33,7 +35,6 @@ cssRenderer.domElement.style.position = 'absolute';
 cssRenderer.domElement.style.top = '0';
 cssRenderer.domElement.style.left = '0';
 cssRenderer.domElement.style.pointerEvents = 'none';
-cssRenderer.setSize(window.innerHeight,window.innerWidth);
 
 document.getElementById('app').appendChild(cssRenderer.domElement);
 
@@ -42,9 +43,9 @@ menuElement.style.pointerEvents = 'auto';
 
 const menuObject = new CSS3DObject(menuElement);
 
-menuObject.position.set(0.004, 0.044, 0.35);
-menuObject.rotation.set(0.3, 2.5, -0.18);
-menuObject.scale.set(0.0005, 0.0005, 0.0005);
+menuObject.position.set(-0.2, 6.6, -1.75);
+menuObject.rotation.set(-5.2, 0, 0);
+menuObject.scale.set(0.002, 0.002, 0.002);
 menuElement.style.display = 'none';
 
 scene.add(menuObject);
@@ -52,16 +53,17 @@ let onScreen = false;
 let screenObject;
 const loader = new GLTFLoader();
 document.getElementById('loading-screen').style.display = 'block';
-
 loader.load(
     './src/assets/sn2.glb',
     (gltf) => {
         const model = gltf.scene;
-        model.position.set(0, 0, 0);
-        model.scale.set(0.002, 0.002, 0.002);
+        model.position.set(3.5, -17, -1);
+        model.scale.set(0.125, 0.125, 0.125);
+        model.lookAt(0, 1000, -180)
 
         scene.add(model);
-        screenObject = model.getObjectByName('_gltfNode_17');
+        screenObject = model.getObjectByName('_gltfNode_13');
+
     },
     undefined,
     (error) => {
@@ -69,21 +71,19 @@ loader.load(
     }
 );
 document.getElementById('loading-screen').style.display = 'none';
-
-const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+const ambientLight = new THREE.AmbientLight(0x404040, 3);
 scene.add(ambientLight);
 
-const pointLight = new THREE.PointLight(0xffffff, 5, 100);
-pointLight.position.set(0.015, 0.4, 0.16);
-pointLight.intensity = 10;
+
+const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+pointLight.position.set(0, 2400, 0.16);
+pointLight.intensity = 1000;
 scene.add(pointLight);
 
 const controls = new FlyControls(camera, renderer.domElement);
-controls.movementSpeed = 0.5;
+controls.movementSpeed = 20;
 controls.rollSpeed = Math.PI / 2;
 controls.dragToLook = true;
-
-
 
 function addStars() {
     const starGeometry = new THREE.BufferGeometry();
@@ -127,8 +127,8 @@ function addPlanet(position, texturePath, size) {
     return planet;
 }
 
-const planet1 = addPlanet(new THREE.Vector3(-25, 20, 50), './src/assets/img/2k_jupiter.jpg', 5);
-const planet2 = addPlanet(new THREE.Vector3(20, 10, 200), './src/assets/img/2k_mars.jpg', 8);
+const planet1 = addPlanet(new THREE.Vector3(80, 100, -80), './src/assets/img/2k_mars.jpg', 100);
+const planet2 = addPlanet(new THREE.Vector3(20, 150, 50), './src/assets/img/2k_jupiter.jpg', 8);
 
 
 
@@ -247,16 +247,14 @@ function animate() {
     controls.update(0.01);
     renderer.render(scene, camera);
     cssRenderer.render(scene, camera);
+    console.log(camera.position.x, camera.position.y, camera.position.z);
 
     if (planet1) {
-        planet1.rotation.y += 0.0005;
+        planet1.rotation.y += 0.0002;
     }
     if (planet2) {
-        planet2.rotation.y += 0.0006;
+        planet2.rotation.y += 0.0002;
     }
 }
-
-animate();
-
 
 animate();
