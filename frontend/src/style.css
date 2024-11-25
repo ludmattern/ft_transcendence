@@ -1,8 +1,7 @@
 :root {
+  --content-font-weight: 100;
 
-    --content-font-weight: 100;
-
-  --font-family: 'Stellar', Arial, sans-serif;
+  --font-family: "Stellar", Arial, sans-serif;
   --menu-color: #999999;
   --hover-menu-color: #99ffff;
   --active-menu-color: #99ffff;
@@ -39,29 +38,12 @@ body {
 
 .hud-title {
   position: relative;
-  font-size: 2rem; /* Ajustez selon vos besoins */
+  font-size: 1.5rem;
   font-weight: 700;
-  color: var(--content-color); /* Couleur principale (teinte lumineuse) */
+  color: var(--content-color);
   text-transform: uppercase;
   text-align: center;
   margin: 0;
-}
-
-.hud-title::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 120%;
-  height: 120%;
-  background: radial-gradient(
-    circle,
-    rgba(0, 255, 255, 0.3) 0%,
-    transparent 70%
-  );
-  filter: blur(20px);
-  z-index: -1; /* Place l'effet derrière le texte */
 }
 
 .hud-body > .row {
@@ -275,31 +257,102 @@ button {
 
 @font-face {
   font-family: "Stellar";
-  src: url("font/Stellar-light.otf") format("opentype");
+  src: url("assets/font/Stellar-light.otf") format("opentype");
   font-weight: 300;
   font-style: normal;
 }
 @font-face {
   font-family: "Stellar";
-  src: url("font/Stellar-Regular.otf") format("opentype");
+  src: url("assets/font/Stellar-Regular.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
   font-family: "Stellar";
-  src: url("font/Stellar-Bold.otf") format("opentype");
+  src: url("assets/font/Stellar-Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
 }
 @font-face {
   font-family: "Stellar";
-  src: url("font/Stellar-Medium.otf") format("opentype");
+  src: url("assets/font/Stellar-Medium.otf") format("opentype");
   font-weight: 500;
   font-style: normal;
 }
 
 .hud-header {
   font-family: var(--font-family);
+  padding: 0.75rem;
+}
+
+.hud-header .nav {
+  padding-top: 1rem;
+  top: 2.7rem;
+  position: fixed;
+  text-transform: uppercase;
+}
+
+.hud-header .left-menu,
+.hud-header .right-menu {
+  display: flex;
+}
+
+@media (min-width: 900px) {
+  .hud-header .left-menu,
+  .hud-header .right-menu {
+    position: relative;
+    top: -2rem;
+  }
+
+  .hud-header .left-menu > .nav-item:first-child {
+    position: relative;
+    left: -2.5rem;
+    top: -1.1rem;
+    rotate: 9deg;
+  }
+
+  .hud-header .left-menu > .nav-item:last-child {
+    position: relative;
+    left: 2rem;
+    top: 0.35rem;
+    rotate: 7deg;
+  }
+
+  .hud-header .right-menu > .nav-item:first-child {
+    position: relative;
+    left: -2.5rem;
+    top: 0.3rem;
+    rotate: -7deg;
+  }
+
+  .hud-header .right-menu > .nav-item:last-child {
+    position: relative;
+    top: -0.95rem;
+    left: 1rem;
+    rotate: -9deg;
+  }
+
+  .hud-header .left-menu {
+    left: -4rem;
+  }
+
+  .hud-header .right-menu {
+    left: 6rem;
+  }
+
+  .hud-header .first-game,
+  .hud-header .second-game {
+    padding: 0 6.5rem 0 6.5rem;
+  }
+
+  .hud-header .first-game {
+    rotate: 2deg;
+  }
+  .hud-header .second-game {
+    position: relative;
+    left: 0.4rem;
+    rotate: -3deg;
+  }
 }
 
 /* Container Styling */
@@ -316,6 +369,7 @@ button {
 }
 
 .nav-tabs .nav-item {
+  padding-top: 0.2rem;
   flex: 1;
   border: none;
   text-transform: uppercase;
@@ -330,7 +384,6 @@ button {
   padding: 0px;
   text-align: center;
   border: none;
-  padding-bottom: 0.3rem;
 }
 
 .nav-tabs .nav-link.active {
@@ -345,20 +398,19 @@ button {
 }
 
 .panel-item {
-  margin-bottom: 20px;
   padding: 10px 15px;
   border-bottom: 1px dotted var(--secondary-hud-elements-color);
   font-weight: var(--content-font-weight);
-  color : var(--content-color);
+  color: var(--content-color);
 }
 
-.tab-container .btn{
-    background: transparent;
-    border: none;
-    color : var(--menu-color);
-    padding: 0;
-    margin: 0;;
-    padding-right: 0.5rem;
+.tab-container .btn {
+  background: transparent;
+  border: none;
+  color: var(--menu-color);
+  padding: 0;
+  margin: 0;
+  padding-right: 0.5rem;
 }
 
 .panel-item:last-child {
