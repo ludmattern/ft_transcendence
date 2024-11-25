@@ -11,12 +11,12 @@ import { CSS3DRenderer, CSS3DObject } from 'https://cdn.skypack.dev/three@0.128.
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
-    80,
+    50,
     window.innerWidth / window.innerHeight,
     0.1,
     1000
 );
-camera.position.set(0, 0, 0);
+camera.position.set(0.05, 0.08, 0.16);
 
 const lookBehindPosition = new THREE.Vector3(0, 0, 180);
 camera.lookAt(lookBehindPosition);
@@ -24,7 +24,7 @@ camera.lookAt(lookBehindPosition);
 const renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('app').appendChild(renderer.domElement);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 const pixelRatio = window.devicePixelRatio || 1;
 
 const cssRenderer = new CSS3DRenderer();
@@ -33,6 +33,7 @@ cssRenderer.domElement.style.position = 'absolute';
 cssRenderer.domElement.style.top = '0';
 cssRenderer.domElement.style.left = '0';
 cssRenderer.domElement.style.pointerEvents = 'none';
+cssRenderer.setSize(window.innerHeight,window.innerWidth);
 
 document.getElementById('app').appendChild(cssRenderer.domElement);
 
@@ -41,23 +42,26 @@ menuElement.style.pointerEvents = 'auto';
 
 const menuObject = new CSS3DObject(menuElement);
 
-menuObject.position.set(-0.01, -0.30, 0.70);
-menuObject.rotation.set(0.49, 3.1, 0);
-menuObject.scale.set(0.001, 0.001, 0.001);
+menuObject.position.set(0.004, 0.044, 0.35);
+menuObject.rotation.set(0.3, 2.5, -0.18);
+menuObject.scale.set(0.0005, 0.0005, 0.0005);
 menuElement.style.display = 'none';
 
+scene.add(menuObject);
 let onScreen = false;
 let screenObject;
 const loader = new GLTFLoader();
 document.getElementById('loading-screen').style.display = 'block';
 
 loader.load(
-    './src/assets/models/cockpit/cockpit.glb',
+    './src/assets/sn2.glb',
     (gltf) => {
         const model = gltf.scene;
         model.position.set(0, 0, 0);
+        model.scale.set(0.002, 0.002, 0.002);
+
         scene.add(model);
-        screenObject = model.getObjectByName('screen_screen2_0');
+        screenObject = model.getObjectByName('_gltfNode_17');
     },
     undefined,
     (error) => {
@@ -66,15 +70,16 @@ loader.load(
 );
 document.getElementById('loading-screen').style.display = 'none';
 
-const ambientLight = new THREE.AmbientLight(0x404040);
+const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
 scene.add(ambientLight);
 
-const pointLight = new THREE.PointLight(0xffffff, 1.5, 500);
-pointLight.position.set(50, 50, 50);
+const pointLight = new THREE.PointLight(0xffffff, 5, 100);
+pointLight.position.set(0.015, 0.4, 0.16);
+pointLight.intensity = 10;
 scene.add(pointLight);
 
 const controls = new FlyControls(camera, renderer.domElement);
-controls.movementSpeed = 10;
+controls.movementSpeed = 0.5;
 controls.rollSpeed = Math.PI / 2;
 controls.dragToLook = true;
 
