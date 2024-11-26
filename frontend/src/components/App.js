@@ -16,6 +16,8 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     1300
 );
+
+
 const cameraLight = new THREE.PointLight(0xaaaaff, 7, 100);
 cameraLight.position.set(0.05, 0.08, 0.16);
 camera.add(cameraLight);
@@ -128,7 +130,7 @@ function addStars() {
 
     const starMaterial = new THREE.PointsMaterial({
         color: 0xffffff,
-        size: 1,
+        size: 0.5,
     });
 
     const stars = new THREE.Points(starGeometry, starMaterial);
@@ -183,13 +185,13 @@ function addPlanet(position, texturePath, size, ringOptions) {
 
 addPlanet(
     new THREE.Vector3(750, 750, -60), 
-    './src/assets/img/neptunemap.jpg', 
+    './src/assets/img/uranusmap.jpg', 
     250, 
     {
         innerRadius: 400, 
-        outerRadius: 600, 
+        outerRadius: 550, 
         thetaSegments: 64,
-        texturePath: './src/assets/img/neptunemap.jpg', 
+        texturePath: './src/assets/img/uranusringcolour.jpg', 
         opacity: 0.2 
     }
 );

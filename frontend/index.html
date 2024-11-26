@@ -46,7 +46,7 @@
                 
                 <!-- Menu Principal -->
                 <div id="main-menu" class="menu-section">
-                    <div class="row g-1">
+                    <div class="row g-4">
                         <div class="col-6">
                             <button class="space-btn w-100" onclick="showMenu('play-menu')">
                                 <i class="bi bi-controller"></i>
@@ -73,7 +73,7 @@
     
                 <!-- Menu Jouer -->
                 <div id="play-menu" class="menu-section hidden">
-                    <div class="row g-1">
+                    <div class="row g-4">
                         <div class="col-4">
                             <button class="space-btn w-100" onclick="showMenu('solo-menu')">
                                 <i class="bi bi-person"></i>
@@ -93,7 +93,7 @@
                             </button>
                         </div>
                     </div>
-                    <div id="back-button" class="mt-1">
+                    <div id="back-button" class="mt-4">
                         <button class="back-btn" onclick="goBack()">
                             <i class="bi bi-arrow-left"></i> Back
                         </button>
@@ -102,7 +102,7 @@
     
                 <!-- Menu Solo -->
                 <div id="solo-menu" class="menu-section hidden">
-                    <div class="mb-1">
+                    <div class="mb-4">
                         <label class="form-label text-cyan">Select a map</label>
                         <select class="space-select form-select">
                             <option>Mars</option>
@@ -110,7 +110,7 @@
                             <option>Orgasme</option>
                         </select>
                     </div>
-                    <div class="mb-1">
+                    <div class="mb-4">
                         <label class="form-label text-cyan">Difficulté</label>
                         <select class="space-select form-select">
                             <option>Easy</option>
@@ -122,7 +122,7 @@
                         <i class="bi bi-rocket"></i>
                         Launch
                     </button>
-                    <div id="back-button" class="mt-1">
+                    <div id="back-button" class="mt-4">
                         <button class="back-btn" onclick="goBack()">
                             <i class="bi bi-arrow-left"></i> Back
                         </button>
@@ -130,7 +130,7 @@
                 </div>
                 <!-- Menu Multijoueur -->
                 <div id="multiplayer-menu" class="menu-section hidden">
-                    <div class="row g-1 mb-1">
+                    <div class="row g-4 mb-4">
                         <div class="col-4">
                             <button class="space-btn w-100" onclick="showMenu('local-menu')">
                                 <i class="bi bi-people"></i>
@@ -150,7 +150,7 @@
                             </button>
                         </div>
                     </div>
-                    <div id="back-button" class="mt-1 ">
+                    <div id="back-button" class="mt-4 ">
                         <button class="back-btn" onclick="goBack()">
                             <i class="bi bi-arrow-left"></i> Back
                         </button>
@@ -158,14 +158,14 @@
                 </div>
                 <!-- Menu Local -->
                 <div id="local-menu" class="menu-section hidden">
-                    <div class="mb-1">
+                    <div class="mb-4">
                         <label class="form-label text-cyan">Gamemode</label>
                         <select class="space-select form-select">
                             <option>1 vs 1</option>
                             <option>2 vs 2</option>
                         </select>
                     </div>
-                    <div class="mb-1">
+                    <div class="mb-4">
                         <label class="form-label text-cyan">Map</label>
                         <select class="space-select form-select">
                             <option>Mars</option>
@@ -174,7 +174,7 @@
                         </select>
                     </div>
                     <button class="space-btn w-100">Lanch</button>
-                    <div id="back-button" class="mt-1 ">
+                    <div id="back-button" class="mt-4 ">
                         <button class="back-btn" onclick="goBack()">
                             <i class="bi bi-arrow-left"></i> Back
                         </button>
@@ -183,14 +183,14 @@
     
                 <!-- Menu Privé -->
                 <div id="private-menu" class="menu-section hidden">
-                    <div class="mb-1">
+                    <div class="mb-4">
                         <label class="form-label text-cyan">Gamemode</label>
                         <select class="space-select form-select">
                             <option>1 vs 1</option>
                             <option>2 vs 2</option>
                         </select>
                     </div>
-                    <div class="mb-1">
+                    <div class="mb-4">
                         <label class="form-label text-cyan">Map</label>
                         <select class="space-select form-select">
                             <option>Mars</option>
@@ -198,18 +198,18 @@
                             <option>Orgasme</option>
                         </select>
                     </div>
-                    <button class="space-btn mb-1" onclick="showMenu('invite-section')">
+                    <button class="space-btn mb-4" onclick="showMenu('invite-section')">
                         <i class="bi bi-person-plus"></i>
                         Invite players
                     </button>
                     <div id="invite-section" class="hidden">
-                        <div class="space-input-group mb-1">
+                        <div class="space-input-group mb-4">
                             <label class="form-label text-cyan">Find a players</label>
                             <input type="text" class="space-input form-control" placeholder="Nom du joueur">
                         </div>
                         <button class="space-btn w-100">Send invite</button>
                     </div>
-                    <div id="back-button" class="mt-1">
+                    <div id="back-button" class="mt-4">
                         <button class="back-btn" onclick="goBack()">
                             <i class="bi bi-arrow-left"></i> Back
                         </button>
@@ -218,16 +218,16 @@
     
                 <!-- Menu Matchmaking -->
                 <div id="matchmaking-menu" class="menu-section hidden">
-                    <div class="mb-1">
+                    <div class="mb-4">
                         <label class="form-label text-cyan">Gamemode</label>
                         <select class="space-select form-select">
                             <option>1 vs 1</option>
                             <option>2 vs 2</option>
                         </select>
                     </div>
-                    <div class="mb-1">
+                    <div class="mb-4">
                     <button class="space-btn w-100">Find a game</button>
-                    <div id="back-button" class="mt-1 ">
+                    <div id="back-button" class="mt-4 ">
                         <button class="back-btn" onclick="goBack()">
                             <i class="bi bi-arrow-left"></i> Back
                         </button>
@@ -236,8 +236,8 @@
     
                 <!-- Menu Tournoi -->
                 <div id="tournament-menu" class="menu-section hidden">
-                    <div class="tournament-list mb-1">
-                        <h3 class="text-cyan mb-1">Current Tournament</h3>
+                    <div class="tournament-list mb-4">
+                        <h3 class="text-cyan mb-4">Current Tournament</h3>
                         <div class="tournament-item">
                             <span>Galactique CHampionship</span>
                             <span class="player-count">8/16 Players</span>
@@ -247,7 +247,7 @@
                             <span class="player-count">4/8 Players</span>
                         </div>
                     </div>
-                    <div class="row g-1">
+                    <div class="row g-4">
                         <div class="col-6">
                             <button class="space-btn w-100" onclick="showMenu('create-tournament')">
                                 <i class="bi bi-plus-lg"></i>
@@ -261,7 +261,7 @@
                             </button>
                         </div>
                     </div>
-                    <div id="back-button" class="mt-1 ">
+                    <div id="back-button" class="mt-4 ">
                         <button class="back-btn" onclick="goBack()">
                             <i class="bi bi-arrow-left"></i> Back
                         </button>
@@ -270,11 +270,11 @@
     
                 <!-- Menu Créer Tournoi -->
                 <div id="create-tournament" class="menu-section hidden">
-                    <div class="mb-1">
+                    <div class="mb-4">
                         <label class="form-label text-cyan">Tournament name</label>
                         <input type="text" class="space-input form-control" placeholder="Entrez le nom du tournoi">
                     </div>
-                    <div class="mb-1">
+                    <div class="mb-4">
                         <label class="form-label text-cyan">Player count</label>
                         <select class="space-select form-select">
                             <option>4</option>
@@ -283,7 +283,7 @@
                         </select>
                     </div>
                     <button class="space-btn w-100">Create Tournament</button>
-                    <div id="back-button" class="mt-1 ">
+                    <div id="back-button" class="mt-4 ">
                         <button class="back-btn" onclick="goBack()">
                             <i class="bi bi-arrow-left"></i> Back
                         </button>
@@ -308,7 +308,7 @@
                             <button class="space-btn-small">Joir</button>
                         </div>
                     </div>
-                    <div id="back-button" class="mt-1 ">
+                    <div id="back-button" class="mt-4 ">
                         <button class="back-btn" onclick="goBack()">
                             <i class="bi bi-arrow-left"></i> Back
                         </button>
