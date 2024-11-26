@@ -24,7 +24,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 2rem;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(4px);
   margin: 0;
@@ -40,7 +40,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 2rem;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(4px);
   margin: 0;
@@ -56,24 +56,24 @@ body {
   background: rgba(17, 25, 40, 0.95);
   border: 10px solid #06b6d4;
   border-radius: 0.5rem;
-  padding: 1rem;
+  padding: 2rem;
   box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
 }
 
 /* Title */
 .menu-title {
-  font-size: 3rem;
+  font-size: 4rem;
   font-weight: bold;
   text-align: center;
   color: #06b6d4;
-  margin-bottom: 0.5rem;
+  margin-bottom: 2rem;
   text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
 }
 
 /* Buttons */
 .space-btn {
   padding: 0.3rem 0.6rem;
-  font-size: 1rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #06b6d4;
   background: transparent;
@@ -93,11 +93,11 @@ body {
 }
 
 .space-btn i {
-  font-size: 0.3rem;
+  font-size: 2rem;
 }
 
 .space-btn-small {
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 1rem;
   font-size: 0.3rem;
   color: #06b6d4;
   background: transparent;
@@ -117,7 +117,7 @@ body {
   border: 2px solid #06b6d4;
   color: #06b6d4;
   border-radius: 0.5rem;
-  padding: 0.25rem 0.5rem;
+  padding: 1rem 2rem;
 }
 
 .space-input:focus {
@@ -132,8 +132,8 @@ body {
   background: rgba(17, 25, 40, 0.95);
   border: 2px solid #06b6d4;
   color: #06b6d4;
-  border-radius: 0.5rem;
-  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  padding: 1rem 2rem;
 }
 
 .space-select:focus {
@@ -145,14 +145,14 @@ body {
 .tournament-list {
   background: rgba(31, 41, 55, 0.5);
   border-radius: 0.5rem;
-  padding: 0.5rem;
+  padding: 2rem;
 }
 
 .tournament-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.37rem;
+  padding: 1rem;
   background: rgba(55, 65, 81, 0.5);
   border-radius: 0.25rem;
   margin-bottom: 0.25rem;
@@ -180,21 +180,21 @@ body {
   background: transparent;
   border: none;
   color: #06b6d4;
-  padding: 0.25rem;
-  font-size: 0.25rem;
+  padding: 1rem;
+  font-size: 2rem;
   cursor: pointer;
   transition: color 0.3s ease;
 }
 
 .form-select {
-  font-size: 0.5rem;
+  font-size: 2rem;
   height: 20px;
 }
 .space-select {
-  font-size: 0.1em;
+  font-size: 2em;
 }
 .form-label {
-  font-size: 0.4rem;
+  font-size: 2rem;
 }
 
 .back-btn:hover {
@@ -234,11 +234,11 @@ body {
 }
 
 .spinner > div {
-  background-color: rgba(255, 90, 90, 0.2);
+  background-color: rgba(64, 167, 214, 0.2);
   height: 100%;
   position: absolute;
   width: 100%;
-  border: 2.2px solid #ff5a5a;
+  border: 2.2px solid #5a5dff;
 }
 
 .spinner div:nth-of-type(1) {
