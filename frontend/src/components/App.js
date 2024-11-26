@@ -11,17 +11,16 @@ import { CSS3DRenderer, CSS3DObject } from 'https://cdn.skypack.dev/three@0.128.
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
-    90,
+    75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1300
 );
-const cameraLight = new THREE.PointLight(0xffffff, 5, 100); // Crée une lumière ponctuelle
-cameraLight.position.set(0.05, 0.08, 0.16); // Position initiale relative à la caméra
-camera.add(cameraLight); // Ajoute la lumière à la caméra
-scene.add(camera); // Ajoute la caméra (et donc la lumière) à la scène
+const cameraLight = new THREE.PointLight(0xaaaaff, 7, 100);
+cameraLight.position.set(0.05, 0.08, 0.16);
+camera.add(cameraLight);
+scene.add(camera);
 camera.position.set(0,0,0);
-const lookBehindPosition = new THREE.Vector3(0, 0, 180);
 camera.lookAt(0, 1000, 0)
 
 const renderer = new THREE.WebGLRenderer({ antialias: false });
@@ -48,9 +47,32 @@ menuObject.rotation.set(-5.2, 0, 0);
 menuObject.scale.set(0.002, 0.002, 0.002);
 menuElement.style.display = 'none';
 
-scene.add(menuObject);
+const menuElement2 = document.getElementById('menu2');
+menuElement2.style.pointerEvents = 'auto';
+
+const menuObject2 = new CSS3DObject(menuElement2);
+
+menuObject2.position.set(-3.5, 4.5, -1.8);
+menuObject2.rotation.set(-5.2, 0.65, 0.2);
+menuObject2.scale.set(0.002, 0.002, 0.002);
+menuElement2.style.display = 'none';
+
+
+const menuElement3 = document.getElementById('menu3');
+menuElement3.style.pointerEvents = 'auto';
+
+const menuObject3 = new CSS3DObject(menuElement3);
+
+menuObject3.position.set(3.1, 4.5, -1.85);
+menuObject3.rotation.set(-5.2, -0.60, -0.2);
+menuObject3.scale.set(0.002, 0.002, 0.002);
+menuElement3.style.display = 'none';
+
 let onScreen = false;
-let screenObject;
+let screenObject1;
+let screenObject2;
+let screenObject3;
+
 const loader = new GLTFLoader();
 document.getElementById('loading-screen').style.display = 'block';
 loader.load(
@@ -58,11 +80,15 @@ loader.load(
     (gltf) => {
         const model = gltf.scene;
         model.position.set(3.5, -17, -1);
+        model.rotation.set(0,0,0);
         model.scale.set(0.125, 0.125, 0.125);
         model.lookAt(0, 1000, -180)
 
         scene.add(model);
-        screenObject = model.getObjectByName('_gltfNode_13');
+        screenObject1 = model.getObjectByName('_gltfNode_6');
+        screenObject2 = model.getObjectByName('_gltfNode_13');
+        screenObject3 = model.getObjectByName('_gltfNode_7');
+
 
     },
     undefined,
@@ -87,14 +113,14 @@ controls.dragToLook = true;
 
 function addStars() {
     const starGeometry = new THREE.BufferGeometry();
-    const starCount = 5000;
+    const starCount = 4000;
 
     const starVertices = [];
 
     for (let i = 0; i < starCount; i++) {
-        const x = (Math.random() - 0.5) * 2000;
-        const y = (Math.random() - 0.5) * 2000;
-        const z = (Math.random() - 0.5) * 2000;
+        const x = (Math.random() - 0.5) * 3000;
+        const y = (Math.random() - 0.5) * 3000;
+        const z = (Math.random() - 0.5) * 3000;
         starVertices.push(x, y, z);
     }
 
@@ -111,24 +137,62 @@ function addStars() {
 
 addStars();
 
-function addPlanet(position, texturePath, size) {
+function addPlanet(position, texturePath, size, ringOptions) {
     const textureLoader = new THREE.TextureLoader();
-    const planetTexture = textureLoader.load(texturePath);
 
-    const planetGeometry = new THREE.SphereGeometry(size, 32, 32);
+    const planetTexture = textureLoader.load(texturePath);
+    const planetGeometry = new THREE.SphereGeometry(size, 64, 64);
     const planetMaterial = new THREE.MeshStandardMaterial({
         map: planetTexture,
     });
-
     const planet = new THREE.Mesh(planetGeometry, planetMaterial);
-    planet.position.copy(position);
-    scene.add(planet);
 
-    return planet;
+    const planetGroup = new THREE.Group();
+    planetGroup.add(planet);
+
+    if (ringOptions) 
+        {
+        const ringGeometry = new THREE.RingGeometry(
+            ringOptions.innerRadius,
+            ringOptions.outerRadius,
+            ringOptions.thetaSegments
+        );
+        ringGeometry.rotateX(Math.PI / 2);
+
+        const ringTexture = textureLoader.load(ringOptions.texturePath);
+        const ringMaterial = new THREE.MeshBasicMaterial({
+            map: ringTexture,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: ringOptions.opacity || 0.8
+        });
+
+        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+
+        ring.rotation.x = Math.PI / 2 + 0.6;
+        planetGroup.add(ring);
+
+    }
+
+    planetGroup.position.copy(position);
+    scene.add(planetGroup);
+
+    return planetGroup;
 }
 
-const planet1 = addPlanet(new THREE.Vector3(80, 100, -80), './src/assets/img/2k_mars.jpg', 100);
-const planet2 = addPlanet(new THREE.Vector3(20, 150, 50), './src/assets/img/2k_jupiter.jpg', 8);
+
+addPlanet(
+    new THREE.Vector3(750, 750, -60), 
+    './src/assets/img/neptunemap.jpg', 
+    250, 
+    {
+        innerRadius: 400, 
+        outerRadius: 600, 
+        thetaSegments: 64,
+        texturePath: './src/assets/img/neptunemap.jpg', 
+        opacity: 0.2 
+    }
+);
 
 
 
@@ -143,60 +207,98 @@ window.addEventListener('click', (event) => {
 
     raycaster.setFromCamera(mouse, camera);
 
-    if (screenObject && onScreen == false) 
+    if (screenObject1 && onScreen == false) 
     {
-        const intersects = raycaster.intersectObject(screenObject, true);
-        if (intersects.length > 0) {
-            animateCameraToTarget();
-        }
+        const intersects1 = raycaster.intersectObject(screenObject1, true);
+        const intersects2 = raycaster.intersectObject(screenObject2, true);
+        const intersects3 = raycaster.intersectObject(screenObject3, true);
+
+        if (intersects1.length > 0) 
+        {
+            animateCameraToTarget(
+                new THREE.Vector3(-0.2, 5.257378802731586, -0.8900580859235202),
+                { x: Math.PI / 3, y: 0, z: 0 },
+                1
+            );}
+        else if (intersects2.length > 0) 
+        {
+            animateCameraToTarget(
+                new THREE.Vector3(1.9765430745879866, 3.434172967891374, -0.9419868064632663),
+                { x: Math.PI / 3.5, y: Math.PI / -4.5, z: -Math.PI / 9},
+                3
+            );}
+        else if (intersects3.length > 0) 
+        {
+            animateCameraToTarget(
+                new THREE.Vector3(-2.559453657498437, 3.3453545045816075, -0.7922370317858861),
+                { x: Math.PI / 3.5, y: Math.PI / 5, z: -Math.PI / -10},
+                2
+        );}
     }
 });
-
-
-
-
 /*----------------------ANIMATON-------------------------*/
 
-function animateCameraToTarget() 
+function animateCameraToTarget(endPosition, endRotation, nb) 
 {
-    const endPosition = new THREE.Vector3(0, -0.2500000987201895, 0.5399999812245369);
+    const startPosition = camera.position.clone();
     const startQuaternion = camera.quaternion.clone();
-    camera.lookAt(endPosition);
+
+    camera.position.copy(endPosition);
+
+    camera.rotation.set(endRotation.x, endRotation.y, endRotation.z, 'XYZ');
+
     const endQuaternion = camera.quaternion.clone();
 
+    camera.position.copy(startPosition);
     camera.quaternion.copy(startQuaternion);
+
+    if (startQuaternion.dot(endQuaternion) < 0) 
+    {
+        endQuaternion.x *= -1;
+        endQuaternion.y *= -1;
+        endQuaternion.z *= -1;
+        endQuaternion.w *= -1;
+    }
     controls.enabled = false;
 
-    gsap.to(camera.position, {
+    const dummy = { t: 0 };
+
+    gsap.to(dummy, {
         duration: 2,
-        x: endPosition.x,
-        y: endPosition.y,
-        z: endPosition.z,
+        t: 1,
         ease: "power2.inOut",
         onUpdate: function () {
-            const progress = this.progress();
-            camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, progress);
+            const t = dummy.t;
+            camera.position.lerpVectors(startPosition, endPosition, t);
+            camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, t);
         },
         onComplete: function () 
         {
-            camera.position.copy(endPosition);
-            camera.quaternion.copy(endQuaternion);
             controls.enabled = true;
-            scene.add(menuObject);
+            if (nb == 1)
+                scene.add(menuObject);
+            else if (nb == 2)
+                scene.add(menuObject2);
+            else if (nb == 3)
+                scene.add(menuObject3);
         }
     });
+
     onScreen = true;
 }
 
 
+
 function animateCameraBackToInitialPosition() {
     const startPosition = camera.position.clone();
-    const startQuaternion = camera.quaternion.clone();
+    const startQuaternion = camera.quaternion.clone(); 
 
-    const endPosition = new THREE.Vector3(0, 0, 0);
-    const lookBehindPosition = new THREE.Vector3(0, 0, 180);
-    camera.position.set(0, 0, 0);
-    camera.lookAt(lookBehindPosition);
+    const endPosition = new THREE.Vector3(0, 0, 0); 
+    const lookAtTarget = new THREE.Vector3(0, 50, 0);
+
+
+    camera.position.copy(endPosition);
+    camera.lookAt(lookAtTarget);
     const endQuaternion = camera.quaternion.clone();
 
     camera.position.copy(startPosition);
@@ -205,31 +307,35 @@ function animateCameraBackToInitialPosition() {
     controls.enabled = false;
 
     const dummy = { t: 0 };
-
     gsap.to(dummy, {
         duration: 2,
         t: 1,
         ease: 'power2.inOut',
-        onUpdate: function () {
+        onUpdate: function () 
+        {
             const t = dummy.t;
             camera.position.lerpVectors(startPosition, endPosition, t);
             camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, t);
         },
-        onComplete: function () {
+        onComplete: function () 
+        {
             camera.position.copy(endPosition);
             camera.quaternion.copy(endQuaternion);
             controls.enabled = true;
+        
             scene.remove(menuObject);
+            scene.remove(menuObject2);
+            scene.remove(menuObject3);
             onScreen = false;
-            console.log('done');
         }
     });
 }
 
-const backButton = document.getElementById('backButton');
-backButton.addEventListener('click', () => {
-
-    animateCameraBackToInitialPosition();
+const backButtons = document.querySelectorAll('.back');
+backButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+        animateCameraBackToInitialPosition(); 
+    });
 });
 
 /*----------------------ANIMATE-------------------------*/
@@ -249,12 +355,7 @@ function animate() {
     cssRenderer.render(scene, camera);
     console.log(camera.position.x, camera.position.y, camera.position.z);
 
-    if (planet1) {
-        planet1.rotation.y += 0.0002;
-    }
-    if (planet2) {
-        planet2.rotation.y += 0.0002;
-    }
+
 }
 
 animate();
