@@ -45,14 +45,15 @@ body {
   backdrop-filter: blur(4px);
   margin: 0;
   padding: 0;
-  height: 900px;
-  width: 1800px;
+  height: 1000px;
+  width: 1350px;
 }
 
 /* Menu Panel */
 .menu-panel {
-  height: 900px;
-  width: 1800px;
+
+  height: 1000px;
+  width: 1350px;
   background: rgba(17, 25, 40, 0.95);
   border: 10px solid #06b6d4;
   border-radius: 0.5rem;
@@ -72,18 +73,18 @@ body {
 
 /* Buttons */
 .space-btn {
-  padding: 0.3rem 0.6rem;
+  padding: 1rem 2rem;
   font-size: 2rem;
   font-weight: bold;
   color: #06b6d4;
   background: transparent;
-  border: 10px solid #06b6d4;
+  border: 5px solid #06b6d4;
   border-radius: 0.4rem;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.2rem;
+  gap: 1rem;
 }
 
 .space-btn:hover {
@@ -97,8 +98,8 @@ body {
 }
 
 .space-btn-small {
-  padding: 0.5rem 1rem;
-  font-size: 0.3rem;
+  padding: 1rem 2rem;
+  font-size: 1.5rem;
   color: #06b6d4;
   background: transparent;
   border: 1px solid #06b6d4;
@@ -155,7 +156,7 @@ body {
   padding: 1rem;
   background: rgba(55, 65, 81, 0.5);
   border-radius: 0.25rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 1rem;
   color: #06b6d4;
 }
 
@@ -166,12 +167,12 @@ body {
 
 .tournament-details {
   display: block;
-  font-size: 0.21rem;
+  font-size: 1rem;
   opacity: 0.8;
 }
 
 .player-count {
-  font-size: 0.21rem;
+  font-size: 1rem;
   opacity: 0.8;
 }
 
@@ -188,7 +189,6 @@ body {
 
 .form-select {
   font-size: 2rem;
-  height: 20px;
 }
 .space-select {
   font-size: 2em;
@@ -282,186 +282,3 @@ body {
     transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
   }
 }
-
-/* 
-
-body {
-    background-color: rgb(0, 0, 0);
-    overflow: hidden;
-}
-
-.menu-container {
-    font-family: 'Orbitron', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(4px);
-    margin: 0;
-    padding: 0;
-    height: 180px;
-    width: 180px;
-}
-
-.menu-panel {
-    height: 180px;
-    width: 180px;
-    background: rgba(17, 25, 40, 0.95);
-    border: 2px solid #ff073a; 
-    border-radius: 0.5rem;
-    padding: 1rem;
-    width: 100%;
-    max-width: 600px;
-    box-shadow: 0 0 30px rgba(255, 7, 58, 0.3); 
-}
-
-.menu-title {
-    font-size: 0.75rem;
-    font-weight: bold;
-    text-align: center;
-    color: #ff073a; 
-    margin-bottom: 0.5rem;
-    text-shadow: 0 0 10px rgba(255, 7, 58, 0.5);
-}
-
-.space-btn {
-    padding: 0.30rem 0.6rem;
-    font-size: 0.3rem;
-    font-weight: bold;
-    color: #ff073a; 
-    background: transparent;
-    border: 1px solid #ff073a; 
-    border-radius: 0.4rem;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.2rem;
-}
-
-.space-btn:hover {
-    background: #ff073a; 
-    color: #000;
-    box-shadow: 0 0 15px rgba(255, 7, 58, 0.5); 
-}
-
-.space-btn i {
-    font-size: 0.3rem;
-}
-
-.space-btn-small {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.3rem;
-    color: #ff073a; 
-    background: transparent;
-    border: 1px solid #ff073a;
-    border-radius: 0.25rem;
-    transition: all 0.3s ease;
-}
-
-.space-btn-small:hover {
-    background: #ff073a;
-    color: #000;
-}
-
-.space-input {
-    background: rgba(17, 25, 40, 0.95);
-    border: 2px solid #ff073a;
-    color: #ff073a;
-    border-radius: 0.5rem;
-    padding: 0.25rem 0.5rem;
-}
-
-.space-input:focus {
-    box-shadow: 0 0 0 2px rgba(255, 7, 58, 0.3); 
-    border-color: #ff073a; 
-    background: rgba(17, 25, 40, 0.95);
-    color: #ff073a; 
-}
-
-.space-select {
-    background: rgba(17, 25, 40, 0.95);
-    border: 2px solid #ff073a; 
-    color: #ff073a; 
-    border-radius: 0.5rem;
-    padding: 0.25rem 0.5rem;
-}
-
-.space-select:focus {
-    box-shadow: 0 0 0 2px rgba(255, 7, 58, 0.3);
-    border-color: #ff073a; 
-}
-
-.tournament-list {
-    background: rgba(31, 41, 55, 0.5);
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-}
-
-.tournament-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.37rem;
-    background: rgba(55, 65, 81, 0.5);
-    border-radius: 0.25rem;
-    margin-bottom: 0.25rem;
-    color: #ff073a;
-}
-
-.tournament-name {
-    display: block;
-    font-weight: bold;
-}
-
-.tournament-details {
-    display: block;
-    font-size: 0.21rem;
-    opacity: 0.8;
-}
-
-.player-count {
-    font-size: 0.21rem;
-    opacity: 0.8;
-}
-
-.back-btn {
-    background: transparent;
-    border: none;
-    color: #ff073a; 
-    padding: 0.25rem;
-    font-size: 0.25rem;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.form-select {
-    font-size: 0.5rem;
-    height: 20px;
-}
-
-.space-select {
-    font-size: 0.1em;
-}
-
-.form-label {
-    font-size: 0.4rem;
-    color: #ff073a; 
-}
-
-.back-btn:hover {
-    color: #ff5c5c; 
-}
-
-.hidden {
-    display: none !important;
-}
-
-.text-cyan {
-    color: #ff073a; 
-}
-
-
-
-*/
