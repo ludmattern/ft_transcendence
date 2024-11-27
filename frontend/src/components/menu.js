@@ -49,7 +49,3 @@ function goBack() {
 document.addEventListener('DOMContentLoaded', () => {
     showMenu('main-menu');
 });
-
-document.querySelectorAll('.space-select').forEach((select) => {
-    select.style.fontSize = '0.3rem';
-});
