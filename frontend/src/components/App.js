@@ -18,7 +18,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 
-const cameraLight = new THREE.PointLight(0xaaaaff, 10, 100);
+const cameraLight = new THREE.PointLight(0xffffff, 10, 100);
 cameraLight.position.set(0, 0, 0);
 camera.add(cameraLight);
 scene.add(camera);
@@ -358,8 +358,6 @@ function animate() {
     renderer.render(scene, camera);
     cssRenderer.render(scene, camera);
     console.log(camera.position.x, camera.position.y, camera.position.z);
-
-
 }
 
 
