@@ -22,8 +22,8 @@ const cameraLight = new THREE.PointLight(0xaaaaff, 10, 100);
 cameraLight.position.set(0, 0, 0);
 camera.add(cameraLight);
 scene.add(camera);
-camera.position.set(0,0,0);
-camera.lookAt(0, 1000, 0)
+camera.position.set(0, 0.06275803512326787, 1.9990151147571098);
+camera.lookAt(0, 50, -15)
 
 const renderer = new THREE.WebGLRenderer({ antialias: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -87,9 +87,11 @@ loader.load(
         model.lookAt(0, 1000, -180)
 
         scene.add(model);
+        
         screenObject1 = model.getObjectByName('_gltfNode_6');
         screenObject2 = model.getObjectByName('_gltfNode_13');
         screenObject3 = model.getObjectByName('_gltfNode_7');
+        document.getElementById('loading-screen').style.display = 'none';
 
 
     },
@@ -98,7 +100,7 @@ loader.load(
         console.error('Erreur lors du chargement du modèle:', error);
     }
 );
-document.getElementById('loading-screen').style.display = 'none';
+
 const ambientLight = new THREE.AmbientLight(0x404040, 3);
 scene.add(ambientLight);
 
@@ -295,8 +297,8 @@ function animateCameraBackToInitialPosition() {
     const startPosition = camera.position.clone();
     const startQuaternion = camera.quaternion.clone(); 
 
-    const endPosition = new THREE.Vector3(0, 0, 0); 
-    const lookAtTarget = new THREE.Vector3(0, 50, 0);
+    const endPosition = new THREE.Vector3(0, 0.06275803512326787, 1.9990151147571098); 
+    const lookAtTarget = new THREE.Vector3(0, 50, -15);
 
 
     camera.position.copy(endPosition);
