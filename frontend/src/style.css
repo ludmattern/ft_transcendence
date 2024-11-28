@@ -49,6 +49,7 @@ a {
   color: var(--content-color);
   text-transform: uppercase;
   text-align: center;
+  line-height: 1rem;
   margin: 0;
 }
 
@@ -69,14 +70,14 @@ a {
 }
 
 .central-window {
-  min-height: 300px;
-  height: 100%;
+  min-height: 500px;
+  overflow: auto;
 }
 
 .central-window h5 {
-	border-top: 2px solid var(--secondary-hud-elements-color);
-	border-bottom: 2px solid var(--secondary-hud-elements-color);
-  }
+  border-top: 2px solid var(--secondary-hud-elements-color);
+  border-bottom: 2px solid var(--secondary-hud-elements-color);
+}
 
 button {
   margin-top: 10px;
