@@ -302,7 +302,7 @@ button {
 
 .hud-header .nav {
   padding-top: 1rem;
-  top: 2.7rem;
+  top: 2.5rem;
   position: fixed;
   text-transform: uppercase;
 }
@@ -439,4 +439,30 @@ button {
 .actions {
   display: flex;
   gap: 10px;
+}
+
+.form-container {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.2s ease-in-out;
+  display: none;
+}
+.form-container.active {
+  opacity: 1;
+  transform: scale(1);
+  display: block;
+}
+
+.hud-header .active {
+  color: var(--active-menu-color);
+}
+
+.hud-header .active::after {
+  content: "";
+  display: block;
+  position: relative;
+  transform: translate(-7%, -100%);
+  width: 114%;
+  height: 1.2rem;
+  border: 1px solid var(--active-menu-color);
 }
