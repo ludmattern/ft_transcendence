@@ -305,6 +305,7 @@ button {
   top: 2.5rem;
   position: fixed;
   text-transform: uppercase;
+  font-weight: 500;
 }
 
 .hud-header .left-menu,
@@ -447,22 +448,33 @@ button {
   transition: all 0.2s ease-in-out;
   display: none;
 }
+
 .form-container.active {
   opacity: 1;
   transform: scale(1);
   display: block;
 }
 
+.hud-header a {
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
 .hud-header .active {
   color: var(--active-menu-color);
+  text-shadow: -8px 0px 20px var(--active-menu-color),
+    8px 0px 20px var(--active-menu-color);
+  transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
 .hud-header .active::after {
   content: "";
   display: block;
-  position: relative;
-  transform: translate(-7%, -100%);
-  width: 114%;
-  height: 1.2rem;
+  position: absolute;
+  top: 31%;
+  left: 10%;
+  width: 80%;
+  height: 50%;
   border: 1px solid var(--active-menu-color);
+  pointer-events: none;
+  transition: border-color 0.2s ease, width 0.2s ease, height 0.2s ease;
 }

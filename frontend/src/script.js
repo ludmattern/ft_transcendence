@@ -23,7 +23,7 @@ function switchForm(showFormId) {
         form.classList.remove("active"); // Remove active class for animation
         setTimeout(() => {
           form.style.display = "none"; // Hide form after animation
-        }, 500); // Match the CSS transition duration
+        }, 100); // Match the CSS transition duration
       }
     });
   
@@ -41,7 +41,7 @@ function switchForm(showFormId) {
       setTimeout(() => {
         showForm.style.display = "block"; // Ensure the form is visible
         setTimeout(() => showForm.classList.add("active"), 10); // Add active class for animation
-      }, 500);
+      }, 100);
     }
   
     // Add active class to the corresponding nav link
