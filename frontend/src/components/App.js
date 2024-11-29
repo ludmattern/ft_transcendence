@@ -12,7 +12,7 @@ import { CSS3DRenderer, CSS3DObject } from 'https://cdn.skypack.dev/three@0.128.
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
-    75,
+    90,
     window.innerWidth / window.innerHeight,
     0.1,
     1600
@@ -181,7 +181,7 @@ addPlanet(
         outerRadius: 850, 
         thetaSegments: 64,
         texturePath: './src/assets/img/uranusringcolour.jpg', 
-        opacity: 0.2 
+        opacity: 0.4 
     }
 );
 
