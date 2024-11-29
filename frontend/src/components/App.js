@@ -4,6 +4,7 @@ import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.128.0/examples/jsm/l
 import { gsap } from 'https://cdn.skypack.dev/gsap';
 import { CSS3DRenderer, CSS3DObject } from 'https://cdn.skypack.dev/three@0.128.0/examples/jsm/renderers/CSS3DRenderer.js';
 
+/*6h4vl9mc0gk0   lfr8v60tfjk    https://tools.wwwtyro.net/space-3d/index.html#animationSpeed=0.8199880281747889&fov=150&nebulae=true&pointStars=true&resolution=1024&seed=6h4vl9mc0gk0&stars=true&sun=false */
 
 /*----------------------INIT SCENE LOAD ELEMENT-------------------------*/
 
@@ -14,11 +15,11 @@ const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1300
+    1600
 );
 
 
-const cameraLight = new THREE.PointLight(0xffffff, 10, 100);
+const cameraLight = new THREE.PointLight(0xf2f2f2, 10, 100);
 cameraLight.position.set(0, 0, 0);
 camera.add(cameraLight);
 scene.add(camera);
@@ -59,7 +60,6 @@ menuObject2.rotation.set(-5.2, 0.65, 0.2);
 menuObject2.scale.set(0.002, 0.002, 0.002);
 menuElement2.style.display = 'none';
 
-
 const menuElement3 = document.getElementById('menu3');
 menuElement3.style.pointerEvents = 'auto';
 
@@ -74,6 +74,20 @@ let onScreen = false;
 let screenObject1;
 let screenObject2;
 let screenObject3;
+
+const skyboxImages = [
+    'src/assets/img/skybox3/right.png',
+    'src/assets/img/skybox3/left.png',
+    'src/assets/img/skybox3/top.png',
+    'src/assets/img/skybox3/bottom.png',
+    'src/assets/img/skybox3/front.png',
+    'src/assets/img/skybox3/back.png'
+];
+
+const loaderr = new THREE.CubeTextureLoader();
+const skyboxTexture = loaderr.load(skyboxImages);
+
+scene.background = skyboxTexture;
 
 const loader = new GLTFLoader();
 document.getElementById('loading-screen').style.display = 'block';
@@ -101,13 +115,11 @@ loader.load(
     }
 );
 
-const ambientLight = new THREE.AmbientLight(0x404040, 3);
-scene.add(ambientLight);
 
 
-const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-pointLight.position.set(0, 2400, 0.16);
-pointLight.intensity = 1000;
+
+const pointLight = new THREE.PointLight(0xffffff, 1.5, 1000);
+pointLight.position.set(0, 750, -160);
 scene.add(pointLight);
 
 const controls = new FlyControls(camera, renderer.domElement);
@@ -115,31 +127,6 @@ controls.movementSpeed = 20;
 controls.rollSpeed = Math.PI / 2;
 controls.dragToLook = true;
 
-function addStars() {
-    const starGeometry = new THREE.BufferGeometry();
-    const starCount = 4000;
-
-    const starVertices = [];
-
-    for (let i = 0; i < starCount; i++) {
-        const x = (Math.random() - 0.5) * 3000;
-        const y = (Math.random() - 0.5) * 3000;
-        const z = (Math.random() - 0.5) * 3000;
-        starVertices.push(x, y, z);
-    }
-
-    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-
-    const starMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.5,
-    });
-
-    const stars = new THREE.Points(starGeometry, starMaterial);
-    scene.add(stars);
-}
-
-addStars();
 
 function addPlanet(position, texturePath, size, ringOptions) {
     const textureLoader = new THREE.TextureLoader();
@@ -186,12 +173,12 @@ function addPlanet(position, texturePath, size, ringOptions) {
 
 
 addPlanet(
-    new THREE.Vector3(750, 750, -60), 
-    './src/assets/img/uranusmap.jpg', 
-    250, 
+    new THREE.Vector3(750, 400, -360), 
+    './src/assets/img/2k_jupiter.jpg', 
+    500, 
     {
-        innerRadius: 400, 
-        outerRadius: 550, 
+        innerRadius: 600, 
+        outerRadius: 850, 
         thetaSegments: 64,
         texturePath: './src/assets/img/uranusringcolour.jpg', 
         opacity: 0.2 
@@ -354,6 +341,7 @@ window.addEventListener('resize', () => {
 
 function animate() {
     requestAnimationFrame(animate);
+
     controls.update(0.01);
     renderer.render(scene, camera);
     cssRenderer.render(scene, camera);
