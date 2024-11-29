@@ -4,7 +4,7 @@ import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.128.0/examples/jsm/l
 import { gsap } from 'https://cdn.skypack.dev/gsap';
 import { CSS3DRenderer, CSS3DObject } from 'https://cdn.skypack.dev/three@0.128.0/examples/jsm/renderers/CSS3DRenderer.js';
 
-/*6h4vl9mc0gk0   lfr8v60tfjk    https://tools.wwwtyro.net/space-3d/index.html#animationSpeed=0.8199880281747889&fov=150&nebulae=true&pointStars=true&resolution=1024&seed=6h4vl9mc0gk0&stars=true&sun=false */
+/*6h4vl9mc0gk0   lfr8v60tfjk  4h64avzyz1y0   https://tools.wwwtyro.net/space-3d/index.html#animationSpeed=0.8199880281747889&fov=150&nebulae=true&pointStars=true&resolution=1024&seed=6h4vl9mc0gk0&stars=true&sun=false */
 
 /*----------------------INIT SCENE LOAD ELEMENT-------------------------*/
 
@@ -76,12 +76,12 @@ let screenObject2;
 let screenObject3;
 
 const skyboxImages = [
-    'src/assets/img/skybox3/right.png',
-    'src/assets/img/skybox3/left.png',
-    'src/assets/img/skybox3/top.png',
-    'src/assets/img/skybox3/bottom.png',
-    'src/assets/img/skybox3/front.png',
-    'src/assets/img/skybox3/back.png'
+    'src/assets/img/skybox1/right.png',
+    'src/assets/img/skybox1/left.png',
+    'src/assets/img/skybox1/top.png',
+    'src/assets/img/skybox1/bottom.png',
+    'src/assets/img/skybox1/front.png',
+    'src/assets/img/skybox1/back.png'
 ];
 
 const loaderr = new THREE.CubeTextureLoader();
