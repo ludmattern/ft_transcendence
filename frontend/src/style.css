@@ -112,7 +112,7 @@ button {
     rgba(0, 0, 0, 1) 100%
   );
 
-  filter: blur(1px);
+  filter: blur(2px);
 }
 
 @keyframes bg-move {
@@ -141,6 +141,7 @@ button {
   position: fixed;
   pointer-events: none; /* Prevent user interaction */
   z-index: 10;
+  overflow: visible; /* Permet au flou de dépasser les limites */
 }
 .svg-top-left {
   width: 100px;
@@ -255,19 +256,19 @@ button {
 }
 
 .hud-svg .hud-svg-footer {
-  bottom: 0px;
+  bottom: -20px;
   left: 50%;
-  height: 90px;
-  width: 1080px;
-  transform: translate(-50%, 0);
+  height: 130px;
+  width: 1220px;
+  transform: scale(0.9) translate(-55.5%, 0);
 }
 
 .hud-svg .hud-svg-header {
-  top: 0px;
+  top: -24px;
   left: 50%;
-  height: 90px;
-  width: 1240px;
-  transform: translate(-50%, 0);
+  height: 133px;
+  width: 1381px;
+  transform: scale(0.9) translate(-55.5%, 0);
 }
 
 @font-face {
@@ -477,4 +478,44 @@ button {
   border: 1px solid var(--active-menu-color);
   pointer-events: none;
   transition: border-color 0.2s ease, width 0.2s ease, height 0.2s ease;
+}
+
+.background-svg .cls-1 {
+  filter: blur(6px);
+  opacity: 1;
+  stroke-width: 3px;
+  height: 100%;
+}
+
+.cls-1 {
+  fill: none;
+  stroke: var(--primary-hud-elements-color);
+  stroke-width: 2px;
+  stroke-miterlimit: 10;
+}
+
+.hud-svg-header,
+.hud-svg-footer {
+  fill: none;
+  stroke: var(--primary-hud-elements-color);
+  stroke-width: 4px;
+  overflow: visible;
+
+  mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 1) 50%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 1) 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
 }
