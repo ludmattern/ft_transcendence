@@ -105,7 +105,7 @@
               class="col-md-7 d-flex flex-column justify-content-around text-center central-window"
             >
               <!-- Login Form -->
-              <div id="login-form">
+              <div id="login-form" class="form-container active">
                 <h5 class="text-white">PILOT IDENTIFICATION - LOG IN</h5>
                 <form action="#" method="post" class="w-100">
                   <div class="form-group">
@@ -141,7 +141,7 @@
               </div>
 
               <!-- Subscribe Form -->
-              <div id="subscribe-form" style="display: none">
+              <div id="subscribe-form" class="form-container">
                 <h5 class="text-white">PILOT IDENTIFICATION - REGISTER</h5>
                 <form action="#" method="post" class="w-100">
                   <div class="form-group">
@@ -219,7 +219,7 @@
               </div>
 
               <!-- Settings Form -->
-              <div id="settings-form" style="display: none">
+              <div id="settings-form" class="form-container">
                 <h5 class="text-white">SETTINGS</h5>
                 <form action="#" method="post" class="w-100">
                   <div class="form-group">
@@ -298,7 +298,7 @@
               </div>
 
               <!-- Delete Account Form -->
-              <div id="delete-account-form" style="display: none">
+              <div id="delete-account-form" class="form-container">
                 <h5 class="text-white mb-4">DELETE ACCOUNT</h5>
                 <p class="text-white">Are you sure you want to delete your account?</p>
                 <p class="text-white">This action is permanent</p>
@@ -309,7 +309,7 @@
               </div>
 
               <!-- Log out Form -->
-              <div id="logout-form" style="display: none">
+              <div id="logout-form" class="form-container">
                 <h5 class="text-white mb-4">LOG OUT</h5>
                 <p class="text-white">Are you sure you want to logout ?</p>
                 <div class="d-flex justify-content-center mt-4">
@@ -321,74 +321,6 @@
             </div>
           </div>
 
-          <script>
-            // JavaScript to toggle forms
-            document
-              .getElementById("enlist-link")
-              .addEventListener("click", function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                document.getElementById("login-form").style.display = "none";
-                document.getElementById("settings-form").style.display = "none";
-                document.getElementById("subscribe-form").style.display = "block";
-                document.getElementById("delete-account-form").style.display = "none";
-                document.getElementById("logout-form").style.display = "none";
-              });
-
-            document
-              .getElementById("login-link")
-              .addEventListener("click", function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                document.getElementById("subscribe-form").style.display = "none";
-                document.getElementById("settings-form").style.display = "none";
-                document.getElementById("login-form").style.display = "block";
-                document.getElementById("delete-account-form").style.display = "none";
-                document.getElementById("logout-form").style.display = "none";
-              });
-            
-            document
-              .getElementById("settings-link")
-              .addEventListener("click", function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                document.getElementById("login-form").style.display = "none";
-                document.getElementById("settings-form").style.display = "block";
-                document.getElementById("subscribe-form").style.display = "none";
-                document.getElementById("delete-account-form").style.display = "none";
-                document.getElementById("logout-form").style.display = "none";
-              });
-
-              document
-              .getElementById("delete-account-link")
-              .addEventListener("click", function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                document.getElementById("login-form").style.display = "none";
-                document.getElementById("settings-form").style.display = "none";
-                document.getElementById("subscribe-form").style.display = "none";
-                document.getElementById("delete-account-form").style.display = "block";
-                document.getElementById("logout-form").style.display = "none";
-              });
-
-              document
-              .getElementById("logout-link")
-              .addEventListener("click", function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                document.getElementById("login-form").style.display = "none";
-                document.getElementById("settings-form").style.display = "none";
-                document.getElementById("subscribe-form").style.display = "none";
-                document.getElementById("delete-account-form").style.display = "none";
-                document.getElementById("logout-form").style.display = "block";
-              });
-
-              document
-              .getElementById("home-link")
-              .addEventListener("click", function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                document.getElementById("login-form").style.display = "none";
-                document.getElementById("settings-form").style.display = "none";
-                document.getElementById("subscribe-form").style.display = "none";
-                document.getElementById("delete-account-form").style.display = "none";
-                document.getElementById("logout-form").style.display = "none";
-              });
-          </script>
 
           <!-- Right Column -->
           <div class="col-md-2-5 d-flex flex-column">
@@ -965,5 +897,6 @@
     </span>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
