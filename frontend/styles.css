@@ -3,10 +3,7 @@ body {
   overflow: hidden;
 }
 
-
-
-.menu2
-{
+.menu2 {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,11 +15,9 @@ body {
   height: 900px;
   width: 1800px;
   border: 10px solid #06b6d4;
-
 }
 
-.menu3
-{
+.menu3 {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,7 +29,6 @@ body {
   height: 950px;
   width: 1150px;
   border: 10px solid #06b6d4;
-
 }
 /* Menu Container */
 .menu-container {
@@ -53,7 +47,6 @@ body {
 
 /* Menu Panel */
 .menu-panel {
-
   height: 1000px;
   width: 1350px;
   background: rgba(17, 25, 40, 0.95);
@@ -213,7 +206,6 @@ body {
 
 .spinnerhead {
   margin: 0;
-  position: fixed;
   top: 0;
   left: 0;
   width: 100vw;

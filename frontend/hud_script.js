@@ -1,58 +1,70 @@
 // Function to handle transitions between forms with animations
 function switchForm(showFormId) {
-    const forms = [
-      "login-form",
-      "subscribe-form",
-      "settings-form",
-      "delete-account-form",
-      "logout-form",
-    ];
-  
-    const navLinks = [
-      "enlist-link",
-      "login-link",
-      "settings-link",
-      "logout-link",
-      "home-link",
-    ];
-  
-    // Hide all forms with animation
-    forms.forEach((formId) => {
-      const form = document.getElementById(formId);
-      if (form) {
-        form.classList.remove("active"); // Remove active class for animation
-        setTimeout(() => {
-          form.style.display = "none"; // Hide form after animation
-        }, 100); // Match the CSS transition duration
-      }
-    });
-  
-    // Remove active class from all nav links
-    navLinks.forEach((linkId) => {
-      const link = document.getElementById(linkId);
-      if (link) {
-        link.classList.remove("active");
-      }
-    });
-  
-    // Show the target form with animation
-    const showForm = document.getElementById(showFormId);
-    if (showForm) {
+  const forms = [
+    "login-form",
+    "subscribe-form",
+    "settings-form",
+    "delete-account-form",
+    "logout-form",
+  ];
+
+  const navLinks = [
+    "enlist-link",
+    "login-link",
+    "settings-link",
+    "logout-link",
+    "home-link",
+  ];
+
+  const centralWindow = document.getElementById("central-window");
+
+  // Hide all forms with animation
+  forms.forEach((formId) => {
+    const form = document.getElementById(formId);
+    if (form) {
+      form.classList.remove("active"); // Remove active class for animation
       setTimeout(() => {
-        showForm.style.display = "block"; // Ensure the form is visible
-        setTimeout(() => showForm.classList.add("active"), 10); // Add active class for animation
-      }, 100);
+        form.style.display = "none"; // Hide form after animation
+      }, 100); // Match the CSS transition duration
     }
-  
-    // Add active class to the corresponding nav link
-    const correspondingLinkId = getLinkIdByForm(showFormId);
-    if (correspondingLinkId) {
-      const activeLink = document.getElementById(correspondingLinkId);
-      if (activeLink) {
-        activeLink.classList.add("active");
-      }
+  });
+
+  // Remove active class from all nav links
+  navLinks.forEach((linkId) => {
+    const link = document.getElementById(linkId);
+    if (link) {
+      link.classList.remove("active");
+    }
+  });
+
+  // Show the target form with animation
+  const showForm = document.getElementById(showFormId);
+  if (showForm) {
+    setTimeout(() => {
+      showForm.style.display = "block"; // Ensure the form is visible
+      setTimeout(() => showForm.classList.add("active"), 10); // Add active class for animation
+    }, 100);
+
+    // Remove d-none class from #central-window if it's hidden
+    if (centralWindow) {
+      centralWindow.classList.remove("d-none");
+    }
+  } else {
+    // Add d-none class to #central-window for home-link
+    if (centralWindow) {
+      centralWindow.classList.add("d-none");
     }
   }
+
+  // Add active class to the corresponding nav link
+  const correspondingLinkId = getLinkIdByForm(showFormId);
+  if (correspondingLinkId) {
+    const activeLink = document.getElementById(correspondingLinkId);
+    if (activeLink) {
+      activeLink.classList.add("active");
+    }
+  }
+}
   
   // Map form IDs to their corresponding nav link IDs
   function getLinkIdByForm(formId) {
