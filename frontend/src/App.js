@@ -76,12 +76,12 @@ let screenObject2;
 let screenObject3;
 
 const skyboxImages = [
-    'src/assets/img/skybox1/right.png',
-    'src/assets/img/skybox1/left.png',
-    'src/assets/img/skybox1/top.png',
-    'src/assets/img/skybox1/bottom.png',
-    'src/assets/img/skybox1/front.png',
-    'src/assets/img/skybox1/back.png'
+    '../src/assets/img/skybox1/right.png',
+    '../src/assets/img/skybox1/left.png',
+    '../src/assets/img/skybox1/top.png',
+    '../src/assets/img/skybox1/bottom.png',
+    '../src/assets/img/skybox1/front.png',
+    '../src/assets/img/skybox1/back.png'
 ];
 
 const loaderr = new THREE.CubeTextureLoader();
@@ -92,7 +92,7 @@ scene.background = skyboxTexture;
 const loader = new GLTFLoader();
 document.getElementById('loading-screen').style.display = 'block';
 loader.load(
-    './src/assets/sn2.glb',
+    '../src/assets/models/starfighter/sn2.glb',
     (gltf) => {
         const model = gltf.scene;
         model.position.set(3.5, -17, -1);
@@ -174,13 +174,13 @@ function addPlanet(position, texturePath, size, ringOptions) {
 
 addPlanet(
     new THREE.Vector3(750, 400, -360), 
-    './src/assets/img/2k_jupiter.jpg', 
+    '../src/assets/img/2k_jupiter.jpg', 
     500, 
     {
         innerRadius: 600, 
         outerRadius: 850, 
         thetaSegments: 64,
-        texturePath: './src/assets/img/uranusringcolour.jpg', 
+        texturePath: '../src/assets/img/uranusringcolour.jpg', 
         opacity: 0.4 
     }
 );
