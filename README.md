@@ -1,75 +1,79 @@
-projet/
+# **Project Structure**
+
+```
+project/
 ├───frontend/
-│   ├───public/                # Contenu statique accessible par le navigateur
-│   │   └───index.html         # Page principale
+│   ├───public/                # Static content accessible by the browser
+│   │   └───index.html         # Main page
 │   │
 │   └───src/
-│       ├───assets/            # Ressources statiques
-│       │   ├───font/          # Polices personnalisées
-│       │   ├───img/           # Images génériques
-│       │   ├───models/        # Modèles 3D spécifiques aux jeux
-│       │   ├───SVG/           # Fichiers SVG vectoriels
-│       │   └───textures/      # Textures pour les jeux
+│       ├───assets/            # Static resources
+│       │   ├───font/          # Custom fonts
+│       │   ├───img/           # Generic images
+│       │   ├───models/        # 3D models specific to the games
+│       │   ├───SVG/           # SVG vector files
+│       │   └───textures/      # Textures for the games
 │       │
-│       ├───components/        # Composants réutilisables
-│       │   ├───UI/            # Boutons, modales, etc.
-│       │   ├───Menu/          # Composants spécifiques aux menus
-│       │   └───Games/         # Composants spécifiques aux jeux
-│       │       ├───Game1/     # Composants du jeu 1
-│       │       └───Game2/     # Composants du jeu 2
+│       ├───components/        # Reusable components
+│       │   ├───UI/            # Buttons, modals, etc.
+│       │   ├───Menu/          # Components specific to menus
+│       │   └───Games/         # Components specific to games
+│       │       ├───Game1/     # Components for game 1
+│       │       └───Game2/     # Components for game 2
 │       │
-│       ├───pages/             # Pages principales
-│       │   ├───Menu/          # Pages de menu
+│       ├───pages/             # Main pages
+│       │   ├───Menu/          # Menu pages
 │       │   │   ├───MainMenu.js
 │       │   │   ├───SettingsMenu.js
 │       │   │   └───CreditsMenu.js
-│       │   ├───Game1/         # Pages liées au jeu 1
+│       │   ├───Game1/         # Pages related to game 1
 │       │   │   ├───Game1Intro.js
 │       │   │   ├───Game1Play.js
 │       │   │   └───Game1Results.js
-│       │   └───Game2/         # Pages liées au jeu 2
+│       │   └───Game2/         # Pages related to game 2
 │       │       ├───Game2Intro.js
 │       │       ├───Game2Play.js
 │       │       └───Game2Results.js
 │       │
-│       ├───services/          # Gestion des appels API
+│       ├───services/          # API management
 │       │   └───api.js
 │       │
-│       ├───hooks/             # Hooks personnalisés
+│       ├───hooks/             # Custom hooks
 │       │   └───useGameLogic.js
 │       │
-│       ├───contexts/          # Contexte global
+│       ├───contexts/          # Global context
 │       │   └───AppContext.js
 │       │
-│       ├───store/             # État global
-│       │   └───gameState.js   # Gestion des états des jeux
+│       ├───store/             # Global state
+│       │   └───gameState.js   # Management of game states
 │       │
-│       ├───styles/             # Dossier principal pour les styles
-│       │   ├───base/           # Styles de base
-│       │   │   ├───reset.css   # Réinitialisation des styles par défaut du navigateur
-│       │   │   ├───variables.css  # Variables globales (couleurs, tailles, etc.)
-│       │   │   ├───mixins.css     # Mixins ou fonctions réutilisables
-│       │   │   └───global.css  # Styles globaux partagés dans tout le projet
+│       ├───styles/             # Main folder for styles
+│       │   ├───base/           # Base styles
+│       │   │   ├───reset.css   # Reset default browser styles
+│       │   │   ├───variables.css  # Global variables (colors, sizes, etc.)
+│       │   │   ├───mixins.css     # Reusable mixins or functions
+│       │   │   └───global.css  # Global styles shared throughout the project
 │       │   │
-│       │   ├───components/     # Styles spécifiques aux composants
-│       │   │   ├───Button.css  # Boutons
-│       │   │   ├───Modal.css   # Modales
+│       │   ├───components/     # Styles specific to components
+│       │   │   ├───Button.css  # Buttons
+│       │   │   ├───Modal.css   # Modals
 │       │   │   └───Header.css  # Header
 │       │   │
-│       │   ├───pages/          # Styles spécifiques aux pages
-│       │   │   ├───Menu.css    # Styles des pages de menu
-│       │   │   ├───Game1.css   # Styles des pages du jeu 1
-│       │   │   └───Game2.css   # Styles des pages du jeu 2
+│       │   ├───pages/          # Styles specific to pages
+│       │   │   ├───Menu.css    # Styles for menu pages
+│       │   │   ├───Game1.css   # Styles for game 1 pages
+│       │   │   └───Game2.css   # Styles for game 2 pages
 │       │   │
-│       │   ├───themes/         # Thèmes personnalisés (si applicable)
-│       │   │   ├───light.css   # Thème clair
-│       │   │   └───dark.css    # Thème sombre
+│       │   ├───themes/         # Custom themes (if applicable)
+│       │   │   ├───light.css   # Light theme
+│       │   │   └───dark.css    # Dark theme
 │       │   │
-│       │   └───index.css       # Point d’entrée pour importer tous les styles
+│       │   └───index.css       # Entry point to import all styles
 │       │
-│       ├───utils/             # Fonctions utilitaires
-│       │   ├───gameUtils.js   # Fonctions spécifiques aux jeux
-│       │   └───menuUtils.js   # Fonctions spécifiques aux menus
+│       ├───utils/             # Utility functions
+│       │   ├───gameUtils.js   # Functions specific to games
+│       │   └───menuUtils.js   # Functions specific to menus
 │       │
-│       ├───App.js             # Point d'entrée principal de l'application
-│       └───index.js           # Entrée principale du projet
+│       ├───App.js             # Main entry point of the application
+│       └───index.js           # Main project entry point
+```
