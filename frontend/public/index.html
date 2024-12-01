@@ -18,9 +18,10 @@
 
     <!-- Fullscreen Container -->
     <div class="hud_screen-effect"></div>
-    <div class="container-fluid">
+    <div id="apps" class="container-fluid"></div>
+      <div class="container-fluid">
       <!-- Header -->
-      <header class="hud-header">
+      <!-- <header class="hud-header">
         <div class="row">
           <div class="col-12 text-center">
             <h1 class="hud-title interactive"><a id="home-link" href="#">ft_transcendence</a></h1>
@@ -66,8 +67,9 @@
             </ul>
           </nav>
         </div>
-      </header>
-
+      </header> -->
+     
+      <header-placeholder></header-placeholder>
       <!-- Main Content -->
       <div class="hud-body">
         <div class="row full-height w-100">
@@ -1028,16 +1030,7 @@
       </svg>
     </span>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="../src/pages/hud/hud.js"></script>
-
-
-
-
-
-
-
-    <!-- FELIX -->
+  <!-- FELIX -->
     <div class="spinnerhead" id="loading-screen">
         <div class="spinner">
             <div></div>
@@ -1348,9 +1341,10 @@
             </div>
         </div>
   
+        <script src="../src/pages/pong/menu.js"></script>
         <script type="module" src="../src/App.js"></script>
-        
-    <script src="../src/pages/pong/menu.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script type="module" src="../src/index.js"></script>
 </body>
 </html>

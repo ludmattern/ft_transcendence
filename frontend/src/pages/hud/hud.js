@@ -45,18 +45,15 @@ function switchForm(showFormId) {
       setTimeout(() => showForm.classList.add("active"), 10); // Add active class for animation
     }, 100);
 
-    // Remove d-none class from #central-window if it's hidden
     if (centralWindow) {
       centralWindow.classList.remove("d-none");
     }
   } else {
-    // Add d-none class to #central-window for home-link
     if (centralWindow) {
       centralWindow.classList.add("d-none");
     }
   }
 
-  // Add active class to the corresponding nav link
   const correspondingLinkId = getLinkIdByForm(showFormId);
   if (correspondingLinkId) {
     const activeLink = document.getElementById(correspondingLinkId);
@@ -114,6 +111,7 @@ function switchForm(showFormId) {
   });
 
   document.addEventListener("DOMContentLoaded", function () {
+    console.debug("Initializing the HUD");
     const expanders = document.querySelectorAll(".side-window-expander");
     const leftSideWindow = document.querySelector('.tab-content');
 

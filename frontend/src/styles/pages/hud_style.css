@@ -433,6 +433,7 @@ button {
 .nav-tabs {
   display: flex;
   gap: 10px;
+  padding-bottom: 0.3rem;
   border-bottom: var(--secondary-hud-elements-color) 2px solid;
 }
 
