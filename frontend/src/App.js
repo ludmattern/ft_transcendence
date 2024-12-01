@@ -12,14 +12,14 @@ import { CSS3DRenderer, CSS3DObject } from 'https://cdn.skypack.dev/three@0.128.
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
-    90,
+    75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1600
+    10000
 );
 
 
-const cameraLight = new THREE.PointLight(0xf2f2f2, 10, 100);
+const cameraLight = new THREE.PointLight(0xf2f2f2, 2, 100);
 cameraLight.position.set(0, 0, 0);
 camera.add(cameraLight);
 scene.add(camera);
@@ -76,12 +76,12 @@ let screenObject2;
 let screenObject3;
 
 const skyboxImages = [
-    '../src/assets/img/skybox1/right.png',
-    '../src/assets/img/skybox1/left.png',
-    '../src/assets/img/skybox1/top.png',
-    '../src/assets/img/skybox1/bottom.png',
-    '../src/assets/img/skybox1/front.png',
-    '../src/assets/img/skybox1/back.png'
+    '../src/assets/img/skybox/right.png',
+    '../src/assets/img/skybox/left.png',
+    '../src/assets/img/skybox/top.png',
+    '../src/assets/img/skybox/bottom.png',
+    '../src/assets/img/skybox/front.png',
+    '../src/assets/img/skybox/back.png'
 ];
 
 const loaderr = new THREE.CubeTextureLoader();
@@ -92,7 +92,7 @@ scene.background = skyboxTexture;
 const loader = new GLTFLoader();
 document.getElementById('loading-screen').style.display = 'block';
 loader.load(
-    '../src/assets/models/starfighter/sn2.glb',
+    '../src/assets/models/sn4.glb',
     (gltf) => {
         const model = gltf.scene;
         model.position.set(3.5, -17, -1);
@@ -100,13 +100,19 @@ loader.load(
         model.scale.set(0.125, 0.125, 0.125);
         model.lookAt(0, 1000, -180)
 
+        model.traverse((child) => {
+            if (child.isMesh) 
+            {
+                child.material.color.multiplyScalar(3);
+                child.material.metalness = 0.2;
+            }
+        });
         scene.add(model);
-        
+
         screenObject1 = model.getObjectByName('_gltfNode_6');
         screenObject2 = model.getObjectByName('_gltfNode_13');
         screenObject3 = model.getObjectByName('_gltfNode_7');
         document.getElementById('loading-screen').style.display = 'none';
-
 
     },
     undefined,
@@ -116,75 +122,113 @@ loader.load(
 );
 
 
+/*
+const saturnConfig = 
+{
+    positionX: 3247,
+    positionY: 2304,
+    positionZ: -3000,
+    rotationX: 86,
+    rotationY: 12,
+    rotationZ: -79,
+    scale: 5,
+};
 
+function loadSaturnModel(modelPath, config) 
+{
+    const loaderr = new GLTFLoader();
 
-const pointLight = new THREE.PointLight(0xffffff, 1.5, 1000);
-pointLight.position.set(0, 750, -160);
-scene.add(pointLight);
+    loaderr.load(
+        modelPath,
+        function (gltf) {
+            const modell = gltf.scene;
 
-const controls = new FlyControls(camera, renderer.domElement);
-controls.movementSpeed = 20;
-controls.rollSpeed = Math.PI / 2;
-controls.dragToLook = true;
+            modell.position.set(config.positionX, config.positionY, config.positionZ);
+            modell.rotation.set(
+                THREE.MathUtils.degToRad(config.rotationX),
+                THREE.MathUtils.degToRad(config.rotationY),
+                THREE.MathUtils.degToRad(config.rotationZ)
+            );
+            modell.scale.set(config.scale, config.scale, config.scale);
 
+            
+            scene.add(modell);
+            document.getElementById('loading-screen').style.display = 'none';
 
-function addPlanet(position, texturePath, size, ringOptions) {
-    const textureLoader = new THREE.TextureLoader();
-
-    const planetTexture = textureLoader.load(texturePath);
-    const planetGeometry = new THREE.SphereGeometry(size, 64, 64);
-    const planetMaterial = new THREE.MeshStandardMaterial({
-        map: planetTexture,
-    });
-    const planet = new THREE.Mesh(planetGeometry, planetMaterial);
-
-    const planetGroup = new THREE.Group();
-    planetGroup.add(planet);
-
-    if (ringOptions) 
-        {
-        const ringGeometry = new THREE.RingGeometry(
-            ringOptions.innerRadius,
-            ringOptions.outerRadius,
-            ringOptions.thetaSegments
-        );
-        ringGeometry.rotateX(Math.PI / 2);
-
-        const ringTexture = textureLoader.load(ringOptions.texturePath);
-        const ringMaterial = new THREE.MeshBasicMaterial({
-            map: ringTexture,
-            side: THREE.DoubleSide,
-            transparent: true,
-            opacity: ringOptions.opacity || 0.8
-        });
-
-        const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-
-        ring.rotation.x = Math.PI / 2 + 0.6;
-        planetGroup.add(ring);
-
-    }
-
-    planetGroup.position.copy(position);
-    scene.add(planetGroup);
-
-    return planetGroup;
+        },
+        function (error) {
+            console.error('Erreur lors du chargement du modèle :', error);
+        }
+    );
 }
 
+loadSaturnModel('../src/assets/models/s3/scene.gltf', saturnConfig);
+*/
 
-addPlanet(
-    new THREE.Vector3(750, 400, -360), 
-    '../src/assets/img/2k_jupiter.jpg', 
-    500, 
-    {
-        innerRadius: 600, 
-        outerRadius: 850, 
-        thetaSegments: 64,
-        texturePath: '../src/assets/img/uranusringcolour.jpg', 
-        opacity: 0.4 
-    }
-);
+/*
+function loadSaturnModel(modelPath, config) {
+    const loaderrr = new GLTFLoader();
 
+    loaderrr.load(
+        modelPath,
+        function (gltf) {
+            const planet = gltf.scene;
+
+            planet.position.set(config.positionX, config.positionY, config.positionZ);
+            planet.rotation.set(
+                THREE.MathUtils.degToRad(config.rotationX),
+                THREE.MathUtils.degToRad(config.rotationY),
+                THREE.MathUtils.degToRad(config.rotationZ)
+            );
+            planet.scale.set(config.scale, config.scale, config.scale);
+
+            planet.traverse((child) => {
+                if (child.isMesh) {
+                    const oldMaterial = child.material;
+
+                    if (oldMaterial.isGLTFSpecularGlossinessMaterial) {
+
+                        const newMaterial = new THREE.MeshStandardMaterial({
+                            map: oldMaterial.map,
+                            color: oldMaterial.color,
+                            metalness: 0.1,
+                            roughness: 0.7,
+                            normalMap: oldMaterial.normalMap,
+                        });
+
+                        child.material = newMaterial;
+                    }
+                }
+            });
+
+            scene.add(planet);
+            document.getElementById('loading-screen').style.display = 'none';
+        },
+        undefined,
+        function (error) {
+            console.error('Erreur lors du chargement du modèle :', error);
+        }
+    );
+}
+
+// Charger le modèle
+loadSaturnModel('../src/assets/models/s2.glb', saturnConfig);*/
+
+const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
+sunLight.position.set(-15000 ,280210.384550551276 ,-9601.008032820177); 
+sunLight.castShadow = true;
+
+sunLight.shadow.mapSize.width = 2048;
+sunLight.shadow.mapSize.height = 2048;
+sunLight.shadow.camera.near = 0.5;
+sunLight.shadow.camera.far = 2000;
+
+scene.add(sunLight);
+
+const controls = new FlyControls(camera, renderer.domElement);
+controls.movementSpeed = 2000;
+controls.rollSpeed = Math.PI / 2;
+controls.dragToLook = true;
 
 
 /*----------------------EVENT HANDLER-------------------------*/
@@ -280,13 +324,13 @@ function animateCameraToTarget(endPosition, endRotation, nb)
 
 
 
-function animateCameraBackToInitialPosition() {
+function animateCameraBackToInitialPosition() 
+{
     const startPosition = camera.position.clone();
     const startQuaternion = camera.quaternion.clone(); 
 
     const endPosition = new THREE.Vector3(0, 0.06275803512326787, 1.9990151147571098); 
     const lookAtTarget = new THREE.Vector3(0, 50, -15);
-
 
     camera.position.copy(endPosition);
     camera.lookAt(lookAtTarget);
@@ -339,9 +383,9 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
 });
 
-function animate() {
+function animate() 
+{
     requestAnimationFrame(animate);
-
     controls.update(0.01);
     renderer.render(scene, camera);
     cssRenderer.render(scene, camera);
