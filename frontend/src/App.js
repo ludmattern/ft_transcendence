@@ -267,6 +267,37 @@ window.addEventListener("click", (event) => {
     }
   }
 });
+
+export function switchwindow(screen)
+{
+    if (screen === null)
+        animateCameraBackToInitialPosition();
+    else if (screen === "pong")
+    {
+        animateCameraToTarget(
+            new THREE.Vector3(
+            -2.559453657498437,
+            3.3453545045816075,
+            -0.7922370317858861
+            ),
+            { x: Math.PI / 3.5, y: Math.PI / 5, z: -Math.PI / -10 },
+            2
+        );
+    }
+    else if (screen === "race")
+    {
+        animateCameraToTarget(
+            new THREE.Vector3(
+              1.9765430745879866,
+              3.434172967891374,
+              -0.9419868064632663
+            ),
+            { x: Math.PI / 3.5, y: Math.PI / -4.5, z: -Math.PI / 9 },
+            3
+          );
+    }
+}
+
 /*----------------------ANIMATON-------------------------*/
 
 function animateCameraToTarget(endPosition, endRotation, nb) {

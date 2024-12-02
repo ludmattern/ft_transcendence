@@ -1,5 +1,7 @@
+import { switchwindow } from "../../App.js";
+
 // Function to handle transitions between forms with animations
-function switchForm(showFormId) {
+export function switchForm(showFormId) {
   const forms = [
     "profile-form",
     "pong-form",
@@ -106,11 +108,13 @@ document.getElementById("profile-link").addEventListener("click", function (e) {
 document.getElementById("pong-link").addEventListener("click", function (e) {
   e.preventDefault();
   switchForm("pong-form");
+  switchwindow("pong");
 });
 
 document.getElementById("race-link").addEventListener("click", function (e) {
   e.preventDefault();
   switchForm("race-form");
+  switchwindow("race");
 });
 
 document.getElementById("social-link").addEventListener("click", function (e) {
@@ -140,4 +144,5 @@ document.getElementById("logout-link").addEventListener("click", function (e) {
 document.getElementById("home-link").addEventListener("click", function (e) {
   e.preventDefault();
   switchForm(null); // No form is shown
+  switchwindow(null);
 });
