@@ -376,7 +376,6 @@ function animate() {
   controls.update(0.01);
   renderer.render(scene, camera);
   cssRenderer.render(scene, camera);
-
   console.log(camera.position.x, camera.position.y, camera.position.z);
 }
 

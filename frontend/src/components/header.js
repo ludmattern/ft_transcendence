@@ -1,64 +1,64 @@
-import { createElement } from '../utils/mini_react.js';
+import { createElement } from "../utils/mini_react.js";
 
 export function Header() {
-  console.debug('creating Header component');
+  console.debug("creating Header component");
   return createElement(
-    'header',
-    { className: 'hud-header' },
+    "header",
+    { className: "hud-header" },
     createElement(
-      'div',
-      { className: 'row' },
+      "div",
+      { className: "row" },
       createElement(
-        'div',
-        { className: 'col-12 text-center' },
+        "div",
+        { className: "col-12 text-center" },
         createElement(
-          'h1',
-          { className: 'hud-title interactive' },
-          createElement('a', { id: 'home-link', href: '#' }, 'ft_transcendence')
+          "h1",
+          { className: "hud-title interactive" },
+          createElement("a", { id: "home-link", href: "#" }, "ft_transcendence")
         )
       )
     ),
     createElement(
-      'div',
-      { className: 'row' },
+      "div",
+      { className: "row" },
       createElement(
-        'nav',
-        { className: 'col-12 d-flex justify-content-center' },
+        "nav",
+        { className: "col-12 d-flex justify-content-center" },
         createElement(
-          'ul',
-          { className: 'nav' },
+          "ul",
+          { className: "nav" },
           // Menu gauche
           createElement(
-            'span',
-            { className: 'left-menu' },
-            createNavItem('profile'),
-            createNavItem('social')
+            "span",
+            { className: "left-menu" },
+            createNavItem("profile", "profile-link"),
+            createNavItem("social", "social-link")
           ),
           // Jeux (Menu central)
           createElement(
-            'li',
-            { className: 'nav-item first-game' },
+            "li",
+            { className: "nav-item first-game" },
             createElement(
-              'span',
-              { className: 'nav-link text-white' },
-              createElement('a', { href: '#' }, 'pong')
+              "span",
+              { className: "nav-link text-white" },
+              createElement("a", { href: "#", id: "pong-link" }, "pong")
             )
           ),
           createElement(
-            'li',
-            { className: 'nav-item second-game' },
+            "li",
+            { className: "nav-item second-game" },
             createElement(
-              'span',
-              { className: 'nav-link text-white' },
-              createElement('a', { href: '#' }, 'race')
+              "span",
+              { className: "nav-link text-white" },
+              createElement("a", { href: "#", id: "race-link" }, "race")
             )
           ),
           // Menu droit
           createElement(
-            'span',
-            { className: 'right-menu' },
-            createNavItem('settings', 'settings-link'),
-            createNavItem('logout', 'logout-link')
+            "span",
+            { className: "right-menu" },
+            createNavItem("settings", "settings-link"),
+            createNavItem("logout", "logout-link")
           )
         )
       )
@@ -73,14 +73,14 @@ export function Header() {
  * @param {string} [id] - L'ID à attribuer à l'élément <a> (facultatif)
  * @returns {HTMLElement} - L'élément <li> créé
  */
-function createNavItem(text, id = '') {
+function createNavItem(text, id = "") {
   return createElement(
-    'li',
-    { className: 'nav-item' },
+    "li",
+    { className: "nav-item" },
     createElement(
-      'span',
-      { className: 'nav-link text-white' },
-      createElement('a', { href: '#', id }, text)
+      "span",
+      { className: "nav-link text-white" },
+      createElement("a", { href: "#", id }, text)
     )
   );
 }
@@ -93,8 +93,8 @@ function createNavItem(text, id = '') {
  */
 function createNavLink(text) {
   return createElement(
-    'span',
-    { className: 'nav-link text-white' },
-    createElement('a', { href: '#' }, text)
+    "span",
+    { className: "nav-link text-white" },
+    createElement("a", { href: "#" }, text)
   );
 }

@@ -523,6 +523,11 @@ button {
   pointer-events: all;
 }
 
+.hud-header a:hover {
+  color: var(--active-menu-color);
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
 .hud-header .active {
   color: var(--active-menu-color);
   text-shadow: -8px 0px 20px var(--active-menu-color),
@@ -541,6 +546,12 @@ button {
   border: 1px solid var(--active-menu-color);
   pointer-events: none;
   transition: border-color 0.2s ease, width 0.2s ease, height 0.2s ease;
+}
+
+.hud-header .first-game .active::after,
+.hud-header .second-game .active::after {
+  left: 40%;
+  width: 19%;
 }
 
 .background-svg .cls-1 {

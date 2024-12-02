@@ -1,6 +1,10 @@
 // Function to handle transitions between forms with animations
 function switchForm(showFormId) {
   const forms = [
+    "profile-form",
+    "pong-form",
+    "race-form",
+    "social-form",
     "login-form",
     "subscribe-form",
     "settings-form",
@@ -9,6 +13,10 @@ function switchForm(showFormId) {
   ];
 
   const navLinks = [
+    "profile-link",
+    "pong-link",
+    "race-link",
+    "social-link",
     "enlist-link",
     "login-link",
     "settings-link",
@@ -62,50 +70,74 @@ function switchForm(showFormId) {
     }
   }
 }
-  
-  // Map form IDs to their corresponding nav link IDs
-  function getLinkIdByForm(formId) {
-    const mapping = {
-      "login-form": "login-link",
-      "subscribe-form": "enlist-link",
-      "settings-form": "settings-link",
-      "delete-account-form": "settings-link", // Delete is part of settings
-      "logout-form": "logout-link",
-    };
-    return mapping[formId] || null; // Return null if no match
-  }
-  
-  // Event listeners for navigation links
-  document.getElementById("enlist-link").addEventListener("click", function (e) {
+
+// Map form IDs to their corresponding nav link IDs
+function getLinkIdByForm(formId) {
+  const mapping = {
+    "profile-form": "profile-link",
+    "pong-form": "pong-link",
+    "race-form": "race-link",
+    "social-form": "social-link",
+    "login-form": "login-link",
+    "subscribe-form": "enlist-link",
+    "settings-form": "settings-link",
+    "delete-account-form": "settings-link", // Delete is part of settings
+    "logout-form": "logout-link",
+  };
+  return mapping[formId] || null; // Return null if no match
+}
+
+// Event listeners for navigation links
+document.getElementById("enlist-link").addEventListener("click", function (e) {
+  e.preventDefault();
+  switchForm("subscribe-form");
+});
+
+document.getElementById("login-link").addEventListener("click", function (e) {
+  e.preventDefault();
+  switchForm("login-form");
+});
+
+document.getElementById("profile-link").addEventListener("click", function (e) {
+  e.preventDefault();
+  switchForm("profile-form");
+});
+
+document.getElementById("pong-link").addEventListener("click", function (e) {
+  e.preventDefault();
+  switchForm("pong-form");
+});
+
+document.getElementById("race-link").addEventListener("click", function (e) {
+  e.preventDefault();
+  switchForm("race-form");
+});
+
+document.getElementById("social-link").addEventListener("click", function (e) {
+  e.preventDefault();
+  switchForm("social-form");
+});
+
+document
+  .getElementById("settings-link")
+  .addEventListener("click", function (e) {
     e.preventDefault();
-    switchForm("subscribe-form");
+    switchForm("settings-form");
   });
-  
-  document.getElementById("login-link").addEventListener("click", function (e) {
+
+document
+  .getElementById("delete-account-link")
+  .addEventListener("click", function (e) {
     e.preventDefault();
-    switchForm("login-form");
+    switchForm("delete-account-form");
   });
-  
-  document
-    .getElementById("settings-link")
-    .addEventListener("click", function (e) {
-      e.preventDefault();
-      switchForm("settings-form");
-    });
-  
-  document
-    .getElementById("delete-account-link")
-    .addEventListener("click", function (e) {
-      e.preventDefault();
-      switchForm("delete-account-form");
-    });
-  
-  document.getElementById("logout-link").addEventListener("click", function (e) {
-    e.preventDefault();
-    switchForm("logout-form");
-  });
-  
-  document.getElementById("home-link").addEventListener("click", function (e) {
-    e.preventDefault();
-    switchForm(null); // No form is shown
-  });
+
+document.getElementById("logout-link").addEventListener("click", function (e) {
+  e.preventDefault();
+  switchForm("logout-form");
+});
+
+document.getElementById("home-link").addEventListener("click", function (e) {
+  e.preventDefault();
+  switchForm(null); // No form is shown
+});
