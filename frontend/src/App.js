@@ -92,7 +92,7 @@ scene.background = skyboxTexture;
 const loader = new GLTFLoader();
 document.getElementById('loading-screen').style.display = 'block';
 loader.load(
-    '../src/assets/models/sn4.glb',
+    '../src/assets/models/sn5.glb',
     (gltf) => {
         const model = gltf.scene;
         model.position.set(3.5, -17, -1);
