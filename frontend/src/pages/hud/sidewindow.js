@@ -35,7 +35,7 @@ observer.observe(leftSideWindow, {
 });
 
 // 4. Tab navigation logic
-const tabLinks = document.querySelectorAll(".nav-link a");
+const tabLinks = document.querySelectorAll(".side-window .nav-link a");
 const tabContentContainer = document.getElementById("tab-content");
 
 tabLinks.forEach((link) => {
