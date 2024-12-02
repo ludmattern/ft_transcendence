@@ -1,31 +1,57 @@
-document.addEventListener("DOMContentLoaded", function () {
-  console.debug("Initializing the HUD");
-  const expanders = document.querySelectorAll(".side-window-expander");
-  const leftSideWindow = document.querySelector(".tab-content");
+console.debug("Initializing the HUD and tab navigation for the side window");
 
-  expanders.forEach(function (expander) {
-    expander.addEventListener("click", function () {
-      this.classList.toggle("active");
-    });
-  });
+// 1. Expander logic for the side window
+const expanders = document.querySelectorAll(".side-window-expander");
+const leftSideWindow = document.querySelector(".tab-content");
 
-  function checkOverflow() {
-    if (leftSideWindow.scrollHeight > leftSideWindow.clientHeight) {
-      leftSideWindow.classList.add("overflow");
-    } else {
-      leftSideWindow.classList.remove("overflow");
-    }
-  }
-
-  checkOverflow();
-
-  const observer = new MutationObserver(() => {
-    checkOverflow(); // Vérifier l'overflow à chaque changement
-  });
-
-  observer.observe(leftSideWindow, {
-    childList: true, // Observe les ajouts/suppressions d'enfants
-    subtree: true, // Observe les changements dans les sous-arbres
-    characterData: true, // Observe les changements dans le texte
+expanders.forEach((expander) => {
+  expander.addEventListener("click", function () {
+    this.classList.toggle("active");
   });
 });
+
+// 2. Function to check overflow in left side window
+function checkOverflow() {
+  if (leftSideWindow.scrollHeight > leftSideWindow.clientHeight) {
+    leftSideWindow.classList.add("overflow");
+  } else {
+    leftSideWindow.classList.remove("overflow");
+  }
+}
+
+checkOverflow();
+
+// 3. Observe changes in the left side window for overflow updates
+const observer = new MutationObserver(() => {
+  checkOverflow();
+});
+
+observer.observe(leftSideWindow, {
+  childList: true,
+  subtree: true,
+  characterData: true,
+});
+
+// 4. Tab navigation logic
+const tabLinks = document.querySelectorAll(".nav-link a");
+const tabContentContainer = document.getElementById("tab-content");
+
+tabLinks.forEach((link) => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    const tabName = link.getAttribute("data-tab");
+
+    // Set the clicked tab as active
+    tabLinks.forEach((tabLink) => {
+      tabLink.parentElement.classList.remove("active");
+    });
+    link.parentElement.classList.add("active");
+
+    // Load the corresponding tab content
+    loadTabContent(tabName, tabContentContainer);
+  });
+});
+
+// Load the initial tab (INFO) on page load
+loadTabContent("info", tabContentContainer);

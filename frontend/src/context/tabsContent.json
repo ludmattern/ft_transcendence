@@ -1,0 +1,13 @@
+{
+	"info": [
+	  { "inviter": "LOSSALOS", "actions": true },
+	  { "inviter": "SPACE_RANGERS", "actions": true },
+	  { "inviter": "ALIEN_ALLIANCE", "actions": false }
+	],
+	"comm": [
+	  { "inviter": "GALACTIC_FIGHTERS", "actions": true },
+	  { "inviter": "ASTEROID_DEFENSE", "actions": true },
+	  { "inviter": "STAR_CRUISERS", "actions": false }
+	]
+  }
+  
