@@ -64,7 +64,6 @@ function createPanelItem(inviter, hasActions = false) {
   );
 }
 
-// Generates the entire side window with tabs
 export function SideWindow() {
   return createElement(
     "div",
@@ -90,6 +89,37 @@ export function SideWindow() {
         )
       )
     ),
+    // Add a button to add notifications
+    createElement(
+      "div",
+      { className: "add-notification-btn-container" },
+      createElement(
+        "button",
+        {
+          className: "btn btn-primary",
+          id: "add-notification-button",
+          onclick: () => {
+            const container = document.getElementById("tab-content");
+            addPanelItem(container, "NEW_INVITER_NAME", true);
+          },
+        },
+        "Add Notification"
+      )
+    ),
     createElement("div", { className: "tab-content", id: "tab-content" })
   );
+}
+
+export function addPanelItem(container, inviter, actions = true) {
+  // Create the new panel item using the inviter and actions values
+  const newPanelItem = createPanelItem(inviter, actions);
+
+  // Insert the new panel item before the delimiter
+  const delimiter = container.firstChild;
+  if (delimiter) {
+    container.insertBefore(newPanelItem, delimiter);
+  } else {
+    // If there is no delimiter, just append the new panel item to the container
+    container.appendChild(newPanelItem);
+  }
 }
