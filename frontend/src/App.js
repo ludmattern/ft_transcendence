@@ -50,16 +50,23 @@ menuObject.position.set(-0.2, 6.6, -1.75);
 menuObject.rotation.set(-5.2, 0, 0);
 menuObject.scale.set(0.002, 0.002, 0.002);
 menuElement.style.display = "none";
+let menuElement2;
+let menuObject2;
+export function initializeMenuElements() {
+  menuElement2 = document.getElementById("menu2");
+  if (!menuElement2) {
+    console.error("L'élément avec ID 'menu2' n'a pas été trouvé.");
+    return;
+  }
+  menuElement2.style.pointerEvents = "auto";
 
-const menuElement2 = document.getElementById("menu2");
-menuElement2.style.pointerEvents = "auto";
+  menuObject2 = new CSS3DObject(menuElement2);
 
-const menuObject2 = new CSS3DObject(menuElement2);
-
-menuObject2.position.set(-3.5, 4.5, -1.8);
-menuObject2.rotation.set(-5.2, 0.65, 0.2);
-menuObject2.scale.set(0.002, 0.002, 0.002);
-menuElement2.style.display = "none";
+  menuObject2.position.set(-3.5, 4.5, -1.8);
+  menuObject2.rotation.set(-5.2, 0.65, 0.2);
+  menuObject2.scale.set(0.002, 0.002, 0.002);
+  menuElement2.style.display = "none";
+}
 
 const menuElement3 = document.getElementById("menu3");
 menuElement3.style.pointerEvents = "auto";
@@ -381,13 +388,17 @@ function animateCameraBackToInitialPosition() {
   });
 }
 
+document.addEventListener('backButtonClicked', () => {
+  console.log('backButtonClicked event received');
+  animateCameraBackToInitialPosition();
+});
 const backButtons = document.querySelectorAll(".back");
 backButtons.forEach((button) => {
   button.addEventListener("click", () => {
+    console.log('back');
     animateCameraBackToInitialPosition();
   });
 });
-
 /*----------------------ANIMATE-------------------------*/
 
 window.addEventListener("resize", () => {

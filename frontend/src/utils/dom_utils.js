@@ -1,4 +1,6 @@
 // modules.js
+
+
 /**
  * Mapping of module names to their respective file paths for dynamic import.
  * This allows for centralized management of module paths.
@@ -6,6 +8,8 @@
 export const modules = {
   hud: "../pages/hud/hud.js", // Path to the HUD module
   sidewindow: "../pages/hud/sidewindow.js", // Path to the sidewindow module
+  pongmenu: "../pages/pong/menu.js", 
+
 };
 
 /**
