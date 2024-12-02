@@ -14,8 +14,8 @@ function createNavItem(label, active = false) {
 }
 
 // Function to dynamically load content into tabs
-function loadTabContent(tabName, container) {
-  fetch("../data/tabsContent.json")
+export function loadTabContent(tabName, container) {
+  fetch("../src/context/tabsContent.json")
     .then((response) => response.json())
     .then((data) => {
       const tabItems = data[tabName];
