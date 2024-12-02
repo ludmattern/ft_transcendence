@@ -458,6 +458,11 @@ button {
   background-color: transparent;
 }
 
+.side-window .nav-tabs a:hover {
+  color: var(--active-menu-color);
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
 .side-window .nav-tabs .active > a {
   background-color: transparent;
   color: var(--active-menu-color);
@@ -475,12 +480,24 @@ button {
   height: 300px;
 }
 
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .panel-item {
   padding: 10px 15px;
   border-bottom: 1px dotted var(--secondary-hud-elements-color);
   font-weight: var(--content-font-weight);
   color: var(--content-color);
   overflow-wrap: break-word;
+  animation: fadeIn 0.3s ease-in-out;
 }
 
 .side-window .btn {
@@ -601,15 +618,15 @@ button {
   margin: 4px auto;
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
-  background-color: var(--active-menu-color);
+  background-color: var(--menu-color);
 }
 
 .side-window-expander:hover {
   cursor: pointer;
 }
 
-#l-sw-expander.active .line {
-  background-color: var(--menu-color);
+.side-window-expander:hover .line {
+  background-color: var(--active-menu-color);
 }
 
 #l-sw-expander.active .line:nth-child(1) {

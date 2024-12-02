@@ -1,26 +1,6 @@
 {
 	"info": [
 	  { "inviter": "LOSSALOS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
-	  { "inviter": "SPACE_RANGERS", "actions": true },
 	  { "inviter": "ALIEN_ALLIANCE", "actions": false }
 	],
 	"comm": [
