@@ -376,8 +376,7 @@ function animate() {
   controls.update(0.01);
   renderer.render(scene, camera);
   cssRenderer.render(scene, camera);
-  modell.rotation.y += 0.0001;
-  modell.rotation.x += 0.0001;
+
   console.log(camera.position.x, camera.position.y, camera.position.z);
 }
 
