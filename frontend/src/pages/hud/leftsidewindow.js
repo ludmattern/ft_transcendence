@@ -1,14 +1,17 @@
-import { loadTabContent } from "../../components/sidewindow.js";
+import { loadTabContent } from "../../components/leftSideWindow.js";
+import { addPanelItem } from "../../components/leftSideWindow.js";
 
 console.debug("Initializing the HUD and tab navigation for the side window");
 
 // 1. Expander logic for the side window
-const expanders = document.querySelectorAll(".side-window-expander");
-const leftSideWindow = document.querySelector(".tab-content");
+const expanders = document.querySelectorAll(".left-side-window-expander");
+const leftSideWindow = document.querySelector(".l-tab-content");
 
 expanders.forEach((expander) => {
   expander.addEventListener("click", function () {
     this.classList.toggle("active");
+    // Toggle the visibility of the left-side window content
+    leftSideWindow.classList.toggle("well-hidden");
   });
 });
 
@@ -35,8 +38,8 @@ observer.observe(leftSideWindow, {
 });
 
 // 4. Tab navigation logic
-const tabLinks = document.querySelectorAll(".side-window .nav-link a");
-const tabContentContainer = document.getElementById("tab-content");
+const tabLinks = document.querySelectorAll(".l-side-window .nav-link a");
+const tabContentContainer = document.getElementById("l-tab-content");
 
 tabLinks.forEach((link) => {
   link.addEventListener("click", (event) => {
@@ -61,6 +64,6 @@ loadTabContent("info", tabContentContainer);
 document
   .getElementById("add-notification-button")
   .addEventListener("click", () => {
-    const container = document.getElementById("tab-content");
+    const container = document.getElementById("l-tab-content");
     addPanelItem(container, "NEW_INVITER_NAME", true);
   });

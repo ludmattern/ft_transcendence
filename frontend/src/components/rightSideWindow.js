@@ -64,10 +64,10 @@ function createPanelItem(inviter, hasActions = false) {
   );
 }
 
-export function SideWindow() {
+export function RightSideWindow() {
   return createElement(
     "div",
-    { className: "side-window left-side-window" },
+    { className: "r-side-window right-side-window" },
     createElement(
       "ul",
       { className: "nav nav-tabs" },
@@ -81,10 +81,10 @@ export function SideWindow() {
           { className: "container" },
           createElement(
             "div",
-            { className: "side-window-expander active", id: "l-sw-expander" },
-            createElement("span", { className: "line" }),
-            createElement("span", { className: "line" }),
-            createElement("span", { className: "line" })
+            { className: "right-side-window-expander active", id: "r-sw-expander" },
+            createElement("span", { className: "r-line" }),
+            createElement("span", { className: "r-line" }),
+            createElement("span", { className: "r-line" })
           )
         )
       )
@@ -99,14 +99,14 @@ export function SideWindow() {
           className: "btn btn-primary",
           id: "add-notification-button",
           onclick: () => {
-            const container = document.getElementById("tab-content");
+            const container = document.getElementById("r-tab-content");
             addPanelItem(container, "NEW_INVITER_NAME", true);
           },
         },
         "Add Notification"
       )
     ),
-    createElement("div", { className: "tab-content", id: "tab-content" })
+    createElement("div", { className: "r-tab-content", id: "r-tab-content" })
   );
 }
 

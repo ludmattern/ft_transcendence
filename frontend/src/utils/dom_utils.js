@@ -6,7 +6,8 @@
  */
 export const modules = {
   hud: "../pages/hud/hud.js", // Path to the HUD module
-  sidewindow: "../pages/hud/sidewindow.js", // Path to the sidewindow module
+  leftsidewindow: "../pages/hud/leftsidewindow.js", // Path to the sidewindow module
+  rightsidewindow: "../pages/hud/rightsidewindow.js", // Path to the sidewindow module
   pongmenu: "../pages/pong/menu.js",
 };
 
