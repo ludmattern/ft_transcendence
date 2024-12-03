@@ -1,4 +1,5 @@
 import { createElement } from "../utils/mini_react.js";
+import { switchwindow } from "../App.js";
 
 const menuStructure = {
     'main-menu': null,
@@ -82,19 +83,21 @@ function MenuButton({ iconClass, text, onClick }) {
   );
 }
 
-// Option Select Component
-function OptionSelect({ labelText, options }) {
+
+
+function OptionSelect({ id, labelText, options }) {
   return createElement(
     'div',
     { className: 'mb-4' },
-    createElement('label', { className: 'form-label text-cyan' }, labelText),
+    createElement('label', { className: 'form-label text-cyan', htmlFor: id }, labelText),
     createElement(
       'select',
-      { className: 'space-select form-select' },
-      ...options.map((option) => createElement('option', {}, option))
+      { className: 'space-select form-select', id: id },
+      ...options.map((option) => createElement('option', { value: option }, option))
     )
   );
 }
+
 
 // Main Menu Component
 function MainMenu() {
@@ -237,7 +240,21 @@ function TournamentMenu() {
   );
 }
 
-// Create Tournament Menu Component
+function handleCreateTournament() {
+  const nameInput = document.getElementById('tournament-name-input');
+  const playerCountSelect = document.getElementById('tournament-player-count');
+
+  if (nameInput && playerCountSelect) {
+    const tournamentName = nameInput.value;
+    const playerCount = playerCountSelect.value;
+    console.log('Creating tournament with settings:');
+    console.log('Tournament Name:', tournamentName);
+    console.log('Player Count:', playerCount);
+  } else {
+    console.error('Input or select not found for Create Tournament Menu');
+  }
+}
+
 function CreateTournamentMenu() {
   return createElement(
     'div',
@@ -245,38 +262,36 @@ function CreateTournamentMenu() {
     createElement(
       'div',
       { className: 'mb-4' },
-      createElement('label', { className: 'form-label text-cyan' }, 'Tournament name'),
+      createElement('label', { className: 'form-label text-cyan', htmlFor: 'tournament-name-input' }, 'Tournament Name'),
       createElement('input', {
         type: 'text',
+        id: 'tournament-name-input',
         className: 'space-input form-control',
         placeholder: 'Enter tournament name',
       })
     ),
+    OptionSelect({ id: 'tournament-player-count', labelText: 'Player Count', options: ['4', '8', '16'] }),
+    createElement(
+      'button',
+      {
+        className: 'space-btn w-100',
+        onClick: () => handleCreateTournament(),
+      },
+      'Create Tournament'
+    ),
     createElement(
       'div',
-      { className: 'mb-4' },
-      createElement('label', { className: 'form-label text-cyan' }, 'Player count'),
+      { id: 'back-button', className: 'mt-4' },
       createElement(
-        'select',
-        { className: 'space-select form-select' },
-        createElement('option', {}, '4'),
-        createElement('option', {}, '8'),
-        createElement('option', {}, '16')
+        'button',
+        { className: 'back-btn', onClick: () => goBack() },
+        createElement('i', { className: 'bi bi-arrow-left' }),
+        ' Back'
       )
-    ),
-    createElement('button', { className: 'space-btn w-100' }, 'Create Tournament'),
-    createElement(
-        'div',
-        { id: 'back-button', className: 'mt-4' },
-        createElement(
-          'button',
-          { className: 'back-btn', onClick: () => goBack() },
-          createElement('i', { className: 'bi bi-arrow-left' }),
-          ' Back'
-        )
-      )
+    )
   );
 }
+
 
 // Join Tournament Menu Component
 function JoinTournamentMenu() {
@@ -322,16 +337,35 @@ function JoinTournamentMenu() {
   );
 }
 
+function handleSoloLaunch() {
+  const mapSelect = document.getElementById('solo-map-select');
+  const difficultySelect = document.getElementById('solo-difficulty-select');
+
+  if (mapSelect && difficultySelect) {
+    const selectedMap = mapSelect.value;
+    const selectedDifficulty = difficultySelect.value;
+    console.log('Launching solo game with settings:');
+    console.log('Map:', selectedMap);
+    console.log('Difficulty:', selectedDifficulty);
+    switchwindow("game");
+  } else {
+    console.error('Select elements not found');
+  }
+}
+
 // Solo Menu Component
 function SoloMenu() {
   return createElement(
     'div',
     { id: 'solo-menu', className: 'menu-section hidden' },
-    OptionSelect({ labelText: 'Select a map', options: ['Mars', 'Pluton', 'Orgasme'] }),
-    OptionSelect({ labelText: 'Difficulty', options: ['Easy', 'Medium', 'Hard'] }),
+    OptionSelect({id: 'solo-map-select', labelText: 'Select a map', options: ['Mars', 'Pluton', 'Orgasme'] }),
+    OptionSelect({ id: 'solo-difficulty-select', labelText: 'Difficulty', options: ['Easy', 'Medium', 'Hard'] }),
     createElement(
       'button',
-      { className: 'space-btn w-100' },
+      { className: 'space-btn w-100',
+        onClick: () => handleSoloLaunch(),
+      },
+
       createElement('i', { className: 'bi bi-rocket' }),
       ' Launch'
     ),
@@ -398,25 +432,51 @@ function MultiplayerMenu() {
 }
 
 // Local Menu Component
+function handleLocalLaunch() {
+  const gamemodeSelect = document.getElementById('local-gamemode-select');
+  const mapSelect = document.getElementById('local-map-select');
+
+  if (gamemodeSelect && mapSelect) {
+    const selectedGamemode = gamemodeSelect.value;
+    const selectedMap = mapSelect.value;
+    console.log('Launching local game with settings:');
+    console.log('Gamemode:', selectedGamemode);
+    console.log('Map:', selectedMap);
+    switchwindow("game");
+
+  } else {
+    console.error('Select elements not found for Local Menu');
+  }
+}
+
+// Local Menu Component
 function LocalMenu() {
   return createElement(
     'div',
     { id: 'local-menu', className: 'menu-section hidden' },
-    OptionSelect({ labelText: 'Gamemode', options: ['1 vs 1', '2 vs 2'] }),
-    OptionSelect({ labelText: 'Map', options: ['Mars', 'Pluton', 'Orgasme'] }),
-    createElement('button', { className: 'space-btn w-100' }, 'Launch'),
+    OptionSelect({ id: 'local-gamemode-select', labelText: 'Gamemode', options: ['1 vs 1', '2 vs 2'] }),
+    OptionSelect({ id: 'local-map-select', labelText: 'Map', options: ['Mars', 'Pluton', 'Orgasme'] }),
     createElement(
-        'div',
-        { id: 'back-button', className: 'mt-4' },
-        createElement(
-          'button',
-          { className: 'back-btn', onClick: () => goBack() },
-          createElement('i', { className: 'bi bi-arrow-left' }),
-          ' Back'
-        )
+      'button',
+      {
+        className: 'space-btn w-100',
+        onClick: () => handleLocalLaunch(),
+      },
+      'Launch'
+    ),
+    createElement(
+      'div',
+      { id: 'back-button', className: 'mt-4' },
+      createElement(
+        'button',
+        { className: 'back-btn', onClick: () => goBack() },
+        createElement('i', { className: 'bi bi-arrow-left' }),
+        ' Back'
       )
+    )
   );
 }
+
 
 // Private Menu Component
 function PrivateMenu() {
@@ -463,22 +523,42 @@ function PrivateMenu() {
 }
 
 // Matchmaking Menu Component
+function handleMatchmakingLaunch() {
+  const gamemodeSelect = document.getElementById('matchmaking-gamemode-select');
+
+  if (gamemodeSelect) {
+    const selectedGamemode = gamemodeSelect.value;
+    console.log('Searching for a game with settings:');
+    console.log('Gamemode:', selectedGamemode);
+    switchwindow("game");
+  } else {
+    console.error('Select element not found for Matchmaking Menu');
+  }
+}
+
 function MatchmakingMenu() {
   return createElement(
     'div',
     { id: 'matchmaking-menu', className: 'menu-section hidden' },
-    OptionSelect({ labelText: 'Gamemode', options: ['1 vs 1', '2 vs 2'] }),
-    createElement('button', { className: 'space-btn w-100' }, 'Find a game'),
+    OptionSelect({ id: 'matchmaking-gamemode-select', labelText: 'Gamemode', options: ['1 vs 1', '2 vs 2'] }),
     createElement(
-        'div',
-        { id: 'back-button', className: 'mt-4' },
-        createElement(
-          'button',
-          { className: 'back-btn', onClick: () => goBack() },
-          createElement('i', { className: 'bi bi-arrow-left' }),
-          ' Back'
-        )
+      'button',
+      {
+        className: 'space-btn w-100',
+        onClick: () => handleMatchmakingLaunch(),
+      },
+      'Find a game'
+    ),
+    createElement(
+      'div',
+      { id: 'back-button', className: 'mt-4' },
+      createElement(
+        'button',
+        { className: 'back-btn', onClick: () => goBack() },
+        createElement('i', { className: 'bi bi-arrow-left' }),
+        ' Back'
       )
+    )
   );
 }
 

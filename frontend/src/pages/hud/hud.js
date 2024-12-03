@@ -143,6 +143,6 @@ document.getElementById("logout-link").addEventListener("click", function (e) {
 
 document.getElementById("home-link").addEventListener("click", function (e) {
   e.preventDefault();
-  switchForm(null); // No form is shown
+  switchForm(null);
   switchwindow(null);
 });
