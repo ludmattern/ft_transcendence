@@ -67,46 +67,53 @@ function createPanelItem(inviter, hasActions = false) {
 export function RightSideWindow() {
   return createElement(
     "div",
-    { className: "r-side-window right-side-window" },
-    createElement(
-      "ul",
-      { className: "nav nav-tabs" },
-      createNavItem("INFO", true),
-      createNavItem("COMM", false),
-      createElement(
-        "li",
-        { className: "nav-item" },
-        createElement(
-          "div",
-          { className: "container" },
-          createElement(
-            "div",
-            { className: "right-side-window-expander active", id: "r-sw-expander" },
-            createElement("span", { className: "r-line" }),
-            createElement("span", { className: "r-line" }),
-            createElement("span", { className: "r-line" })
-          )
-        )
-      )
-    ),
-    // Add a button to add notifications
+    { className: "col-md-2-5 d-flex flex-column" },
     createElement(
       "div",
-      { className: "add-notification-btn-container" },
+      { className: "r-side-window right-side-window" },
       createElement(
-        "button",
-        {
-          className: "btn btn-primary",
-          id: "add-notification-button",
-          onclick: () => {
-            const container = document.getElementById("r-tab-content");
-            addPanelItem(container, "NEW_INVITER_NAME", true);
+        "ul",
+        { className: "nav nav-tabs" },
+        createNavItem("INFO", true),
+        createNavItem("COMM", false),
+        createElement(
+          "li",
+          { className: "nav-item" },
+          createElement(
+            "div",
+            { className: "container" },
+            createElement(
+              "div",
+              {
+                className: "right-side-window-expander active",
+                id: "r-sw-expander",
+              },
+              createElement("span", { className: "r-line" }),
+              createElement("span", { className: "r-line" }),
+              createElement("span", { className: "r-line" })
+            )
+          )
+        )
+      ),
+      // Add a button to add notifications
+      createElement(
+        "div",
+        { className: "add-notification-btn-container" },
+        createElement(
+          "button",
+          {
+            className: "btn btn-primary",
+            id: "r-add-notification-button",
+            onclick: () => {
+              const container = document.getElementById("r-tab-content");
+              addPanelItem(container, "NEW_INVITER_NAME", true);
+            },
           },
-        },
-        "Add Notification"
-      )
-    ),
-    createElement("div", { className: "r-tab-content", id: "r-tab-content" })
+          "Add Notification"
+        )
+      ),
+      createElement("div", { className: "r-tab-content", id: "r-tab-content" })
+    )
   );
 }
 

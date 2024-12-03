@@ -62,7 +62,7 @@ tabLinks.forEach((link) => {
 loadTabContent("info", tabContentContainer);
 
 document
-  .getElementById("add-notification-button")
+  .getElementById("l-add-notification-button")
   .addEventListener("click", () => {
     const container = document.getElementById("l-tab-content");
     addPanelItem(container, "NEW_INVITER_NAME", true);
