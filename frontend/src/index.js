@@ -4,8 +4,8 @@ import { SideWindow } from "./components/sidewindow.js";
 import { loadComponent } from "./utils/dom_utils.js";
 import { PongMenu } from "./components/pongMenu.js";
 import { initializeMenuElements } from "./App.js";
-// import { HUDSVG } from "./components/HUDSVG.js";
 import { HelmetSVG } from "./components/HelmetSVG.js";
+import { HUDSVG } from "./components/HUDSVG.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.debug("Injecting header component and loading associated script");
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("left window are fully loaded and initialized");
   });
 
-//   loadComponent("helmet-svg-placeholder", HelmetSVG, "", () => {
-//     console.log("helmet svg components are fully loaded and initialized");
-//   });
+  loadComponent("hud-svg-placeholder", HUDSVG, "", () => {
+    console.log("helmet svg components are fully loaded and initialized");
+  });
 });
