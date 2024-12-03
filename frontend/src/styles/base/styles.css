@@ -223,8 +223,8 @@ body {
   animation: spinner-y0fdc1 2.8s infinite ease;
   transform-style: preserve-3d;
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 30%;
+  left: 48%;
 }
 
 .spinner > div {
