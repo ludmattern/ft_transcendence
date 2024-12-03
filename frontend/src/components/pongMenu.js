@@ -1,4 +1,5 @@
 import { createElement } from "../utils/mini_react.js";
+import { switchwindow } from "../App.js";
 
 const menuStructure = {
     'main-menu': null,
@@ -292,36 +293,7 @@ function CreateTournamentMenu() {
 }
 
 
-function handleJoinTournament(tournamentName) 
-{
-  console.log(`Joining tournament: ${tournamentName}`);
-}
-
-
-function renderTournamentList() {
-  return tournaments.map(tournament =>
-    createElement(
-      'div',
-      { className: 'tournament-item' },
-      createElement(
-        'div',
-        {},
-        createElement('span', { className: 'tournament-name' }, tournament.name),
-        createElement('span', { className: 'tournament-details' }, tournament.details)
-      ),
-      createElement(
-        'button',
-        {
-          className: 'space-btn-small',
-          onClick: () => handleJoinTournament(tournament.name),
-        },
-        'Join'
-      )
-    )
-  );
-}
-
-
+// Join Tournament Menu Component
 function JoinTournamentMenu() {
   return createElement(
     'div',
@@ -329,22 +301,41 @@ function JoinTournamentMenu() {
     createElement(
       'div',
       { className: 'tournament-list' },
-      ...renderTournamentList()
+      createElement(
+        'div',
+        { className: 'tournament-item' },
+        createElement(
+          'div',
+          {},
+          createElement('span', { className: 'tournament-name' }, 'Interstellar'),
+          createElement('span', { className: 'tournament-details' }, '16 Players')
+        ),
+        createElement('button', { className: 'space-btn-small' }, 'Join')
+      ),
+      createElement(
+        'div',
+        { className: 'tournament-item' },
+        createElement(
+          'div',
+          {},
+          createElement('span', { className: 'tournament-name' }, 'StarsCraft'),
+          createElement('span', { className: 'tournament-details' }, '8 players')
+        ),
+        createElement('button', { className: 'space-btn-small' }, 'Join')
+      )
     ),
     createElement(
-      'div',
-      { id: 'back-button', className: 'mt-4' },
-      createElement(
-        'button',
-        { className: 'back-btn', onClick: () => goBack() },
-        createElement('i', { className: 'bi bi-arrow-left' }),
-        ' Back'
+        'div',
+        { id: 'back-button', className: 'mt-4' },
+        createElement(
+          'button',
+          { className: 'back-btn', onClick: () => goBack() },
+          createElement('i', { className: 'bi bi-arrow-left' }),
+          ' Back'
+        )
       )
-    )
   );
 }
-
-
 
 function handleSoloLaunch() {
   const mapSelect = document.getElementById('solo-map-select');
@@ -356,7 +347,7 @@ function handleSoloLaunch() {
     console.log('Launching solo game with settings:');
     console.log('Map:', selectedMap);
     console.log('Difficulty:', selectedDifficulty);
-
+    switchwindow("game");
   } else {
     console.error('Select elements not found');
   }
@@ -451,6 +442,8 @@ function handleLocalLaunch() {
     console.log('Launching local game with settings:');
     console.log('Gamemode:', selectedGamemode);
     console.log('Map:', selectedMap);
+    switchwindow("game");
+
   } else {
     console.error('Select elements not found for Local Menu');
   }
@@ -537,7 +530,7 @@ function handleMatchmakingLaunch() {
     const selectedGamemode = gamemodeSelect.value;
     console.log('Searching for a game with settings:');
     console.log('Gamemode:', selectedGamemode);
-    // Ici, ajoutez la logique pour démarrer le matchmaking avec ce paramètre
+    switchwindow("game");
   } else {
     console.error('Select element not found for Matchmaking Menu');
   }

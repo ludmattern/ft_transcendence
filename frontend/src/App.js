@@ -135,7 +135,7 @@ const saturnConfig = {
   rotationZ: -79,
   scale: 5,
 };
-
+/*
 let modell;
 
 function loadSaturnModel(modelPath, config) {
@@ -164,7 +164,7 @@ function loadSaturnModel(modelPath, config) {
 
 loadSaturnModel("../src/assets/models/saturn.glb", saturnConfig);
 
-/*
+*/
 function loadSaturnModel(modelPath, config) {
     const loaderrr = new GLTFLoader();
 
@@ -182,23 +182,31 @@ function loadSaturnModel(modelPath, config) {
             planet.scale.set(config.scale, config.scale, config.scale);
 
             planet.traverse((child) => {
-                if (child.isMesh) {
-                    const oldMaterial = child.material;
-
-                    if (oldMaterial.isGLTFSpecularGlossinessMaterial) {
-
-                        const newMaterial = new THREE.MeshStandardMaterial({
-                            map: oldMaterial.map,
-                            color: oldMaterial.color,
-                            metalness: 0.1,
-                            roughness: 0.7,
-                            normalMap: oldMaterial.normalMap,
-                        });
-
-                        child.material = newMaterial;
-                    }
-                }
-            });
+              if (child.isMesh) {
+                  const oldMaterial = child.material;
+          
+                  if (oldMaterial.isGLTFSpecularGlossinessMaterial) {
+                      const newMaterial = new THREE.MeshStandardMaterial({
+                          map: oldMaterial.map,
+                          color: oldMaterial.color,
+                          metalness: 0.1,
+                          roughness: 0.7,
+                          normalMap: oldMaterial.normalMap,
+                          emissive: oldMaterial.emissive,
+                          emissiveMap: oldMaterial.emissiveMap,
+                          emissiveIntensity: oldMaterial.emissiveIntensity,
+                          alphaMap: oldMaterial.alphaMap,
+                          transparent: oldMaterial.transparent,
+                          opacity: oldMaterial.opacity,
+                          side: oldMaterial.side,
+                          envMap: oldMaterial.envMap,
+                          lightMap: oldMaterial.lightMap,
+                          lightMapIntensity: oldMaterial.lightMapIntensity,
+                      });
+                      child.material = newMaterial;
+                  }
+              }
+          });
 
             scene.add(planet);
             document.getElementById('loading-screen').style.display = 'none';
@@ -211,7 +219,7 @@ function loadSaturnModel(modelPath, config) {
 }
 
 // Charger le modèle
-loadSaturnModel('../src/assets/models/s2.glb', saturnConfig);*/
+loadSaturnModel('../src/assets/models/saturn.glb', saturnConfig);
 
 const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
 sunLight.position.set(-15000, 280210.384550551276, -9601.008032820177);
@@ -296,6 +304,14 @@ export function switchwindow(screen) {
       ),
       { x: Math.PI / 3.5, y: Math.PI / -4.5, z: -Math.PI / 9 },
       3
+    );
+  }
+  else if (screen === "game")
+  {
+    animateCameraToTarget(
+      new THREE.Vector3(-0.2, 5.257378802731586, -0.8900580859235202),
+      { x: Math.PI / 3, y: 0, z: 0 },
+      1
     );
   }
 }
