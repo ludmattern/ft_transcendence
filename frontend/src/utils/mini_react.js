@@ -16,7 +16,11 @@ const effectsQueue = new Set();
  * const div = createElement('div', { className: 'container' }, 'Content');
  */
 export function createElement(type, props = {}, ...children) {
-    const element = document.createElement(type);
+    // Determine if the element is an SVG element or not
+    const isSVG = ['svg', 'path', 'circle', 'rect', 'line', 'polygon', 'polyline', 'g', 'defs', 'linearGradient', 'radialGradient', 'stop'].includes(type);
+    const element = isSVG 
+        ? document.createElementNS('http://www.w3.org/2000/svg', type) 
+        : document.createElement(type);
 
     // Add attributes or event listeners
     for (const [key, value] of Object.entries(props)) {
