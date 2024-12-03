@@ -183,28 +183,51 @@ function PlayMenu() {
   );
 }
 
-// Tournament Menu Component
+async function fetchTournaments() 
+{
+  try {
+    const response = await fetch('../src/context/tournaments.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const tournaments = await response.json();
+    return tournaments;
+  } catch (error) {
+    console.error('Failed to fetch tournaments:', error);
+    return []; 
+  }
+}
+
+function renderTournamentList(tournaments) {
+  return tournaments.map((tournament) =>
+    createElement(
+      'div',
+      { className: 'tournament-item' },
+      createElement('span', { className: 'tournament-name' }, tournament.name),
+      createElement('span', { className: 'player-count' }, tournament.players)
+    )
+  );
+}
+
 function TournamentMenu() {
+  const tournamentListContainer = createElement(
+    'div',
+    { className: 'tournament-list mb-4' },
+    createElement('h3', { className: 'text-cyan mb-4' }, 'Current Tournament')
+  );
+
+  // Charger les tournois et les ajouter dynamiquement
+  fetchTournaments().then((tournaments) => {
+    const tournamentItems = renderTournamentList(tournaments);
+    tournamentItems.forEach((item) => {
+      tournamentListContainer.appendChild(item);
+    });
+  });
+
   return createElement(
     'div',
     { id: 'tournament-menu', className: 'menu-section hidden' },
-    createElement(
-      'div',
-      { className: 'tournament-list mb-4' },
-      createElement('h3', { className: 'text-cyan mb-4' }, 'Current Tournament'),
-      createElement(
-        'div',
-        { className: 'tournament-item' },
-        createElement('span', {}, 'Galactique Championship'),
-        createElement('span', { className: 'player-count' }, '8/16 Players')
-      ),
-      createElement(
-        'div',
-        { className: 'tournament-item' },
-        createElement('span', {}, 'Ligue Spatiale S1'),
-        createElement('span', { className: 'player-count' }, '4/8 Players')
-      )
-    ),
+    tournamentListContainer,
     createElement(
       'div',
       { className: 'row g-4' },
@@ -228,17 +251,18 @@ function TournamentMenu() {
       )
     ),
     createElement(
-        'div',
-        { id: 'back-button', className: 'mt-4' },
-        createElement(
-          'button',
-          { className: 'back-btn', onClick: () => goBack() },
-          createElement('i', { className: 'bi bi-arrow-left' }),
-          ' Back'
-        )
+      'div',
+      { id: 'back-button', className: 'mt-4' },
+      createElement(
+        'button',
+        { className: 'back-btn', onClick: () => goBack() },
+        createElement('i', { className: 'bi bi-arrow-left' }),
+        ' Back'
       )
+    )
   );
 }
+
 
 function handleCreateTournament() {
   const nameInput = document.getElementById('tournament-name-input');
