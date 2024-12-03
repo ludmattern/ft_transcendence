@@ -207,7 +207,6 @@ function loadSaturnModel(modelPath, config) {
                   }
               }
           });
-
             scene.add(planet);
             document.getElementById('loading-screen').style.display = 'none';
         },
