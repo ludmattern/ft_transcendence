@@ -89,6 +89,7 @@ export function RightSideWindow() {
                 id: "r-sw-expander",
               },
               createElement("span", { className: "r-line" }),
+
               createElement("span", { className: "r-line" }),
               createElement("span", { className: "r-line" })
             )

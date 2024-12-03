@@ -15,13 +15,23 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("HUD and Header components are fully loaded and initialized");
   });
 
-  loadComponent("left-window-placeholder", LeftSideWindow, "leftsidewindow", () => {
-    console.log("left window are fully loaded and initialized");
-  });
+  loadComponent(
+    "left-window-placeholder",
+    LeftSideWindow,
+    "leftsidewindow",
+    () => {
+      console.log("left window are fully loaded and initialized");
+    }
+  );
 
-  loadComponent("right-window-placeholder", RightSideWindow, "rightsidewindow", () => {
-    console.log("right window are fully loaded and initialized");
-  });
+  loadComponent(
+    "right-window-placeholder",
+    RightSideWindow,
+    "rightsidewindow",
+    () => {
+      console.log("right window are fully loaded and initialized");
+    }
+  );
 
   loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {
     console.log("Pong Menu is fully loaded and initialized");
