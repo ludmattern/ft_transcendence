@@ -188,12 +188,34 @@ button {
   bottom: 0px;
   right: 0px;
 }
+
+.svg-bottom-right .br-1 {
+  fill: url(#brg1);
+}
+
+.svg-bottom-right .br-2 {
+  fill: url(#brg2);
+}
+
+.svg-bottom-right .br-3 {
+  fill: #010101;
+}
+
+.svg-bottom-right .br-4 {
+  fill: url(#brg3);
+}
+
 .svg-bottom-center {
   bottom: 0px;
   left: 50%;
   height: 35px;
   width: 550px;
   transform: translate(-50%, 0);
+}
+
+.helmet-svg {
+  position: absolute;
+  z-index: 9999999;
 }
 
 .helmet-svg .tl-1,
@@ -477,7 +499,7 @@ button {
 /* Tab Content */
 .tab-content {
   overflow: auto;
-  height: 300px;
+  height: 20vh;
 }
 
 @keyframes fadeIn {

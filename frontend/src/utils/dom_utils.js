@@ -1,6 +1,5 @@
 // modules.js
 
-
 /**
  * Mapping of module names to their respective file paths for dynamic import.
  * This allows for centralized management of module paths.
@@ -8,8 +7,7 @@
 export const modules = {
   hud: "../pages/hud/hud.js", // Path to the HUD module
   sidewindow: "../pages/hud/sidewindow.js", // Path to the sidewindow module
-  pongmenu: "../pages/pong/menu.js", 
-
+  pongmenu: "../pages/pong/menu.js",
 };
 
 /**
@@ -68,6 +66,9 @@ export function replacePlaceholder(placeholderTag, component, callback) {
  */
 export function loadComponentScript(moduleName, callback) {
   // Get the file path of the module from the modules object
+  if (moduleName === "") {
+    return;
+  }
   const modulePath = modules[moduleName];
 
   // If the module is not found, log an error and return
