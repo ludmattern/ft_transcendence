@@ -629,7 +629,11 @@ function back() {
   return createElement(
     "div",
     { className: "background-sc1" },
-    null
+    createElement (
+      "div",
+      {className: "pong"},
+      "PONG"
+    )
   );
 }
 
@@ -669,14 +673,12 @@ export function Menu() {
     createElement(
       "div",
       { className: `alternative-content` },
-      back() // If you have a specific background or content
+      back() 
     ),
     createElement(
       "div",
       { className: `menu-panel` },
-      // Add components specific to 'menu' here
       MenuTitle("Main Menu"),
-      // Include any other components or elements you need
     )
   );
 }
