@@ -625,14 +625,27 @@ function MatchmakingMenu() {
   );
 }
 
-// Pong Menu Component (Main Component)
+function back() {
+  return createElement(
+    "div",
+    { className: "background-sc1" },
+    null
+  );
+}
+
+
 export function PongMenu() {
   return createElement(
     "div",
-    { className: "menu-container", id: "menu2" },
+    { className: `menu-container`, id: "menu2" },
     createElement(
       "div",
-      { className: "menu-panel" },
+      { className: `alternative-content` },
+      back()
+    ),
+    createElement(
+      "div",
+      { className: `menu-panel` },
       MenuTitle("Space Pong"),
       MainMenu(),
       PlayMenu(),
@@ -644,6 +657,26 @@ export function PongMenu() {
       LocalMenu(),
       PrivateMenu(),
       MatchmakingMenu()
+    )
+  );
+}
+
+
+export function Menu() {
+  return createElement(
+    "div",
+    { className: `menu2`, id: "menu" },
+    createElement(
+      "div",
+      { className: `alternative-content` },
+      back() // If you have a specific background or content
+    ),
+    createElement(
+      "div",
+      { className: `menu-panel` },
+      // Add components specific to 'menu' here
+      MenuTitle("Main Menu"),
+      // Include any other components or elements you need
     )
   );
 }

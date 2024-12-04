@@ -41,6 +41,7 @@ cssRenderer.domElement.style.pointerEvents = "none";
 
 document.getElementById("app").appendChild(cssRenderer.domElement);
 
+
 const menuElement = document.getElementById("menu");
 menuElement.style.pointerEvents = "auto";
 
@@ -50,23 +51,34 @@ menuObject.position.set(-0.2, 6.6, -1.75);
 menuObject.rotation.set(-5.2, 0, 0);
 menuObject.scale.set(0.002, 0.002, 0.002);
 menuElement.style.display = "none";
+menuElement.classList.add("active");
+
+
+
 let menuElement2;
 let menuObject2;
-export function initializeMenuElements() {
+
+export function initializeMenuElements() 
+{
+
   menuElement2 = document.getElementById("menu2");
   if (!menuElement2) {
-    console.error("L'élément avec ID 'menu2' n'a pas été trouvé.");
+    console.error("The element with ID 'menu2' was not found.");
     return;
   }
   menuElement2.style.pointerEvents = "auto";
 
   menuObject2 = new CSS3DObject(menuElement2);
-
   menuObject2.position.set(-3.5, 4.5, -1.8);
   menuObject2.rotation.set(-5.2, 0.65, 0.2);
   menuObject2.scale.set(0.002, 0.002, 0.002);
   menuElement2.style.display = "none";
+  menuElement2.classList.add("active");
 }
+
+
+
+
 
 const menuElement3 = document.getElementById("menu3");
 menuElement3.style.pointerEvents = "auto";
@@ -77,6 +89,8 @@ menuObject3.position.set(3.1, 4.5, -1.85);
 menuObject3.rotation.set(-5.2, -0.6, -0.2);
 menuObject3.scale.set(0.002, 0.002, 0.002);
 menuElement3.style.display = "none";
+menuElement3.classList.add("active");
+
 
 let onScreen = false;
 let screenObject1;
@@ -96,13 +110,14 @@ const loaderr = new THREE.CubeTextureLoader();
 const skyboxTexture = loaderr.load(skyboxImages);
 
 scene.background = skyboxTexture;
+let model;
 
 const loader = new GLTFLoader();
 document.getElementById("loading-screen").style.display = "block";
 loader.load(
   "../src/assets/models/sn5.glb",
   (gltf) => {
-    const model = gltf.scene;
+    model = gltf.scene;
     model.position.set(3.5, -17, -1);
     model.rotation.set(0, 0, 0);
     model.scale.set(0.125, 0.125, 0.125);
@@ -135,43 +150,15 @@ const saturnConfig = {
   rotationZ: -79,
   scale: 5,
 };
-/*
-let modell;
 
-function loadSaturnModel(modelPath, config) {
-  const loaderr = new GLTFLoader();
-
-  loaderr.load(
-    modelPath,
-    function (gltf) {
-      modell = gltf.scene;
-
-      modell.position.set(config.positionX, config.positionY, config.positionZ);
-      modell.rotation.set(
-        THREE.MathUtils.degToRad(config.rotationX),
-        THREE.MathUtils.degToRad(config.rotationY),
-        THREE.MathUtils.degToRad(config.rotationZ)
-      );
-      modell.scale.set(config.scale, config.scale, config.scale);
-      scene.add(modell);
-      document.getElementById("loading-screen").style.display = "none";
-    },
-    function (error) {
-      console.error("Erreur lors du chargement du modèle :", error);
-    }
-  );
-}
-
-loadSaturnModel("../src/assets/models/saturn.glb", saturnConfig);
-
-*/
+let planet;
 function loadSaturnModel(modelPath, config) {
     const loaderrr = new GLTFLoader();
 
     loaderrr.load(
         modelPath,
         function (gltf) {
-            const planet = gltf.scene;
+            planet = gltf.scene;
 
             planet.position.set(config.positionX, config.positionY, config.positionZ);
             planet.rotation.set(
@@ -207,6 +194,10 @@ function loadSaturnModel(modelPath, config) {
                   }
               }
           });
+            scene.add(menuObject2)
+            scene.add(menuObject)
+            scene.add(menuObject3)
+
             scene.add(planet);
             document.getElementById('loading-screen').style.display = 'none';
         },
@@ -232,7 +223,7 @@ sunLight.shadow.camera.far = 2000;
 scene.add(sunLight);
 
 const controls = new FlyControls(camera, renderer.domElement);
-controls.movementSpeed = 2000;
+controls.movementSpeed = 20;
 controls.rollSpeed = Math.PI / 2;
 controls.dragToLook = true;
 
@@ -339,21 +330,27 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
   controls.enabled = false;
 
   const dummy = { t: 0 };
-
   gsap.to(dummy, {
     duration: 2,
     t: 1,
     ease: "power2.inOut",
     onUpdate: function () {
+
       const t = dummy.t;
       camera.position.lerpVectors(startPosition, endPosition, t);
       camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, t);
     },
     onComplete: function () {
       controls.enabled = true;
-      if (nb == 1) scene.add(menuObject);
-      else if (nb == 2) scene.add(menuObject2);
-      else if (nb == 3) scene.add(menuObject3);
+      if (nb == 1) 
+        menuElement.classList.remove("active");  
+      else if (nb == 2)
+      {
+        menuElement2.classList.remove("active");  
+      } 
+      else if (nb == 3) 
+        menuElement3.classList.remove("active");  
+
     },
   });
 
@@ -379,6 +376,9 @@ function animateCameraBackToInitialPosition() {
   camera.quaternion.copy(startQuaternion);
 
   controls.enabled = false;
+  menuElement2.classList.add("active");     
+  menuElement.classList.add("active");     
+  menuElement3.classList.add("active");     
 
   const dummy = { t: 0 };
   gsap.to(dummy, {
@@ -395,9 +395,6 @@ function animateCameraBackToInitialPosition() {
       camera.quaternion.copy(endQuaternion);
       controls.enabled = true;
 
-      scene.remove(menuObject);
-      scene.remove(menuObject2);
-      scene.remove(menuObject3);
       onScreen = false;
     },
   });
@@ -423,7 +420,9 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
 });
 
+
 function animate() {
+
   requestAnimationFrame(animate);
   controls.update(0.01);
   renderer.render(scene, camera);

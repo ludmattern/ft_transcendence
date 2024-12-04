@@ -2,13 +2,27 @@ body {
   background-color: rgb(0, 0, 0);
   overflow: hidden;
 }
+.menu3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(17, 25, 40, 1);
+  backdrop-filter: blur(4px);
+  margin: 0;
+  padding: 0;
+  height: 950px;
+  width: 1150px;
+  border: 10px solid #06b6d4;
+}
+
 
 .menu2 {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(17, 25, 40, 1);
   backdrop-filter: blur(4px);
   margin: 0;
   padding: 0;
@@ -17,19 +31,113 @@ body {
   border: 10px solid #06b6d4;
 }
 
-.menu3 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(4px);
-  margin: 0;
-  padding: 0;
-  height: 950px;
-  width: 1150px;
-  border: 10px solid #06b6d4;
+
+.menu2 .row.mt-3, .wait2 {
+  position: absolute; 
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
+
+.menu2.active .row.mt-3 {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.menu2.active .wait2 {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.menu2 .row.mt-3 {
+  opacity: 1;
+  
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.menu2 .wait2 {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+
+
+@keyframes anime-dvd {
+  15% {
+     top: 71%;
+     left: 45%;
+  }
+  30% {
+    top: 40%;
+     left: 80%;
+  }
+
+  45% {
+     top: 0%;
+     left: 50%;
+
+  }
+
+  60% {
+     top: 60%;
+     left: 0%;
+
+  }
+
+  75% {
+     top: 71%;
+     left: 30%;
+
+  }
+
+  90% {
+     top: 40%;
+     left: 80%;
+
+
+  }
+
+  100% {
+     top: 10%;
+     left: 0;
+  }
+}
+  
+img {
+  position: relative; 
+
+  top: 0;
+  left: 0;
+  filter: invert(1);
+  animation: anime-dvd 20s forwards infinite alternate-reverse linear;
+}
+
+.menu3 .row.mt-3  {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 2s ease-in-out, visibility 0.5s ease-in-out;
+}
+
+.menu3 .wait {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 2s ease-in-out, visibility 0.5s ease-in-out;
+}
+
+.menu3.active .row.mt-3{
+  opacity: 0;
+  visibility: hidden;
+}
+
+ .menu3.active .wait {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Menu Container */
 .menu-container {
   font-family: "Orbitron", sans-serif;
@@ -44,6 +152,36 @@ body {
   height: 1000px;
   width: 1350px;
 }
+
+.background-sc1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 10px solid #06b6d4;
+
+  background: rgba(17, 25, 40, 1);
+  background-size: 200% 200%;
+}
+
+
+
+.alternative-content {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 2s ease-in-out, visibility 0.5s ease-in-out;
+}
+
+.menu-container.active .alternative-content {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 2s ease-in-out, visibility 0.5s ease-in-out;
+
+}
+
+
+
 
 /* Menu Panel */
 .menu-panel {
@@ -276,3 +414,6 @@ body {
     transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
   }
 }
+
+
+
