@@ -37,231 +37,244 @@
               class="col-md-11 d-flex flex-column justify-content-around text-center central-window"
             >
               <!-- Login Form -->
-              <div id="login-form" class="form-container active flex-column justify-content-around text-center">
+              <div
+                id="login-form"
+                class="form-container active flex-column justify-content-around text-center"
+              >
                 <h5>PILOT IDENTIFICATION - LOG IN</h5>
-                <form action="#" method="post" class="w-100">
-                  <div class="form-group">
-                    <label for="pilot-id">ID</label>
-                    <input
-                      type="text"
-                      id="pilot-id"
-                      name="pilot-id"
-                      class="form-control"
-                      required
-                    />
+                <span class="background-central-span">
+                  <form action="#" method="post" class="w-100">
+                    <div class="form-group">
+                      <label for="pilot-id">ID</label>
+                      <input
+                        type="text"
+                        id="pilot-id"
+                        name="pilot-id"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="password">Password</label>
+                      <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <button class="btn bi bi-check">accept</button>
+                  </form>
+                  <div>
+                    <span
+                      ><p>
+                        New pilot ?
+                        <a href="#" id="enlist-link" class="text-info"
+                          >Enlist</a
+                        >
+                      </p>
+                    </span>
                   </div>
-                  <div class="form-group">
-                    <label for="password">Password</label>
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      class="form-control"
-                      required
-                    />
-                  </div>
-                  <button type="submit" class="btn btn-primary btn-block">
-                    Submit
-                  </button>
-                </form>
-                <div>
-                  <span
-                    >New pilot ?
-                    <a href="#" id="enlist-link" class="text-info">Enlist</a>
-                  </span>
-                </div>
+                </span>
                 <span class="panel-end"></span>
               </div>
 
               <!-- Subscribe Form -->
               <div id="subscribe-form" class="form-container">
                 <h5>PILOT IDENTIFICATION - REGISTER</h5>
-                <form action="#" method="post" class="w-100">
-                  <div class="form-group">
-                    <label for="new-pilot-id">ID</label>
-                    <input
-                      type="text"
-                      id="new-pilot-id"
-                      name="new-pilot-id"
-                      class="form-control"
-                      required
-                    />
+                <span class="background-central-span">
+                  <form action="#" method="post" class="w-100">
+                    <div class="form-group">
+                      <label for="new-pilot-id">ID</label>
+                      <input
+                        type="text"
+                        id="new-pilot-id"
+                        name="new-pilot-id"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="new-password">Password</label>
+                      <input
+                        type="password"
+                        id="new-password"
+                        name="new-password"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="confirm-password">Confirm Password</label>
+                      <input
+                        type="password"
+                        id="confirm-password"
+                        name="confirm-password"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="email">Email</label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="confirm-email">Confirm Email</label>
+                      <input
+                        type="email"
+                        id="confirm-email"
+                        name="confirm-email"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="language">Language</label>
+                      <select
+                        id="language"
+                        name="language"
+                        class="form-control"
+                        required
+                      >
+                        <option value="french">French</option>
+                        <option value="english">English</option>
+                        <option value="german">German</option>
+                      </select>
+                    </div>
+                    <button type="submit" class="btn btn-block">
+                      Register
+                    </button>
+                  </form>
+                  <div>
+                    <span
+                      ><p>
+                        Already flown ?
+                        <a href="#" id="login-link" class="text-info">Log In</a>
+                      </p>
+                    </span>
                   </div>
-                  <div class="form-group">
-                    <label for="new-password">Password</label>
-                    <input
-                      type="password"
-                      id="new-password"
-                      name="new-password"
-                      class="form-control"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="confirm-password">Confirm Password</label>
-                    <input
-                      type="password"
-                      id="confirm-password"
-                      name="confirm-password"
-                      class="form-control"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="email">Email</label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      class="form-control"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="confirm-email">Confirm Email</label>
-                    <input
-                      type="email"
-                      id="confirm-email"
-                      name="confirm-email"
-                      class="form-control"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="language">Language</label>
-                    <select
-                      id="language"
-                      name="language"
-                      class="form-control"
-                      required
-                    >
-                      <option value="french">French</option>
-                      <option value="english">English</option>
-                      <option value="german">German</option>
-                    </select>
-                  </div>
-                  <button type="submit" class="btn btn-success btn-block">
-                    Register
-                  </button>
-                </form>
-                <div>
-                  <span
-                    >Already flown ?
-                    <a href="#" id="login-link" class="text-info">Log In</a>
-                  </span>
-                </div>
-                <span class="panel-end"></span>
+                  <span class="panel-end"></span>
+                </span>
               </div>
 
               <!-- Settings Form -->
               <div id="settings-form" class="form-container">
                 <h5>SETTINGS</h5>
-                <form action="#" method="post" class="w-100">
-                  <div class="form-group">
-                    <label for="old-password">Old password</label>
-                    <input
-                      type="password"
-                      id="old-password"
-                      name="old-password"
-                      class="form-control"
-                      required
-                    />
+                <span class="background-central-span">
+                  <form action="#" method="post" class="w-100">
+                    <div class="form-group">
+                      <label for="old-password">Old password</label>
+                      <input
+                        type="password"
+                        id="old-password"
+                        name="old-password"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="new-password">New Password</label>
+                      <input
+                        type="password"
+                        id="new-password"
+                        name="new-password"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="confirm-new-password"
+                        >Confirm new password</label
+                      >
+                      <input
+                        type="password"
+                        id="confirm-new-password"
+                        name="confirm-new-password"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="email">New Email</label>
+                      <input
+                        type="email"
+                        id="new-email"
+                        name="new-email"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="confirm-new-email">Confirm new Email</label>
+                      <input
+                        type="email"
+                        id="confirm-new-email"
+                        name="confirm-new-email"
+                        class="form-control"
+                        required
+                      />
+                    </div>
+                    <div class="form-group">
+                      <label for="language">Language</label>
+                      <select
+                        id="language"
+                        name="language"
+                        class="form-control"
+                        required
+                      >
+                        <option value="french">French</option>
+                        <option value="english">English</option>
+                        <option value="german">German</option>
+                      </select>
+                    </div>
+					<button class="btn bi bi-arrow-repeat"> update</button>
+                  </form>
+                  <div>
+                    <span
+                      ><p>
+                        Delete Account ?
+                        <a href="#" id="delete-account-link" class="text-info"
+                          >resign</a
+                        >
+                      </p>
+                    </span>
                   </div>
-                  <div class="form-group">
-                    <label for="new-password">New Password</label>
-                    <input
-                      type="password"
-                      id="new-password"
-                      name="new-password"
-                      class="form-control"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="confirm-new-password"
-                      >Confirm new password</label
-                    >
-                    <input
-                      type="password"
-                      id="confirm-new-password"
-                      name="confirm-new-password"
-                      class="form-control"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="email">New Email</label>
-                    <input
-                      type="email"
-                      id="new-email"
-                      name="new-email"
-                      class="form-control"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="confirm-new-email">Confirm new Email</label>
-                    <input
-                      type="email"
-                      id="confirm-new-email"
-                      name="confirm-new-email"
-                      class="form-control"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="language">Language</label>
-                    <select
-                      id="language"
-                      name="language"
-                      class="form-control"
-                      required
-                    >
-                      <option value="french">French</option>
-                      <option value="english">English</option>
-                      <option value="german">German</option>
-                    </select>
-                  </div>
-                  <button type="submit" class="btn btn-success btn-block">
-                    Update
-                  </button>
-                </form>
-                <div>
-                  <span
-                    >Delete Account ?
-                    <a href="#" id="delete-account-link" class="text-info"
-                      >resign</a
-                    >
-                  </span>
-                </div>
-                <span class="panel-end"></span>
+                  <span class="panel-end"></span>
+                </span>
               </div>
 
               <!-- Delete Account Form -->
               <div id="delete-account-form" class="form-container">
-                <h5 class="mb-4">DELETE ACCOUNT</h5>
-                <p>Are you sure you want to delete your account?</p>
-                <p>This action is permanent</p>
-                <div class="d-flex justify-content-center mt-4">
-                  <button class="btn btn-secondary me-2" id="confirm-delete">
-                    No
-                  </button>
-                  <button class="btn btn-danger" id="cancel-delete">Yes</button>
-                </div>
-                <span class="panel-end"></span>
+                <h5>DELETE ACCOUNT</h5>
+                <span class="background-central-span">
+                  <p>Are you sure you want to delete your account?</p>
+                  <p>This action is permanent</p>
+                  <div class="d-flex justify-content-center">
+                    <button class="btn bi bi-x" id="confirm-delete">No</button>
+                    <button class="btn bi bi-check" id="cancel-delete">Yes</button>
+                  </div>
+                  <span class="panel-end"></span>
+                </span>
               </div>
 
               <!-- Log out Form -->
               <div id="logout-form" class="form-container">
-                <h5 class="mb-4">LOG OUT</h5>
-                <p>Are you sure you want to logout ?</p>
-                <div class="d-flex justify-content-center mt-4">
-                  <button class="btn btn-secondary me-2" id="confirm-delete">
-                    No
-                  </button>
-                  <button class="btn btn-danger" id="cancel-delete">Yes</button>
-                </div>
-                <span class="panel-end"></span>
+                <h5>LOG OUT</h5>
+                <span class="background-central-span">
+                  <p>Are you sure you want to logout ?</p>
+                  <div class="d-flex justify-content-center">
+					<button class="btn bi bi-x" id="confirm-delete">No</button>
+                    <button class="btn bi bi-check" id="cancel-delete">Yes</button>
+                  </div>
+                  <span class="panel-end"></span>
+                </span>
               </div>
             </div>
           </div>
@@ -323,7 +336,6 @@
         <div class="race">RACE</div>
       </div>
     </div>
-
 
     <mid-placeholder></mid-placeholder>
 

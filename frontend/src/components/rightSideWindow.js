@@ -103,7 +103,7 @@ export function RightSideWindow() {
         createElement(
           "button",
           {
-            className: "btn btn-primary",
+            className: "btn",
             id: "r-add-notification-button",
             onclick: () => {
               const container = document.getElementById("r-tab-content");

@@ -102,7 +102,7 @@ export function LeftSideWindow() {
         createElement(
           "button",
           {
-            className: "btn btn-primary",
+            className: "btn",
             id: "l-add-notification-button",
             onclick: () => {
               const container = document.getElementById("l-tab-content");
