@@ -130,7 +130,7 @@ img {
   backdrop-filter: blur(4px);
   margin: 0;
   padding: 0;
-  height: 1000px;
+  height: 1050px;
   width: 1350px;
 }
 
@@ -163,7 +163,7 @@ img {
 
 /* Menu Panel */
 .menu-panel {
-  height: 1000px;
+  height: 1050px;
   width: 1350px;
   background: rgba(17, 25, 40, 0.95);
   border: 10px solid #06b6d4;

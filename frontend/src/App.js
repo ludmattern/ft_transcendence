@@ -78,8 +78,8 @@ export function initM1()
   menuElement2.style.pointerEvents = "auto";
 
   menuObject2 = new CSS3DObject(menuElement2);
-  menuObject2.position.set(-3.5, 4.5, -1.8);
-  menuObject2.rotation.set(-5.2, 0.65, 0.2);
+  menuObject2.position.set(-3.6, 4.6, -1.8);
+  menuObject2.rotation.set(-5.2, 0.63, 0.2);
   menuObject2.scale.set(0.002, 0.002, 0.002);
   menuElement2.style.display = "none";
 }
@@ -98,6 +98,7 @@ export function initM3 () {
   menuObject3.rotation.set(-5.2, -0.6, -0.2);
   menuObject3.scale.set(0.002, 0.002, 0.002);
   menuElement3.style.display = "none";
+  menuElement3.classList.add("active");
 }
 
 
@@ -266,7 +267,7 @@ window.addEventListener("click", (event) => {
           3.434172967891374,
           -0.9419868064632663
         ),
-        { x: Math.PI / 3.5, y: Math.PI / -4.5, z: -Math.PI / 9 },
+        { x: Math.PI / 3.2, y: Math.PI / -5.5, z: -Math.PI / 12 },
         3
       );
     } else if (intersects3.length > 0) {
@@ -276,7 +277,7 @@ window.addEventListener("click", (event) => {
           3.3453545045816075,
           -0.7922370317858861
         ),
-        { x: Math.PI / 3.5, y: Math.PI / 5, z: -Math.PI / -10 },
+        { x: Math.PI / 3.2, y: Math.PI / 5.5, z: -Math.PI / -12 },
         2
       );
     }
@@ -292,7 +293,7 @@ export function switchwindow(screen) {
         3.3453545045816075,
         -0.7922370317858861
       ),
-      { x: Math.PI / 3.5, y: Math.PI / 5, z: -Math.PI / -10 },
+      { x: Math.PI / 3.2, y: Math.PI / 5.5, z: -Math.PI / -12 },
       2
     );
   } else if (screen === "race") {
@@ -302,7 +303,7 @@ export function switchwindow(screen) {
         3.434172967891374,
         -0.9419868064632663
       ),
-      { x: Math.PI / 3.5, y: Math.PI / -4.5, z: -Math.PI / 9 },
+      { x: Math.PI / 3.2, y: Math.PI / -5.5, z: -Math.PI / 12 },
       3
     );
   }
