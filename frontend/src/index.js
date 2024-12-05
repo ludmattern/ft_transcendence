@@ -7,6 +7,7 @@ import { PongMenu } from "./components/pongMenu.js";
 import { midScreen } from "./components/midScreen.js";
 import { HelmetSVG } from "./components/HelmetSVG.js";
 import { HUDSVG } from "./components/HUDSVG.js";
+import { game2 } from "./components/game2.js";
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -16,7 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadComponent("right-window-placeholder", RightSideWindow, "rightsidewindow", () => {});
 
-  loadComponent("mid-placeholder", midScreen, "pongmenu", () => {  });
+  loadComponent("race-placeholder", game2, "", () => {  });
+
+  loadComponent("mid-placeholder", midScreen, "", () => {  });
 
   loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {  });
 

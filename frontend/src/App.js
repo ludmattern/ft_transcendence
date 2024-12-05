@@ -44,7 +44,7 @@ document.getElementById("app").appendChild(cssRenderer.domElement);
 let menuElement;  
 let menuObject;
 
-export function initm2()
+export function initM2()
 {
 
   menuElement = document.getElementById("gameScreen");  
@@ -64,13 +64,10 @@ export function initm2()
 }
 
 
-
-
-
 let menuElement2;
 let menuObject2;
 
-export function initializeMenuElements() 
+export function initM1() 
 {
 
   menuElement2 = document.getElementById("menu2");
@@ -90,18 +87,21 @@ export function initializeMenuElements()
 
 
 
+let menuObject3;
+let menuElement3;
 
+export function initM3 () {
 
-const menuElement3 = document.getElementById("menu3");
-menuElement3.style.pointerEvents = "auto";
+  menuElement3 = document.getElementById("menu3");
+  menuObject3 = new CSS3DObject(menuElement3);
+  menuElement3.style.pointerEvents = "auto";
+  menuObject3.position.set(3.1, 4.5, -1.85);
+  menuObject3.rotation.set(-5.2, -0.6, -0.2);
+  menuObject3.scale.set(0.002, 0.002, 0.002);
+  menuElement3.style.display = "none";
+  menuElement3.classList.add("active");
+}
 
-const menuObject3 = new CSS3DObject(menuElement3);
-
-menuObject3.position.set(3.1, 4.5, -1.85);
-menuObject3.rotation.set(-5.2, -0.6, -0.2);
-menuObject3.scale.set(0.002, 0.002, 0.002);
-menuElement3.style.display = "none";
-menuElement3.classList.add("active");
 
 
 let onScreen = false;

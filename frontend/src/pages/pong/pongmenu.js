@@ -1,6 +1,6 @@
 
-import { initm2 } from "../../App.js";
-import { initializeMenuElements } from "../../App.js";
+import { initM2, initM3, initM1 } from "../../App.js";
 
-initm2();
-initializeMenuElements();
+initM1();
+initM2();
+initM3();

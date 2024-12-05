@@ -51,7 +51,7 @@ function goBack() {
 }
 
 // Back Button Component
-function BackButton() {
+export function BackButton() {
   return createElement(
     "button",
     {
