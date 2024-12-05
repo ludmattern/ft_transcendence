@@ -728,3 +728,62 @@ button {
 .well-hidden {
   visibility: hidden;
 }
+
+.form-container h5 {
+  color: var(--content-color);
+  font-weight: 500;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0;
+  padding-top: 0.2rem;
+}
+
+.form-group {
+  margin: 1rem 0;
+  padding: 1rem 5rem;
+  text-align: left;
+}
+
+.form-control {
+  width: 100%;
+  border: 1px solid var(--primary-hud-elements-color);
+  background-color: var(--secondary-hud-elements-color);
+  color: var(--content-color);
+  opacity: 0.9;
+  border-radius: 0;
+}
+
+.form-control:focus {
+  border: 1px solid var(--primary-hud-elements-color);
+  background-color: var(--secondary-hud-elements-color);
+  color: var(--content-color);
+  opacity: 1;
+}
+
+.btn {
+  background-color: var(--primary-hud-elements-color);
+  color: var(--content-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  text-transform: uppercase;
+  font-weight: 500;
+  border-radius: 0;
+}
+
+/*
+  --content-font-weight: 100;
+
+  --font-family: "Stellar", Arial, sans-serif;
+  --menu-color: #999999;
+  --hover-menu-color: #99ffff;
+  --active-menu-color: #99ffff;
+
+  --content-color: #66ffff;
+  --info-color: #ccffcc;
+  --alert-color: #ff6666;
+
+  --primary-hud-elements-color: #66ccff;
+  --secondary-hud-elements-color: #006666;
+  --info-hud-elements-color: #ffffcc;
+
+  */
