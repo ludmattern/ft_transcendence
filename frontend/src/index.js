@@ -7,49 +7,24 @@ import { PongMenu } from "./components/pongMenu.js";
 import { game2 } from "./components/game2.js";
 import { midScreen } from "./components/midScreen.js";
 import { initializeMenuElements } from "./App.js";
-//import { initializeMenuElements2 } from "./App.js";
+import { initm2 } from "./App.js";
 import { HelmetSVG } from "./components/HelmetSVG.js";
 import { HUDSVG } from "./components/HUDSVG.js";
 import { Menu } from "./components/pongMenu.js"; 
 
+
 document.addEventListener("DOMContentLoaded", () => {
-  console.debug("Injecting header component and loading associated script");
+  loadComponent("header-placeholder", Header, "hud", () => {});
 
-  loadComponent("header-placeholder", Header, "hud", () => {
-    console.log("HUD and Header components are fully loaded and initialized");
-  });
+  loadComponent("left-window-placeholder", LeftSideWindow, "leftsidewindow", () => {});
 
-  loadComponent(
-    "left-window-placeholder",
-    LeftSideWindow,
-    "leftsidewindow",
-    () => {
-      console.log("left window are fully loaded and initialized");
-    }
-  );
+  loadComponent("right-window-placeholder", RightSideWindow, "rightsidewindow", () => {});
 
-  loadComponent(
-    "right-window-placeholder",
-    RightSideWindow,
-    "rightsidewindow",
-    () => {
-      console.log("right window are fully loaded and initialized");
-    }
-  );
+  loadComponent("mid-placeholder", midScreen, "pongmenu", () => { initm2(); });
 
-  loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {
-    console.log("Pong Menu is fully loaded and initialized");
-    initializeMenuElements();
+  loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => { initializeMenuElements(); });
 
-  });
+  loadComponent("helmet-svg-placeholder", HelmetSVG, "", () => {});
 
-
-
-  loadComponent("helmet-svg-placeholder", HelmetSVG, "", () => {
-    console.log("left window are fully loaded and initialized");
-  });
-
-  loadComponent("hud-svg-placeholder", HUDSVG, "", () => {
-    console.log("helmet svg components are fully loaded and initialized");
-  });
+  loadComponent("hud-svg-placeholder", HUDSVG, "", () => {});
 });

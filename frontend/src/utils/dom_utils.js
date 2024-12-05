@@ -8,7 +8,7 @@ export const modules = {
   hud: "../pages/hud/hud.js", // Path to the HUD module
   leftsidewindow: "../pages/hud/leftsidewindow.js", // Path to the sidewindow module
   rightsidewindow: "../pages/hud/rightsidewindow.js", // Path to the sidewindow module
-  pongmenu: "../pages/pong/menu.js",
+  pongmenu: "../pages/pong/pongmenu.js",
 };
 
 /**
@@ -25,7 +25,7 @@ export function loadComponent(placeholder, component, moduleName, callback) {
 
     // Dynamically load the associated JavaScript module
     loadComponentScript(moduleName, () => {
-      console.log(`${moduleName}.js loaded and initialized`);
+      console.debug(`${moduleName}.js loaded and initialized`);
 
       // Call the callback function if provided
       if (callback) callback();
@@ -81,7 +81,7 @@ export function loadComponentScript(moduleName, callback) {
   // Dynamically import the module
   import(modulePath)
     .then((module) => {
-      console.log(`${moduleName} loaded successfully`);
+      console.debug(`${moduleName} loaded successfully`);
 
       // Execute the callback function if provided
       if (callback) callback(module);

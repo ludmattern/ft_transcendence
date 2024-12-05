@@ -41,17 +41,29 @@ cssRenderer.domElement.style.pointerEvents = "none";
 
 document.getElementById("app").appendChild(cssRenderer.domElement);
 
+let menuElement;  
+let menuObject;
 
-const menuElement = document.getElementById("menu");
-menuElement.style.pointerEvents = "auto";
+export function initm2()
+{
 
-const menuObject = new CSS3DObject(menuElement);
+  menuElement = document.getElementById("gameScreen");  
+  if (!menuElement) {
+    console.error("The element with ID 'gameScreen' was not found.");
+    return;
+  }
+  menuObject = new CSS3DObject(menuElement);
 
-menuObject.position.set(-0.2, 6.6, -1.75);
-menuObject.rotation.set(-5.2, 0, 0);
-menuObject.scale.set(0.002, 0.002, 0.002);
-menuElement.style.display = "none";
-menuElement.classList.add("active");
+  menuElement.style.pointerEvents = "auto";
+  menuObject.position.set(-0.2, 6.6, -1.75);
+  menuObject.rotation.set(-5.2, 0, 0);
+  menuObject.scale.set(0.002, 0.002, 0.002);
+  menuElement.style.display = "none";
+  menuElement.classList.add("active");
+
+}
+
+
 
 
 
@@ -195,8 +207,8 @@ function loadSaturnModel(modelPath, config) {
               }
           });
             scene.add(menuObject2)
-            scene.add(menuObject)
             scene.add(menuObject3)
+            scene.add(menuObject)
 
             scene.add(planet);
             document.getElementById('loading-screen').style.display = 'none';
