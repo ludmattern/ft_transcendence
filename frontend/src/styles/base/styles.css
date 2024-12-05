@@ -118,33 +118,6 @@ img {
   border: 10px solid #06b6d4;
 }
 
-.race {
-  font-size: 6em;
-  font-weight: bold;
-
-}
-
-.menu3 .row.mt-3  {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 2s ease-in-out, visibility 0.5s ease-in-out;
-}
-
-.menu3 .wait {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 2s ease-in-out, visibility 0.5s ease-in-out;
-}
-
-.menu3.active .row.mt-3{
-  opacity: 0;
-  visibility: hidden;
-}
-
- .menu3.active .wait {
-  opacity: 1;
-  visibility: visible;
-}
 
 /* Menu Container */
 .menu-container {
@@ -184,18 +157,6 @@ img {
 
 }
 
-.alternative-content {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 2s ease-in-out, visibility 0.5s ease-in-out;
-}
-
-.menu-container.active .alternative-content {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 2s ease-in-out, visibility 0.5s ease-in-out;
-
-}
 
 
 

@@ -82,7 +82,6 @@ export function initM1()
   menuObject2.rotation.set(-5.2, 0.65, 0.2);
   menuObject2.scale.set(0.002, 0.002, 0.002);
   menuElement2.style.display = "none";
-  menuElement2.classList.add("active");
 }
 
 
@@ -99,7 +98,6 @@ export function initM3 () {
   menuObject3.rotation.set(-5.2, -0.6, -0.2);
   menuObject3.scale.set(0.002, 0.002, 0.002);
   menuElement3.style.display = "none";
-  menuElement3.classList.add("active");
 }
 
 
@@ -356,12 +354,6 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
       controls.enabled = true;
       if (nb == 1) 
         menuElement.classList.remove("active");  
-      else if (nb == 2)
-      {
-        menuElement2.classList.remove("active");  
-      } 
-      else if (nb == 3) 
-        menuElement3.classList.remove("active");  
 
     },
   });
@@ -388,9 +380,7 @@ function animateCameraBackToInitialPosition() {
   camera.quaternion.copy(startQuaternion);
 
   controls.enabled = false;
-  menuElement2.classList.add("active");     
   menuElement.classList.add("active");     
-  menuElement3.classList.add("active");     
 
   const dummy = { t: 0 };
   gsap.to(dummy, {

@@ -11,15 +11,6 @@ export function game2() {
       {className : "row mt-3"},
       createElement("div", { className: "col-12" }, BackButton())
     ),
-    createElement(
-      "div",
-      {className : "wait"},
-      createElement(
-        "div",
-        {className : "race"},
-        "race"
-      )
-    )
   );
 }
 

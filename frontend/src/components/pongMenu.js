@@ -644,11 +644,6 @@ export function PongMenu() {
     { className: `menu-container`, id: "menu2" },
     createElement(
       "div",
-      { className: `alternative-content` },
-      back()
-    ),
-    createElement(
-      "div",
       { className: `menu-panel` },
       MenuTitle("Space Pong"),
       MainMenu(),
@@ -665,20 +660,3 @@ export function PongMenu() {
   );
 }
 
-
-export function Menu() {
-  return createElement(
-    "div",
-    { className: `menu2`, id: "menu" },
-    createElement(
-      "div",
-      { className: `alternative-content` },
-      back() 
-    ),
-    createElement(
-      "div",
-      { className: `menu-panel` },
-      MenuTitle("Main Menu"),
-    )
-  );
-}
