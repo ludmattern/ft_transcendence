@@ -1,5 +1,4 @@
 import { createElement } from "../utils/mini_react.js";
-import { switchwindow } from "../App.js";
 import { animateCameraBackToInitialPosition } from "../App.js";
 
 
@@ -29,24 +28,6 @@ if (waitingRoom) waitingRoom.classList.add('d-none');
 if (selection) selection.classList.remove('d-none');
 }
 
-
-
-
-export function BackButton() {
-  return createElement(
-    "button",
-    {
-      className: "back-btn w-100 back",
-      onClick: () => {
-        goBack();
-        const event = new CustomEvent("backButtonClicked");
-        document.dispatchEvent(event);
-      },
-    },
-    createElement("i", { className: "bi bi-arrow-left" }),
-    " Back"
-  );
-}
 
 
 function HeaderNav() {

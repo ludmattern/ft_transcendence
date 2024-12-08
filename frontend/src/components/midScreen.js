@@ -1,6 +1,5 @@
 
 import { createElement } from "../utils/mini_react.js";
-import { BackButton } from "./pongMenu.js";
 
 
 export function midScreen() {
@@ -10,7 +9,6 @@ export function midScreen() {
     createElement(
       "div",
       {className :"row mt-3"},
-      createElement("div", { className: "col-12" }, BackButton())
 
     ),
     createElement(

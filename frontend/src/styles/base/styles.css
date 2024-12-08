@@ -532,7 +532,7 @@ h3 {
 
 .btn-secondary {
   background: #f0f !important;
-  color: #000;
+  color: #000 !important;
   border: 2px solid #f0f;
   box-shadow: 0 0 5px #f0f, 0 0 15px #f0f;
   font-family: Orbitron, sans-serif;
