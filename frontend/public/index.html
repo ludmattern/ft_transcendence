@@ -258,9 +258,13 @@
 
               <div id="profile-form" class="form-container">
                 <h5 class="text-center">Pilot Profile</h5>
-                <span class="background-central-span d-flex flex-column align-items-center flex-grow-1">
+                <span
+                  class="background-central-span d-flex flex-column align-items-center flex-grow-1"
+                >
                   <!-- Profile Information -->
-                  <div class="profile-info d-flex justify-content-evenly align-items-center w-100 m-3">
+                  <div
+                    class="profile-info d-flex justify-content-evenly align-items-center w-100 m-3"
+                  >
                     <!-- Profile Picture -->
                     <div class="profile-pic-container">
                       <img
@@ -269,15 +273,31 @@
                         class="profile-pic rounded-circle"
                       />
                     </div>
-              
+
                     <!-- Profile Details -->
                     <div class="profile-details text-start">
                       <!-- Profile Status -->
                       <div class="profile-status mb-2">
-                        <span class="status-indicator bi bi-circle-fill text-success"></span>
-                        <span class="profile-pseudo fw-bold">Pseudo</span>
+                        <span
+                          class="status-indicator bi bi-circle-fill text-success"
+                        ></span>
+                        <form action="#" method="post" class="d-inline">
+                          <input
+                            type="text"
+                            class="profile-pseudo-input form-control form-control-sm d-inline w-auto fw-bold"
+                            name="profile-pseudo"
+                            value="Pseudo"
+                            required
+                            style="
+                              display: inline;
+                              font-size: 1rem;
+                              border: none;
+                              background: transparent;
+                            "
+                          />
+                        </form>
                       </div>
-              
+
                       <!-- Profile Statistics -->
                       <div class="profile-stats">
                         <div class="stat-item d-flex align-items-center mb-1">
@@ -293,18 +313,30 @@
                       </div>
                     </div>
                   </div>
-              
+
                   <span class="panel-mid"></span>
-              
+
                   <!-- Match History -->
-                  <div class="profile-match-history mt-2 w-100 d-flex flex-column">
-                    <h6 class="match-history-title d-flex justify-content-center mb-2">
+                  <div
+                    class="profile-match-history mt-2 w-100 d-flex flex-column"
+                  >
+                    <h6
+                      class="match-history-title d-flex justify-content-center mb-2"
+                    >
                       <span class="bi bi-journal me-2"></span>
                       Match History
                     </h6>
-                    <div class="match-history-container table-responsive" style="max-height: 50vh; overflow-y: auto;">
-                      <table class="table table-sm table-striped mb-0 transparent-table">
-                        <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                    <div
+                      class="match-history-container table-responsive"
+                      style="max-height: 50vh; overflow-y: auto"
+                    >
+                      <table
+                        class="table table-sm table-striped mb-0 transparent-table"
+                      >
+                        <thead
+                          class="table-light"
+                          style="position: sticky; top: 0; z-index: 1"
+                        >
                           <tr>
                             <th scope="col">Outcome</th>
                             <th scope="col">Game Mode</th>
@@ -344,9 +376,7 @@
                   <span class="panel-end"></span>
                 </span>
               </div>
-                                        
-              
-              
+
               <!-- Log out Form -->
               <div id="logout-form" class="form-container">
                 <h5>LOG OUT</h5>
