@@ -1,11 +1,10 @@
-import * as THREE from "https://unpkg.com/three@0.128.0/build/three.module.js";
-import { FlyControls } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/controls/FlyControls.js";
-import { GLTFLoader } from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/loaders/GLTFLoader.js";
-import { gsap } from "https://cdn.skypack.dev/gsap";
+import * as THREE from '../src/threelibs/three.module.js';
+import { FlyControls } from "../src/threelibs/FlyControls.js";
+import { GLTFLoader } from "../src/threelibs/GLTFLoader.js";
 import {
   CSS3DRenderer,
   CSS3DObject,
-} from "https://cdn.skypack.dev/three@0.128.0/examples/jsm/renderers/CSS3DRenderer.js";
+} from "../src/threelibs/CSS3DRenderer.js";
 
 /*6h4vl9mc0gk0   lfr8v60tfjk  4h64avzyz1y0   https://tools.wwwtyro.net/space-3d/index.html#animationSpeed=0.8199880281747889&fov=150&nebulae=true&pointStars=true&resolution=1024&seed=6h4vl9mc0gk0&stars=true&sun=false */
 
@@ -57,6 +56,7 @@ export function initM2()
   menuElement.style.pointerEvents = "auto";
   menuObject.position.set(-0.2, 6.6, -1.75);
   menuObject.rotation.set(-5.2, 0, 0);
+
   menuObject.scale.set(0.002, 0.002, 0.002);
   menuElement.style.display = "none";
   menuElement.classList.add("active");
@@ -75,14 +75,17 @@ export function initM1()
     console.error("The element with ID 'menu2' was not found.");
     return;
   }
-  menuElement2.style.pointerEvents = "auto";
 
   menuObject2 = new CSS3DObject(menuElement2);
   menuObject2.position.set(-3.6, 4.6, -1.8);
+
   menuObject2.rotation.set(-5.2, 0.63, 0.2);
   menuObject2.scale.set(0.002, 0.002, 0.002);
-  menuElement2.style.display = "none";
+  menuElement2.style.pointerEvents = "auto";
+  menuElement2.classList.add("active");
+
 }
+
 
 
 
@@ -285,7 +288,8 @@ window.addEventListener("click", (event) => {
 });
 
 export function switchwindow(screen) {
-  if (screen === null) animateCameraBackToInitialPosition();
+  if (screen === null) 
+    animateCameraBackToInitialPosition();
   else if (screen === "pong") {
     animateCameraToTarget(
       new THREE.Vector3(
@@ -354,7 +358,11 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
     onComplete: function () {
       controls.enabled = true;
       if (nb == 1) 
-        menuElement.classList.remove("active");  
+        menuElement.classList.remove("active");
+      if (nb == 2) 
+        menuElement2.classList.remove("active"); 
+      if (nb == 3) 
+        menuElement3.classList.remove("active"); 
 
     },
   });
@@ -381,7 +389,10 @@ function animateCameraBackToInitialPosition() {
   camera.quaternion.copy(startQuaternion);
 
   controls.enabled = false;
-  menuElement.classList.add("active");     
+  menuElement.classList.add("active");
+  menuElement2.classList.add("active");     
+  menuElement3.classList.add("active");     
+
 
   const dummy = { t: 0 };
   gsap.to(dummy, {

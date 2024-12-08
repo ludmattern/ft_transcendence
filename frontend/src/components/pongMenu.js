@@ -1,56 +1,37 @@
 import { createElement } from "../utils/mini_react.js";
 import { switchwindow } from "../App.js";
 
-const menuStructure = {
-  "main-menu": null,
-  "play-menu": "main-menu",
-  "solo-menu": "play-menu",
-  "multiplayer-menu": "play-menu",
-  "tournament-menu": "play-menu",
-  "local-menu": "multiplayer-menu",
-  "private-menu": "multiplayer-menu",
-  "matchmaking-menu": "multiplayer-menu",
-  "invite-section": "private-menu",
-  "create-tournament": "tournament-menu",
-  "join-tournament": "tournament-menu",
-  "menu-new-tournament": "tournament-menu",
-};
 
-let currentMenu = "main-menu";
 
-function showMenu(menuId) {
-  document
-    .querySelectorAll(".menu-section, #invite-section")
-    .forEach((menu) => {
-      menu.classList.add("hidden");
-    });
 
-  const targetMenu = document.getElementById(menuId);
-  if (targetMenu) {
-    targetMenu.classList.remove("hidden");
-    currentMenu = menuId;
-  }
-
-  const backButton = document.getElementById("back-button");
-  if (menuId !== "main-menu") {
-    backButton.classList.remove("hidden");
-  } else {
-    backButton.classList.add("hidden");
-  }
-
-  if (menuId === "invite-section") {
-    document.getElementById("private-menu").classList.remove("hidden");
-  }
+function joinTournament() {
+  document.getElementById('tournamentList').classList.add('d-none');
+  document.getElementById('waitingRoom').classList.remove('d-none');
 }
 
-function goBack() {
-  const parentMenu = menuStructure[currentMenu];
-  if (parentMenu) {
-    showMenu(parentMenu);
-  }
+function leaveTournament() {
+  document.getElementById('waitingRoom').classList.add('d-none');
+  document.getElementById('tournamentList').classList.remove('d-none');
 }
 
-// Back Button Component
+function startMatchmaking() {
+const selection = document.getElementById('matchmakingSelection');
+const waitingRoom = document.getElementById('waitingRoomMatchmaking');
+if (selection) selection.classList.add('d-none');
+if (waitingRoom) waitingRoom.classList.remove('d-none');
+}
+
+function cancelMatchmaking() 
+{
+const selection = document.getElementById('matchmakingSelection');
+const waitingRoom = document.getElementById('waitingRoomMatchmaking');
+if (waitingRoom) waitingRoom.classList.add('d-none');
+if (selection) selection.classList.remove('d-none');
+}
+
+
+
+
 export function BackButton() {
   return createElement(
     "button",
@@ -67,572 +48,630 @@ export function BackButton() {
   );
 }
 
-// Menu Title Component
-function MenuTitle(title) {
-  return createElement("h1", { className: "menu-title" }, title);
-}
 
-// Button Component
-function MenuButton({ iconClass, text, onClick }) {
+function HeaderNav() {
   return createElement(
-    "button",
-    { className: "space-btn w-100", onClick },
-    createElement("i", { className: iconClass }),
-    ` ${text}`
+    "div",
+    { className: "row align-items-center py-3 top-row" },
+    createElement("div", { className: "col text-start" }),
+    createElement(
+      "div",
+      { className: "col text-center" },
+      createElement(
+        "ul",
+        { className: "nav nav-pills justify-content-center", id: "mainTabs", role: "tablist" },
+        createElement(
+          "li",
+          { className: "nav-item", role: "presentation" },
+          createElement(
+            "button",
+            {
+              className: "nav-link active top menu",
+              id: "play-tab",
+              "data-bs-toggle": "pill",
+              "data-bs-target": "#playContent",
+              type: "button",
+              role: "tab",
+              "aria-controls": "playContent",
+              "aria-selected": "true"
+            },
+            "Play"
+          )
+        ),
+        createElement(
+          "li",
+          { className: "nav-item", role: "presentation" },
+          createElement(
+            "button",
+            {
+              className: "nav-link  top",
+              id: "leaderboard-tab",
+              "data-bs-toggle": "pill",
+              "data-bs-target": "#leaderboardContent",
+              type: "button",
+              role: "tab",
+              "aria-controls": "leaderboardContent",
+              "aria-selected": "false"
+            },
+            "Leaderboard"
+          )
+        )
+      )
+    ),
+    createElement(
+      "div",
+      { className: "col text-end" },
+      createElement("button", { className: "btn btn-back" }, "Back")
+    )
   );
 }
 
-function OptionSelect({ id, labelText, options }) {
+
+
+function SoloContent() {
   return createElement(
     "div",
-    { className: "mb-4" },
-    createElement(
-      "label",
-      { className: "form-label text-cyan", htmlFor: id },
-      labelText
-    ),
+    {
+      className: "tab-pane fade show active",
+      id: "soloContent",
+      role: "tabpanel",
+      "aria-labelledby": "solo-tab",
+    },
+    createElement("h3", {}, "Select a map"),
     createElement(
       "select",
-      { className: "space-select form-select", id: id },
-      ...options.map((option) =>
-        createElement("option", { value: option }, option)
-      )
+      { className: "form-select mb-3", "aria-label": "Map selector solo" },
+      createElement("option", { value: "map1" }, "Map 1"),
+      createElement("option", { value: "map2" }, "Map 2"),
+      createElement("option", { value: "map3" }, "Map 3")
+    ),
+    createElement("h3", {}, "Difficulty"),
+    createElement(
+      "select",
+      { className: "form-select mb-3", "aria-label": "Difficulty selector" },
+      createElement("option", { value: "easy" }, "Easy"),
+      createElement("option", { value: "medium" }, "Medium"),
+      createElement("option", { value: "hard" }, "Hard")
+    ),
+    createElement("div", { className: "cont" },
+      createElement("button", { className: "btn btn-primary mt-3" }, "Launch")
     )
   );
 }
 
-// Main Menu Component
-function MainMenu() {
+function LocalContent() {
   return createElement(
     "div",
-    { id: "main-menu", className: "menu-section" },
+    {
+      className: "tab-pane fade",
+      id: "localContent",
+      role: "tabpanel",
+      "aria-labelledby": "local-tab",
+    },
+    createElement("h3", {}, "Select a map"),
     createElement(
-      "div",
-      { className: "row g-4" },
-      createElement(
-        "div",
-        { className: "col-6" },
-        MenuButton({
-          iconClass: "bi bi-controller",
-          text: "Play",
-          onClick: () => showMenu("play-menu"),
-        })
-      ),
-      createElement(
-        "div",
-        { className: "col-6" },
-        MenuButton({
-          iconClass: "bi bi-trophy",
-          text: "Leaderboard",
-          onClick: () => showMenu("leaderboard-menu"),
-        })
-      )
+      "select",
+      { className: "form-select mb-3", "aria-label": "Map selector local" },
+      createElement("option", { value: "map1" }, "Map 1"),
+      createElement("option", { value: "map2" }, "Map 2"),
+      createElement("option", { value: "map3" }, "Map 3")
     ),
-    createElement(
-      "div",
-      { className: "row mt-3" },
-      createElement("div", { className: "col-12" }, BackButton())
+    createElement("div", { className: "cont" },
+      createElement("button", { className: "btn btn-primary mt-3" }, "Launch")
     )
   );
 }
 
-// Play Menu Component
-function PlayMenu() {
+function LocalSoloTabs() {
   return createElement(
     "div",
-    { id: "play-menu", className: "menu-section hidden" },
+    {
+      className: "tab-pane fade show active",
+      id: "play1",
+      role: "tabpanel",
+      "aria-labelledby": "play1-tab",
+    },
     createElement(
-      "div",
-      { className: "row g-4" },
-      createElement(
-        "div",
-        { className: "col-4" },
-        MenuButton({
-          iconClass: "bi bi-person",
-          text: "Solo",
-          onClick: () => showMenu("solo-menu"),
-        })
+      "ul",
+      { className: "nav nav-pills mb-3", id: "soloLocalTabs", role: "tablist" },
+      createElement("li", { className: "nav-item", role: "presentation" },
+        createElement("button", {
+          className: "nav-link active right",
+          id: "solo-tab",
+          "data-bs-toggle": "pill",
+          "data-bs-target": "#soloContent",
+          type: "button",
+          role: "tab",
+          "aria-controls": "soloContent",
+          "aria-selected": "true"
+        }, "Solo")
       ),
-      createElement(
-        "div",
-        { className: "col-4" },
-        MenuButton({
-          iconClass: "bi bi-people",
-          text: "Multiplayer",
-          onClick: () => showMenu("multiplayer-menu"),
-        })
-      ),
-      createElement(
-        "div",
-        { className: "col-4" },
-        MenuButton({
-          iconClass: "bi bi-award",
-          text: "Tournament",
-          onClick: () => showMenu("tournament-menu"),
-        })
+      createElement("li", { className: "nav-item", role: "presentation" },
+        createElement("button", {
+          className: "nav-link right",
+          id: "local-tab",
+          "data-bs-toggle": "pill",
+          "data-bs-target": "#localContent",
+          type: "button",
+          role: "tab",
+          "aria-controls": "localContent",
+          "aria-selected": "false"
+        }, "Local")
       )
     ),
     createElement(
       "div",
-      { id: "back-button", className: "mt-4" },
+      { className: "tab-content" },
+      SoloContent(),
+      LocalContent()
+    )
+  );
+}
+
+
+function MatchmakingContent() {
+  return createElement(
+    "div",
+    {
+      className: "tab-pane fade show active",
+      id: "matchmakingContent",
+      role: "tabpanel",
+      "aria-labelledby": "matchmaking-tab",
+    },
+    createElement(
+      "div",
+      { id: "matchmakingSelection" },
+      createElement("h3", {}, "Select a map"),
+      createElement(
+        "select",
+        {
+          className: "form-select mb-3",
+          "aria-label": "Map selector solo",
+        },
+        createElement("option", { value: "map1" }, "Map 1"),
+        createElement("option", { value: "map2" }, "Map 2"),
+        createElement("option", { value: "map3" }, "Map 3")
+      ),
+      createElement(
+        "div",
+        { className: "cont" },
+        createElement(
+          "button",
+          {
+            className: "btn btn-primary mt-3",
+            onClick: () => startMatchmaking(),
+          },
+          "Launch"
+        )
+      )
+    ),
+    createElement(
+      "div",
+      { id: "waitingRoomMatchmaking", className: "d-none matchm" },
+      createElement("h4", {}, "Waiting Room"),
+      createElement("p", {}, "Searching for players..."),
       createElement(
         "button",
-        { className: "back-btn", onClick: () => goBack() },
-        createElement("i", { className: "bi bi-arrow-left" }),
-        " Back"
+        {
+          className: "btn btn-secondary btn-sm",
+          onClick: () => cancelMatchmaking(),
+        },
+        "Cancel"
       )
     )
   );
 }
 
-async function fetchTournaments() {
-  try {
-    const response = await fetch("../src/context/tournaments.json");
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const tournaments = await response.json();
-    return tournaments;
-  } catch (error) {
-    console.error("Failed to fetch tournaments:", error);
-    return [];
-  }
-}
-
-function renderTournamentList(tournaments) {
-  return tournaments.map((tournament) =>
+function MpPrivateContent() {
+  return createElement(
+    "div",
+    {
+      className: "tab-pane fade",
+      id: "mpPrivateContent",
+      role: "tabpanel",
+      "aria-labelledby": "mp-private-tab",
+    },
+    createElement("h3", {}, "Select a map"),
     createElement(
-      "div",
-      { className: "tournament-item" },
-      createElement("span", { className: "tournament-name" }, tournament.name),
-      createElement("span", { className: "player-count" }, tournament.players)
+      "select",
+      { className: "form-select mb-3", "aria-label": "Map selector multiplayer private" },
+      createElement("option", { value: "map1" }, "Map 1"),
+      createElement("option", { value: "map2" }, "Map 2"),
+      createElement("option", { value: "map3" }, "Map 3")
+    ),
+    createElement("h3", {}, "Invite Player"),
+    createElement("input", { type: "text", className: "form-control mb-3", placeholder: "Player Name or ID" }),
+    createElement("div", { className: "cont" },
+      createElement("button", { className: "btn btn-primary mt-3" }, "Launch")
     )
   );
 }
 
-function TournamentMenu() {
-  const tournamentListContainer = createElement(
-    "div",
-    { className: "tournament-list mb-4" },
-    createElement("h3", { className: "text-cyan mb-4" }, "Current Tournament")
-  );
-
-  // Charger les tournois et les ajouter dynamiquement
-  fetchTournaments().then((tournaments) => {
-    const tournamentItems = renderTournamentList(tournaments);
-    tournamentItems.forEach((item) => {
-      tournamentListContainer.appendChild(item);
-    });
-  });
-
+function MultiplayerTabs() {
   return createElement(
     "div",
-    { id: "tournament-menu", className: "menu-section hidden" },
-    tournamentListContainer,
+    {
+      className: "tab-pane fade",
+      id: "play2",
+      role: "tabpanel",
+      "aria-labelledby": "play2-tab",
+    },
     createElement(
-      "div",
-      { className: "row g-4" },
+      "ul",
+      { className: "nav nav-pills mb-3", id: "multiplayerTabs", role: "tablist" },
       createElement(
-        "div",
-        { className: "col-6" },
-        MenuButton({
-          iconClass: "bi bi-plus-lg",
-          text: "Créer",
-          onClick: () => showMenu("create-tournament"),
-        })
+        "li",
+        { className: "nav-item", role: "presentation" },
+        createElement(
+          "button",
+          {
+            className: "nav-link active right",
+            id: "matchmaking-tab",
+            "data-bs-toggle": "pill",
+            "data-bs-target": "#matchmakingContent",
+            type: "button",
+            role: "tab",
+            "aria-controls": "matchmakingContent",
+            "aria-selected": "true"
+          },
+          "Matchmaking"
+        )
       ),
       createElement(
-        "div",
-        { className: "col-6" },
-        MenuButton({
-          iconClass: "bi bi-person-plus",
-          text: "Rejoindre",
-          onClick: () => showMenu("join-tournament"),
-        })
+        "li",
+        { className: "nav-item", role: "presentation" },
+        createElement(
+          "button",
+          {
+            className: "nav-link right",
+            id: "mp-private-tab",
+            "data-bs-toggle": "pill",
+            "data-bs-target": "#mpPrivateContent",
+            type: "button",
+            role: "tab",
+            "aria-controls": "mpPrivateContent",
+            "aria-selected": "false"
+          },
+          "Private"
+        )
       )
     ),
     createElement(
       "div",
-      { id: "back-button", className: "mt-4" },
+      { className: "tab-content" },
+      MatchmakingContent(),
+      MpPrivateContent()
+    )
+  );
+}
+
+
+function TournamentJoinContent() {
+  return createElement(
+    "div",
+    {
+      className: "tab-pane fade show active",
+      id: "tournamentJoinContent",
+      role: "tabpanel",
+      "aria-labelledby": "tournament-join-tab",
+    },
+    createElement("h4", {}, "Available Tournaments"),
+    createElement(
+      "div",
+      { id: "tournamentList" },
+      createElement(
+        "div",
+        { className: "table-container t" },
+        createElement(
+          "table",
+          { className: "table" },
+          createElement(
+            "thead",
+            {},
+            createElement(
+              "tr",
+              {},
+              createElement("th", { style: "background-color: rgb(7, 5, 47); color: white;" }, "Name"),
+              createElement("th", { style: "background-color: rgb(7, 5, 47); color: white;" }, "Players"),
+              createElement("th", { style: "background-color: rgb(7, 5, 47); color: white;" })
+            )
+          ),
+          createElement(
+            "tbody",
+            { className: "tbody" },
+            // Quelques lignes d'exemple, répétez si besoin
+            [1,2,3,4,5].map(() =>
+              createElement(
+                "tr",
+                {},
+                createElement("td", { style: "background-color: rgb(7, 5, 47); color: white;" }, "Tournoi A"),
+                createElement("td", { style: "background-color: rgb(7, 5, 47); color: white;" }, "5/8"),
+                createElement(
+                  "td",
+                  { style: "background-color: rgb(7, 5, 47); color: white;" },
+                  createElement(
+                    "button",
+                    { className: "btn btn-primary btn-sm tab", onClick: () => joinTournament() },
+                    "Join"
+                  )
+                )
+              )
+            )
+          )
+        )
+      ),
+    ),
+    createElement(
+      "div",
+      { id: "waitingRoom", className: "d-none matchm" },
+      createElement("h4", {}, "Waiting Room"),
+      createElement("p", {}, "Waiting for players to join..."),
       createElement(
         "button",
-        { className: "back-btn", onClick: () => goBack() },
-        createElement("i", { className: "bi bi-arrow-left" }),
-        " Back"
+        { className: "btn btn-secondary btn-sm", onClick: () => leaveTournament() },
+        "Leave"
       )
     )
   );
 }
 
-function handleCreateTournament() {
-  const nameInput = document.getElementById("tournament-name-input");
-  const playerCountSelect = document.getElementById("tournament-player-count");
-
-  if (nameInput && playerCountSelect) {
-    const tournamentName = nameInput.value;
-    const playerCount = playerCountSelect.value;
-    console.log("Creating tournament with settings:");
-    console.log("Tournament Name:", tournamentName);
-    console.log("Player Count:", playerCount);
-  } else {
-    console.error("Input or select not found for Create Tournament Menu");
-  }
-}
-
-function CreateTournamentMenu() {
+function TournamentCreateContent() {
   return createElement(
     "div",
-    { id: "create-tournament", className: "menu-section hidden" },
+    {
+      className: "tab-pane fade",
+      id: "tournamentCreateContent",
+      role: "tabpanel",
+      "aria-labelledby": "tournament-create-tab",
+    },
+    createElement("h4", {}, "Create a Tournament"),
     createElement(
       "div",
-      { className: "mb-4" },
+      { className: "mb-3 tourn" },
       createElement(
         "label",
-        { className: "form-label text-cyan", htmlFor: "tournament-name-input" },
+        { htmlFor: "tournamentName", className: "form-label" },
         "Tournament Name"
       ),
       createElement("input", {
         type: "text",
-        id: "tournament-name-input",
-        className: "space-input form-control",
+        className: "form-control",
+        id: "tournamentName",
         placeholder: "Enter tournament name",
       })
     ),
-    OptionSelect({
-      id: "tournament-player-count",
-      labelText: "Player Count",
-      options: ["4", "8", "16"],
-    }),
     createElement(
-      "button",
-      {
-        className: "space-btn w-100",
-        onClick: () => handleCreateTournament(),
-      },
-      "Create Tournament"
+      "div",
+      { className: "mb-3 tourn" },
+      createElement(
+        "label",
+        { htmlFor: "playerCount", className: "form-label" },
+        "Number of Players"
+      ),
+      createElement(
+        "select",
+        { className: "form-select", id: "playerCount" },
+        createElement("option", { value: "4" }, "4"),
+        createElement("option", { value: "8" }, "8"),
+        createElement("option", { value: "16" }, "16")
+      )
+    ),
+    createElement("button", { className: "btn btn-primary" }, "Create")
+  );
+}
+
+function TournamentTabs() {
+  return createElement(
+    "div",
+    {
+      className: "tab-pane fade",
+      id: "play3",
+      role: "tabpanel",
+      "aria-labelledby": "play3-tab",
+    },
+    createElement(
+      "ul",
+      { className: "nav nav-pills mb-3", id: "tournamentTabs", role: "tablist" },
+      createElement(
+        "li",
+        { className: "nav-item", role: "presentation" },
+        createElement(
+          "button",
+          {
+            className: "nav-link active right",
+            id: "tournament-join-tab",
+            "data-bs-toggle": "pill",
+            "data-bs-target": "#tournamentJoinContent",
+            type: "button",
+            role: "tab",
+            "aria-controls": "tournamentJoinContent",
+            "aria-selected": "true"
+          },
+          "Join"
+        )
+      ),
+      createElement(
+        "li",
+        { className: "nav-item", role: "presentation" },
+        createElement(
+          "button",
+          {
+            className: "nav-link right",
+            id: "tournament-create-tab",
+            "data-bs-toggle": "pill",
+            "data-bs-target": "#tournamentCreateContent",
+            type: "button",
+            role: "tab",
+            "aria-controls": "tournamentCreateContent",
+            "aria-selected": "false"
+          },
+          "Create"
+        )
+      )
     ),
     createElement(
       "div",
-      { id: "back-button", className: "mt-4" },
-      createElement(
-        "button",
-        { className: "back-btn", onClick: () => goBack() },
-        createElement("i", { className: "bi bi-arrow-left" }),
-        " Back"
-      )
+      { className: "tab-content tab2 tab3" },
+      TournamentJoinContent(),
+      TournamentCreateContent()
     )
   );
 }
 
-// Join Tournament Menu Component
-function JoinTournamentMenu() {
+
+function PlayTabs() {
   return createElement(
     "div",
-    { id: "join-tournament", className: "menu-section hidden" },
+    { className: "tab-content" },
+    LocalSoloTabs(),
+    MultiplayerTabs(),
+    TournamentTabs(),
+    // Onglet Private (play4) si nécessaire
     createElement(
       "div",
-      { className: "tournament-list" },
+      {
+        className: "tab-pane fade",
+        id: "play4",
+        role: "tabpanel",
+        "aria-labelledby": "play4-tab",
+      },
+      createElement("h3", {}, "Private")
+    )
+  );
+}
+
+function PlaySection() {
+  return createElement(
+    "div",
+    {
+      className: "tab-pane fade show active",
+      id: "playContent",
+      role: "tabpanel",
+      "aria-labelledby": "play-tab",
+    },
+    createElement(
+      "div",
+      { className: "row" },
       createElement(
         "div",
-        { className: "tournament-item" },
+        { className: "col-3" },
         createElement(
           "div",
-          {},
+          {
+            className: "nav flex-column nav-pills menu",
+            id: "play-vertical-tabs",
+            role: "tablist",
+            "aria-orientation": "vertical"
+          },
           createElement(
-            "span",
-            { className: "tournament-name" },
-            "Interstellar"
+            "button",
+            {
+              className: "nav-link active left",
+              id: "play1-tab",
+              "data-bs-toggle": "pill",
+              "data-bs-target": "#play1",
+              type: "button",
+              role: "tab",
+              "aria-controls": "play1",
+              "aria-selected": "true"
+            },
+            "Local / Solo"
           ),
           createElement(
-            "span",
-            { className: "tournament-details" },
-            "16 Players"
+            "button",
+            {
+              className: "nav-link left",
+              id: "play2-tab",
+              "data-bs-toggle": "pill",
+              "data-bs-target": "#play2",
+              type: "button",
+              role: "tab",
+              "aria-controls": "play2",
+              "aria-selected": "false"
+            },
+            "Multiplayer"
+          ),
+          createElement(
+            "button",
+            {
+              className: "nav-link left",
+              id: "play3-tab",
+              "data-bs-toggle": "pill",
+              "data-bs-target": "#play3",
+              type: "button",
+              role: "tab",
+              "aria-controls": "play3",
+              "aria-selected": "false"
+            },
+            "Tournament"
           )
-        ),
-        createElement("button", { className: "space-btn-small" }, "Join")
+        )
       ),
       createElement(
         "div",
-        { className: "tournament-item" },
+        { className: "col" },
+        PlayTabs()
+      )
+    )
+  );
+}
+
+
+function LeaderboardSection() {
+  return createElement(
+    "div",
+    {
+      className: "tab-pane fade",
+      id: "leaderboardContent",
+      role: "tabpanel",
+      "aria-labelledby": "leaderboard-tab"
+    },
+    createElement(
+      "div",
+      { className: "row" },
+      createElement("div", { className: "col-3" }),
+      createElement(
+        "div",
+        { className: "col" },
         createElement(
           "div",
-          {},
-          createElement("span", { className: "tournament-name" }, "StarsCraft"),
+          { className: "leader" },
+          createElement("h3", {}, "Leaderboard"),
+          createElement("button", { className: "btn btn-primary mb-3 leadbtn" }, "Find me"),
           createElement(
-            "span",
-            { className: "tournament-details" },
-            "8 players"
+            "div",
+            { className: "table-container" },
+            createElement(
+              "table",
+              { className: "table table-striped" },
+              createElement(
+                "thead",
+                {},
+                createElement(
+                  "tr",
+                  {},
+                  createElement("th", { style: "background-color: rgb(7, 5, 47); color: white;" }, "Rank"),
+                  createElement("th", { style: "background-color: rgb(7, 5, 47); color: white;" }, "Player"),
+                  createElement("th", { style: "background-color: rgb(7, 5, 47); color: white;" }, "Score")
+                )
+              ),
+              createElement(
+                "tbody",
+                {},
+                Array.from({length:20}, () =>
+                  createElement(
+                    "tr",
+                    {},
+                    createElement("td", { style:"background-color: rgb(7, 5, 47); color: white;"}, "1"),
+                    createElement("td", { style:"background-color: rgb(7, 5, 47); color: white;"}, "PlayerOne"),
+                    createElement("td", { style:"background-color: rgb(7, 5, 47); color: white;"}, "2500")
+                  )
+                )
+              )
+            )
           )
-        ),
-        createElement("button", { className: "space-btn-small" }, "Join")
+        )
       )
-    ),
-    createElement(
-      "div",
-      { id: "back-button", className: "mt-4" },
-      createElement(
-        "button",
-        { className: "back-btn", onClick: () => goBack() },
-        createElement("i", { className: "bi bi-arrow-left" }),
-        " Back"
-      )
-    )
-  );
-}
-
-function handleSoloLaunch() {
-  const mapSelect = document.getElementById("solo-map-select");
-  const difficultySelect = document.getElementById("solo-difficulty-select");
-
-  if (mapSelect && difficultySelect) {
-    const selectedMap = mapSelect.value;
-    const selectedDifficulty = difficultySelect.value;
-    console.log("Launching solo game with settings:");
-    console.log("Map:", selectedMap);
-    console.log("Difficulty:", selectedDifficulty);
-    switchwindow("game");
-  } else {
-    console.error("Select elements not found");
-  }
-}
-
-// Solo Menu Component
-function SoloMenu() {
-  return createElement(
-    "div",
-    { id: "solo-menu", className: "menu-section hidden" },
-    OptionSelect({
-      id: "solo-map-select",
-      labelText: "Select a map",
-      options: ["Mars", "Pluton", "Orgasme"],
-    }),
-    OptionSelect({
-      id: "solo-difficulty-select",
-      labelText: "Difficulty",
-      options: ["Easy", "Medium", "Hard"],
-    }),
-    createElement(
-      "button",
-      { className: "space-btn w-100", onClick: () => handleSoloLaunch() },
-
-      createElement("i", { className: "bi bi-rocket" }),
-      " Launch"
-    ),
-    createElement(
-      "div",
-      { id: "back-button", className: "mt-4" },
-      createElement(
-        "button",
-        { className: "back-btn", onClick: () => goBack() },
-        createElement("i", { className: "bi bi-arrow-left" }),
-        " Back"
-      )
-    )
-  );
-}
-
-// Multiplayer Menu Component
-function MultiplayerMenu() {
-  return createElement(
-    "div",
-    { id: "multiplayer-menu", className: "menu-section hidden" },
-    createElement(
-      "div",
-      { className: "row g-4 mb-4" },
-      createElement(
-        "div",
-        { className: "col-4" },
-        MenuButton({
-          iconClass: "bi bi-people",
-          text: "Local",
-          onClick: () => showMenu("local-menu"),
-        })
-      ),
-      createElement(
-        "div",
-        { className: "col-4" },
-        MenuButton({
-          iconClass: "bi bi-shield",
-          text: "Private",
-          onClick: () => showMenu("private-menu"),
-        })
-      ),
-      createElement(
-        "div",
-        { className: "col-4" },
-        MenuButton({
-          iconClass: "bi bi-broadcast",
-          text: "Matchmaking",
-          onClick: () => showMenu("matchmaking-menu"),
-        })
-      )
-    ),
-    createElement(
-      "div",
-      { id: "back-button", className: "mt-4" },
-      createElement(
-        "button",
-        { className: "back-btn", onClick: () => goBack() },
-        createElement("i", { className: "bi bi-arrow-left" }),
-        " Back"
-      )
-    )
-  );
-}
-
-// Local Menu Component
-function handleLocalLaunch() {
-  const gamemodeSelect = document.getElementById("local-gamemode-select");
-  const mapSelect = document.getElementById("local-map-select");
-
-  if (gamemodeSelect && mapSelect) {
-    const selectedGamemode = gamemodeSelect.value;
-    const selectedMap = mapSelect.value;
-    console.log("Launching local game with settings:");
-    console.log("Gamemode:", selectedGamemode);
-    console.log("Map:", selectedMap);
-    switchwindow("game");
-  } else {
-    console.error("Select elements not found for Local Menu");
-  }
-}
-
-// Local Menu Component
-function LocalMenu() {
-  return createElement(
-    "div",
-    { id: "local-menu", className: "menu-section hidden" },
-    OptionSelect({
-      id: "local-gamemode-select",
-      labelText: "Gamemode",
-      options: ["1 vs 1", "2 vs 2"],
-    }),
-    OptionSelect({
-      id: "local-map-select",
-      labelText: "Map",
-      options: ["Mars", "Pluton", "Orgasme"],
-    }),
-    createElement(
-      "button",
-      {
-        className: "space-btn w-100",
-        onClick: () => handleLocalLaunch(),
-      },
-      "Launch"
-    ),
-    createElement(
-      "div",
-      { id: "back-button", className: "mt-4" },
-      createElement(
-        "button",
-        { className: "back-btn", onClick: () => goBack() },
-        createElement("i", { className: "bi bi-arrow-left" }),
-        " Back"
-      )
-    )
-  );
-}
-
-// Private Menu Component
-function PrivateMenu() {
-  return createElement(
-    "div",
-    { id: "private-menu", className: "menu-section hidden" },
-    OptionSelect({ labelText: "Gamemode", options: ["1 vs 1", "2 vs 2"] }),
-    OptionSelect({ labelText: "Map", options: ["Mars", "Pluton", "Orgasme"] }),
-    createElement(
-      "button",
-      {
-        className: "space-btn mb-4",
-        onClick: () => showMenu("invite-section"),
-      },
-      createElement("i", { className: "bi bi-person-plus" }),
-      " Invite players"
-    ),
-    createElement(
-      "div",
-      { id: "invite-section", className: "hidden" },
-      createElement(
-        "div",
-        { className: "space-input-group mb-4" },
-        createElement(
-          "label",
-          { className: "form-label text-cyan" },
-          "Find a players"
-        ),
-        createElement("input", {
-          type: "text",
-          className: "space-input form-control",
-          placeholder: "Player name",
-        })
-      ),
-      createElement("button", { className: "space-btn w-100" }, "Send invite")
-    ),
-    createElement(
-      "div",
-      { id: "back-button", className: "mt-4" },
-      createElement(
-        "button",
-        { className: "back-btn", onClick: () => goBack() },
-        createElement("i", { className: "bi bi-arrow-left" }),
-        " Back"
-      )
-    )
-  );
-}
-
-// Matchmaking Menu Component
-function handleMatchmakingLaunch() {
-  const gamemodeSelect = document.getElementById("matchmaking-gamemode-select");
-
-  if (gamemodeSelect) {
-    const selectedGamemode = gamemodeSelect.value;
-    console.log("Searching for a game with settings:");
-    console.log("Gamemode:", selectedGamemode);
-    switchwindow("game");
-  } else {
-    console.error("Select element not found for Matchmaking Menu");
-  }
-}
-
-function MatchmakingMenu() {
-  return createElement(
-    "div",
-    { id: "matchmaking-menu", className: "menu-section hidden" },
-    OptionSelect({
-      id: "matchmaking-gamemode-select",
-      labelText: "Gamemode",
-      options: ["1 vs 1", "2 vs 2"],
-    }),
-    createElement(
-      "button",
-      {
-        className: "space-btn w-100",
-        onClick: () => handleMatchmakingLaunch(),
-      },
-      "Find a game"
-    ),
-    createElement(
-      "div",
-      { id: "back-button", className: "mt-4" },
-      createElement(
-        "button",
-        { className: "back-btn", onClick: () => goBack() },
-        createElement("i", { className: "bi bi-arrow-left" }),
-        " Back"
-      )
-    )
-  );
-}
-
-function back() {
-  return createElement(
-    "div",
-    { className: "background-sc1" },
-    createElement (
-      "div",
-      {className: "pong"},
-      "PONG"
     )
   );
 }
@@ -641,22 +680,13 @@ function back() {
 export function PongMenu() {
   return createElement(
     "div",
-    { className: `menu-container`, id: "menu2" },
+    { className: "container-fluid menu1", id : "menu2" },
+    HeaderNav(),
     createElement(
       "div",
-      { className: `menu-panel` },
-      MenuTitle("Space Pong"),
-      MainMenu(),
-      PlayMenu(),
-      TournamentMenu(),
-      CreateTournamentMenu(),
-      JoinTournamentMenu(),
-      SoloMenu(),
-      MultiplayerMenu(),
-      LocalMenu(),
-      PrivateMenu(),
-      MatchmakingMenu()
+      { className: "row mt-4 tab-content", id: "mainTabsContent" },
+      PlaySection(),
+      LeaderboardSection()
     )
   );
 }
-
