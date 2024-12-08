@@ -464,6 +464,13 @@ button {
   width: 100%;
 }
 
+.panel-mid {
+  content: "";
+  display: block;
+  border-bottom: var(--secondary-hud-elements-color) 2px dotted;
+  width: 100%;
+}
+
 .left-side-window:has(.overflow) .panel-end {
   display: none;
 }
@@ -810,4 +817,33 @@ p {
   backdrop-filter: blur(1rem);
   transition: all 0.2s;
   z-index: 9;
+}
+
+.transparent-table {
+  background-color: transparent; /* Supprime le fond général */
+  color : var(--content-color);
+}
+
+.transparent-table thead th {
+  background-color: rgba(255, 255, 255, 0.0) !important; /* Header semi-transparent */
+  color : var(--content-color);
+  
+}
+
+.transparent-table tbody tr {
+  background-color: rgba(255, 255, 255, 0.1) !important; /* Lignes semi-transparentes */
+  
+}
+
+.transparent-table tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.0) !important; /* Alternance des lignes */
+  color : var(--content-color);
+  
+}
+
+.transparent-table>:not(caption)>*>* {
+  background-color: transparent !important; /* Neutralise le fond */
+  color : var(--content-color);
+  box-shadow: none !important; /* Supprime l'ombre interne */
+  border: none;
 }
