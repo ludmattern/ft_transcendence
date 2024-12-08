@@ -1,6 +1,6 @@
 import { createElement } from "../utils/mini_react.js";
 import { switchwindow } from "../App.js";
-
+import { animateCameraBackToInitialPosition } from "../App.js";
 
 
 
@@ -101,7 +101,11 @@ function HeaderNav() {
     createElement(
       "div",
       { className: "col text-end" },
-      createElement("button", { className: "btn btn-back" }, "Back")
+      createElement("button", { className: "btn btn-back", 
+        onClick: () => {
+          animateCameraBackToInitialPosition();
+        },
+       }, "Back")
     )
   );
 }

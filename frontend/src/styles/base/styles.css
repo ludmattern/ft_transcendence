@@ -8,13 +8,12 @@ body {
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: rgba(17, 25, 40, 1);
+  background-color: #07052f;
   backdrop-filter: blur(4px);
   margin: 0;
   padding: 0;
   height: 900px;
   width: 1800px;
-  border: 10px solid #06b6d4;
 }
 
 .menu2 .row.mt-3,
@@ -100,13 +99,12 @@ body {
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  background: rgba(17, 25, 40, 1);
+  background-color: #07052f;
   backdrop-filter: blur(4px);
   margin: 0;
   padding: 0;
   height: 950px;
   width: 1150px;
-  border: 10px solid #06b6d4;
 }
 
 
@@ -187,8 +185,6 @@ body {
 
 
 .menu1 {
-  border: 10px solid #06b6d4;
-
   height: 1050px;
   width: 1350px;
   color: #fff;
@@ -201,13 +197,13 @@ body {
 
 
 #menu2.active {
-  filter: blur(5px); /* Ajustez l'intensité du flou */
-  transition: filter 0.3s ease; /* Transition douce */
+  filter: blur(2px);
+  transition: filter 0.3s ease; 
 }
 
 .btn-back {
   background: linear-gradient(90deg, #0ff, #0044ff);
-  color: #fff;
+  color: #000000 !important;
   border: 2px solid #0ff;
   border-radius: 5px;
   padding: 10px 20px;
@@ -222,7 +218,7 @@ body {
 
 .btn-back:hover {
   background: #0ff;
-  color: #000;
+  color: #ffffff !important; 
 
 }
 
@@ -350,9 +346,9 @@ body {
   content: "";
   position: absolute;
   bottom: 0;
-  left: 332px;
+  left: 336px;
   right: 0;
-  height: 1px;
+  height: 2px;
   background-color: #0ff;
 }
 
@@ -513,6 +509,8 @@ h3 {
 }
 
 .btn-primary {
+  color: #000 !important;
+
   background: linear-gradient(90deg, #0ff, #04f);
   border: 2px solid #0ff;
   color: #000;

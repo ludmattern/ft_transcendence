@@ -370,7 +370,7 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
   onScreen = true;
 }
 
-function animateCameraBackToInitialPosition() {
+export function animateCameraBackToInitialPosition() {
   const startPosition = camera.position.clone();
   const startQuaternion = camera.quaternion.clone();
 
