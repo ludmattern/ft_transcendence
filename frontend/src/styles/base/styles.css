@@ -107,7 +107,29 @@
 	width: 1150px;
 }
 
-#app .spinnerhead {
+.progress-container {
+  width: 300px;
+  height: 20px;
+  background: #111;
+  border: 2px solid #0ff; 
+  border-radius: 10px;
+  overflow: hidden;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px #0ff, 0 0 20px #0ff; 
+}
+
+#progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #00f, #0ff, #00f);
+  animation: pulse-neon 2s infinite; 
+  box-shadow: 0 0 10px #0ff, 0 0 20px #00f inset; 
+  transition: width 0.3s ease; 
+}
+
+.spinnerhead {
 	margin: 0;
 	top: 0;
 	left: 0;
