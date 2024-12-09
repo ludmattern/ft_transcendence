@@ -234,7 +234,7 @@ body {
 
 #app .btn-back:hover {
 	background: #0ff;
-	color: #ffffff !important;
+	color: #000000 !important;
 }
 
 #app .btn-back:active {
@@ -254,6 +254,7 @@ body {
 	border-right: #0ff solid 2px;
 	flex: 0 0 auto;
 	justify-content: space-around;
+  width: 300px !important;
 }
 
 #app .table-container.t {
@@ -361,7 +362,7 @@ body {
   content: "";
   position: absolute;
   bottom: 0;
-  left: 359px;
+  left: 298px;
   right: 0;
   height: 2px;
   background-color: #0ff;
