@@ -1,4 +1,5 @@
-#app body {
+body 
+{
   background-color: rgb(0, 0, 0);
   overflow: hidden;
 }
@@ -38,7 +39,6 @@
 
 #app .menu2 .row.mt-3 {
   opacity: 1;
-
   visibility: visible;
   pointer-events: auto;
 }
@@ -107,27 +107,7 @@
   width: 1150px;
 }
 
-.progress-container {
-  width: 300px;
-  height: 20px;
-  background: #111;
-  border: 2px solid #0ff; 
-  border-radius: 10px;
-  overflow: hidden;
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 10px #0ff, 0 0 20px #0ff; 
-}
 
-#progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #00f, #0ff, #00f);
-  animation: pulse-neon 2s infinite; 
-  box-shadow: 0 0 10px #0ff, 0 0 20px #00f inset; 
-  transition: width 0.3s ease; 
-}
 
 .spinnerhead {
   margin: 0;
@@ -148,8 +128,30 @@
   animation: spinner-y0fdc1 2.8s infinite ease;
   transform-style: preserve-3d;
   position: absolute;
+  top: 25%;
+  left: 49.55%;
+}
+
+.progress-container {
+  width: 300px;
+  height: 20px;
+  background: #111;
+  border: 2px solid #0ff; 
+  border-radius: 10px;
+  overflow: hidden;
+  position: absolute;
   top: 30%;
-  left: 48%;
+  left: 50.2%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px #0ff, 0 0 20px #0ff; 
+}
+
+#progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #00f, #0ff, #00f);
+  animation: pulse-neon 2s infinite; 
+  box-shadow: 0 0 10px #0ff, 0 0 20px #00f inset; 
+  transition: width 0.3s ease; 
 }
 
 .spinner > div {
@@ -208,8 +210,8 @@
   color: #fff;
   font-family: "Orbitron", sans-serif;
   background-color: #07052f;
-  height: 1050px !important;
-  width: 1350px !important;
+  height: 1050px ;
+  width: 1350px ;
 }
 
 #app #menu2.active {
@@ -255,7 +257,7 @@
 }
 
 #app .table-container.t {
-  width: 700px;
+  width: 800px;
 }
 
 #app .mb-3.tourn {
@@ -358,7 +360,7 @@
   content: "";
   position: absolute;
   bottom: 0;
-  left: 336px;
+  left: 359px;
   right: 0;
   height: 2px;
   background-color: #0ff;
@@ -391,7 +393,7 @@
   text-shadow: 0 0 5px #0ff, 0 0 15px #0ff;
   position: relative;
   z-index: 99;
-  left: 14px;
+  left: 2px;
 }
 
 #app .nav-link.active.left::after {
@@ -434,6 +436,8 @@
   margin-bottom: 30px;
   width: 950px;
 }
+
+
 
 #app #tournamentList {
   margin-top: 60px;
@@ -587,7 +591,8 @@
   background-color: #000;
 }
 #app .table-container {
-  max-height: 400px;
+  max-height: 500px;
+  width: 100%;
   overflow-y: auto;
 }
 

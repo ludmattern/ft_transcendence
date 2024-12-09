@@ -44,7 +44,6 @@ function initCamera() {
   camera.position.set(0, 0.06275803512326787, 1.9990151147571098);
   camera.lookAt(0, 50, -15);
 
-  // Lumière liée à la caméra
   const cameraLight = new THREE.PointLight(0xf2f2f2, 2, 100);
   cameraLight.position.set(0, 0, 0);
   camera.add(cameraLight);
@@ -93,7 +92,8 @@ export function initM1()
 {
 
   menuElement2 = document.getElementById("menu2");
-  if (!menuElement2) {
+  if (!menuElement2)
+    {
     console.error("The element with ID 'menu2' was not found.");
     return;
   }
@@ -105,7 +105,6 @@ export function initM1()
   menuObject2.scale.set(0.002, 0.002, 0.002);
   menuElement2.style.pointerEvents = "auto";
   menuElement2.classList.add("active");
-
 }
 
 export function initM3 () 
@@ -264,9 +263,13 @@ function initControls()
 
 function onWindowResize() 
 {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  camera.aspect = window.innerWidth / window.innerHeight;
-  cssRenderer.setSize(window.innerWidth, window.innerHeight);
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  renderer.setSize(width, height);
+  cssRenderer.setSize(width, height);
+
+  camera.aspect = width / height;
   camera.updateProjectionMatrix();
 }
 
