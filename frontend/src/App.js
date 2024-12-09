@@ -140,9 +140,10 @@ function initSkybox()
 
 
 
-function loadModels() {
+function loadModels() 
+{
   const loadingScreen = document.getElementById("loading-screen");
-  const progressBar = document.getElementById("progress-bar"); // Un div interne qui s'étend
+  const progressBar = document.getElementById("progress-bar");
   loadingScreen.style.display = "block";
 
   const loader = new GLTFLoader();
