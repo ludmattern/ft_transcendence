@@ -109,7 +109,7 @@ body {
 
 
 
-.spinnerhead {
+.load {
 	margin: 0;
 	top: 0;
 	left: 0;
@@ -122,15 +122,7 @@ body {
 	z-index: 9999;
 }
 
-#app .spinner {
-	width: 44.8px;
-	height: 44.8px;
-	animation: spinner-y0fdc1 2.8s infinite ease;
-	transform-style: preserve-3d;
-  position: absolute;
-  top: 25%;
-  left: 49.55%;
-}
+
 
 .progress-container {
   width: 300px;
@@ -154,55 +146,6 @@ body {
   transition: width 0.3s ease; 
 }
 
-#app .spinner > div {
-	background-color: rgba(64, 167, 214, 0.2);
-	height: 100%;
-	position: absolute;
-	width: 100%;
-	border: 2.2px solid #5a5dff;
-}
-
-#app .spinner div:nth-of-type(1) {
-	transform: translateZ(-22.4px) rotateY(180deg);
-}
-
-#app .spinner div:nth-of-type(2) {
-	transform: rotateY(-270deg) translateX(50%);
-	transform-origin: top right;
-}
-
-#app .spinner div:nth-of-type(3) {
-	transform: rotateY(270deg) translateX(-50%);
-	transform-origin: center left;
-}
-
-#app .spinner div:nth-of-type(4) {
-	transform: rotateX(90deg) translateY(-50%);
-	transform-origin: top center;
-}
-
-#app .spinner div:nth-of-type(5) {
-	transform: rotateX(-90deg) translateY(50%);
-	transform-origin: bottom center;
-}
-
-#app .spinner div:nth-of-type(6) {
-	transform: translateZ(22.4px);
-}
-
-@keyframes spinner-y0fdc1 {
-	0% {
-		transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
-	}
-
-	50% {
-		transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
-	}
-
-	100% {
-		transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
-	}
-}
 
 #app .menu1 {
 	height: 1050px;

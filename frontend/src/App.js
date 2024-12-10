@@ -153,7 +153,6 @@ function loadModels()
     }
   }
 
-  // Chargement du modèle Saturn
   const satLoader = new GLTFLoader();
   satLoader.load(
     '../src/assets/models/saturn.glb',
@@ -334,7 +333,7 @@ function onMouseClick(event) {
       );
     } else if (intersects3.length > 0) {
       animateCameraToTarget(
-        new THREE.Vector3(-2.559453657498437, 3.3453545045816075, -0.7922370317858861),
+        new THREE.Vector3(-2.559453657498437, 3.253545045816075, -0.7922370317858861),
         { x: Math.PI / 3.2, y: Math.PI / 5.5, z: -Math.PI / -12 },
         2
       );

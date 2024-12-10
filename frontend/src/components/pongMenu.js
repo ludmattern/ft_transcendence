@@ -340,10 +340,10 @@ function TournamentJoinContent() {
       role: "tabpanel",
       "aria-labelledby": "tournament-join-tab",
     },
-    createElement("h4", {}, "Available Tournaments"),
     createElement(
       "div",
       { id: "tournamentList" },
+      createElement("h4", {}, "Available Tournaments"),
       createElement(
         "div",
         { className: "table-container t" },
