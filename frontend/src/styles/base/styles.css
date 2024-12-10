@@ -157,10 +157,6 @@ body {
 	width: 1350px !important;
 }
 
-#app #menu2.active {
-	filter: blur(2px);
-	transition: filter 0.3s ease;
-}
 
 #app .btn-back {
 	background: linear-gradient(90deg, #0ff, #0044ff);
@@ -168,6 +164,7 @@ body {
 	border: 2px solid #0ff;
 	border-radius: 5px;
 	padding: 10px 20px;
+	font-size: 1.4em;
 	font-family: 'Orbitron', sans-serif;
 	text-transform: uppercase;
 	box-shadow: 0 0 5px #0ff, 0 0 15px #0044ff;
@@ -199,10 +196,18 @@ body {
 	justify-content: space-around;
   width: 300px !important;
 }
-
+#app .table-striped {
+	font-size: 1.2em;
+	
+}
 #app .table-container.t {
 	width: 700px;
   width: 800px;
+}
+
+#app .ctourn {
+	transform: scale(1.2);
+	margin-top: 100px;
 }
 
 #app .mb-3.tourn {
@@ -394,7 +399,7 @@ body {
 	position: relative;
 	display: inline-block;
 	padding: 10px 20px;
-	font-size: 1.2rem;
+	font-size: 1.5rem;
 	text-transform: uppercase;
 	color: #0ff;
 	border-radius: 4px;
@@ -440,6 +445,7 @@ body {
 
 #app .form-select.mb-3 {
 	width: 800px;
+
 }
 
 #app .tab-content {
@@ -481,7 +487,8 @@ body {
 }
 
 #app .btn-primary.tab {
-	width: 80px;
+	width: 120px;
+	font-size: 1.1em;
 }
 
 #app .btn-primary:hover {
@@ -515,6 +522,8 @@ body {
 	border: 2px solid #0ff;
 	border-radius: 5px;
 	padding: 10px;
+	height: 60px;
+	font-size: 1.3em;
 	font-family: Orbitron, sans-serif;
 	text-transform: uppercase;
 	box-shadow: 0 0 5px #0ff, 0 0 15px #04f;
@@ -531,8 +540,9 @@ body {
 	background-color: #000;
 }
 #app .table-container {
-  max-height: 500px;
+  max-height: 600px;
   width: 100%;
+  font-size: 1.4em;
   overflow-y: auto;
 }
 
@@ -554,6 +564,7 @@ body {
 
 #app .leadbtn {
 	color: #000 !important;
+	font-size: 1.4em !important; 
 	margin-top: 40px;
 	margin-bottom: 40px;
 }
@@ -576,4 +587,9 @@ body {
 
 #app .matchm {
 	margin-top: 200px;
+}
+
+#waitingRoomMatchmaking,
+#waitingRoom {
+	transform: scale(1.4);
 }

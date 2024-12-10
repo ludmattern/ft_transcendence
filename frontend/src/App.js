@@ -285,7 +285,7 @@ export function switchwindow(screen)
   else if (screen === "pong") 
   {
     animateCameraToTarget(
-      new THREE.Vector3(-2.559453657498437, 3.3453545045816075, -0.7922370317858861),
+      new THREE.Vector3(-2.559453657498437, 3.253545045816075, -0.7922370317858861),
       { x: Math.PI / 3.2, y: Math.PI / 5.5, z: -Math.PI / -12 },
       2
     );
@@ -403,7 +403,6 @@ export function animateCameraBackToInitialPosition() {
 
   camera.position.copy(startPosition);
   camera.quaternion.copy(startQuaternion);
-
   controls.enabled = false;
   menuElement.classList.add("active");
   menuElement2.classList.add("active");     
