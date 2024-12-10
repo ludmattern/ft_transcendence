@@ -223,7 +223,6 @@ body {
 }
 
 #app .flex-column.menu {
-	justify-content: space-around;
 	height: 100%;
 }
 
@@ -320,7 +319,8 @@ body {
 }
 
 #app .nav-link.left {
-	height: 250px;
+	height: 150px;
+	margin: -2px;
 	line-height: 60px;
 	color: #96adff;
 	border: none;
@@ -380,7 +380,7 @@ body {
 	padding-right: 0;
 	height: 936px;
 	width: 361px;
-	margin-top: 0;
+	margin: 0px;
 }
 
 #app .nav.nav-pills.mb-3 {
