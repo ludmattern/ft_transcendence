@@ -12,6 +12,7 @@ export function switchForm(showFormId) {
     "settings-form",
     "delete-account-form",
     "logout-form",
+	"other-profile-form",
   ];
 
   const navLinks = [
@@ -24,6 +25,7 @@ export function switchForm(showFormId) {
     "settings-link",
     "logout-link",
     "home-link",
+	"other-profile-link",
   ];
 
   const centralWindow = document.getElementById("central-window");
@@ -85,15 +87,21 @@ function getLinkIdByForm(formId) {
     "settings-form": "settings-link",
     "delete-account-form": "settings-link", // Delete is part of settings
     "logout-form": "logout-link",
+	"other-profile-form": "other-profile-link",
   };
   return mapping[formId] || null; // Return null if no match
 }
 
 // Event listeners for navigation links
-document.getElementById("enlist-link").addEventListener("click", function (e) {
+document.getElementById("other-profile-link").addEventListener("click", function (e) {
   e.preventDefault();
-  switchForm("subscribe-form");
+  switchForm("other-profile-form");
 });
+
+document.getElementById("enlist-link").addEventListener("click", function (e) {
+	e.preventDefault();
+	switchForm("subscribe-form");
+  });
 
 document.getElementById("login-link").addEventListener("click", function (e) {
   e.preventDefault();
