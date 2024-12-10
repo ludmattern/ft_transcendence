@@ -156,7 +156,7 @@ function loadModels()
   }
 
   loader.load(
-    "../src/assets/models/sn5.glb",
+    "../src/assets/models/sn6.glb",
     (gltf) => {
       model = gltf.scene;
       model.position.set(3.5, -17, -1);
@@ -221,11 +221,12 @@ function loadModels()
         }
       });
 
+
+
+      scene.add(planet);
       if (menuObject2) scene.add(menuObject2);
       if (menuObject3) scene.add(menuObject3);
       if (menuObject) scene.add(menuObject);
-
-      scene.add(planet);
 
       loadingScreen.style.display = 'none';
     },
