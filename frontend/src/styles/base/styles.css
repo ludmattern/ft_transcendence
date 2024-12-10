@@ -201,6 +201,7 @@ body {
   width: 300px !important;
 }
 #app .table-striped {
+	width: 100%;
 	font-size: 1.2em;
 	
 }
@@ -237,8 +238,10 @@ body {
 	margin-top: 150px;
 }
 
-#app .table {
+#app .table 
+{
 	border-color: #0ff;
+	width: 100% !important;
 }
 
 #app .nav.nav-pills {
@@ -544,16 +547,14 @@ body {
   width: 100%;
   font-size: 1.4em;
   overflow-y: auto;
+  overflow-x: hidden; 
 }
 
 #app .table-container::-webkit-scrollbar {
 	width: 5px;
 }
 
-#app .table-container::-webkit-scrollbar-thumb {
-	background: linear-gradient(90deg, #0ff, #0044ff);
-	border-radius: 5px;
-}
+
 
 #app .leader {
 	display: flex;
