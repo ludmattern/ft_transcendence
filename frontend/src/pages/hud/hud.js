@@ -87,7 +87,7 @@ function getLinkIdByForm(formId) {
     "settings-form": "settings-link",
     "delete-account-form": "settings-link", // Delete is part of settings
     "logout-form": "logout-link",
-	"other-profile-form": "other-profile-link",
+	"other-profile-form": "social-link",
   };
   return mapping[formId] || null; // Return null if no match
 }
