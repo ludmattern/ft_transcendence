@@ -82,7 +82,7 @@ function HeaderNav() {
     createElement(
       "div",
       { className: "col text-end" },
-      createElement("button", { className: "btn btn-back", 
+      createElement("button", { className: "btn btn-back mt-0", 
         onClick: () => {
           animateCameraBackToInitialPosition();
         },
@@ -404,7 +404,7 @@ function TournamentCreateContent() {
   return createElement(
     "div",
     {
-      className: "tab-pane fade",
+      className: "tab-pane fade ctourn",
       id: "tournamentCreateContent",
       role: "tabpanel",
       "aria-labelledby": "tournament-create-tab",
