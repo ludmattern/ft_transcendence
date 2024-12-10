@@ -201,7 +201,6 @@ function loadModels()
     }
   );
 
-  // Chargement du modèle SN6 (le plus lourd)
   loader.load(
     "../src/assets/models/sn6.glb",
     (gltf) => {
