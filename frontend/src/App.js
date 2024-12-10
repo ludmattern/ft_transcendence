@@ -137,8 +137,6 @@ function initSkybox()
 
 
 
-
-
 function loadModels() 
 {
   const loadingScreen = document.getElementById("loading-screen");
@@ -155,33 +153,7 @@ function loadModels()
     }
   }
 
-  loader.load(
-    "../src/assets/models/sn6.glb",
-    (gltf) => {
-      model = gltf.scene;
-      model.position.set(3.5, -17, -1);
-      model.rotation.set(0, 0, 0);
-      model.scale.set(0.125, 0.125, 0.125);
-      model.lookAt(0, 1000, -180);
-
-      model.traverse((child) => {
-        if (child.isMesh) {
-          child.material.color.multiplyScalar(3);
-          child.material.metalness = 0.2;
-        }
-      });
-      scene.add(model);
-
-      screenObject1 = model.getObjectByName("_gltfNode_6");
-      screenObject2 = model.getObjectByName("_gltfNode_13");
-      screenObject3 = model.getObjectByName("_gltfNode_7");
-    },
-    onProgress,
-    (error) => {
-      console.error("Erreur lors du chargement du modèle:", error);
-    }
-  );
-
+  // Chargement du modèle Saturn
   const satLoader = new GLTFLoader();
   satLoader.load(
     '../src/assets/models/saturn.glb',
@@ -221,21 +193,52 @@ function loadModels()
         }
       });
 
-
-
       scene.add(planet);
-      if (menuObject2) scene.add(menuObject2);
-      if (menuObject3) scene.add(menuObject3);
-      if (menuObject) scene.add(menuObject);
+    },
+    onProgress,
+    (error) => {
+      console.error('Erreur lors du chargement du modèle Saturn:', error);
+    }
+  );
+
+  // Chargement du modèle SN6 (le plus lourd)
+  loader.load(
+    "../src/assets/models/sn6.glb",
+    (gltf) => {
+      model = gltf.scene;
+      model.position.set(3.5, -17, -1);
+      model.rotation.set(0, 0, 0);
+      model.scale.set(0.125, 0.125, 0.125);
+      model.lookAt(0, 1000, -180);
+
+      model.traverse((child) => {
+        if (child.isMesh) {
+          child.material.color.multiplyScalar(3);
+          child.material.metalness = 0.2;
+        }
+      });
+      scene.add(model);
+
+      if (menuObject2) 
+        scene.add(menuObject2);
+      if (menuObject3) 
+        scene.add(menuObject3);
+      if (menuObject) 
+        scene.add(menuObject);
+
+      screenObject1 = model.getObjectByName("_gltfNode_6");
+      screenObject2 = model.getObjectByName("_gltfNode_13");
+      screenObject3 = model.getObjectByName("_gltfNode_7");
 
       loadingScreen.style.display = 'none';
     },
     onProgress,
     (error) => {
-      console.error('Erreur lors du chargement du modèle :', error);
+      console.error("Erreur lors du chargement du modèle SN6:", error);
     }
   );
 }
+
 
 
 
