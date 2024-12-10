@@ -253,7 +253,8 @@ body {
 	width: 299px;
 }
 
-#app .nav.flex-column.nav-pills {
+#app .nav.flex-column.nav-pills
+{
 	width: 100%;
 	align-items: flex-end;
 }
