@@ -240,7 +240,8 @@ function loadModels()
 
 
 
-function initLights() {
+function initLights() 
+{
   const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
   sunLight.position.set(-15000, 280210.384550551276, -9601.008032820177);
   sunLight.castShadow = true;
@@ -362,7 +363,7 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
     endQuaternion.w *= -1;
   }
 
-  controls.enabled = false;
+  //controls.enabled = false;
 
   const dummy = { t: 0 };
   gsap.to(dummy, {
@@ -375,7 +376,7 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
       camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, t);
     },
     onComplete: () => {
-      controls.enabled = true;
+      //controls.enabled = true;
       if (nb == 1) menuElement.classList.remove("active");
       if (nb == 2) menuElement2.classList.remove("active");
       if (nb == 3) menuElement3.classList.remove("active");
@@ -403,7 +404,7 @@ export function animateCameraBackToInitialPosition() {
 
   camera.position.copy(startPosition);
   camera.quaternion.copy(startQuaternion);
-  controls.enabled = false;
+  //controls.enabled = false;
   menuElement.classList.add("active");
   menuElement2.classList.add("active");     
   menuElement3.classList.add("active");     
@@ -421,7 +422,7 @@ export function animateCameraBackToInitialPosition() {
     onComplete: () => {
       camera.position.copy(endPosition);
       camera.quaternion.copy(endQuaternion);
-      controls.enabled = true;
+      //controls.enabled = true;
       onScreen = false;
     },
   });
@@ -432,7 +433,86 @@ function addEventListeners()
 {
   window.addEventListener("click", onMouseClick);
   window.addEventListener("resize", onWindowResize);
+ 
 }
+
+
+let freeViewEnabled = false;
+let cameraRotation = { x: 0, y: 0 };
+let initialCameraRotation = { x: 0, y: 0 };
+
+document.getElementById("free-view").addEventListener("click", () => {
+  freeViewEnabled = !freeViewEnabled;
+  if (freeViewEnabled) {
+    onScreen = true
+
+    enableFreeView();
+  } else {
+    onScreen = false
+
+    disableFreeView();
+    animateCameraBackToInitialPosition();
+
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && freeViewEnabled) {
+    freeViewEnabled = false;
+    disableFreeView();
+    onScreen = false
+
+    animateCameraBackToInitialPosition();
+  }
+});
+
+function enableFreeView() 
+{
+  initialCameraRotation.x = camera.rotation.x;
+  initialCameraRotation.y = camera.rotation.y;
+  cameraRotation.x = camera.rotation.x;
+  cameraRotation.y = camera.rotation.y;
+  //renderer.domElement.requestPointerLock();
+
+  document.addEventListener("mousemove", onFreeViewMouseMove, false);
+}
+
+function disableFreeView() 
+{
+  document.exitPointerLock();
+  document.removeEventListener("mousemove", onFreeViewMouseMove, false);
+}
+
+function onFreeViewMouseMove(event) 
+{
+  let maxRotationAngle = Math.PI / 3;
+  const rotationSpeed = 0.00035; 
+
+
+  const deltaX = event.movementX;
+  const deltaY = event.movementY;
+
+  cameraRotation.y -= deltaX * rotationSpeed;
+  cameraRotation.x -= deltaY * rotationSpeed;
+
+  cameraRotation.y = THREE.MathUtils.clamp(
+    cameraRotation.y,
+    initialCameraRotation.y - maxRotationAngle,
+    initialCameraRotation.y + maxRotationAngle
+  );
+
+  cameraRotation.x = THREE.MathUtils.clamp(
+    cameraRotation.x,
+    initialCameraRotation.x - maxRotationAngle / 2,
+    initialCameraRotation.x + maxRotationAngle / 2
+  );
+
+  camera.rotation.set(cameraRotation.x, cameraRotation.y, 0, "XYZ");
+  camera.updateMatrixWorld(true);
+}
+
+
+
 
 export function buildScene() 
 {
@@ -442,9 +522,25 @@ export function buildScene()
   initCSSRenderer();
   initSkybox();
   initLights();
-  initControls();
+  //initControls();
   loadModels();
   addEventListeners();
+
+  const textureLoader = new THREE.TextureLoader();
+  textureLoader.load('../src/assets/img/ludo.png', (texture) => {
+    const planeGeometry = new THREE.PlaneGeometry(10, 10);
+    const planeMaterial = new THREE.MeshBasicMaterial({
+      map: texture,
+      side: THREE.DoubleSide,
+    });
+  
+    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.position.set(0, 16, 15);
+    plane.rotation.set(-10, 0, 0);
+    plane.scale.set(0.5, 0.5, 0.5);
+    scene.add(plane);
+  });
+
 }
 
 
@@ -458,6 +554,7 @@ function animate()
   if (cssRenderer && scene && camera) 
     cssRenderer.render(scene, camera);
 }
+
 
 buildScene();
 animate();
