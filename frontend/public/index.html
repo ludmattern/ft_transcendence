@@ -56,7 +56,7 @@
 										method="post"
 										class="w-100">
 										<div class="form-group">
-											<label for="pilot-id">ID</label>
+											<label class="mb-3" for="pilot-id">ID</label>
 											<input
 												type="text"
 												id="pilot-id"
@@ -65,7 +65,7 @@
 												required />
 										</div>
 										<div class="form-group">
-											<label for="password">Password</label>
+											<label class="mb-3" for="password">Password</label>
 											<input
 												type="password"
 												id="password"
@@ -103,7 +103,7 @@
 										method="post"
 										class="w-100">
 										<div class="form-group">
-											<label for="new-pilot-id">ID</label>
+											<label class="mb-3" for="new-pilot-id">ID</label>
 											<input
 												type="text"
 												id="new-pilot-id"
@@ -112,7 +112,7 @@
 												required />
 										</div>
 										<div class="form-group">
-											<label for="new-password">Password</label>
+											<label class="mb-3" for="new-password">Password</label>
 											<input
 												type="password"
 												id="new-password"
@@ -121,7 +121,7 @@
 												required />
 										</div>
 										<div class="form-group">
-											<label for="confirm-password">Confirm Password</label>
+											<label class="mb-3" for="confirm-password">Confirm Password</label>
 											<input
 												type="password"
 												id="confirm-password"
@@ -130,7 +130,7 @@
 												required />
 										</div>
 										<div class="form-group">
-											<label for="email">Email</label>
+											<label class="mb-3" for="email">Email</label>
 											<input
 												type="email"
 												id="email"
@@ -139,7 +139,7 @@
 												required />
 										</div>
 										<div class="form-group">
-											<label for="confirm-email">Confirm Email</label>
+											<label class="mb-3" for="confirm-email">Confirm Email</label>
 											<input
 												type="email"
 												id="confirm-email"
@@ -148,11 +148,11 @@
 												required />
 										</div>
 										<div class="form-group">
-											<label for="language">Language</label>
+											<label class="mb-3" for="language">Language</label>
 											<select
 												id="language"
 												name="language"
-												class="form-control"
+												class="form-control p-3"
 												required>
 												<option value="french">French</option>
 												<option value="english">English</option>
@@ -193,7 +193,7 @@
 										method="post"
 										class="w-100">
 										<div class="form-group">
-											<label for="old-password">Old password</label>
+											<label class="mb-3" for="old-password">Old password</label>
 											<input
 												type="password"
 												id="old-password"
@@ -202,7 +202,7 @@
 												required />
 										</div>
 										<div class="form-group">
-											<label for="new-password">New Password</label>
+											<label class="mb-3" for="new-password">New Password</label>
 											<input
 												type="password"
 												id="new-password"
@@ -211,7 +211,7 @@
 												required />
 										</div>
 										<div class="form-group">
-											<label for="confirm-new-password">Confirm new password</label>
+											<label class="mb-3" for="confirm-new-password">Confirm new password</label>
 											<input
 												type="password"
 												id="confirm-new-password"
@@ -220,7 +220,7 @@
 												required />
 										</div>
 										<div class="form-group">
-											<label for="email">New Email</label>
+											<label class="mb-3" for="email">New Email</label>
 											<input
 												type="email"
 												id="new-email"
@@ -229,7 +229,7 @@
 												required />
 										</div>
 										<div class="form-group">
-											<label for="confirm-new-email">Confirm new Email</label>
+											<label class="mb-3" for="confirm-new-email">Confirm new Email</label>
 											<input
 												type="email"
 												id="confirm-new-email"
@@ -238,11 +238,11 @@
 												required />
 										</div>
 										<div class="form-group">
-											<label for="language">Language</label>
+											<label class="mb-3" for="language">Language</label>
 											<select
 												id="language"
 												name="language"
-												class="form-control"
+												class="form-control p-3"
 												required>
 												<option value="french">French</option>
 												<option value="english">English</option>
@@ -322,54 +322,48 @@
 									<span class="panel-mid"></span>
 
 									<!-- Match History -->
-									<div class="profile-match-history mt-2 w-100 d-flex flex-column p-4">
-										<h6 class="match-history-title d-flex justify-content-center mb-2">
-											<span class="bi bi-journal me-2"></span>
-											Match History
+									<div class="profile-match-history mt-2 w-100 d-flex flex-column">
+										<h6 class="match-history-title d-flex justify-content-center m-3">
+										  <span class="bi bi-journal me-2"></span>
+										  Match History
 										</h6>
-										<div
-											class="match-history-container table-responsive"
-											style="max-height: 50vh; overflow-y: auto">
-											<table class="table table-sm table-striped mb-0 transparent-table">
-												<thead
-													class="table-light"
-													style="position: sticky; top: 0; z-index: 1">
-													<tr>
-														<th scope="col">Outcome</th>
-														<th scope="col">Game Mode</th>
-														<th scope="col">Duration</th>
-														<th scope="col">Date</th>
-														<th scope="col">Opponents</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td class="text-success fw-bold">Win</td>
-														<td>1v1</td>
-														<td>10min</td>
-														<td>01/01/2022</td>
-														<td>Opponent</td>
-													</tr>
-													<tr>
-														<td class="text-danger fw-bold">Loss</td>
-														<td>2v2</td>
-														<td>20min</td>
-														<td>01/01/2022</td>
-														<td>Opponent 1, Opponent 2</td>
-													</tr>
-													<tr>
-														<td class="text-danger fw-bold">Loss</td>
-														<td>2v2</td>
-														<td>20min</td>
-														<td>01/01/2022</td>
-														<td>Opponent 1, Opponent 2</td>
-													</tr>
-
-													<!-- Add more rows as needed -->
-												</tbody>
-											</table>
+										<div class="match-history-container d-flex flex-column" style="max-height: 50vh; overflow-y: auto;">
+										  <!-- Header -->
+										  <div class="match-history-header d-flex fw-bold">
+											<span class="col-2">Outcome</span>
+											<span class="col-2">Game Mode</span>
+											<span class="col-2">Duration</span>
+											<span class="col-2">Date</span>
+											<span class="col-4">Opponents</span>
+										  </div>
+										  <!-- Match Items -->
+										  <div class="match-item d-flex">
+											<span class="col-2 text-success fw-bold">Win</span>
+											<span class="col-2">1v1</span>
+											<span class="col-2">10min</span>
+											<span class="col-2">01/01/2022</span>
+											<span class="col-4">Opponent</span>
+										  </div>
+										  <div class="match-item d-flex">
+											<span class="col-2 text-danger fw-bold">Loss</span>
+											<span class="col-2">2v2</span>
+											<span class="col-2">20min</span>
+											<span class="col-2">01/01/2022</span>
+											<span class="col-4">Opponent 1, Opponent 2</span>
+										  </div>
+										  <div class="match-item d-flex">
+											<span class="col-2 text-danger fw-bold">Loss</span>
+											<span class="col-2">2v2</span>
+											<span class="col-2">20min</span>
+											<span class="col-2">01/01/2022</span>
+											<span class="col-4">Opponent 1, Opponent 2</span>
+										  </div>
+										  <!-- Add more match items as needed -->
 										</div>
-									</div>
+									  </div>
+									  
+									  
+									  
 								</span>
 								<span class="panel-end"></span>
 							</div>
