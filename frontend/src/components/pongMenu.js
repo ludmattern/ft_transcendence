@@ -118,7 +118,7 @@ function SoloContent() {
       createElement("option", { value: "medium" }, "Medium"),
       createElement("option", { value: "hard" }, "Hard")
     ),
-    createElement("div", { className: "cont" },
+    createElement("div", { className: "d-flex justify-content-center mt-5" },
       createElement("button", { className: "btn btn-primary mt-3" }, "Launch")
     )
   );
@@ -141,7 +141,7 @@ function LocalContent() {
       createElement("option", { value: "map2" }, "Map 2"),
       createElement("option", { value: "map3" }, "Map 3")
     ),
-    createElement("div", { className: "cont" },
+    createElement("div", { className: "d-flex justify-content-center mt-5" },
       createElement("button", { className: "btn btn-primary mt-3" }, "Launch")
     )
   );
@@ -219,7 +219,7 @@ function MatchmakingContent() {
       ),
       createElement(
         "div",
-        { className: "cont" },
+        { className: "d-flex justify-content-center mt-5" },
         createElement(
           "button",
           {
@@ -266,7 +266,7 @@ function MpPrivateContent() {
     ),
     createElement("h3", {}, "Invite Player"),
     createElement("input", { type: "text", className: "form-control mb-3", placeholder: "Player Name or ID" }),
-    createElement("div", { className: "cont" },
+    createElement("div", { className: "d-flex justify-content-center mt-5" },
       createElement("button", { className: "btn btn-primary mt-3" }, "Launch")
     )
   );

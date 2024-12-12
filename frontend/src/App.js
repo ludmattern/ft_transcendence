@@ -382,7 +382,6 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
       if (nb == 3) menuElement3.classList.remove("active");
     },
   });
-
   onScreen = true;
 }
 
@@ -401,7 +400,8 @@ export function animateCameraBackToInitialPosition() {
   camera.position.copy(endPosition);
   camera.lookAt(lookAtTarget);
   const endQuaternion = camera.quaternion.clone();
-
+  if (freeViewEnabled)
+    disableFreeView();
   camera.position.copy(startPosition);
   camera.quaternion.copy(startQuaternion);
   //controls.enabled = false;
@@ -424,6 +424,8 @@ export function animateCameraBackToInitialPosition() {
       camera.quaternion.copy(endQuaternion);
       //controls.enabled = true;
       onScreen = false;
+
+
     },
   });
 }
@@ -493,7 +495,6 @@ function onFreeViewMouseMove(event)
 {
   let maxRotationAngle = Math.PI / 3;
   const rotationSpeed = 0.0003; 
-
 
   const deltaX = event.movementX;
   const deltaY = event.movementY;
