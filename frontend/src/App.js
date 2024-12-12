@@ -344,6 +344,8 @@ function onMouseClick(event) {
 
 
 function animateCameraToTarget(endPosition, endRotation, nb) {
+  document.removeEventListener("mousemove", onBaseMouseMove, false);
+
   const startPosition = camera.position.clone();
   const startQuaternion = camera.quaternion.clone();
 
@@ -378,15 +380,30 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
     onComplete: () => {
       //controls.enabled = true;
       if (nb == 1) menuElement.classList.remove("active");
-      if (nb == 2) menuElement2.classList.remove("active");
+      if (nb == 2) 
+      {
+        menuElement2.classList.remove("active");
+      }
       if (nb == 3) menuElement3.classList.remove("active");
+
+
+      initialCameraRotation.x = camera.rotation.x;
+      initialCameraRotation.y = camera.rotation.y;
+      cameraRotation.x = camera.rotation.x;
+      cameraRotation.y = camera.rotation.y;
+      document.addEventListener("mousemove", onBaseMouseMove, false);
+
+
     },
+    
   });
   onScreen = true;
 }
 
 
 export function animateCameraBackToInitialPosition() {
+  document.removeEventListener("mousemove", onBaseMouseMove, false);
+
   const startPosition = camera.position.clone();
   const startQuaternion = camera.quaternion.clone();
 
@@ -422,8 +439,12 @@ export function animateCameraBackToInitialPosition() {
     onComplete: () => {
       camera.position.copy(endPosition);
       camera.quaternion.copy(endQuaternion);
-      //controls.enabled = true;
       onScreen = false;
+      initialCameraRotation.x = camera.rotation.x;
+      initialCameraRotation.y = camera.rotation.y;
+      cameraRotation.x = camera.rotation.x;
+      cameraRotation.y = camera.rotation.y;
+      document.addEventListener("mousemove", onBaseMouseMove, false);
 
 
     },
@@ -440,8 +461,8 @@ function addEventListeners()
 
 
 let freeViewEnabled = false;
-let cameraRotation = { x: 0, y: 0 };
-let initialCameraRotation = { x: 0, y: 0 };
+let cameraRotation = { x: 0, y: 0, z:0};
+let initialCameraRotation = { x: 0, y: 0, z:0 };
 
 document.getElementById("free-view").addEventListener("click", () => {
   freeViewEnabled = !freeViewEnabled;
@@ -458,12 +479,40 @@ document.getElementById("free-view").addEventListener("click", () => {
   }
 });
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && freeViewEnabled) {
+document.addEventListener("mousemove", onBaseMouseMove, false);
+
+function onBaseMouseMove(event) 
+{
+  let maxRotationAngle = Math.PI / 3;
+  const rotationSpeed = 0.000005; 
+
+  const deltaX = event.movementX;
+  const deltaY = event.movementY;
+
+  cameraRotation.y -= deltaX * rotationSpeed;
+  cameraRotation.x -= deltaY * rotationSpeed;
+
+  cameraRotation.y = THREE.MathUtils.clamp(
+    cameraRotation.y,
+    initialCameraRotation.y - maxRotationAngle,
+    initialCameraRotation.y + maxRotationAngle
+  );
+
+  cameraRotation.x = THREE.MathUtils.clamp(
+    cameraRotation.x,
+    initialCameraRotation.x - maxRotationAngle / 2,
+    initialCameraRotation.x + maxRotationAngle / 2
+  );
+
+  camera.rotation.set(cameraRotation.x, cameraRotation.y, camera.rotation.z, "XYZ");
+  camera.updateMatrixWorld(true);
+}
+document.addEventListener('pointerlockchange', () => {
+  if (document.pointerLockElement !== renderer.domElement && freeViewEnabled)
+  {
     freeViewEnabled = false;
     disableFreeView();
-    onScreen = false
-
+    onScreen = false;
     animateCameraBackToInitialPosition();
   }
 });
@@ -494,7 +543,7 @@ function disableFreeView()
 function onFreeViewMouseMove(event) 
 {
   let maxRotationAngle = Math.PI / 3;
-  const rotationSpeed = 0.0003; 
+  const rotationSpeed = 0.00025; 
 
   const deltaX = event.movementX;
   const deltaY = event.movementY;
@@ -532,6 +581,10 @@ export function buildScene()
   //initControls();
   loadModels();
   addEventListeners();
+  initialCameraRotation.x = camera.rotation.x;
+  initialCameraRotation.y = camera.rotation.y;
+  cameraRotation.x = camera.rotation.x;
+  cameraRotation.y = camera.rotation.y;
 }
 
 
