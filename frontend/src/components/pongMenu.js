@@ -186,7 +186,7 @@ function LocalSoloTabs() {
     ),
     createElement(
       "div",
-      { className: "tab-content" },
+      { className: " tab-content" },
       SoloContent(),
       LocalContent()
     )
@@ -323,7 +323,7 @@ function MultiplayerTabs() {
     ),
     createElement(
       "div",
-      { className: "tab-content" },
+      { className: " tab-content" },
       MatchmakingContent(),
       MpPrivateContent()
     )
@@ -495,7 +495,7 @@ function TournamentTabs() {
     ),
     createElement(
       "div",
-      { className: "tab-content tab2 tab3" },
+      { className: " tab-content tab2 tab3" },
       TournamentJoinContent(),
       TournamentCreateContent()
     )
@@ -506,7 +506,7 @@ function TournamentTabs() {
 function PlayTabs() {
   return createElement(
     "div",
-    { className: "tab-content" },
+    { className: " tab-content" },
     LocalSoloTabs(),
     MultiplayerTabs(),
     TournamentTabs(),
@@ -668,7 +668,7 @@ export function PongMenu() {
     HeaderNav(),
     createElement(
       "div",
-      { className: "row mt-4 tab-content", id: "mainTabsContent" },
+      { className: "row mt-4  tab-content", id: "mainTabsContent" },
       PlaySection(),
       LeaderboardSection()
     )

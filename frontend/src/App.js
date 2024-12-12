@@ -531,22 +531,6 @@ export function buildScene()
   //initControls();
   loadModels();
   addEventListeners();
-
-  const textureLoader = new THREE.TextureLoader();
-  textureLoader.load('../src/assets/img/ludo.png', (texture) => {
-    const planeGeometry = new THREE.PlaneGeometry(10, 10);
-    const planeMaterial = new THREE.MeshBasicMaterial({
-      map: texture,
-      side: THREE.DoubleSide,
-    });
-  
-    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    plane.position.set(0, 16, 15);
-    plane.rotation.set(-10, 0, 0);
-    plane.scale.set(0.5, 0.5, 0.5);
-    scene.add(plane);
-  });
-
 }
 
 

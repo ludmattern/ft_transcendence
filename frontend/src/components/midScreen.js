@@ -16,7 +16,7 @@ export function midScreen() {
       {className : "wait2"},
       createElement(
         "img",
-        {className: "mid-screensaver", src : "../src/assets/img/image-removebg-preview (1).png"},
+        {className: "mid-screensaver", src : "../src/assets/img/42.png"},
       )
     )
   );

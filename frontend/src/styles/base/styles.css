@@ -159,6 +159,10 @@ body {
 	width: 1350px !important;
 }
 
+.menu1.active{
+	filter: blur(2px);
+}
+
 
 #app .btn-back {
 	background: linear-gradient(90deg, #0ff, #0044ff);
@@ -204,7 +208,7 @@ body {
 	
 }
 #app .table-container.t {
-	width: 700px;
+width: 700px;
   width: 800px;
 }
 
@@ -574,15 +578,6 @@ body {
 	flex-direction: column;
 	justify-content: space-between;
 	padding-bottom: 10px;
-}
-
-@keyframes cyber-lines {
-	0% {
-		background-position: 0%;
-	}
-	100% {
-		background-position: 100%;
-	}
 }
 
 #app .matchm {
