@@ -344,6 +344,8 @@ function onMouseClick(event) {
 
 
 function animateCameraToTarget(endPosition, endRotation, nb) {
+  document.removeEventListener("mousemove", onBaseMouseMove, false);
+
   const startPosition = camera.position.clone();
   const startQuaternion = camera.quaternion.clone();
 
@@ -383,10 +385,14 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
         menuElement2.classList.remove("active");
       }
       if (nb == 3) menuElement3.classList.remove("active");
+
+
       initialCameraRotation.x = camera.rotation.x;
       initialCameraRotation.y = camera.rotation.y;
       cameraRotation.x = camera.rotation.x;
       cameraRotation.y = camera.rotation.y;
+      document.addEventListener("mousemove", onBaseMouseMove, false);
+
 
     },
     
@@ -396,6 +402,8 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
 
 
 export function animateCameraBackToInitialPosition() {
+  document.removeEventListener("mousemove", onBaseMouseMove, false);
+
   const startPosition = camera.position.clone();
   const startQuaternion = camera.quaternion.clone();
 
@@ -431,12 +439,12 @@ export function animateCameraBackToInitialPosition() {
     onComplete: () => {
       camera.position.copy(endPosition);
       camera.quaternion.copy(endQuaternion);
-      //controls.enabled = true;
       onScreen = false;
       initialCameraRotation.x = camera.rotation.x;
       initialCameraRotation.y = camera.rotation.y;
       cameraRotation.x = camera.rotation.x;
       cameraRotation.y = camera.rotation.y;
+      document.addEventListener("mousemove", onBaseMouseMove, false);
 
 
     },
@@ -499,13 +507,12 @@ function onBaseMouseMove(event)
   camera.rotation.set(cameraRotation.x, cameraRotation.y, camera.rotation.z, "XYZ");
   camera.updateMatrixWorld(true);
 }
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && freeViewEnabled) {
+document.addEventListener('pointerlockchange', () => {
+  if (document.pointerLockElement !== renderer.domElement && freeViewEnabled)
+  {
     freeViewEnabled = false;
     disableFreeView();
-    onScreen = false
-
+    onScreen = false;
     animateCameraBackToInitialPosition();
   }
 });
