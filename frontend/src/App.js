@@ -201,7 +201,7 @@ function loadModels()
   );
 
   loader.load(
-    "../src/assets/models/sn6.glb",
+    "../src/assets/models/sn8.glb",
     (gltf) => {
       model = gltf.scene;
       model.position.set(3.5, -17, -1);
