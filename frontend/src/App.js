@@ -51,7 +51,7 @@ function initCamera() {
 }
 
 function initRenderer() {
-  renderer = new THREE.WebGLRenderer({ antialias: false });
+  renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   document.getElementById("app").appendChild(renderer.domElement);
@@ -474,7 +474,7 @@ function enableFreeView()
   initialCameraRotation.y = camera.rotation.y;
   cameraRotation.x = camera.rotation.x;
   cameraRotation.y = camera.rotation.y;
-  //renderer.domElement.requestPointerLock();
+  renderer.domElement.requestPointerLock();
   menuElement.style.pointerEvents = "none";
   menuElement2.style.pointerEvents = "none";
   menuElement3.style.pointerEvents = "none";
@@ -484,7 +484,7 @@ function enableFreeView()
 
 function disableFreeView() 
 {
-  //document.exitPointerLock();
+  document.exitPointerLock();
   menuElement.style.pointerEvents = "auto";
   menuElement2.style.pointerEvents = "auto";
   menuElement3.style.pointerEvents = "auto";
