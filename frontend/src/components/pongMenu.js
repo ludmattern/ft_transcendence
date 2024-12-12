@@ -33,7 +33,7 @@ if (selection) selection.classList.remove('d-none');
 function HeaderNav() {
   return createElement(
     "div",
-    { className: "row align-items-center py-3 top-row" },
+    { className: "row align-items-center py-3 top-row p-0" },
     createElement("div", { className: "col text-start" }),
     createElement(
       "div",
@@ -82,7 +82,7 @@ function HeaderNav() {
     createElement(
       "div",
       { className: "col text-end" },
-      createElement("button", { className: "btn btn-back mt-0", 
+      createElement("button", { className: "btn btn-back mt-0 pt-2 pb-2 ps-3 pe-3", 
         onClick: () => {
           animateCameraBackToInitialPosition();
         },
@@ -102,7 +102,7 @@ function SoloContent() {
       role: "tabpanel",
       "aria-labelledby": "solo-tab",
     },
-    createElement("h3", {}, "Select a map"),
+    createElement("h3", {className: "mt-5"}, "Select a map"),
     createElement(
       "select",
       { className: "form-select mb-3", "aria-label": "Map selector solo" },
@@ -110,7 +110,7 @@ function SoloContent() {
       createElement("option", { value: "map2" }, "Map 2"),
       createElement("option", { value: "map3" }, "Map 3")
     ),
-    createElement("h3", {}, "Difficulty"),
+    createElement("h3", {className: "mt-5"}, "Difficulty"),
     createElement(
       "select",
       { className: "form-select mb-3", "aria-label": "Difficulty selector" },
@@ -133,7 +133,7 @@ function LocalContent() {
       role: "tabpanel",
       "aria-labelledby": "local-tab",
     },
-    createElement("h3", {}, "Select a map"),
+    createElement("h3", {className: "mt-5"}, "Select a map"),
     createElement(
       "select",
       { className: "form-select mb-3", "aria-label": "Map selector local" },
@@ -158,7 +158,7 @@ function LocalSoloTabs() {
     },
     createElement(
       "ul",
-      { className: "nav nav-pills mb-3", id: "soloLocalTabs", role: "tablist" },
+      { className: "nav nav-pills mb-4 mt-5 topcontent", id: "soloLocalTabs", role: "tablist" },
       createElement("li", { className: "nav-item", role: "presentation" },
         createElement("button", {
           className: "nav-link active right",
@@ -173,7 +173,7 @@ function LocalSoloTabs() {
       ),
       createElement("li", { className: "nav-item", role: "presentation" },
         createElement("button", {
-          className: "nav-link right",
+          className: "nav-link right pt-2 pb-2 ps-3 pe-3",
           id: "local-tab",
           "data-bs-toggle": "pill",
           "data-bs-target": "#localContent",
@@ -186,7 +186,7 @@ function LocalSoloTabs() {
     ),
     createElement(
       "div",
-      { className: " tab-content" },
+      { className: " tab-content mt-0" },
       SoloContent(),
       LocalContent()
     )
@@ -206,7 +206,7 @@ function MatchmakingContent() {
     createElement(
       "div",
       { id: "matchmakingSelection" },
-      createElement("h3", {}, "Select a map"),
+      createElement("h3", {className: "mt-5"}, "Select a map"),
       createElement(
         "select",
         {
@@ -233,7 +233,7 @@ function MatchmakingContent() {
     createElement(
       "div",
       { id: "waitingRoomMatchmaking", className: "d-none matchm" },
-      createElement("h4", {}, "Waiting Room"),
+      createElement("h4", {className: "mt-5"}, "Waiting Room"),
       createElement("p", {}, "Searching for players..."),
       createElement(
         "button",
@@ -256,7 +256,7 @@ function MpPrivateContent() {
       role: "tabpanel",
       "aria-labelledby": "mp-private-tab",
     },
-    createElement("h3", {}, "Select a map"),
+    createElement("h3", {className: "mt-5"}, "Select a map"),
     createElement(
       "select",
       { className: "form-select mb-3", "aria-label": "Map selector multiplayer private" },
@@ -264,7 +264,7 @@ function MpPrivateContent() {
       createElement("option", { value: "map2" }, "Map 2"),
       createElement("option", { value: "map3" }, "Map 3")
     ),
-    createElement("h3", {}, "Invite Player"),
+    createElement("h3", {className: "mt-5"}, "Invite Player"),
     createElement("input", { type: "text", className: "form-control mb-3", placeholder: "Player Name or ID" }),
     createElement("div", { className: "d-flex justify-content-center mt-5" },
       createElement("button", { className: "btn btn-primary mt-3" }, "Launch")
@@ -283,7 +283,7 @@ function MultiplayerTabs() {
     },
     createElement(
       "ul",
-      { className: "nav nav-pills mb-3", id: "multiplayerTabs", role: "tablist" },
+      { className: "nav nav-pills mb-4 mt-5 topcontent", id: "multiplayerTabs", role: "tablist" },
       createElement(
         "li",
         { className: "nav-item", role: "presentation" },
@@ -308,7 +308,7 @@ function MultiplayerTabs() {
         createElement(
           "button",
           {
-            className: "nav-link right",
+            className: "nav-link right pt-2 pb-2 ps-3 pe-3",
             id: "mp-private-tab",
             "data-bs-toggle": "pill",
             "data-bs-target": "#mpPrivateContent",
@@ -323,7 +323,7 @@ function MultiplayerTabs() {
     ),
     createElement(
       "div",
-      { className: " tab-content" },
+      { className: " tab-content m-0" },
       MatchmakingContent(),
       MpPrivateContent()
     )
@@ -342,8 +342,8 @@ function TournamentJoinContent() {
     },
     createElement(
       "div",
-      { id: "tournamentList" },
-      createElement("h4", {}, "Available Tournaments"),
+      { className: "mt-5", id: "tournamentList" },
+      createElement("h4", {className: "mt-5"}, "Available Tournaments"),
       createElement(
         "div",
         { className: "table-container t" },
@@ -388,7 +388,7 @@ function TournamentJoinContent() {
     createElement(
       "div",
       { id: "waitingRoom", className: "d-none matchm" },
-      createElement("h4", {}, "Waiting Room"),
+      createElement("h4", {className: "mt-5"}, "Waiting Room"),
       createElement("p", {}, "Waiting for players to join..."),
       createElement(
         "button",
@@ -408,7 +408,7 @@ function TournamentCreateContent() {
       role: "tabpanel",
       "aria-labelledby": "tournament-create-tab",
     },
-    createElement("h4", {}, "Create a Tournament"),
+    createElement("h4", {className: "mt-5"}, "Create a Tournament"),
     createElement(
       "div",
       { className: "mb-3 tourn" },
@@ -455,7 +455,7 @@ function TournamentTabs() {
     },
     createElement(
       "ul",
-      { className: "nav nav-pills mb-3", id: "tournamentTabs", role: "tablist" },
+      { className: "nav nav-pills mb-4 mt-5 topcontent", id: "tournamentTabs", role: "tablist" },
       createElement(
         "li",
         { className: "nav-item", role: "presentation" },
@@ -480,7 +480,7 @@ function TournamentTabs() {
         createElement(
           "button",
           {
-            className: "nav-link right",
+            className: "nav-link right pt-2 pb-2 ps-3 pe-3",
             id: "tournament-create-tab",
             "data-bs-toggle": "pill",
             "data-bs-target": "#tournamentCreateContent",
@@ -495,7 +495,7 @@ function TournamentTabs() {
     ),
     createElement(
       "div",
-      { className: " tab-content tab2 tab3" },
+      { className: " tab-content tab2 tab3 mt-0" },
       TournamentJoinContent(),
       TournamentCreateContent()
     )
@@ -506,7 +506,7 @@ function TournamentTabs() {
 function PlayTabs() {
   return createElement(
     "div",
-    { className: " tab-content" },
+    { className: " tab-content mt-0" },
     LocalSoloTabs(),
     MultiplayerTabs(),
     TournamentTabs(),
@@ -519,7 +519,7 @@ function PlayTabs() {
         role: "tabpanel",
         "aria-labelledby": "play4-tab",
       },
-      createElement("h3", {}, "Private")
+      createElement("h3", {className: "mt-5"}, "Private")
     )
   );
 }
@@ -538,7 +538,7 @@ function PlaySection() {
       { className: "row" },
       createElement(
         "div",
-        { className: "col-3" },
+        { className: "col-3 p-0 m-0 " },
         createElement(
           "div",
           {
@@ -613,15 +613,15 @@ function LeaderboardSection() {
     createElement(
       "div",
       { className: "row" },
-      createElement("div", { className: "col-3" }),
+      createElement("div", { className: "col-3 p-0 m-0 " }),
       createElement(
         "div",
         { className: "col" },
         createElement(
           "div",
-          { className: "leader" },
-          createElement("h3", {}, "Leaderboard"),
-          createElement("button", { className: "btn btn-primary mb-3 leadbtn" }, "Find me"),
+          { className: "leader m-5" },
+          createElement("h3", {className: "mt-5"}, "Leaderboard"),
+          createElement("button", { className: "btn btn-primary mb-5 leadbtn mt-5" }, "Find me"),
           createElement(
             "div",
             { className: "table-container" },
@@ -668,7 +668,7 @@ export function PongMenu() {
     HeaderNav(),
     createElement(
       "div",
-      { className: "row mt-4  tab-content", id: "mainTabsContent" },
+      { className: "row  tab-content", id: "mainTabsContent" },
       PlaySection(),
       LeaderboardSection()
     )
