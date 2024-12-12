@@ -473,20 +473,26 @@ function enableFreeView()
   cameraRotation.x = camera.rotation.x;
   cameraRotation.y = camera.rotation.y;
   //renderer.domElement.requestPointerLock();
+  menuElement.style.pointerEvents = "none";
+  menuElement2.style.pointerEvents = "none";
+  menuElement3.style.pointerEvents = "none";
 
   document.addEventListener("mousemove", onFreeViewMouseMove, false);
 }
 
 function disableFreeView() 
 {
-  document.exitPointerLock();
+  //document.exitPointerLock();
+  menuElement.style.pointerEvents = "auto";
+  menuElement2.style.pointerEvents = "auto";
+  menuElement3.style.pointerEvents = "auto";
   document.removeEventListener("mousemove", onFreeViewMouseMove, false);
 }
 
 function onFreeViewMouseMove(event) 
 {
   let maxRotationAngle = Math.PI / 3;
-  const rotationSpeed = 0.00035; 
+  const rotationSpeed = 0.0003; 
 
 
   const deltaX = event.movementX;

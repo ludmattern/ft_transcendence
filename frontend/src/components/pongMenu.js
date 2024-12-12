@@ -364,7 +364,6 @@ function TournamentJoinContent() {
           createElement(
             "tbody",
             { className: "tbody" },
-            // Quelques lignes d'exemple, répétez si besoin
             [1,2,3,4,5].map(() =>
               createElement(
                 "tr",
