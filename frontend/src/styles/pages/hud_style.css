@@ -100,7 +100,6 @@ a {
 .central-window {
   overflow: auto;
   pointer-events: all;
-  border-bottom: 2px solid var(--secondary-hud-elements-color);
 }
 
 .central-window h5 {
@@ -603,15 +602,11 @@ button {
 }
 
 .form-container {
-  opacity: 0;
-  transform: scale(0.95);
-  transition: all 0.2s ease-in-out;
-  display: none;
+  border-bottom: 2px solid var(--secondary-hud-elements-color);
 }
 
 .form-container.active {
   opacity: 1;
-  transform: scale(1);
   display: block;
 }
 
@@ -904,4 +899,14 @@ p {
 
 .social-pilot-list #search-bar::placeholder {
   color: var(--menu-color);
+}
+
+.waiting-screen-effect {
+	position: absolute;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(1rem);
+    transition: all 0.2s;
+    z-index: 0;
+    background-color: black;
 }

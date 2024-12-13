@@ -20,7 +20,8 @@
     <script type="module" src="../src/index.js"></script>
   </head>
   <body>
-    <!-- <div class="blur-screen-effect"></div> -->
+    <div id="waiting-screen-effect" class="waiting-screen-effect"></div>
+    <div id="blur-screen-effect" class="blur-screen-effect"></div>
     <div class="hud_screen-effect">
       <div class="hud_screen-effect"></div>
     </div>
@@ -30,8 +31,8 @@
       <header-placeholder></header-placeholder>
 
       <div class="hud-body">
-        <div class="row full-height w-100">
-          <left-window-placeholder></left-window-placeholder>
+        <div class="row full-height w-100" style="display: flex; justify-content: center;">
+		<left-window-placeholder></left-window-placeholder>
 
           <div
             class="d-flex flex-column align-items-center col-md-7 justify-content-around"

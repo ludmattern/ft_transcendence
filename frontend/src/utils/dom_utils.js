@@ -9,6 +9,10 @@ export const modules = {
   leftsidewindow: "../pages/hud/leftsidewindow.js", // Path to the sidewindow module
   rightsidewindow: "../pages/hud/rightsidewindow.js", // Path to the sidewindow module
   pongmenu: "../pages/pong/pongmenu.js",
+  subscribeForm: "../pages/hud/subscribeForm.js",
+  loginForm: "../pages/hud/loginForm.js",
+  settingsForm: "../pages/hud/settingsForm.js",
+  socialForm: "../pages/hud/socialForm.js",
 };
 
 /**
@@ -21,7 +25,9 @@ export const modules = {
 export function loadComponent(target, component, moduleName, callback) {
 	// Replace the target content or the placeholder with the provided component
 	replacePlaceholderOrContent(target, component, () => {
-	  console.debug(`${component.name} component has been rendered`);
+	  if (component) {
+		console.debug(`${component.name} component has been rendered`)
+	  };
   
 	  // Dynamically load the associated JavaScript module
 	  loadComponentScript(moduleName, () => {
@@ -46,6 +52,17 @@ export function loadComponent(target, component, moduleName, callback) {
 	if (targetElement) {
 	  console.debug(`Processing ${target}`);
   
+		// If component is null, clear the content and exit
+		if (!component) {
+			console.debug(`Clearing content of ${target} as component is null`);
+			targetElement.innerHTML = ''; // Clear the existing content
+			if (callback && typeof callback === "function") {
+				console.debug("Calling the callback after clearing the target");
+				callback();
+			}
+			return;
+		}
+
 	  // Check if the target is a placeholder (custom tag without children)
 	  const isPlaceholder = targetElement.tagName.includes('-');
   
