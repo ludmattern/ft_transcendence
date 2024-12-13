@@ -5,7 +5,6 @@
  * This allows for centralized management of module paths.
  */
 export const modules = {
-  hud: "../pages/hud/hud.js", // Path to the HUD module
   leftsidewindow: "../pages/hud/leftsidewindow.js", // Path to the sidewindow module
   rightsidewindow: "../pages/hud/rightsidewindow.js", // Path to the sidewindow module
   pongmenu: "../pages/pong/pongmenu.js",

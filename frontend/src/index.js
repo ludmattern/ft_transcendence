@@ -50,7 +50,7 @@ function loadSVGComponents() {
 
 // Charger les composants pour les utilisateurs authentifiés
 function loadAuthenticatedComponents() {
-    loadComponent("header-placeholder", Header, "hud", () => {});
+    loadComponent("header-placeholder", Header, "", () => {});
     loadComponent("left-window-placeholder", LeftSideWindow, "leftsidewindow", () => {});
     loadComponent("right-window-placeholder", RightSideWindow, "rightsidewindow", () => {});
     loadComponent("race-placeholder", game2, "", () => {});
