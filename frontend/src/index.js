@@ -73,6 +73,7 @@ function setupEventListeners() {
         });
 		document.getElementById("blur-screen-effect").classList.remove("d-none");
 		setActiveLink("profile-link");
+		history.pushState(null, "", "/profile");
     });
 
     document.getElementById("pong-link").addEventListener("click", function (e) {
@@ -81,6 +82,7 @@ function setupEventListeners() {
         loadComponent("#central-window", null, "", () => {});
 		document.getElementById("blur-screen-effect").classList.add("d-none");
 		setActiveLink("pong-link");
+		history.pushState(null, "", "/pong");
     });
 
     document.getElementById("race-link").addEventListener("click", function (e) {
@@ -89,6 +91,7 @@ function setupEventListeners() {
         loadComponent("#central-window", null, "", () => {});
 		document.getElementById("blur-screen-effect").classList.add("d-none");
 		setActiveLink("race-link");
+		history.pushState(null, "", "/race");
     });
 
     document.getElementById("social-link").addEventListener("click", function (e) {
@@ -98,6 +101,7 @@ function setupEventListeners() {
         });
 		document.getElementById("blur-screen-effect").classList.remove("d-none");
 		setActiveLink("social-link");
+		history.pushState(null, "", "/social");
     });
 
     document
@@ -108,6 +112,7 @@ function setupEventListeners() {
             });
 			document.getElementById("blur-screen-effect").classList.remove("d-none");
 			setActiveLink("settings-link");
+			history.pushState(null, "", "/settings");
         });
 
     document.getElementById("logout-link").addEventListener("click", function (e) {
@@ -117,15 +122,76 @@ function setupEventListeners() {
         });
 		document.getElementById("blur-screen-effect").classList.remove("d-none");
 		setActiveLink("logout-link");
+		history.pushState(null, "", "/logout");
     });
 
-    document.getElementById("home-link").addEventListener("click", function (e) {
-        e.preventDefault();
-        switchwindow(null);
-        loadComponent("#central-window", null, "", () => {});
+	document.getElementById("home-link").addEventListener("click", function (e) {
+		e.preventDefault();
+		switchwindow(null);
+		loadComponent("#central-window", null, "", () => {});
 		document.getElementById("blur-screen-effect").classList.add("d-none");
 		setActiveLink(null);
-    });
+		history.pushState(null, "", "/");
+	});
 }
 
-initializeApp();
+
+window.addEventListener("popstate", (event) => {
+	const path = window.location.pathname; // Obtenir la route actuelle
+    console.debug(`popstate triggered, route: ${path}`);
+	
+    // Gérer les différentes routes
+    switch (path) {
+        case "/":
+            switchwindow(null);
+            loadComponent("#central-window", null, "", () => {});
+            document.getElementById("blur-screen-effect").classList.add("d-none");
+            setActiveLink(null);
+            break;
+			case "/profile":
+				loadComponent("#central-window", ProfileForm, "", () => {
+					console.debug("ProfileForm loaded via popstate.");
+				});
+				document.getElementById("blur-screen-effect").classList.remove("d-none");
+				setActiveLink("profile-link");
+				break;
+				case "/pong":
+					switchwindow("pong");
+					loadComponent("#central-window", null, "", () => {});
+            document.getElementById("blur-screen-effect").classList.add("d-none");
+            setActiveLink("pong-link");
+            break;
+			case "/race":
+				switchwindow("race");
+				loadComponent("#central-window", null, "", () => {});
+				document.getElementById("blur-screen-effect").classList.add("d-none");
+				setActiveLink("race-link");
+				break;
+				case "/social":
+					loadComponent("#central-window", SocialForm, "socialForm", () => {
+						console.debug("SocialForm loaded via popstate.");
+					});
+					document.getElementById("blur-screen-effect").classList.remove("d-none");
+					setActiveLink("social-link");
+					break;
+					case "/settings":
+						loadComponent("#central-window", SettingsForm, "settingsForm", () => {
+							console.debug("SettingsForm loaded via popstate.");
+						});
+            document.getElementById("blur-screen-effect").classList.remove("d-none");
+            setActiveLink("settings-link");
+            break;
+			case "/logout":
+				loadComponent("#central-window", LogoutForm, "", () => {
+					console.debug("LogoutForm loaded via popstate.");
+				});
+				document.getElementById("blur-screen-effect").classList.remove("d-none");
+            setActiveLink("logout-link");
+            break;
+			default:
+            console.warn(`Unknown route: ${path}`);
+            break;
+		}
+	});
+
+	initializeApp();

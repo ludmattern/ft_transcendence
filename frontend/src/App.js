@@ -44,7 +44,7 @@ function initCamera() {
   camera.position.set(0, 0.06275803512326787, 1.9990151147571098);
   camera.lookAt(0, 50, -15);
 
-  const cameraLight = new THREE.PointLight(0xf2f2f2, 2, 100);
+  const cameraLight = new THREE.PointLight(0xf2f2f2, 0, 100);
   cameraLight.position.set(0, 0, 0);
   camera.add(cameraLight);
   scene.add(camera);
@@ -226,7 +226,26 @@ function loadModels()
 
       screenObject1 = model.getObjectByName("_gltfNode_6");
       screenObject2 = model.getObjectByName("_gltfNode_13");
-      screenObject3 = model.getObjectByName("_gltfNode_7");
+	  screenObject3 = model.getObjectByName("_gltfNode_7");
+
+		const material = new THREE.MeshStandardMaterial({
+		  emissive: new THREE.Color(0x050505), // Couleur blanche émise
+		  emissiveIntensity: 1, // Ajuste l'intensité lumineuse
+		  color: new THREE.Color(0x050505), // Couleur de base du matériau (ici noir pour voir l'émission)
+		});
+	  
+		screenObject1.material = material;
+		screenObject2.material = material;
+		screenObject3.material = material;
+	// 	const rectLight = new THREE.RectAreaLight(0xffffff, 1, 10, 10); // Couleur, intensité, largeur, hauteur
+	// 	rectLight.position.copy(screenObject2.position);
+	// 	rectLight.lookAt(screenObject2.position.clone().add(new THREE.Vector3(0, 0, -1))); // Orienter vers l'avant
+	// 	rectLight.scale.copy(screenObject2.scale); // Ajuster la taille si nécessaire
+	  
+	// 	// Ajouter la lumière à la scène
+	// 	scene.add(rectLight);
+	// 	scene.add(rectLight);
+	// 	scene.add(rectLight);
 
       loadingScreen.style.display = 'none';
     },
@@ -242,7 +261,7 @@ function loadModels()
 
 function initLights() 
 {
-  const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
+  const sunLight = new THREE.DirectionalLight(0xffffff, 0.5);
   sunLight.position.set(-15000, 280210.384550551276, -9601.008032820177);
   sunLight.castShadow = true;
 
@@ -578,7 +597,7 @@ export function buildScene()
   initCSSRenderer();
   initSkybox();
   initLights();
-  //initControls();
+  initControls();
   loadModels();
   addEventListeners();
   initialCameraRotation.x = camera.rotation.x;

@@ -13,7 +13,6 @@ body {
 	align-items: center;
 	justify-content: center;
 	padding: 1rem;
-	background-color: var(--backcol);
 	backdrop-filter: blur(4px);
 	margin: 0;
 	padding: 0;
