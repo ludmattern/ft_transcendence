@@ -50,6 +50,21 @@ function loadAuthenticatedComponents() {
     loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {});
 }
 
+function setActiveLink(linkId) {
+    document.querySelectorAll("header a").forEach(link => {
+        link.classList.remove("active");
+    });
+
+	if (!linkId) {
+		return;
+	}
+
+    const activeLink = document.getElementById(linkId);
+    if (activeLink) {
+        activeLink.classList.add("active");
+    }
+}
+
 function setupEventListeners() {
     document.getElementById("profile-link").addEventListener("click", function (e) {
         e.preventDefault();
@@ -57,6 +72,7 @@ function setupEventListeners() {
             console.debug("ProfileForm loaded on click.");
         });
 		document.getElementById("blur-screen-effect").classList.remove("d-none");
+		setActiveLink("profile-link");
     });
 
     document.getElementById("pong-link").addEventListener("click", function (e) {
@@ -64,6 +80,7 @@ function setupEventListeners() {
         switchwindow("pong");
         loadComponent("#central-window", null, "", () => {});
 		document.getElementById("blur-screen-effect").classList.add("d-none");
+		setActiveLink("pong-link");
     });
 
     document.getElementById("race-link").addEventListener("click", function (e) {
@@ -71,6 +88,7 @@ function setupEventListeners() {
         switchwindow("race");
         loadComponent("#central-window", null, "", () => {});
 		document.getElementById("blur-screen-effect").classList.add("d-none");
+		setActiveLink("race-link");
     });
 
     document.getElementById("social-link").addEventListener("click", function (e) {
@@ -79,6 +97,7 @@ function setupEventListeners() {
             console.debug("SocialForm loaded on click.");
         });
 		document.getElementById("blur-screen-effect").classList.remove("d-none");
+		setActiveLink("social-link");
     });
 
     document
@@ -88,6 +107,7 @@ function setupEventListeners() {
                 console.debug("SettingsForm loaded on click.");
             });
 			document.getElementById("blur-screen-effect").classList.remove("d-none");
+			setActiveLink("settings-link");
         });
 
     document.getElementById("logout-link").addEventListener("click", function (e) {
@@ -96,6 +116,7 @@ function setupEventListeners() {
             console.debug("LogoutForm loaded on click.");
         });
 		document.getElementById("blur-screen-effect").classList.remove("d-none");
+		setActiveLink("logout-link");
     });
 
     document.getElementById("home-link").addEventListener("click", function (e) {
@@ -103,6 +124,7 @@ function setupEventListeners() {
         switchwindow(null);
         loadComponent("#central-window", null, "", () => {});
 		document.getElementById("blur-screen-effect").classList.add("d-none");
+		setActiveLink(null);
     });
 }
 
