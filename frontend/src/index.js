@@ -1,53 +1,131 @@
-// index.js
+import { switchwindow } from "./App.js";
+import { loadComponent } from "./utils/dom_utils.js";
+import { LoginForm } from "./components/loginForm.js";
+import { ProfileForm } from "./components/profileForm.js";
+import { SocialForm } from "./components/socialForm.js";
+import { SettingsForm } from "./components/settingsForm.js";
+import { LogoutForm } from "./components/logoutForm.js";
+import { isClientAuthenticated } from "./services/auth.js";
 import { Header } from "./components/header.js";
 import { LeftSideWindow } from "./components/leftSideWindow.js";
 import { RightSideWindow } from "./components/rightSideWindow.js";
-import { loadComponent } from "./utils/dom_utils.js";
 import { PongMenu } from "./components/pongMenu.js";
 import { midScreen } from "./components/midScreen.js";
 import { HelmetSVG } from "./components/HelmetSVG.js";
 import { HUDSVG } from "./components/HUDSVG.js";
 import { game2 } from "./components/game2.js";
-import { LoginForm } from "./components/loginForm.js";
-import { SubscribeForm } from "./components/subscribeForm.js";
-import { SettingsForm } from "./components/settingsForm.js";
-import { ProfileForm } from "./components/profileForm.js";
-import { OtherProfileForm } from "./components/otherProfileForm.js";
-import { SocialForm } from "./components/socialForm.js";
-import { LogoutForm } from "./components/logoutForm.js";
-import { DeleteAccountForm } from "./components/deleteAccountForm.js";
 
+async function initializeApp() {
+    loadSVGComponents();
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadComponent("header-placeholder", Header, "hud", () => {});
+    const isAuthenticated = await isClientAuthenticated();
 
-  loadComponent("left-window-placeholder", LeftSideWindow, "leftsidewindow", () => {});
+    if (!isAuthenticated) {
+        loadComponent("#central-window", LoginForm, "loginForm", () => {
+            console.debug("LoginForm loaded as user is not authenticated.");
+        });
+        return;
+    }
+	
+	document.getElementById("waiting-screen-effect").classList.add("d-none");
+	document.getElementById("blur-screen-effect").classList.add("d-none");
+    loadAuthenticatedComponents();
 
-  loadComponent("right-window-placeholder", RightSideWindow, "rightsidewindow", () => {});
+    setupEventListeners();
+}
 
-  loadComponent("race-placeholder", game2, "", () => {  });
+function loadSVGComponents() {
+    document.addEventListener("DOMContentLoaded", () => {
+        loadComponent("helmet-svg-placeholder", HelmetSVG, "", () => {});
+        loadComponent("hud-svg-placeholder", HUDSVG, "", () => {});
+    });
+}
 
-  loadComponent("mid-placeholder", midScreen, "", () => {  });
+function loadAuthenticatedComponents() {
+    loadComponent("header-placeholder", Header, "", () => {});
+    loadComponent("left-window-placeholder", LeftSideWindow, "leftsidewindow", () => {});
+    loadComponent("right-window-placeholder", RightSideWindow, "rightsidewindow", () => {});
+    loadComponent("race-placeholder", game2, "", () => {});
+    loadComponent("mid-placeholder", midScreen, "", () => {});
+    loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {});
+}
 
-  loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {  });
+function setActiveLink(linkId) {
+    document.querySelectorAll("header a").forEach(link => {
+        link.classList.remove("active");
+    });
 
-  loadComponent("helmet-svg-placeholder", HelmetSVG, "", () => {});
+	if (!linkId) {
+		return;
+	}
 
-  loadComponent("hud-svg-placeholder", HUDSVG, "", () => {});
+    const activeLink = document.getElementById(linkId);
+    if (activeLink) {
+        activeLink.classList.add("active");
+    }
+}
 
-  loadComponent("login-form-placeholder", LoginForm, "", () => {});
+function setupEventListeners() {
+    document.getElementById("profile-link").addEventListener("click", function (e) {
+        e.preventDefault();
+        loadComponent("#central-window", ProfileForm, "", () => {
+            console.debug("ProfileForm loaded on click.");
+        });
+		document.getElementById("blur-screen-effect").classList.remove("d-none");
+		setActiveLink("profile-link");
+    });
 
-  loadComponent("subscribe-form-placeholder", SubscribeForm, "", () => {});
+    document.getElementById("pong-link").addEventListener("click", function (e) {
+        e.preventDefault();
+        switchwindow("pong");
+        loadComponent("#central-window", null, "", () => {});
+		document.getElementById("blur-screen-effect").classList.add("d-none");
+		setActiveLink("pong-link");
+    });
 
-  loadComponent("settings-form-placeholder", SettingsForm, "", () => {});
+    document.getElementById("race-link").addEventListener("click", function (e) {
+        e.preventDefault();
+        switchwindow("race");
+        loadComponent("#central-window", null, "", () => {});
+		document.getElementById("blur-screen-effect").classList.add("d-none");
+		setActiveLink("race-link");
+    });
 
-  loadComponent("profile-form-placeholder", ProfileForm, "", () => {});
+    document.getElementById("social-link").addEventListener("click", function (e) {
+        e.preventDefault();
+        loadComponent("#central-window", SocialForm, "socialForm", () => {
+            console.debug("SocialForm loaded on click.");
+        });
+		document.getElementById("blur-screen-effect").classList.remove("d-none");
+		setActiveLink("social-link");
+    });
 
-  loadComponent("other-profile-form-placeholder", OtherProfileForm, "", () => {});
+    document
+        .getElementById("settings-link").addEventListener("click", function (e) {
+            e.preventDefault();
+            loadComponent("#central-window", SettingsForm, "settingsForm", () => {
+                console.debug("SettingsForm loaded on click.");
+            });
+			document.getElementById("blur-screen-effect").classList.remove("d-none");
+			setActiveLink("settings-link");
+        });
 
-  loadComponent("social-form-placeholder", SocialForm, "", () => {});
+    document.getElementById("logout-link").addEventListener("click", function (e) {
+        e.preventDefault();
+        loadComponent("#central-window", LogoutForm, "", () => {
+            console.debug("LogoutForm loaded on click.");
+        });
+		document.getElementById("blur-screen-effect").classList.remove("d-none");
+		setActiveLink("logout-link");
+    });
 
-  loadComponent("logout-form-placeholder", LogoutForm, "", () => {});
+    document.getElementById("home-link").addEventListener("click", function (e) {
+        e.preventDefault();
+        switchwindow(null);
+        loadComponent("#central-window", null, "", () => {});
+		document.getElementById("blur-screen-effect").classList.add("d-none");
+		setActiveLink(null);
+    });
+}
 
-  loadComponent("delete-account-form-placeholder", DeleteAccountForm, "", () => {});
-});
+initializeApp();

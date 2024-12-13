@@ -20,7 +20,10 @@
     <script type="module" src="../src/index.js"></script>
   </head>
   <body>
-    <!-- <div class="blur-screen-effect"></div> -->
+	<!-- custom cursor -->
+	<div class="cursor"></div>
+    <div id="waiting-screen-effect" class="waiting-screen-effect"></div>
+    <div id="blur-screen-effect" class="blur-screen-effect"></div>
     <div class="hud_screen-effect">
       <div class="hud_screen-effect"></div>
     </div>
@@ -30,8 +33,8 @@
       <header-placeholder></header-placeholder>
 
       <div class="hud-body">
-        <div class="row full-height w-100">
-          <left-window-placeholder></left-window-placeholder>
+        <div class="row full-height w-100" style="display: flex; justify-content: center;">
+		<left-window-placeholder></left-window-placeholder>
 
           <div
             class="d-flex flex-column align-items-center col-md-7 justify-content-around"
@@ -95,5 +98,14 @@
     <script type="module" src="../src/App.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+	<script>
+		const cursor = document.querySelector('.cursor');
+		const positionElement = (e)=> {
+			const mouseY = e.clientY;
+			const mouseX = e.clientX;
+			cursor.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+		}
+		window.addEventListener('mousemove', positionElement);
+	</script>
+	</body>
 </html>

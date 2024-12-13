@@ -1,4 +1,6 @@
 import { createElement } from '../utils/mini_react.js';
+import { loadComponent } from '../utils/dom_utils.js';
+import { LoginForm } from './loginForm.js';
 
 export function SubscribeForm() {
   return createElement(
@@ -111,3 +113,18 @@ export function SubscribeForm() {
     )
   );
 }
+
+// Event listener for the Log In link
+document.addEventListener("DOMContentLoaded", () => {
+	const loginLink = document.getElementById("login-link");
+  
+	if (loginLink) {
+	  loginLink.addEventListener("click", function (e) {
+		e.preventDefault();
+		// Replace #central-window content with the LoginForm component
+		loadComponent("#central-window", LoginForm, "", () => {
+		  console.debug("LoginForm loaded on click.");
+		});
+	  });
+	}
+  });
