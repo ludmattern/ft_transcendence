@@ -103,7 +103,6 @@ body {
 	align-items: center;
 	justify-content: center;
 	padding: 2rem;
-	background-color: var(--backcol);
 	backdrop-filter: blur(4px);
 	margin: 0;
 	padding: 0;
@@ -151,7 +150,6 @@ body {
 #app .menu1 {
 	color: #fff;
 	font-family: Orbitron, sans-serif;
-	background-color: var(--backcol);
 	height: 1050px !important;
 	width: 1350px !important;
   }
@@ -243,7 +241,7 @@ body {
   }
   #app .nav-link.active.top {
 	color: #fff;
-	background-color: var(--backcol);
+	background-color: #050505;
 	border: 2px solid #0ff;
 	border-bottom: none;
 	border-radius: 0;
@@ -299,7 +297,7 @@ body {
   }
   #app .nav-link.active.left {
 	color: #fff;
-	background-color: var(--backcol);
+	background-color: #050505;
 	border: 2px solid #0ff;
 	border-right: none;
 	border-radius: 0;
