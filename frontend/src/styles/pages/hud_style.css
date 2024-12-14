@@ -834,7 +834,6 @@ p {
   position: absolute;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(1rem);
   transition: all 0.2s;
   z-index: 9;
 }

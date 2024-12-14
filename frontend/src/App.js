@@ -486,7 +486,7 @@ function addEventListeners()
 let freeViewEnabled = false;
 let cameraRotation = { x: 0, y: 0, z:0};
 let initialCameraRotation = { x: 0, y: 0, z:0 };
-
+/*
 document.getElementById("free-view").addEventListener("click", () => {
   freeViewEnabled = !freeViewEnabled;
   if (freeViewEnabled) {
@@ -501,7 +501,7 @@ document.getElementById("free-view").addEventListener("click", () => {
 
   }
 });
-
+*/
 //document.addEventListener("mousemove", onBaseMouseMove, false);
 
 function onBaseMouseMove(event) 
