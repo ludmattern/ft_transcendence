@@ -446,9 +446,9 @@ export function animateCameraBackToInitialPosition() {
   camera.position.copy(startPosition);
   camera.quaternion.copy(startQuaternion);
   //controls.enabled = false;
-  menuElement.classList.add('active');
-  menuElement2.classList.add('active');     
-  menuElement3.classList.add('active');     
+  if (menuElement) menuElement.classList.add('active');
+  if (menuElement2) menuElement2.classList.add('active');
+  if (menuElement3) menuElement3.classList.add('active');
 
   const dummy = { t: 0 };
   gsap.to(dummy, {
