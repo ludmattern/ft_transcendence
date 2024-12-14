@@ -5,13 +5,13 @@
  * This allows for centralized management of module paths.
  */
 export const modules = {
-  leftsidewindow: "../pages/hud/leftsidewindow.js", // Path to the sidewindow module
-  rightsidewindow: "../pages/hud/rightsidewindow.js", // Path to the sidewindow module
-  pongmenu: "../pages/pong/pongmenu.js",
-  subscribeForm: "../pages/hud/subscribeForm.js",
-  loginForm: "../pages/hud/loginForm.js",
-  settingsForm: "../pages/hud/settingsForm.js",
-  socialForm: "../pages/hud/socialForm.js",
+  leftsidewindow: '/src/pages/hud/leftsidewindow.js', // Path to the sidewindow module
+  rightsidewindow: '/src/pages/hud/rightsidewindow.js', // Path to the sidewindow module
+  pongmenu: '/src/pages/pong/pongmenu.js',
+  subscribeForm: '/src/pages/hud/subscribeForm.js',
+  loginForm: '/src/pages/hud/loginForm.js',
+  settingsForm: '/src/pages/hud/settingsForm.js',
+  socialForm: '/src/pages/hud/socialForm.js',
 };
 
 /**
@@ -55,8 +55,8 @@ export function loadComponent(target, component, moduleName, callback) {
 		if (!component) {
 			console.debug(`Clearing content of ${target} as component is null`);
 			targetElement.innerHTML = ''; // Clear the existing content
-			if (callback && typeof callback === "function") {
-				console.debug("Calling the callback after clearing the target");
+			if (callback && typeof callback === 'function') {
+				console.debug('Calling the callback after clearing the target');
 				callback();
 			}
 			return;
@@ -79,8 +79,8 @@ export function loadComponent(target, component, moduleName, callback) {
 	  }
   
 	  // If a callback is provided, execute it
-	  if (callback && typeof callback === "function") {
-		console.debug("Calling the callback after processing the target");
+	  if (callback && typeof callback === 'function') {
+		console.debug('Calling the callback after processing the target');
 		callback();
 	  }
 	} else {
@@ -95,14 +95,14 @@ export function loadComponent(target, component, moduleName, callback) {
  */
 export function loadComponentScript(moduleName, callback) {
   // Get the file path of the module from the modules object
-  if (moduleName === "") {
+  if (moduleName === '') {
     return;
   }
   const modulePath = modules[moduleName];
 
   // If the module is not found, log an error and return
   if (!modulePath) {
-    console.error(`Module "${moduleName}" not found.`);
+    console.error(`Module '${moduleName}' not found.`);
     return;
   }
 

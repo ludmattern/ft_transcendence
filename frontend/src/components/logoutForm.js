@@ -1,4 +1,4 @@
-import { createElement } from '../utils/mini_react.js';
+import { createElement } from '/src/utils/mini_react.js';
 
 export function LogoutForm() {
   return createElement(

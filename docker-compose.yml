@@ -31,11 +31,8 @@ services:
       - ./nginx/certs:/etc/nginx/certs:ro
       - ./frontend:/usr/share/nginx/html/frontend:ro
     ports:
-    # a enlever pour passer en ssl :
       - "8080:80"
       - "8443:443"
-    # depends_on:
-    #   - auth-service
     networks:
       - frontend_network
       - backend_network

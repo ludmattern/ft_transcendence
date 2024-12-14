@@ -1,6 +1,6 @@
-import { createElement } from '../utils/mini_react.js';
-import { loadComponent } from '../utils/dom_utils.js';
-import { LoginForm } from './loginForm.js';
+import { createElement } from '/src/utils/mini_react.js';
+import { loadComponent } from '/src/utils/dom_utils.js';
+import { LoginForm } from '/src/components/loginForm.js';
 
 export function SubscribeForm() {
   return createElement(

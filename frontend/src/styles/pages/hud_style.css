@@ -1,7 +1,7 @@
 :root {
   --content-font-weight: 100;
 
-  --font-family: "Stellar", Arial, sans-serif;
+  --font-family: 'Stellar', Arial, sans-serif;
   --menu-color: #999999;
   --hover-menu-color: #99ffff;
   --active-menu-color: #99ffff;
@@ -328,26 +328,26 @@ button {
 }
 
 @font-face {
-  font-family: "Stellar";
-  src: url("../../assets/font/Stellar-light.otf") format("opentype");
+  font-family: 'Stellar';
+  src: url('/src/assets/font/Stellar-light.otf') format('opentype');
   font-weight: 300;
   font-style: normal;
 }
 @font-face {
-  font-family: "Stellar";
-  src: url("../../assets/font/Stellar-Regular.otf") format("opentype");
+  font-family: 'Stellar';
+  src: url('/src/assets/font/Stellar-Regular.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
-  font-family: "Stellar";
-  src: url("../../assets/font/Stellar-Bold.otf") format("opentype");
+  font-family: 'Stellar';
+  src: url('/src/assets/font/Stellar-Bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
 }
 @font-face {
-  font-family: "Stellar";
-  src: url("../../assets/font/Stellar-Medium.otf") format("opentype");
+  font-family: 'Stellar';
+  src: url('/src/assets/font/Stellar-Medium.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
 }
@@ -457,14 +457,14 @@ button {
 }
 
 .panel-end {
-  content: "";
+  content: '';
   display: block;
   border-bottom: var(--secondary-hud-elements-color) 2px solid;
   width: 100%;
 }
 
 .panel-mid {
-  content: "";
+  content: '';
   display: block;
   border-bottom: var(--secondary-hud-elements-color) 2px dotted;
   width: 100%;
@@ -628,11 +628,11 @@ button {
 }
 
 .hud-header .active::after {
-  content: "";
+  content: '';
   display: block;
   position: absolute;
-  top: 22%;
-  left: 10%;
+  top: 0.75rem;
+  left: 0.5rem;
   width: 80%;
   height: 50%;
   border: 1px solid var(--active-menu-color);
@@ -642,7 +642,7 @@ button {
 
 .hud-header .first-game .active::after,
 .hud-header .second-game .active::after {
-  left: 40%;
+  left: 6.9rem;
   width: 19%;
 }
 
@@ -802,7 +802,7 @@ button {
 /*
   --content-font-weight: 100;
 
-  --font-family: "Stellar", Arial, sans-serif;
+  --font-family: 'Stellar', Arial, sans-serif;
   --menu-color: #999999;
   --hover-menu-color: #99ffff;
   --active-menu-color: #99ffff;

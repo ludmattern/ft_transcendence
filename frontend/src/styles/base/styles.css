@@ -499,7 +499,7 @@ body {
 	position: absolute;
 	width: 30px;
 	height: 30px;
-	background-image: url("../../assets/SVG/SVG/svg-cursor.svg");
+	background-image: url('/src/assets/SVG/SVG/svg-cursor.svg');
 	/*no reapeat*/
 	background-repeat: no-repeat;
 	z-index: 9999999999999999999999999999;
