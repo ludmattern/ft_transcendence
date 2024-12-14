@@ -44,16 +44,26 @@ function initCamera() {
   camera.position.set(0, 0.06275803512326787, 1.9990151147571098);
   camera.lookAt(0, 50, -15);
 
-  const cameraLight = new THREE.PointLight(0xf2f2f2, 0, 100);
-  cameraLight.position.set(0, 0, 0);
-  camera.add(cameraLight);
+  const cameraLight = new THREE.PointLight(0xf2f2f2, 3, 100);
+  cameraLight.position.set(0, 0, 3);
+  cameraLight.castShadow = true; 
+  scene.add(cameraLight);
   scene.add(camera);
+  cameraLight.shadow.mapSize.width = 1024; 
+  cameraLight.shadow.mapSize.height = 1024; 
+  cameraLight.shadow.camera.near = 0.01;
+  cameraLight.shadow.camera.far = 500; 
+
+
+
 }
 
 function initRenderer() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  renderer.shadowMap.enabled = true;
+
   document.getElementById("app").appendChild(renderer.domElement);
 }
 
@@ -213,8 +223,11 @@ function loadModels()
         if (child.isMesh) {
           child.material.color.multiplyScalar(3);
           child.material.metalness = 0.2;
+          child.castShadow = true;
+          child.receiveShadow = true;
         }
       });
+      
       scene.add(model);
 
       if (menuObject2) 
@@ -237,15 +250,6 @@ function loadModels()
 		screenObject1.material = material;
 		screenObject2.material = material;
 		screenObject3.material = material;
-	// 	const rectLight = new THREE.RectAreaLight(0xffffff, 1, 10, 10); // Couleur, intensité, largeur, hauteur
-	// 	rectLight.position.copy(screenObject2.position);
-	// 	rectLight.lookAt(screenObject2.position.clone().add(new THREE.Vector3(0, 0, -1))); // Orienter vers l'avant
-	// 	rectLight.scale.copy(screenObject2.scale); // Ajuster la taille si nécessaire
-	  
-	// 	// Ajouter la lumière à la scène
-	// 	scene.add(rectLight);
-	// 	scene.add(rectLight);
-	// 	scene.add(rectLight);
 
       loadingScreen.style.display = 'none';
     },
@@ -261,7 +265,7 @@ function loadModels()
 
 function initLights() 
 {
-  const sunLight = new THREE.DirectionalLight(0xffffff, 0.5);
+  const sunLight = new THREE.DirectionalLight(0xffffff, 0);
   sunLight.position.set(-15000, 280210.384550551276, -9601.008032820177);
   sunLight.castShadow = true;
 
@@ -498,7 +502,7 @@ document.getElementById("free-view").addEventListener("click", () => {
   }
 });
 
-document.addEventListener("mousemove", onBaseMouseMove, false);
+//document.addEventListener("mousemove", onBaseMouseMove, false);
 
 function onBaseMouseMove(event) 
 {
@@ -592,8 +596,8 @@ function onFreeViewMouseMove(event)
 export function buildScene() 
 {
   initScene();
-  initCamera();
   initRenderer();
+  initCamera();
   initCSSRenderer();
   initSkybox();
   initLights();
