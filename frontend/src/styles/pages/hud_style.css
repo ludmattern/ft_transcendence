@@ -1,7 +1,7 @@
 :root {
   --content-font-weight: 100;
 
-  --font-family: 'Stellar', Arial, sans-serif;
+  --font-family: "Stellar", Arial, sans-serif;
   --menu-color: #999999;
   --hover-menu-color: #99ffff;
   --active-menu-color: #99ffff;
@@ -125,7 +125,7 @@ button {
 .hud_screen-effect {
   position: absolute;
   width: 100.1%;
-  height: 100.3%;
+  height: 101%;
   background-size: 102% 10px;
   background-image: linear-gradient(
     0,
@@ -147,6 +147,7 @@ button {
   );
   filter: blur(2px);
   z-index: 1;
+  translate: 0 -2px;
 }
 
 @keyframes bg-move {
@@ -328,26 +329,26 @@ button {
 }
 
 @font-face {
-  font-family: 'Stellar';
-  src: url('/src/assets/font/Stellar-light.otf') format('opentype');
+  font-family: "Stellar";
+  src: url("/src/assets/font/Stellar-light.otf") format("opentype");
   font-weight: 300;
   font-style: normal;
 }
 @font-face {
-  font-family: 'Stellar';
-  src: url('/src/assets/font/Stellar-Regular.otf') format('opentype');
+  font-family: "Stellar";
+  src: url("/src/assets/font/Stellar-Regular.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
-  font-family: 'Stellar';
-  src: url('/src/assets/font/Stellar-Bold.otf') format('opentype');
+  font-family: "Stellar";
+  src: url("/src/assets/font/Stellar-Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
 }
 @font-face {
-  font-family: 'Stellar';
-  src: url('/src/assets/font/Stellar-Medium.otf') format('opentype');
+  font-family: "Stellar";
+  src: url("/src/assets/font/Stellar-Medium.otf") format("opentype");
   font-weight: 500;
   font-style: normal;
 }
@@ -448,7 +449,7 @@ button {
   border-bottom: none;
 }
 
-.left-side-window:has(.well-hidden) #message-input-container{
+.left-side-window:has(.well-hidden) #message-input-container {
   visibility: hidden;
   pointer-events: none;
 }
@@ -462,7 +463,7 @@ button {
 }
 
 .panel-mid {
-  content: '';
+  content: "";
   display: block;
   border-bottom: var(--secondary-hud-elements-color) 2px dotted;
   width: 100%;
@@ -546,9 +547,10 @@ button {
   height: 20vh;
 }
 
-.r-tab-content, .l-tab-content {
-	background: #ffffff07;
-	border-bottom: 2px solid var(--secondary-hud-elements-color);
+.r-tab-content,
+.l-tab-content {
+  background: #ffffff07;
+  border-bottom: 2px solid var(--secondary-hud-elements-color);
 }
 
 @keyframes fadeIn {
@@ -622,7 +624,7 @@ button {
 }
 
 .hud-header .active::after {
-  content: '';
+  content: "";
   display: block;
   width: 120%;
   translate: -10% -1.5rem;
@@ -873,7 +875,7 @@ p {
 }
 
 .profile-match-history .match-item {
-	overflow-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .profile-match-history .match-item,
@@ -889,11 +891,11 @@ p {
 }
 
 .waiting-screen-effect {
-	position: absolute;
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(1rem);
-    transition: all 0.2s;
-    z-index: 0;
-    background-color: black;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(1rem);
+  transition: all 0.2s;
+  z-index: 0;
+  background-color: black;
 }

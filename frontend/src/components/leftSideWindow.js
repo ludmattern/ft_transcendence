@@ -40,7 +40,12 @@ export function loadTabContent(tabName, container, window) {
             // Create and append the input container
             const inputContainer = createElement(
               "div",
-              { className: "d-flex", style: 'flex-wrap: wrap; background: #ffffff07; position: absolute; width: 100%;', id: "message-input-container" },
+              {
+                className: "d-flex",
+                style:
+                  "flex-wrap: wrap; background: #ffffff07; position: absolute; width: 100%;",
+                id: "message-input-container",
+              },
               createElement("input", {
                 type: "text",
                 id: "message-input",
@@ -57,15 +62,16 @@ export function loadTabContent(tabName, container, window) {
               )
             );
             window.appendChild(inputContainer);
-          } 
-		}
-		else {
-            // Remove the input container if it exists
-            const inputContainer = document.getElementById("message-input-container");
-            if (inputContainer) {
-              inputContainer.remove();
-            }
           }
+        } else {
+          // Remove the input container if it exists
+          const inputContainer = document.getElementById(
+            "message-input-container"
+          );
+          if (inputContainer) {
+            inputContainer.remove();
+          }
+        }
       }
     })
     .catch((error) => {
