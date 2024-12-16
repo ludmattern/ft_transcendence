@@ -1,5 +1,3 @@
-import { loadTabContent } from '/src/components/rightSideWindow.js';
-import { addPanelItem } from '/src/components/rightSideWindow.js';
 
 console.debug('Initializing the HUD and tab navigation for the side window');
 
@@ -30,12 +28,7 @@ tabLinks.forEach((link) => {
     });
     link.parentElement.classList.add('active');
 
-    // Load the corresponding tab content
-    loadTabContent(tabName, tabContentContainer);
   });
 });
-
-// Load the initial tab (INFO) on page load
-loadTabContent('info', tabContentContainer);
 
 
