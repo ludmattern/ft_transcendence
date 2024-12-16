@@ -1,4 +1,5 @@
 import { createElement } from "/src/utils/mini_react.js";
+import { handleRoute } from "/src/index.js";
 
 // Generates a nav item with a link
 function createNavItem(label, active = false) {
@@ -112,33 +113,33 @@ export function loadTabContent(tabName, container, window) {
 }
 
 function showContextMenu(item, messageElement) {
-	const existingMenu = document.querySelector(".context-menu");
+  const existingMenu = document.querySelector(".context-menu");
 
-	if (existingMenu) {
-	  // Identifier le message associé au menu existant
-	  const associatedMessage = existingMenu.nextElementSibling;
-  
-	  // Supprimer le menu existant
-	  existingMenu.remove();
-  
-	  // Si le clic est sur le même message, ne pas recréer de menu
-	  if (associatedMessage === messageElement) {
-		return;
-	  }
-	}
-  
-	// Exemple de JSON avec les statuts de l'auteur
-	const userStatus = {
-	  isFriend: true, // Exemple: mettre à jour selon votre logique
-	  isBlocked: false, // Exemple: mettre à jour selon votre logique
-	};
-  
-	// Créer le menu contextuel
-	const contextMenu = createElement(
-	  "div",
-	  {
-		className: "context-menu",
-		style: `
+  if (existingMenu) {
+    // Identifier le message associé au menu existant
+    const associatedMessage = existingMenu.nextElementSibling;
+
+    // Supprimer le menu existant
+    existingMenu.remove();
+
+    // Si le clic est sur le même message, ne pas recréer de menu
+    if (associatedMessage === messageElement) {
+      return;
+    }
+  }
+
+  // Exemple de JSON avec les statuts de l'auteur
+  const userStatus = {
+    isFriend: true, // Exemple: mettre à jour selon votre logique
+    isBlocked: false, // Exemple: mettre à jour selon votre logique
+  };
+
+  // Créer le menu contextuel
+  const contextMenu = createElement(
+    "div",
+    {
+      className: "context-menu",
+      style: `
 		  display: flex; 
 		  flex-direction: column; 
 		  justify-content: space-between; 
@@ -149,105 +150,144 @@ function showContextMenu(item, messageElement) {
 		  margin-bottom: 0.5rem; 
 		  z-index: 10;
 		`,
-	  },
-	  createElement(
-		"div",
-		{
-		  className: "context-menu-buttons",
-		  style: `
+    },
+    createElement(
+      "div",
+      {
+        className: "context-menu-buttons",
+        style: `
 			display: flex; 
 			justify-content: center; 
 			align-items: center; 
 			gap: 0.5rem; 
 		  `,
-		},
-		createElement(
-		  "button",
-		  {
-			className: "btn",
-			onclick: () => handleFriendAction(userStatus.isFriend),
-		  },
-		  userStatus.isFriend ? "Remove" : "Add"
-		),
-		createElement(
-		  "button",
-		  {
-			className: "btn",
-			onclick: () => handleBlockAction(userStatus.isBlocked),
-		  },
-		  userStatus.isBlocked ? "Unblock" : "Block"
-		),
-		createElement(
-		  "button",
-		  {
-			className: "btn",
-			onclick: () => handleInviteAction(item.author),
-		  },
-		  "Invite"
-		),
-		createElement(
-		  "button",
-		  {
-			className: "btn",
-			onclick: () => handleProfileAction(item.author),
-		  },
-		  "Profile"
-		),
-		createElement(
-		  "button",
-		  {
-			className: "btn",
-			onclick: () => handleMessageAction(item.author),
-		  },
-		  "Message"
-		)
-	  )
-	);
-  
-	// Insérer le menu contextuel au même niveau que le message (dans le container)
-	const container = messageElement.parentNode;
-	container.insertBefore(contextMenu, messageElement);
-  
-	const parentContainer = document.querySelector("#l-tab-content"); // Le conteneur parent spécifique
-	parentContainer.scrollTo({
-	  top: contextMenu.offsetTop - parentContainer.offsetTop, // Position relative au conteneur
-	  behavior: "smooth", // Défilement fluide
-	});
-	
+      },
+      createElement(
+        "button",
+        {
+          className: "btn",
+          onclick: () => handleFriendAction(userStatus.isFriend),
+        },
+        userStatus.isFriend ? "Remove" : "Add"
+      ),
+      createElement(
+        "button",
+        {
+          className: "btn",
+          onclick: () => handleBlockAction(userStatus.isBlocked),
+        },
+        userStatus.isBlocked ? "Unblock" : "Block"
+      ),
+      createElement(
+        "button",
+        {
+          className: "btn",
+          onclick: () => handleInviteAction(item.author),
+        },
+        "Invite"
+      ),
+      createElement(
+        "button",
+        {
+          className: "btn",
+          onclick: () => handleProfileAction(item.author),
+        },
+        "Profile"
+      ),
+      createElement(
+        "button",
+        {
+          className: "btn",
+          onclick: () => handleMessageAction(item.author),
+        },
+        "Message"
+      )
+    )
+  );
 
-	// Cacher le menu lorsque l'utilisateur clique en dehors
-	document.addEventListener(
-	  "click",
-	  (e) => {
-		if (!container.contains(e.target)) {
-		  contextMenu.remove();
-		}
-	  },
-	  { once: true }
-	);
-  }
-  
+  // Insérer le menu contextuel au même niveau que le message (dans le container)
+  const container = messageElement.parentNode;
+  container.insertBefore(contextMenu, messageElement);
+
+  const parentContainer = document.querySelector("#l-tab-content"); // Le conteneur parent spécifique
+  parentContainer.scrollTo({
+    top: contextMenu.offsetTop - parentContainer.offsetTop, // Position relative au conteneur
+    behavior: "smooth", // Défilement fluide
+  });
+
+  // Cacher le menu lorsque l'utilisateur clique en dehors
+  document.addEventListener(
+    "click",
+    (e) => {
+      if (!container.contains(e.target)) {
+        contextMenu.remove();
+      }
+    },
+    { once: true }
+  );
+}
 
 // Fonctions pour gérer les actions
 function handleFriendAction(isFriend) {
-  console.log(isFriend ? "Removing Friend" : "Adding Friend");
-}
+	// Ajouter ou supprimer l'utilisateur de la liste des amis
+	if (isFriend) {
+	  console.log("Removing user from friends list...");
+	  removeFromFriends();
+	} else {
+	  console.log("Adding user to friends list...");
+	  addToFriends();
+	}
+  }
+  
+  function handleBlockAction(isBlocked) {
+	// Bloquer ou débloquer l'utilisateur
+	if (isBlocked) {
+	  console.log("Unblocking user...");
+	  unblockUser();
+	} else {
+	  console.log("Blocking user...");
+	  blockUser();
+	}
+  }
+  
+  function handleInviteAction(author) {
+	// Rediriger vers l'onglet PONG
+	console.log(`Inviting ${author} to play PONG...`);
+	handleRoute("/pong");
+  }
+  
+  function handleProfileAction(author) {
+	// Rediriger vers la page "Other Profile"
+	console.log(`Viewing profile of ${author}...`);
+	handleRoute("/social?pilot=" + encodeURIComponent(author));
+  }
+  
+  function handleMessageAction(author) {
+	// Préremplir le champ de saisie avec le mention de l'utilisateur
+	const messageInput = document.getElementById("message-input");
+	if (messageInput) {
+	  messageInput.value = `@${author}: `;
+	  messageInput.focus();
+	  console.log(`Message input pre-filled for ${author}`);
+	} else {
+	  console.warn("Message input field not found.");
+	}
+  }
 
-function handleBlockAction(isBlocked) {
-  console.log(isBlocked ? "Unblocking User" : "Blocking User");
-}
-
-function handleInviteAction(author) {
-  console.log(`Inviting ${author}`);
-}
-
-function handleProfileAction(author) {
-  console.log(`Viewing profile of ${author}`);
-}
-
-function handleMessageAction(author) {
-  console.log(`Messaging ${author}`);
-}
+  function navigateToPong() {
+	console.debug("Navigating to PONG...");
+	window.location.href = "/pong";
+  }
+  
+  function navigateToProfile() {
+	console.debug("Navigating to Profile...");
+	const urlParams = new URLSearchParams(window.location.search);
+	const user = urlParams.get("user");
+	console.log(`Loading profile for user: ${user}`);
+	// Chargez ici la logique pour afficher le profil
+  }
+  
+  
 
 function createInfoPanelItem(item) {
   const content =
@@ -379,18 +419,4 @@ export function LeftSideWindow() {
       createElement("div", { className: "l-tab-content", id: "l-tab-content" })
     )
   );
-}
-
-export function addPanelItem(container, inviter, actions = true) {
-  // Create the new panel item using the inviter and actions values
-  const newPanelItem = createPanelItem(inviter, actions);
-
-  // Insert the new panel item before the delimiter
-  const delimiter = container.firstChild;
-  if (delimiter) {
-    container.insertBefore(newPanelItem, delimiter);
-  } else {
-    // If there is no delimiter, just append the new panel item to the container
-    container.appendChild(newPanelItem);
-  }
 }

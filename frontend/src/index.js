@@ -4,6 +4,7 @@ import { LoginForm } from "/src/components/loginForm.js";
 import { ProfileForm } from "/src/components/profileForm.js";
 import { SocialForm } from "/src/components/socialForm.js";
 import { SettingsForm } from "/src/components/settingsForm.js";
+import { OtherProfileForm } from "/src/components/otherProfileForm.js";
 import { LogoutForm } from "/src/components/logoutForm.js";
 import { isClientAuthenticated } from "/src/services/auth.js";
 import { Header } from "/src/components/header.js";
@@ -62,34 +63,45 @@ function loadAuthenticatedComponents() {
 }
 
 // Gérer les routes
-function handleRoute(route) {
+export function handleRoute(route) {
   console.debug(`Handling route: ${route}`);
-  switch (route) {
-    case "/":
+  switch (true) {
+    case route === "/":
       navigateToHome();
       break;
-    case "/profile":
+    case route === "/profile":
       navigateToProfile();
       break;
-    case "/pong":
+    case route === "/pong":
       navigateToPong();
       break;
-    case "/race":
+    case route === "/race":
       navigateToRace();
       break;
-    case "/social":
+    case route === "/social":
       navigateToSocial();
       break;
-    case "/settings":
+    case route === "/settings":
       navigateToSettings();
       break;
-    case "/logout":
+    case route === "/logout":
       navigateToLogout();
+      break;
+    case route.startsWith("/social?pilot="): // Vérifie si la route commence par "/social?pilot="
+      const pilot = route.split("=")[1]; // Extrait le nom du pilote de la route
+      console.debug(`Pilot: ${pilot}`);
+      navigateToOtherProfile(pilot); // Passe "pilot" comme argument
       break;
     default:
       console.warn(`Unknown route: ${route}`);
       break;
   }
+}
+
+function navigateToSocial() {
+  loadComponent("#central-window", SocialForm, "socialForm", () => {});
+  document.getElementById("blur-screen-effect").classList.remove("d-none");
+  setActiveLink("social-link");
 }
 
 // Navigation spécifique pour chaque route
@@ -125,10 +137,12 @@ function navigateToRace() {
   setActiveLink("race-link");
 }
 
-function navigateToSocial() {
-  loadComponent("#central-window", SocialForm, "socialForm", () => {});
-  document.getElementById("blur-screen-effect").classList.remove("d-none");
-  setActiveLink("social-link");
+function navigateToOtherProfile(argument) {
+  if (argument) {
+    loadComponent("#central-window", OtherProfileForm, "", () => {});
+    document.getElementById("blur-screen-effect").classList.remove("d-none");
+    setActiveLink(null);
+  }
 }
 
 function navigateToSettings() {
