@@ -1,11 +1,7 @@
-import * as THREE from '/src/threelibs/three.module.js';
-import { FlyControls } from '/src/threelibs/FlyControls.js';
-import { GLTFLoader } from '/src/threelibs/GLTFLoader.js';
-import {
-  CSS3DRenderer,
-  CSS3DObject,
-} from '/src/threelibs/CSS3DRenderer.js';
-
+import * as THREE from "/src/threelibs/three.module.js";
+import { FlyControls } from "/src/threelibs/FlyControls.js";
+import { GLTFLoader } from "/src/threelibs/GLTFLoader.js";
+import { CSS3DRenderer, CSS3DObject } from "/src/threelibs/CSS3DRenderer.js";
 
 /*6h4vl9mc0gk0   lfr8v60tfjk  4h64avzyz1y0   https://tools.wwwtyro.net/space-3d/index.html#animationSpeed=0.8199880281747889&fov=150&nebulae=true&pointStars=true&resolution=1024&seed=6h4vl9mc0gk0&stars=true&sun=false */
 
@@ -33,7 +29,6 @@ function initScene() {
   scene = new THREE.Scene();
 }
 
-
 function initCamera() {
   camera = new THREE.PerspectiveCamera(
     75,
@@ -46,17 +41,14 @@ function initCamera() {
 
   const cameraLight = new THREE.PointLight(0xf2f2f2, 3, 100);
   cameraLight.position.set(0, 0, 3);
-  cameraLight.castShadow = true; 
+  cameraLight.castShadow = true;
   scene.add(cameraLight);
   scene.add(camera);
-  cameraLight.shadow.mapSize.width = 1024; 
-  cameraLight.shadow.mapSize.height = 1024; 
+  cameraLight.shadow.mapSize.width = 1024;
+  cameraLight.shadow.mapSize.height = 1024;
   cameraLight.shadow.camera.near = 0.01;
-  cameraLight.shadow.camera.far = 500; 
+  cameraLight.shadow.camera.far = 500;
   cameraLight.shadow.bias = -0.005;
-
-
-
 }
 
 function initRenderer() {
@@ -65,46 +57,39 @@ function initRenderer() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.shadowMap.enabled = true;
 
-  document.getElementById('app').appendChild(renderer.domElement);
+  document.getElementById("app").appendChild(renderer.domElement);
 }
-
 
 function initCSSRenderer() {
   cssRenderer = new CSS3DRenderer();
   cssRenderer.setSize(window.innerWidth, window.innerHeight);
-  cssRenderer.domElement.style.position = 'absolute';
-  cssRenderer.domElement.style.top = '0';
-  cssRenderer.domElement.style.left = '0';
-  cssRenderer.domElement.style.pointerEvents = 'none';
-  document.getElementById('app').appendChild(cssRenderer.domElement);
+  cssRenderer.domElement.style.position = "absolute";
+  cssRenderer.domElement.style.top = "0";
+  cssRenderer.domElement.style.left = "0";
+  cssRenderer.domElement.style.pointerEvents = "none";
+  document.getElementById("app").appendChild(cssRenderer.domElement);
 }
 
-export function initM2()
-{
-
-  menuElement = document.getElementById('gameScreen');  
+export function initM2() {
+  menuElement = document.getElementById("gameScreen");
   if (!menuElement) {
     console.error("The element with ID 'gameScreen' was not found.");
     return;
   }
   menuObject = new CSS3DObject(menuElement);
 
-  menuElement.style.pointerEvents = 'auto';
+  menuElement.style.pointerEvents = "auto";
   menuObject.position.set(-0.2, 6.6, -1.75);
   menuObject.rotation.set(-5.2, 0, 0);
 
   menuObject.scale.set(0.002, 0.002, 0.002);
-  menuElement.style.display = 'none';
-  menuElement.classList.add('active');
-
+  menuElement.style.display = "none";
+  menuElement.classList.add("active");
 }
 
-export function initM1() 
-{
-
-  menuElement2 = document.getElementById('menu2');
-  if (!menuElement2)
-    {
+export function initM1() {
+  menuElement2 = document.getElementById("menu2");
+  if (!menuElement2) {
     console.error("The element with ID 'menu2' was not found.");
     return;
   }
@@ -114,31 +99,29 @@ export function initM1()
 
   menuObject2.rotation.set(-5.2, 0.63, 0.2);
   menuObject2.scale.set(0.002, 0.002, 0.002);
-  menuElement2.style.pointerEvents = 'auto';
-  menuElement2.classList.add('active');
+  menuElement2.style.pointerEvents = "auto";
+  menuElement2.classList.add("active");
 }
 
-export function initM3 () 
-{
-  menuElement3 = document.getElementById('menu3');
+export function initM3() {
+  menuElement3 = document.getElementById("menu3");
   menuObject3 = new CSS3DObject(menuElement3);
-  menuElement3.style.pointerEvents = 'auto';
+  menuElement3.style.pointerEvents = "auto";
   menuObject3.position.set(3.1, 4.5, -1.85);
   menuObject3.rotation.set(-5.2, -0.6, -0.2);
   menuObject3.scale.set(0.002, 0.002, 0.002);
-  menuElement3.style.display = 'none';
-  menuElement3.classList.add('active');
+  menuElement3.style.display = "none";
+  menuElement3.classList.add("active");
 }
 
-function initSkybox() 
-{
+function initSkybox() {
   const skyboxImages = [
-    '/src/assets/img/skybox/right.png',
-    '/src/assets/img/skybox/left.png',
-    '/src/assets/img/skybox/top.png',
-    '/src/assets/img/skybox/bottom.png',
-    '/src/assets/img/skybox/front.png',
-    '/src/assets/img/skybox/back.png',
+    "/src/assets/img/skybox/right.png",
+    "/src/assets/img/skybox/left.png",
+    "/src/assets/img/skybox/top.png",
+    "/src/assets/img/skybox/bottom.png",
+    "/src/assets/img/skybox/front.png",
+    "/src/assets/img/skybox/back.png",
   ];
 
   const loader = new THREE.CubeTextureLoader();
@@ -146,36 +129,40 @@ function initSkybox()
   scene.background = skyboxTexture;
 }
 
-
-
-function loadModels() 
-{
-  const loadingScreen = document.getElementById('loading-screen');
-  const progressBar = document.getElementById('progress-bar');
-  loadingScreen.style.display = 'block';
+function loadModels() {
+  const loadingScreen = document.getElementById("loading-screen");
+  const progressBar = document.getElementById("progress-bar");
+  loadingScreen.style.display = "block";
 
   const loader = new GLTFLoader();
 
-  function onProgress(xhr) 
-  {
+  function onProgress(xhr) {
     if (xhr.lengthComputable) {
       const percentComplete = (xhr.loaded / xhr.total) * 100;
-      progressBar.style.width = percentComplete + '%';
+      progressBar.style.width = percentComplete + "%";
     }
   }
 
   const satLoader = new GLTFLoader();
   satLoader.load(
-    '/src/assets/models/saturn.glb',
+    "/src/assets/models/saturn.glb",
     (gltf) => {
       planet = gltf.scene;
-      planet.position.set(saturnConfig.positionX, saturnConfig.positionY, saturnConfig.positionZ);
+      planet.position.set(
+        saturnConfig.positionX,
+        saturnConfig.positionY,
+        saturnConfig.positionZ
+      );
       planet.rotation.set(
         THREE.MathUtils.degToRad(saturnConfig.rotationX),
         THREE.MathUtils.degToRad(saturnConfig.rotationY),
         THREE.MathUtils.degToRad(saturnConfig.rotationZ)
       );
-      planet.scale.set(saturnConfig.scale, saturnConfig.scale, saturnConfig.scale);
+      planet.scale.set(
+        saturnConfig.scale,
+        saturnConfig.scale,
+        saturnConfig.scale
+      );
 
       planet.traverse((child) => {
         if (child.isMesh) {
@@ -207,12 +194,12 @@ function loadModels()
     },
     onProgress,
     (error) => {
-      console.error('Erreur lors du chargement du modèle Saturn:', error);
+      console.error("Erreur lors du chargement du modèle Saturn:", error);
     }
   );
 
   loader.load(
-    '/src/assets/models/sn8.glb',
+    "/src/assets/models/sn8.glb",
     (gltf) => {
       model = gltf.scene;
       model.position.set(3.5, -17, -1);
@@ -228,44 +215,37 @@ function loadModels()
           child.receiveShadow = true;
         }
       });
-      
+
       scene.add(model);
 
-      if (menuObject2) 
-        scene.add(menuObject2);
-      if (menuObject3) 
-        scene.add(menuObject3);
-      if (menuObject) 
-        scene.add(menuObject);
+      if (menuObject2) scene.add(menuObject2);
+      if (menuObject3) scene.add(menuObject3);
+      if (menuObject) scene.add(menuObject);
 
-      screenObject1 = model.getObjectByName('_gltfNode_6');
-      screenObject2 = model.getObjectByName('_gltfNode_13');
-	  screenObject3 = model.getObjectByName('_gltfNode_7');
+      screenObject1 = model.getObjectByName("_gltfNode_6");
+      screenObject2 = model.getObjectByName("_gltfNode_13");
+      screenObject3 = model.getObjectByName("_gltfNode_7");
 
-		const material = new THREE.MeshStandardMaterial({
-		  emissive: new THREE.Color(0x050505), // Couleur blanche émise
-		  emissiveIntensity: 1, // Ajuste l'intensité lumineuse
-		  color: new THREE.Color(0x050505), // Couleur de base du matériau (ici noir pour voir l'émission)
-		});
-	  
-		screenObject1.material = material;
-		screenObject2.material = material;
-		screenObject3.material = material;
+      const material = new THREE.MeshStandardMaterial({
+        emissive: new THREE.Color(0x050505), // Couleur blanche émise
+        emissiveIntensity: 1, // Ajuste l'intensité lumineuse
+        color: new THREE.Color(0x050505), // Couleur de base du matériau (ici noir pour voir l'émission)
+      });
 
-      loadingScreen.style.display = 'none';
+      screenObject1.material = material;
+      screenObject2.material = material;
+      screenObject3.material = material;
+
+      loadingScreen.style.display = "none";
     },
     onProgress,
     (error) => {
-      console.error('Erreur lors du chargement du modèle SN6:', error);
+      console.error("Erreur lors du chargement du modèle SN6:", error);
     }
   );
 }
 
-
-
-
-function initLights() 
-{
+function initLights() {
   const sunLight = new THREE.DirectionalLight(0xffffff, 0);
   sunLight.position.set(-15000, 280210.384550551276, -9601.008032820177);
   sunLight.castShadow = true;
@@ -278,18 +258,14 @@ function initLights()
   scene.add(sunLight);
 }
 
-
-function initControls() 
-{
+function initControls() {
   controls = new FlyControls(camera, renderer.domElement);
   controls.movementSpeed = 20;
   controls.rollSpeed = Math.PI / 2;
   controls.dragToLook = true;
 }
 
-
-function onWindowResize() 
-{
+function onWindowResize() {
   const width = window.innerWidth;
   const height = window.innerHeight;
 
@@ -300,31 +276,30 @@ function onWindowResize()
   camera.updateProjectionMatrix();
 }
 
-
-export function switchwindow(screen) 
-{
-  if (screen === null) 
-  {
+export function switchwindow(screen) {
+  if (screen === null) {
     animateCameraBackToInitialPosition();
-  } 
-  else if (screen === 'pong') 
-  {
+  } else if (screen === "pong") {
     animateCameraToTarget(
-      new THREE.Vector3(-2.559453657498437, 3.253545045816075, -0.7922370317858861),
+      new THREE.Vector3(
+        -2.559453657498437,
+        3.253545045816075,
+        -0.7922370317858861
+      ),
       { x: Math.PI / 3.2, y: Math.PI / 5.5, z: -Math.PI / -12 },
       2
     );
-  } 
-  else if (screen === 'race') 
-  {
+  } else if (screen === "race") {
     animateCameraToTarget(
-      new THREE.Vector3(1.9765430745879866, 3.434172967891374, -0.9419868064632663),
+      new THREE.Vector3(
+        1.9765430745879866,
+        3.434172967891374,
+        -0.9419868064632663
+      ),
       { x: Math.PI / 3.2, y: Math.PI / -5.5, z: -Math.PI / 12 },
       3
     );
-  } 
-  else if (screen === 'game')
-  {
+  } else if (screen === "game") {
     animateCameraToTarget(
       new THREE.Vector3(-0.2, 5.257378802731586, -0.8900580859235202),
       { x: Math.PI / 3, y: 0, z: 0 },
@@ -352,13 +327,21 @@ function onMouseClick(event) {
       );
     } else if (intersects2.length > 0) {
       animateCameraToTarget(
-        new THREE.Vector3(1.9765430745879866, 3.434172967891374, -0.9419868064632663),
+        new THREE.Vector3(
+          1.9765430745879866,
+          3.434172967891374,
+          -0.9419868064632663
+        ),
         { x: Math.PI / 3.2, y: Math.PI / -5.5, z: -Math.PI / 12 },
         3
       );
     } else if (intersects3.length > 0) {
       animateCameraToTarget(
-        new THREE.Vector3(-2.559453657498437, 3.253545045816075, -0.7922370317858861),
+        new THREE.Vector3(
+          -2.559453657498437,
+          3.253545045816075,
+          -0.7922370317858861
+        ),
         { x: Math.PI / 3.2, y: Math.PI / 5.5, z: -Math.PI / -12 },
         2
       );
@@ -366,23 +349,21 @@ function onMouseClick(event) {
   }
 }
 
-
 function animateCameraToTarget(endPosition, endRotation, nb) {
-  document.removeEventListener('mousemove', onBaseMouseMove, false);
+  document.removeEventListener("mousemove", onBaseMouseMove, false);
 
   const startPosition = camera.position.clone();
   const startQuaternion = camera.quaternion.clone();
 
   camera.position.copy(endPosition);
-  camera.rotation.set(endRotation.x, endRotation.y, endRotation.z, 'XYZ');
+  camera.rotation.set(endRotation.x, endRotation.y, endRotation.z, "XYZ");
 
   const endQuaternion = camera.quaternion.clone();
 
   camera.position.copy(startPosition);
   camera.quaternion.copy(startQuaternion);
 
-  if (startQuaternion.dot(endQuaternion) < 0) 
-  {
+  if (startQuaternion.dot(endQuaternion) < 0) {
     endQuaternion.x *= -1;
     endQuaternion.y *= -1;
     endQuaternion.z *= -1;
@@ -395,7 +376,7 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
   gsap.to(dummy, {
     duration: 2,
     t: 1,
-    ease: 'power2.inOut',
+    ease: "power2.inOut",
     onUpdate: () => {
       const t = dummy.t;
       camera.position.lerpVectors(startPosition, endPosition, t);
@@ -403,30 +384,24 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
     },
     onComplete: () => {
       //controls.enabled = true;
-      if (nb == 1) menuElement.classList.remove('active');
-      if (nb == 2) 
-      {
-        menuElement2.classList.remove('active');
+      if (nb == 1) menuElement.classList.remove("active");
+      if (nb == 2) {
+        menuElement2.classList.remove("active");
       }
-      if (nb == 3) menuElement3.classList.remove('active');
-
+      if (nb == 3) menuElement3.classList.remove("active");
 
       initialCameraRotation.x = camera.rotation.x;
       initialCameraRotation.y = camera.rotation.y;
       cameraRotation.x = camera.rotation.x;
       cameraRotation.y = camera.rotation.y;
-      document.addEventListener('mousemove', onBaseMouseMove, false);
-
-
+      document.addEventListener("mousemove", onBaseMouseMove, false);
     },
-    
   });
   onScreen = true;
 }
 
-
 export function animateCameraBackToInitialPosition() {
-  document.removeEventListener('mousemove', onBaseMouseMove, false);
+  document.removeEventListener("mousemove", onBaseMouseMove, false);
 
   const startPosition = camera.position.clone();
   const startQuaternion = camera.quaternion.clone();
@@ -441,20 +416,19 @@ export function animateCameraBackToInitialPosition() {
   camera.position.copy(endPosition);
   camera.lookAt(lookAtTarget);
   const endQuaternion = camera.quaternion.clone();
-  if (freeViewEnabled)
-    disableFreeView();
+  if (freeViewEnabled) disableFreeView();
   camera.position.copy(startPosition);
   camera.quaternion.copy(startQuaternion);
   //controls.enabled = false;
-  if (menuElement) menuElement.classList.add('active');
-  if (menuElement2) menuElement2.classList.add('active');
-  if (menuElement3) menuElement3.classList.add('active');
+  if (menuElement) menuElement.classList.add("active");
+  if (menuElement2) menuElement2.classList.add("active");
+  if (menuElement3) menuElement3.classList.add("active");
 
   const dummy = { t: 0 };
   gsap.to(dummy, {
     duration: 2,
     t: 1,
-    ease: 'power2.inOut',
+    ease: "power2.inOut",
     onUpdate: () => {
       const t = dummy.t;
       camera.position.lerpVectors(startPosition, endPosition, t);
@@ -468,47 +442,39 @@ export function animateCameraBackToInitialPosition() {
       initialCameraRotation.y = camera.rotation.y;
       cameraRotation.x = camera.rotation.x;
       cameraRotation.y = camera.rotation.y;
-      document.addEventListener('mousemove', onBaseMouseMove, false);
-
-
+      document.addEventListener("mousemove", onBaseMouseMove, false);
     },
   });
 }
 
-
-function addEventListeners() 
-{
-  window.addEventListener('click', onMouseClick);
-  window.addEventListener('resize', onWindowResize);
- 
+function addEventListeners() {
+  window.addEventListener("click", onMouseClick);
+  window.addEventListener("resize", onWindowResize);
 }
 
-
 let freeViewEnabled = false;
-let cameraRotation = { x: 0, y: 0, z:0};
-let initialCameraRotation = { x: 0, y: 0, z:0 };
+let cameraRotation = { x: 0, y: 0, z: 0 };
+let initialCameraRotation = { x: 0, y: 0, z: 0 };
 
-document.getElementById('free-view').addEventListener('click', () => {
+document.getElementById("free-view").addEventListener("click", () => {
   freeViewEnabled = !freeViewEnabled;
   if (freeViewEnabled) {
-    onScreen = true
+    onScreen = true;
 
     enableFreeView();
   } else {
-    onScreen = false
+    onScreen = false;
 
     disableFreeView();
     animateCameraBackToInitialPosition();
-
   }
 });
 
 //document.addEventListener('mousemove', onBaseMouseMove, false);
 
-function onBaseMouseMove(event) 
-{
+function onBaseMouseMove(event) {
   let maxRotationAngle = Math.PI / 3;
-  const rotationSpeed = 0.000005; 
+  const rotationSpeed = 0.000005;
 
   const deltaX = event.movementX;
   const deltaY = event.movementY;
@@ -528,12 +494,16 @@ function onBaseMouseMove(event)
     initialCameraRotation.x + maxRotationAngle / 2
   );
 
-  camera.rotation.set(cameraRotation.x, cameraRotation.y, camera.rotation.z, 'XYZ');
+  camera.rotation.set(
+    cameraRotation.x,
+    cameraRotation.y,
+    camera.rotation.z,
+    "XYZ"
+  );
   camera.updateMatrixWorld(true);
 }
-document.addEventListener('pointerlockchange', () => {
-  if (document.pointerLockElement !== renderer.domElement && freeViewEnabled)
-  {
+document.addEventListener("pointerlockchange", () => {
+  if (document.pointerLockElement !== renderer.domElement && freeViewEnabled) {
     freeViewEnabled = false;
     disableFreeView();
     onScreen = false;
@@ -541,33 +511,30 @@ document.addEventListener('pointerlockchange', () => {
   }
 });
 
-function enableFreeView() 
-{
+function enableFreeView() {
   initialCameraRotation.x = camera.rotation.x;
   initialCameraRotation.y = camera.rotation.y;
   cameraRotation.x = camera.rotation.x;
   cameraRotation.y = camera.rotation.y;
   renderer.domElement.requestPointerLock();
-  menuElement.style.pointerEvents = 'none';
-  menuElement2.style.pointerEvents = 'none';
-  menuElement3.style.pointerEvents = 'none';
+  menuElement.style.pointerEvents = "none";
+  menuElement2.style.pointerEvents = "none";
+  menuElement3.style.pointerEvents = "none";
 
-  document.addEventListener('mousemove', onFreeViewMouseMove, false);
+  document.addEventListener("mousemove", onFreeViewMouseMove, false);
 }
 
-function disableFreeView() 
-{
+function disableFreeView() {
   document.exitPointerLock();
-  menuElement.style.pointerEvents = 'auto';
-  menuElement2.style.pointerEvents = 'auto';
-  menuElement3.style.pointerEvents = 'auto';
-  document.removeEventListener('mousemove', onFreeViewMouseMove, false);
+  menuElement.style.pointerEvents = "auto";
+  menuElement2.style.pointerEvents = "auto";
+  menuElement3.style.pointerEvents = "auto";
+  document.removeEventListener("mousemove", onFreeViewMouseMove, false);
 }
 
-function onFreeViewMouseMove(event) 
-{
+function onFreeViewMouseMove(event) {
   let maxRotationAngle = Math.PI / 3;
-  const rotationSpeed = 0.00025; 
+  const rotationSpeed = 0.00025;
 
   const deltaX = event.movementX;
   const deltaY = event.movementY;
@@ -587,15 +554,11 @@ function onFreeViewMouseMove(event)
     initialCameraRotation.x + maxRotationAngle / 2
   );
 
-  camera.rotation.set(cameraRotation.x, cameraRotation.y, 0, 'XYZ');
+  camera.rotation.set(cameraRotation.x, cameraRotation.y, 0, "XYZ");
   camera.updateMatrixWorld(true);
 }
 
-
-
-
-export function buildScene() 
-{
+export function buildScene() {
   initScene();
   initRenderer();
   initCamera();
@@ -611,18 +574,12 @@ export function buildScene()
   cameraRotation.y = camera.rotation.y;
 }
 
-
-function animate() 
-{
+function animate() {
   requestAnimationFrame(animate);
-  if (controls) 
-    controls.update(0.01);
-  if (renderer && scene && camera) 
-    renderer.render(scene, camera);
-  if (cssRenderer && scene && camera) 
-    cssRenderer.render(scene, camera);
+  if (controls) controls.update(0.01);
+  if (renderer && scene && camera) renderer.render(scene, camera);
+  if (cssRenderer && scene && camera) cssRenderer.render(scene, camera);
 }
-
 
 buildScene();
 animate();

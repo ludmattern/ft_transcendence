@@ -448,6 +448,11 @@ button {
   border-bottom: none;
 }
 
+.left-side-window:has(.well-hidden) #message-input-container{
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .right-side-window:has(.overflow) {
   border-bottom: 2px solid var(--secondary-hud-elements-color);
 }
@@ -456,26 +461,11 @@ button {
   border-bottom: none;
 }
 
-.panel-end {
-  content: '';
-  display: block;
-  border-bottom: var(--secondary-hud-elements-color) 2px solid;
-  width: 100%;
-}
-
 .panel-mid {
   content: '';
   display: block;
   border-bottom: var(--secondary-hud-elements-color) 2px dotted;
   width: 100%;
-}
-
-.left-side-window:has(.overflow) .panel-end {
-  display: none;
-}
-
-.right-side-window:has(.overflow) .panel-end {
-  display: none;
 }
 
 .right-side-window {
@@ -556,6 +546,11 @@ button {
   height: 20vh;
 }
 
+.r-tab-content, .l-tab-content {
+	background: #ffffff07;
+	border-bottom: 2px solid var(--secondary-hud-elements-color);
+}
+
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -573,7 +568,6 @@ button {
   font-weight: var(--content-font-weight);
   color: var(--content-color);
   overflow-wrap: break-word;
-  animation: fadeIn 0.3s ease-in-out;
 }
 
 .l-side-window .btn {
@@ -630,20 +624,12 @@ button {
 .hud-header .active::after {
   content: '';
   display: block;
-  position: absolute;
-  top: 0.75rem;
-  left: 0.5rem;
-  width: 80%;
-  height: 50%;
+  width: 120%;
+  translate: -10% -1.5rem;
+  height: 1.3rem;
   border: 1px solid var(--active-menu-color);
   pointer-events: none;
   transition: border-color 0.2s ease, width 0.2s ease, height 0.2s ease;
-}
-
-.hud-header .first-game .active::after,
-.hud-header .second-game .active::after {
-  left: 6.9rem;
-  width: 19%;
 }
 
 .background-svg .cls-1 {
@@ -733,6 +719,7 @@ button {
 
 .well-hidden {
   visibility: hidden;
+  pointer-events: none;
 }
 
 .form-container h5 {
@@ -778,7 +765,6 @@ button {
   text-transform: uppercase;
   font-weight: 500;
   border-radius: 0;
-  transition: all 0.2s;
 }
 
 .modifiable-pilot {
@@ -897,7 +883,8 @@ p {
   padding: 1rem;
 }
 
-.social-pilot-list #search-bar::placeholder {
+.social-pilot-list #search-bar::placeholder,
+.left-side-window #message-input::placeholder {
   color: var(--menu-color);
 }
 

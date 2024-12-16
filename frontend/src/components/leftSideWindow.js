@@ -1,21 +1,21 @@
-import { createElement } from '/src/utils/mini_react.js';
+import { createElement } from "/src/utils/mini_react.js";
 
 // Generates a nav item with a link
 function createNavItem(label, active = false) {
   return createElement(
-    'li',
-    { className: 'nav-item' },
+    "li",
+    { className: "nav-item" },
     createElement(
-      'span',
-      { className: `nav-link ${active ? 'active' : ''}` },
-      createElement('a', { href: '#', 'data-tab': label.toLowerCase() }, label)
+      "span",
+      { className: `nav-link ${active ? "active" : ""}` },
+      createElement("a", { href: "#", "data-tab": label.toLowerCase() }, label)
     )
   );
 }
 
 // Function to dynamically load content into tabs
-export function loadTabContent(tabName, container) {
-  fetch('/src/context/tabsContent.json')
+export function loadTabContent(tabName, container, window) {
+  fetch("/src/context/tabsContent.json")
     .then((response) => response.json())
     .then((data) => {
       const tabItems = data[tabName];
@@ -25,16 +25,47 @@ export function loadTabContent(tabName, container) {
         );
 
         // Clear the existing content
-        container.innerHTML = '';
+        container.innerHTML = "";
 
         // Append new elements to the container
         panelItems.forEach((panelItem) => {
           container.appendChild(panelItem);
         });
-
-        // Append the delimiter at the end of the content
-        const delimiter = createElement('span', { className: 'panel-end' });
-        container.appendChild(delimiter);
+        console.log("Tabname:", tabName);
+        // Check if the current tab is 'COMM'
+        if (tabName === "comm") {
+          console.log("Tab COMM loaded");
+          // Check if the input container is already present
+          if (!document.getElementById("message-input")) {
+            // Create and append the input container
+            const inputContainer = createElement(
+              "div",
+              { className: "d-flex", style: 'flex-wrap: wrap; background: #ffffff07; position: absolute; width: 100%;', id: "message-input-container" },
+              createElement("input", {
+                type: "text",
+                id: "message-input",
+                placeholder: "Enter your message...",
+                className: "form-control w-50 me-2",
+                style: "flex: auto; color: var(--content-color);",
+              }),
+              createElement(
+                "button",
+                {
+                  className: "btn btn-sm bi bi-send",
+                },
+                " Send"
+              )
+            );
+            window.appendChild(inputContainer);
+          } 
+		}
+		else {
+            // Remove the input container if it exists
+            const inputContainer = document.getElementById("message-input-container");
+            if (inputContainer) {
+              inputContainer.remove();
+            }
+          }
       }
     })
     .catch((error) => {
@@ -45,20 +76,20 @@ export function loadTabContent(tabName, container) {
 // Generates a panel item
 function createPanelItem(inviter, hasActions = false) {
   return createElement(
-    'div',
-    { className: 'panel-item' },
+    "div",
+    { className: "panel-item" },
     createElement(
-      'span',
+      "span",
       {},
       `New tournament invite from : `,
-      createElement('b', {}, inviter)
+      createElement("b", {}, inviter)
     ),
     hasActions
       ? createElement(
-          'div',
-          { className: 'actions' },
-          createElement('button', { className: 'btn bi bi-check' }, 'accept'),
-          createElement('button', { className: 'btn bi bi-x' }, 'refuse')
+          "div",
+          { className: "actions" },
+          createElement("button", { className: "btn bi bi-check" }, "accept"),
+          createElement("button", { className: "btn bi bi-x" }, "refuse")
         )
       : null
   );
@@ -66,53 +97,39 @@ function createPanelItem(inviter, hasActions = false) {
 
 export function LeftSideWindow() {
   return createElement(
-    'div',
-    { className: 'col-md-2-5 d-flex flex-column' },
+    "div",
+    { className: "col-md-2-5 d-flex flex-column" },
     createElement(
-      'div',
-      { className: 'l-side-window left-side-window' },
+      "div",
+      {
+        className: "l-side-window left-side-window",
+        id: "l-tab-content-container",
+      },
       createElement(
-        'ul',
-        { className: 'nav nav-tabs' },
-        createNavItem('INFO', true),
-        createNavItem('COMM', false),
+        "ul",
+        { className: "nav nav-tabs" },
+        createNavItem("INFO", true),
+        createNavItem("COMM", false),
         createElement(
-          'li',
-          { className: 'nav-item' },
+          "li",
+          { className: "nav-item" },
           createElement(
-            'div',
-            { className: 'container' },
+            "div",
+            { className: "container" },
             createElement(
-              'div',
+              "div",
               {
-                className: 'left-side-window-expander active',
-                id: 'l-sw-expander',
+                className: "left-side-window-expander active",
+                id: "l-sw-expander",
               },
-              createElement('span', { className: 'l-line' }),
-              createElement('span', { className: 'l-line' }),
-              createElement('span', { className: 'l-line' })
+              createElement("span", { className: "l-line" }),
+              createElement("span", { className: "l-line" }),
+              createElement("span", { className: "l-line" })
             )
           )
         )
       ),
-      // Add a button to add notifications
-      createElement(
-        'div',
-        { className: 'add-notification-btn-container' },
-        createElement(
-          'button',
-          {
-            className: 'btn',
-            id: 'l-add-notification-button',
-            onclick: () => {
-              const container = document.getElementById('l-tab-content');
-              addPanelItem(container, 'NEW_INVITER_NAME', true);
-            },
-          },
-          'Add Notification'
-        )
-      ),
-      createElement('div', { className: 'l-tab-content', id: 'l-tab-content' })
+      createElement("div", { className: "l-tab-content", id: "l-tab-content" })
     )
   );
 }

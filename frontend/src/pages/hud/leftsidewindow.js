@@ -1,5 +1,4 @@
 import { loadTabContent } from '/src/components/leftSideWindow.js';
-import { addPanelItem } from '/src/components/leftSideWindow.js';
 
 console.debug('Initializing the HUD and tab navigation for the side window');
 
@@ -15,31 +14,10 @@ expanders.forEach((expander) => {
   });
 });
 
-// 2. Function to check overflow in left side window
-function checkOverflow() {
-  if (leftSideWindow.scrollHeight > leftSideWindow.clientHeight) {
-    leftSideWindow.classList.add('overflow');
-  } else {
-    leftSideWindow.classList.remove('overflow');
-  }
-}
-
-checkOverflow();
-
-// 3. Observe changes in the left side window for overflow updates
-const observer = new MutationObserver(() => {
-  checkOverflow();
-});
-
-observer.observe(leftSideWindow, {
-  childList: true,
-  subtree: true,
-  characterData: true,
-});
-
 // 4. Tab navigation logic
 const tabLinks = document.querySelectorAll('.l-side-window .nav-link a');
 const tabContentContainer = document.getElementById('l-tab-content');
+const window = document.getElementById('l-tab-content-container');
 
 tabLinks.forEach((link) => {
   link.addEventListener('click', (event) => {
@@ -54,16 +32,9 @@ tabLinks.forEach((link) => {
     link.parentElement.classList.add('active');
 
     // Load the corresponding tab content
-    loadTabContent(tabName, tabContentContainer);
+    loadTabContent(tabName, tabContentContainer, window);
   });
 });
 
 // Load the initial tab (INFO) on page load
-loadTabContent('info', tabContentContainer);
-
-document
-  .getElementById('l-add-notification-button')
-  .addEventListener('click', () => {
-    const container = document.getElementById('l-tab-content');
-    addPanelItem(container, 'NEW_INVITER_NAME', true);
-  });
+loadTabContent('info', tabContentContainer, window);

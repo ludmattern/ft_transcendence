@@ -33,8 +33,6 @@ export function loadTabContent(tabName, container) {
         });
 
         // Append the delimiter at the end of the content
-        const delimiter = createElement('span', { className: 'panel-end' });
-        container.appendChild(delimiter);
       }
     })
     .catch((error) => {

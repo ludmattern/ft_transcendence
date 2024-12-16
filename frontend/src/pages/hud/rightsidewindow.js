@@ -14,28 +14,6 @@ expanders.forEach((expander) => {
   });
 });
 
-// 2. Function to check overflow in right side window
-function checkOverflow() {
-  if (rightSideWindow.scrollHeight > rightSideWindow.clientHeight) {
-    rightSideWindow.classList.add('overflow');
-  } else {
-    rightSideWindow.classList.remove('overflow');
-  }
-}
-
-checkOverflow();
-
-// 3. Observe changes in the right side window for overflow updates
-const observer = new MutationObserver(() => {
-  checkOverflow();
-});
-
-observer.observe(rightSideWindow, {
-  childList: true,
-  subtree: true,
-  characterData: true,
-});
-
 // 4. Tab navigation logic
 const tabLinks = document.querySelectorAll('.r-side-window .nav-link a');
 const tabContentContainer = document.getElementById('r-tab-content');
