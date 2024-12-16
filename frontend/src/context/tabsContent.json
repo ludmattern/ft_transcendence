@@ -4,21 +4,15 @@
 	  { "type": "tournament_invite", "inviter": "ALIEN_ALLIANCE", "actions": false }
 	],
 	"comm": [
-	  { "author": "GALACTIC_FIGHTERS", "message": "Hello, we need to discuss strategies." },
-	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
-	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
-	  { "author": "USER", "message": "Prepare for incoming attack!" },
-	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
-	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
-	  { "author": "USER", "message": "Prepare for incoming attack!" },
-	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
-	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
-	  { "author": "USER", "message": "Prepare for incoming attack!" },
-	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
-	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
-	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
-	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
-	  { "author": "USER", "message": "Understood, I am ready to assist." }
+		{ "author": "GALACTIC_FIGHTERS", "message": "Hello, we need to discuss strategies.", "channel": "General" },
+		{ "author": "GALACTIC_FIGHTERS", "message": "Hello, we need to discuss strategies.", "channel": "General" },
+		{ "author": "GALACTIC_FIGHTERS", "message": "Hello, we need to discuss strategies.", "channel": "General" },
+		{ "author": "GALACTIC_FIGHTERS", "message": "Hello, we need to discuss strategies.", "channel": "General" },
+		{ "author": "GALACTIC_FIGHTERS", "message": "Hello, we need to discuss strategies.", "channel": "General" },
+		{ "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!", "channel": "Private" },
+		{ "author": "USER", "message": "Understood, I am ready to assist.", "channel": "Private" },
+		{ "author": "USER", "message": "Understood, I am ready to assist.", "channel": "Private" },
+		{ "author": "USER", "message": "Understood, I am ready to assist.", "channel": "General" },
+		{ "author": "ASTEROID_DEFENSE", "message": "Focus on the left flank!", "channel": "General" }
 	]
-  }
-  
+}
