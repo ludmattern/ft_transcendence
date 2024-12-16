@@ -901,8 +901,7 @@ p {
 }
 
 .message-header span {
-	  color: var(--content-color);
-	  padding-right: 0.3rem;
+	padding-right: 0.3rem;
 }
 
 .user-message,
@@ -915,4 +914,7 @@ p {
 
 .user-message {
 	justify-self: flex-end;
+	align-items: flex-start;
+	background-color: #99ffff24;
+	margin: 1rem;
 }

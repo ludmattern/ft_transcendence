@@ -20,17 +20,51 @@ export function loadTabContent(tabName, container, window) {
     .then((data) => {
       const tabItems = data[tabName];
       if (tabItems) {
-        const panelItems =
-          tabName === "info"
-            ? tabItems.map((item) => createInfoPanelItem(item))
-            : tabItems.map((item) => createCommPanelItem(item));
-
         // Clear the existing content
         container.innerHTML = "";
 
-        // Append new elements to the container
-        panelItems.forEach((panelItem) => {
-          container.appendChild(panelItem);
+        tabItems.forEach((item) => {
+          if (tabName === "comm") {
+            // Vérifier si le dernier message appartient au même utilisateur et au même canal
+            const lastChild = container.lastElementChild;
+            const isSameAuthorAndChannel =
+              lastChild &&
+              lastChild.dataset &&
+              lastChild.dataset.author === item.author &&
+              lastChild.dataset.channel === (item.channel || "General");
+
+            if (isSameAuthorAndChannel) {
+              // Ajouter seulement le corps du message dans le dernier bloc
+              const messageText = createElement(
+                "div",
+                {
+                  className: "message-text",
+                  style: `
+					  margin-top: 0.5rem; 
+					  font-size: 1rem; 
+					`,
+                },
+                item.message
+              );
+              lastChild
+                .querySelector(".message-content-wrapper")
+                .appendChild(messageText);
+            } else {
+              // Créer un nouveau bloc si ce n'est pas le même auteur ou canal
+              const panelItem = createCommPanelItem(item);
+              panelItem.dataset.author = item.author; // Ajouter une donnée pour l'auteur
+              panelItem.dataset.channel = item.channel || "General"; // Ajouter une donnée pour le canal
+              container.appendChild(panelItem);
+
+              // Ajouter un gestionnaire de clic pour afficher les boutons
+              panelItem.addEventListener("click", () =>
+                showContextMenu(item, panelItem)
+              );
+            }
+          } else if (tabName === "info") {
+            const panelItem = createInfoPanelItem(item);
+            container.appendChild(panelItem);
+          }
         });
 
         if (tabName === "comm") {
@@ -56,7 +90,7 @@ export function loadTabContent(tabName, container, window) {
                 {
                   className: "btn btn-sm bi bi-send",
                 },
-                "Send"
+                " Send"
               )
             );
             window.appendChild(inputContainer);
@@ -76,6 +110,145 @@ export function loadTabContent(tabName, container, window) {
       console.error(`Error loading tab content for ${tabName}:`, error);
     });
 }
+
+function showContextMenu(item, messageElement) {
+	const existingMenu = document.querySelector(".context-menu");
+
+	if (existingMenu) {
+	  // Identifier le message associé au menu existant
+	  const associatedMessage = existingMenu.nextElementSibling;
+  
+	  // Supprimer le menu existant
+	  existingMenu.remove();
+  
+	  // Si le clic est sur le même message, ne pas recréer de menu
+	  if (associatedMessage === messageElement) {
+		return;
+	  }
+	}
+  
+	// Exemple de JSON avec les statuts de l'auteur
+	const userStatus = {
+	  isFriend: true, // Exemple: mettre à jour selon votre logique
+	  isBlocked: false, // Exemple: mettre à jour selon votre logique
+	};
+  
+	// Créer le menu contextuel
+	const contextMenu = createElement(
+	  "div",
+	  {
+		className: "context-menu",
+		style: `
+		  display: flex; 
+		  flex-direction: column; 
+		  justify-content: space-between; 
+		  align-items: center; 
+		  padding: 0.5rem; 
+		  background: rgba(255, 255, 255, 0.1);
+		  color: var(--content-color); 
+		  margin-bottom: 0.5rem; 
+		  z-index: 10;
+		`,
+	  },
+	  createElement(
+		"div",
+		{
+		  className: "context-menu-buttons",
+		  style: `
+			display: flex; 
+			justify-content: center; 
+			align-items: center; 
+			gap: 0.5rem; 
+		  `,
+		},
+		createElement(
+		  "button",
+		  {
+			className: "btn",
+			onclick: () => handleFriendAction(userStatus.isFriend),
+		  },
+		  userStatus.isFriend ? "Remove" : "Add"
+		),
+		createElement(
+		  "button",
+		  {
+			className: "btn",
+			onclick: () => handleBlockAction(userStatus.isBlocked),
+		  },
+		  userStatus.isBlocked ? "Unblock" : "Block"
+		),
+		createElement(
+		  "button",
+		  {
+			className: "btn",
+			onclick: () => handleInviteAction(item.author),
+		  },
+		  "Invite"
+		),
+		createElement(
+		  "button",
+		  {
+			className: "btn",
+			onclick: () => handleProfileAction(item.author),
+		  },
+		  "Profile"
+		),
+		createElement(
+		  "button",
+		  {
+			className: "btn",
+			onclick: () => handleMessageAction(item.author),
+		  },
+		  "Message"
+		)
+	  )
+	);
+  
+	// Insérer le menu contextuel au même niveau que le message (dans le container)
+	const container = messageElement.parentNode;
+	container.insertBefore(contextMenu, messageElement);
+  
+	const parentContainer = document.querySelector("#l-tab-content"); // Le conteneur parent spécifique
+	parentContainer.scrollTo({
+	  top: contextMenu.offsetTop - parentContainer.offsetTop, // Position relative au conteneur
+	  behavior: "smooth", // Défilement fluide
+	});
+	
+
+	// Cacher le menu lorsque l'utilisateur clique en dehors
+	document.addEventListener(
+	  "click",
+	  (e) => {
+		if (!container.contains(e.target)) {
+		  contextMenu.remove();
+		}
+	  },
+	  { once: true }
+	);
+  }
+  
+
+// Fonctions pour gérer les actions
+function handleFriendAction(isFriend) {
+  console.log(isFriend ? "Removing Friend" : "Adding Friend");
+}
+
+function handleBlockAction(isBlocked) {
+  console.log(isBlocked ? "Unblocking User" : "Blocking User");
+}
+
+function handleInviteAction(author) {
+  console.log(`Inviting ${author}`);
+}
+
+function handleProfileAction(author) {
+  console.log(`Viewing profile of ${author}`);
+}
+
+function handleMessageAction(author) {
+  console.log(`Messaging ${author}`);
+}
+
 function createInfoPanelItem(item) {
   const content =
     item.type === "friend_request"
@@ -97,77 +270,77 @@ function createInfoPanelItem(item) {
 }
 
 function createCommPanelItem(item) {
-	const isUser = item.author === "USER";
-	return createElement(
-	  "div",
-	  {
-		className: `message ${isUser ? "user-message" : "other-message"}`,
-		style: `
+  const isUser = item.author === "USER";
+  const isPrivate = item.channel === "Private"; // Déterminer si le message est privé
+
+  return createElement(
+    "div",
+    {
+      className: `message ${isUser ? "user-message" : "other-message"}`,
+      style: `
 		  display: flex; 
-		  align-items: center; 
 		  padding: 1rem; 
-		  color: var(--content-color);
+		  ${
+        isPrivate ? "color: #ffff59;" : "color: var(--content-color);"
+      } /* Tout le texte en jaune pour les messages privés */
 		`,
-	  },
-	  // Image de profil à gauche
-	  createElement(
-		"img",
-		{
-		  className: "profile-picture",
-		  src: item.profilePicture || "https://via.placeholder.com/40",
-		  alt: `${item.author}'s profile picture`,
-		  style: `
-			width: 40px; 
-			height: 40px; 
-			object-fit: cover;
-		  `,
-		}
-	  ),
-	  // Contenu du message à droite
-	  createElement(
-		"div",
-		{
-		  className: "message-content-wrapper",
-		},
-		// En haut : Canal, Pseudo et Heure
-		createElement(
-		  "div",
-		  {
-			className: "message-header",
-		  },
-		  createElement(
-			"span",
-			{ className: "channel", style: "font-weight: bold;" },
-			item.channel || "General"
-		  ),
-		  createElement(
-			"span",
-			{ className: "author", style: "font-weight: bold;" },
-			item.author
-		  ),
-		  createElement(
-			"span",
-			{ className: "timestamp", style: "font-size: 0.8rem;" },
-			item.timestamp || "Just now"
-		  )
-		),
-		// En bas : Message
-		createElement(
-		  "div",
-		  {
-			className: "message-text",
-			style: `
-			  margin-top: 0.5rem; 
-			  font-size: 1rem; 
-			  color: var(--content-color);
+    },
+    // Image de profil à gauche (seulement si ce n'est pas "USER")
+    !isUser &&
+      createElement("img", {
+        className: "profile-picture",
+        src: item.profilePicture || "https://via.placeholder.com/40",
+        alt: `${item.author}'s profile picture`,
+        style: `
+			  width: 40px; 
+			  height: 40px; 
+			  object-fit: cover;
 			`,
-		  },
-		  item.message
-		)
-	  )
-	);
-  }
-  
+      }),
+    // Contenu du message à droite
+    createElement(
+      "div",
+      {
+        className: "message-content-wrapper",
+      },
+      // En haut : Canal, Pseudo et Heure (Pseudo seulement si ce n'est pas "USER")
+      createElement(
+        "div",
+        {
+          className: "message-header",
+        },
+        createElement(
+          "span",
+          { className: "channel", style: "font-weight: light;" },
+          isPrivate ? "[Private]" : "[General]" // "Private" si le message est privé
+        ),
+        !isUser &&
+          createElement(
+            "span",
+            { className: "author", style: "font-weight: bold;" },
+            item.author
+          ),
+        createElement(
+          "span",
+          { className: "timestamp", style: "font-size: 0.8rem;" },
+          item.timestamp || "Just now"
+        )
+      ),
+      // En bas : Message
+      createElement(
+        "div",
+        {
+          className: "message-text",
+          style: `
+			  margin-top: 0.5rem; 
+			  font-size: 1rem;
+			`,
+        },
+        item.message
+      )
+    )
+  );
+}
 
 export function LeftSideWindow() {
   return createElement(
