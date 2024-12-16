@@ -1,4 +1,5 @@
 
+
 console.debug('Initializing the HUD and tab navigation for the side window');
 
 // 1. Expander logic for the side window
@@ -30,5 +31,3 @@ tabLinks.forEach((link) => {
 
   });
 });
-
-

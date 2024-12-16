@@ -81,7 +81,7 @@ function initCamera() {
 
   const cameraLight = new THREE.PointLight(0Xb0e7ec,  1, 6);
   cameraLight.position.set(0, 5.5, -1.5);
-  cameraLight.castShadow = true;
+  cameraLight.castShadow = false;
   cameraLight.shadow.bias = -0.005; 
   const pointLightHelper = new THREE.PointLightHelper(cameraLight, 0.1);
   //scene.add(pointLightHelper);
@@ -93,7 +93,7 @@ function initCamera() {
 
   const cameraLight2 = new THREE.PointLight(0Xb0e7ec, 1, 6); 
   cameraLight2.position.set(-3, 3, -1.5);
-  cameraLight2.castShadow = true; 
+  cameraLight2.castShadow = false; 
   cameraLight2.shadow.bias = -0.005;
   const pointLightHelper2 = new THREE.PointLightHelper(cameraLight2, 0.1);
   //scene.add(pointLightHelper2);
@@ -105,7 +105,7 @@ function initCamera() {
 
   const cameraLight3 = new THREE.PointLight(0Xb0e7ec, 1, 6); 
   cameraLight3.position.set(3, 3, -1.5);
-  cameraLight3.castShadow = true; 
+  cameraLight3.castShadow = false; 
   cameraLight3.shadow.bias = -0.005; 
   const pointLightHelper3 = new THREE.PointLightHelper(cameraLight3, 0.1);
   //scene.add(pointLightHelper3);
@@ -680,6 +680,9 @@ function onFreeViewMouseMove(event) {
   camera.updateMatrixWorld(true);
 }
 
+
+
+
 export function buildScene() 
 {
   initScene();
@@ -707,12 +710,15 @@ export function buildScene()
     const renderScene = new RenderPass(scene, camera);
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
-    
+
 
 }
 
 
 let composer;
+
+
+
 
 function animate() 
 {
@@ -728,3 +734,83 @@ function animate()
 
 buildScene();
 animate();
+
+
+
+export function initWireframeScene() 
+{
+  const wireframeDiv = document.getElementById('wireframe');
+  if (!wireframeDiv) {
+    console.error("La div avec l'ID 'wireframe' n'a pas été trouvée.");
+    return;
+  }
+
+  const wireframeScene = new THREE.Scene();
+  const wireframeCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); 
+  const wireframeRenderer = new THREE.WebGLRenderer({ alpha: true });
+
+  const width = wireframeDiv.offsetWidth;
+  const height = wireframeDiv.offsetHeight;
+  wireframeRenderer.setSize(width, height);
+
+  wireframeDiv.appendChild(wireframeRenderer.domElement);
+
+  const allowedNodes = ["_gltfNode_16", "_gltfNode_0"];
+
+  const loader = new GLTFLoader();
+  loader.load(
+    "../src/assets/models/sn13.glb",
+    (gltf) => {
+      const wireframeModel = new THREE.Group();
+
+      gltf.scene.traverse((child) => {
+        if (child.isMesh && allowedNodes.includes(child.name)) {
+          wireframeModel.add(child.clone());
+        }
+      });
+
+      wireframeModel.traverse((child) => {
+        if (child.isMesh) {
+          child.material = new THREE.MeshBasicMaterial({
+            color: 0Xb0e7ec,
+            wireframe: true,
+          });
+        }
+      });
+
+      wireframeModel.scale.set(0.07, 0.07, 0.07);
+      wireframeModel.rotation.set(Math.PI, 0, 0);
+
+      wireframeScene.add(wireframeModel);
+
+
+      wireframeCamera.position.set(0, -60, -50);
+      wireframeCamera.lookAt(wireframeModel.position);
+
+      function animateWireframe() 
+      {
+        requestAnimationFrame(animateWireframe);
+        wireframeModel.rotation.z += 0.006;
+        wireframeRenderer.render(wireframeScene, wireframeCamera);
+      }
+
+      animateWireframe();
+    },
+    undefined,
+    (error) => {
+      console.error("Erreur lors du chargement du modèle :", error);
+    }
+  );
+
+  function onWireframeResize() {
+    const newWidth = wireframeDiv.offsetWidth;
+    const newHeight = wireframeDiv.offsetHeight;
+
+    wireframeRenderer.setSize(newWidth, newHeight);
+
+    wireframeCamera.aspect = newWidth / newHeight;
+    wireframeCamera.updateProjectionMatrix();
+  }
+
+  window.addEventListener("resize", onWireframeResize);
+}
