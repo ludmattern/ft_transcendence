@@ -102,32 +102,72 @@ function createCommPanelItem(item) {
 	  "div",
 	  {
 		className: `message ${isUser ? "user-message" : "other-message"}`,
+		style: `
+		  display: flex; 
+		  align-items: center; 
+		  padding: 1rem; 
+		  color: var(--content-color);
+		`,
 	  },
-	  // Crée le span author uniquement si ce n'est pas USER
-	  !isUser &&
+	  // Image de profil à gauche
+	  createElement(
+		"img",
+		{
+		  className: "profile-picture",
+		  src: item.profilePicture || "https://via.placeholder.com/40",
+		  alt: `${item.author}'s profile picture`,
+		  style: `
+			width: 40px; 
+			height: 40px; 
+			object-fit: cover;
+		  `,
+		}
+	  ),
+	  // Contenu du message à droite
+	  createElement(
+		"div",
+		{
+		  className: "message-content-wrapper",
+		},
+		// En haut : Canal, Pseudo et Heure
 		createElement(
-		  "span",
+		  "div",
 		  {
-			className: "author",
+			className: "message-header",
+		  },
+		  createElement(
+			"span",
+			{ className: "channel", style: "font-weight: bold;" },
+			item.channel || "General"
+		  ),
+		  createElement(
+			"span",
+			{ className: "author", style: "font-weight: bold;" },
+			item.author
+		  ),
+		  createElement(
+			"span",
+			{ className: "timestamp", style: "font-size: 0.8rem;" },
+			item.timestamp || "Just now"
+		  )
+		),
+		// En bas : Message
+		createElement(
+		  "div",
+		  {
+			className: "message-text",
 			style: `
-			  display: block; 
+			  margin-top: 0.5rem; 
+			  font-size: 1rem; 
 			  color: var(--content-color);
-			  font-weight: bolder;
-			  text-align: left;
 			`,
 		  },
-		  `${item.author}: `
-		),
-	  createElement(
-		"span",
-		{
-		  className: "message-content",
-		  style: `display: block; color: var(--content-color);`,
-		},
-		item.message
+		  item.message
+		)
 	  )
 	);
-  }  
+  }
+  
 
 export function LeftSideWindow() {
   return createElement(
