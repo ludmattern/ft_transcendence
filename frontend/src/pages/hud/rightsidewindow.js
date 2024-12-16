@@ -38,9 +38,4 @@ tabLinks.forEach((link) => {
 // Load the initial tab (INFO) on page load
 loadTabContent('info', tabContentContainer);
 
-document
-  .getElementById('r-add-notification-button')
-  .addEventListener('click', () => {
-    const container = document.getElementById('r-tab-content');
-    addPanelItem(container, 'NEW_INVITER_NAME', true);
-  });
+

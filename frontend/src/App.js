@@ -5,6 +5,8 @@ import { CSS3DRenderer, CSS3DObject } from 'https://esm.sh/three/examples/jsm/re
 import { EffectComposer } from 'https://esm.sh/three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'https://esm.sh/three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://esm.sh/three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'https://esm.sh/three/examples/jsm/postprocessing/ShaderPass.js';
+
 
 /*6h4vl9mc0gk0   lfr8v60tfjk  4h64avzyz1y0   https://tools.wwwtyro.net/space-3d/index.html#animationSpeed=0.8199880281747889&fov=150&nebulae=true&pointStars=true&resolution=1024&seed=6h4vl9mc0gk0&stars=true&sun=false */
 
@@ -49,6 +51,7 @@ let onScreen = false;
 let screenObject1, screenObject2, screenObject3;
 let planet, model;
 
+
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -76,41 +79,41 @@ function initCamera() {
   camera.position.set(0, 0.06275803512326787, 1.9990151147571098);
   camera.lookAt(0, 50, -15);
 
-  const cameraLight = new THREE.PointLight(0Xb0e7ec,  1.5, 10); // Lumière blanche avec intensité 1
-  cameraLight.position.set(0, 6, -1.5);
-  cameraLight.castShadow = true; // Active les ombres projetées
+  const cameraLight = new THREE.PointLight(0Xb0e7ec,  1, 6);
+  cameraLight.position.set(0, 5.5, -1.5);
+  cameraLight.castShadow = true;
   cameraLight.shadow.bias = -0.005; 
   const pointLightHelper = new THREE.PointLightHelper(cameraLight, 0.1);
   //scene.add(pointLightHelper);
   scene.add(cameraLight);
-  cameraLight.shadow.mapSize.width = 2048;
-  cameraLight.shadow.mapSize.height = 2048;
-  cameraLight.shadow.camera.near =0;
-  cameraLight.shadow.camera.far = 500; 
+  cameraLight.shadow.mapSize.width = 1024;
+  cameraLight.shadow.mapSize.height = 1024;
+  cameraLight.shadow.camera.near =0.5;
+  cameraLight.shadow.camera.far = 50; 
 
-  const cameraLight2 = new THREE.PointLight(0Xb0e7ec, 1.5, 10); // Lumière blanche avec intensité 1
-  cameraLight2.position.set(-3, 4, -1.5);
-  cameraLight2.castShadow = true; // Active les ombres projetées
-  cameraLight2.shadow.bias = -0.005; // Réduit les artefacts d'ombre
+  const cameraLight2 = new THREE.PointLight(0Xb0e7ec, 1, 6); 
+  cameraLight2.position.set(-3, 3, -1.5);
+  cameraLight2.castShadow = true; 
+  cameraLight2.shadow.bias = -0.005;
   const pointLightHelper2 = new THREE.PointLightHelper(cameraLight2, 0.1);
   //scene.add(pointLightHelper2);
   scene.add(cameraLight2);
-  cameraLight2.shadow.mapSize.width = 2048;
-  cameraLight2.shadow.mapSize.height = 2048;
-  cameraLight2.shadow.camera.near = 0;
-  cameraLight2.shadow.camera.far = 500; 
+  cameraLight2.shadow.mapSize.width = 1024;
+  cameraLight2.shadow.mapSize.height = 1024;
+  cameraLight2.shadow.camera.near = 0.5;
+  cameraLight2.shadow.camera.far = 50; 
 
-  const cameraLight3 = new THREE.PointLight(0Xb0e7ec, 1.5, 10); // Lumière blanche avec intensité 1
-  cameraLight3.position.set(3, 4, -1.5);
-  cameraLight3.castShadow = true; // Active les ombres projetées
-  cameraLight3.shadow.bias = -0.005; // Réduit les artefacts d'ombre
+  const cameraLight3 = new THREE.PointLight(0Xb0e7ec, 1, 6); 
+  cameraLight3.position.set(3, 3, -1.5);
+  cameraLight3.castShadow = true; 
+  cameraLight3.shadow.bias = -0.005; 
   const pointLightHelper3 = new THREE.PointLightHelper(cameraLight3, 0.1);
   //scene.add(pointLightHelper3);
   scene.add(cameraLight3);
-  cameraLight3.shadow.mapSize.width = 2048;
-  cameraLight3.shadow.mapSize.height = 2048;
-  cameraLight3.shadow.camera.near = 0;
-  cameraLight3.shadow.camera.far = 500; 
+  cameraLight3.shadow.mapSize.width = 1024;
+  cameraLight3.shadow.mapSize.height = 1024;
+  cameraLight3.shadow.camera.near = 0.5;
+  cameraLight3.shadow.camera.far = 50; 
 
 
 /*
@@ -137,15 +140,7 @@ function initCamera() {
     //const rectLightHelper3 = createRectAreaLightHelper(rectLight3);
     //scene.add(rectLightHelper3);
 */
-  const geometry = new THREE.SphereGeometry(1, 32, 32);
-  const material = new THREE.MeshStandardMaterial({ color: 0x0077ff, roughness: 0.5, metalness: 0.5 });
-  const sphere = new THREE.Mesh(geometry, material);
-  sphere.castShadow = true;
-  sphere.receiveShadow = true; 
-  sphere.position.set(0, 0, 0);
-
-
-  scene.add(camera);
+  scene.add(camera)
 
   /*
   const cameraLight = new THREE.PointLight(0Xb0e7ec,  10, 1000); // Lumière blanche avec intensité 1
@@ -241,119 +236,126 @@ function initSkybox() {
 }
 
 
+let node18 = null;
+let node19= null;
 function loadModels() 
 {
-  const loadingScreen = document.getElementById("loading-screen");
-  const progressBar = document.getElementById("progress-bar");
-  loadingScreen.style.display = "block";
+const loadingScreen = document.getElementById("loading-screen");
+const progressBar = document.getElementById("progress-bar");
+loadingScreen.style.display = "block";
 
-  const loader = new GLTFLoader();
+const loader = new GLTFLoader();
 
-  function onProgress(xhr) 
-  {
-    if (xhr.lengthComputable) {
-      const percentComplete = (xhr.loaded / xhr.total) * 100;
-      progressBar.style.width = percentComplete + "%";
-    }
+function onProgress(xhr) 
+{
+  if (xhr.lengthComputable) {
+    const percentComplete = (xhr.loaded / xhr.total) * 100;
+    progressBar.style.width = percentComplete + "%";
   }
+}
 
-  const satLoader = new GLTFLoader();
-  satLoader.load(
-    '../src/assets/models/saturn.glb',
-    (gltf) => {
-      planet = gltf.scene;
-      planet.position.set(saturnConfig.positionX, saturnConfig.positionY, saturnConfig.positionZ);
-      planet.rotation.set(
-        THREE.MathUtils.degToRad(saturnConfig.rotationX),
-        THREE.MathUtils.degToRad(saturnConfig.rotationY),
-        THREE.MathUtils.degToRad(saturnConfig.rotationZ)
-      );
-      planet.scale.set(saturnConfig.scale, saturnConfig.scale, saturnConfig.scale);
+const satLoader = new GLTFLoader();
+satLoader.load(
+  '../src/assets/models/saturn.glb',
+  (gltf) => {
+    planet = gltf.scene;
+    planet.position.set(saturnConfig.positionX, saturnConfig.positionY, saturnConfig.positionZ);
+    planet.rotation.set(
+      THREE.MathUtils.degToRad(saturnConfig.rotationX),
+      THREE.MathUtils.degToRad(saturnConfig.rotationY),
+      THREE.MathUtils.degToRad(saturnConfig.rotationZ)
+    );
+    planet.scale.set(saturnConfig.scale, saturnConfig.scale, saturnConfig.scale);
 
-      planet.traverse((child) => {
-        if (child.isMesh) {
-          const oldMaterial = child.material;
-          if (oldMaterial.isGLTFSpecularGlossinessMaterial) {
-            const newMaterial = new THREE.MeshStandardMaterial({
-              map: oldMaterial.map,
-              color: oldMaterial.color,
-              metalness: 0.1,
-              roughness: 0.7,
-              normalMap: oldMaterial.normalMap,
-              emissive: oldMaterial.emissive,
-              emissiveMap: oldMaterial.emissiveMap,
-              emissiveIntensity: oldMaterial.emissiveIntensity,
-              alphaMap: oldMaterial.alphaMap,
-              transparent: oldMaterial.transparent,
-              opacity: oldMaterial.opacity,
-              side: oldMaterial.side,
-              envMap: oldMaterial.envMap,
-              lightMap: oldMaterial.lightMap,
-              lightMapIntensity: oldMaterial.lightMapIntensity,
-            });
-            child.material = newMaterial;
-          }
+    planet.traverse((child) => {
+      if (child.isMesh) {
+        const oldMaterial = child.material;
+        if (oldMaterial.isGLTFSpecularGlossinessMaterial) {
+          const newMaterial = new THREE.MeshStandardMaterial({
+            map: oldMaterial.map,
+            color: oldMaterial.color,
+            metalness: 0.1,
+            roughness: 0.7,
+            normalMap: oldMaterial.normalMap,
+            emissive: oldMaterial.emissive,
+            emissiveMap: oldMaterial.emissiveMap,
+            emissiveIntensity: oldMaterial.emissiveIntensity,
+            alphaMap: oldMaterial.alphaMap,
+            transparent: oldMaterial.transparent,
+            opacity: oldMaterial.opacity,
+            side: oldMaterial.side,
+            envMap: oldMaterial.envMap,
+            lightMap: oldMaterial.lightMap,
+            lightMapIntensity: oldMaterial.lightMapIntensity,
+          });
+          child.material = newMaterial;
+        
         }
-      });
 
-      scene.add(planet);
-    },
-    onProgress,
-    (error) => {
-      console.error('Erreur lors du chargement du modèle Saturn:', error);
-    }
-  );
+      }
+    });
 
-  loader.load(
-    "../src/assets/models/sn13.glb",
-    (gltf) => {
-      model = gltf.scene;
-      model.position.set(3.5, -17, -1);
-      model.rotation.set(0, 0, 0);
-      model.scale.set(0.125, 0.125, 0.125);
-      model.lookAt(0, 1000, -180);
+    scene.add(planet);
+  },
+  onProgress,
+  (error) => {
+    console.error('Erreur lors du chargement du modèle Saturn:', error);
+  }
+);
 
-      model.traverse((child) => {
-        if (child.isMesh) {
-          child.material.color.multiplyScalar(3);
-          child.material.metalness = 0.2;
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-      
-      scene.add(model);
+loader.load(
+  "../src/assets/models/sn13.glb",
+  (gltf) => {
+    model = gltf.scene;
+    model.position.set(3.5, -17, -1);
+    model.rotation.set(0, 0, 0);
+    model.scale.set(0.125, 0.125, 0.125);
+    model.lookAt(0, 1000, -180);
 
-      if (menuObject2) 
-        scene.add(menuObject2);
-      if (menuObject3) 
-        scene.add(menuObject3);
-      if (menuObject) 
-        scene.add(menuObject);
+    model.traverse((child) => {
+      if (child.isMesh) {
+        child.material.color.multiplyScalar(3);
+        child.material.metalness = 0.2;
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+    
+    scene.add(model);
 
-      screenObject1 = model.getObjectByName("_gltfNode_6");
-      screenObject2 = model.getObjectByName("_gltfNode_13");
-	  screenObject3 = model.getObjectByName("_gltfNode_7");
-      const node0 = model.getObjectByName("_gltfNode_0");
-      node0.material.metalness = 0.9;
-      node0.material.roughness = 0.9;
-		const material = new THREE.MeshStandardMaterial({
-		  emissive: new THREE.Color(0x050505), // Couleur blanche émise
-		  emissiveIntensity: 1, // Ajuste l'intensité lumineuse
-		  color: new THREE.Color(0x050505), // Couleur de base du matériau (ici noir pour voir l'émission)
-		});
-	  
-		screenObject1.material = material;
-		screenObject2.material = material;
-		screenObject3.material = material;
+    if (menuObject2) 
+      scene.add(menuObject2);
+    if (menuObject3) 
+      scene.add(menuObject3);
+    if (menuObject) 
+      scene.add(menuObject);
 
-      loadingScreen.style.display = 'none';
-    },
-    onProgress,
-    (error) => {
-      console.error("Erreur lors du chargement du modèle SN6:", error);
-    }
-  );
+    screenObject1 = model.getObjectByName("_gltfNode_6");
+    screenObject2 = model.getObjectByName("_gltfNode_13");
+  screenObject3 = model.getObjectByName("_gltfNode_7");
+    const node0 = model.getObjectByName("_gltfNode_0");
+    node0.material.metalness = 0.9;
+    node0.material.roughness = 0.9;
+  const material = new THREE.MeshStandardMaterial({
+    emissive: new THREE.Color(0x050505), 
+    emissiveIntensity: 1, 
+    color: new THREE.Color(0x050505), 
+  });
+  node18 = model.getObjectByName("_gltfNode_18");
+
+  node19 = model.getObjectByName("_gltfNode_19");
+
+  screenObject1.material = material;
+  screenObject2.material = material;
+  screenObject3.material = material;
+
+    loadingScreen.style.display = 'none';
+  },
+  onProgress,
+  (error) => {
+    console.error("Erreur lors du chargement du modèle SN6:", error);
+  }
+);
 }
 
 function initLights() 
@@ -694,32 +696,33 @@ export function buildScene()
   cameraRotation.x = camera.rotation.x;
   cameraRotation.y = camera.rotation.y;
 
-  
+  const bloomPass = new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    1.5,   // intensité du bloom
+    1,   // rayon
+    0.2   // threshold
+  );
+
     composer = new EffectComposer(renderer);
     const renderScene = new RenderPass(scene, camera);
     composer.addPass(renderScene);
-  
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.5,   // intensité
-      0.5,   // rayon
-      0.1   // threshold
-    );
     composer.addPass(bloomPass);
+    
+
 }
 
 
 let composer;
 
-function animate() {
+function animate() 
+{
   requestAnimationFrame(animate);
-  if (controls) controls.update(0.01);
-
-  if (composer) {
+  if (controls) 
+    controls.update(0.01);
+  if (composer) 
     composer.render(scene, camera);
-  }
-
-  if (cssRenderer && scene && camera) cssRenderer.render(scene, camera);
+  if (cssRenderer && scene && camera) 
+    cssRenderer.render(scene, camera);
 }
 
 
