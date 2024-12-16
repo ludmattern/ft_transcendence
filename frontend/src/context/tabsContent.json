@@ -1,12 +1,24 @@
 {
 	"info": [
-	  { "inviter": "LOSSALOS", "actions": true },
-	  { "inviter": "ALIEN_ALLIANCE", "actions": false }
+	  { "type": "friend_request", "inviter": "LOSSALOS", "actions": true },
+	  { "type": "tournament_invite", "inviter": "ALIEN_ALLIANCE", "actions": false }
 	],
 	"comm": [
-	  { "inviter": "GALACTIC_FIGHTERS", "actions": true },
-	  { "inviter": "ASTEROID_DEFENSE", "actions": true },
-	  { "inviter": "STAR_CRUISERS", "actions": false }
+	  { "author": "GALACTIC_FIGHTERS", "message": "Hello, we need to discuss strategies." },
+	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
+	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
+	  { "author": "USER", "message": "Prepare for incoming attack!" },
+	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
+	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
+	  { "author": "USER", "message": "Prepare for incoming attack!" },
+	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
+	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
+	  { "author": "USER", "message": "Prepare for incoming attack!" },
+	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
+	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
+	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
+	  { "author": "ASTEROID_DEFENSE", "message": "Prepare for incoming attack!" },
+	  { "author": "USER", "message": "Understood, I am ready to assist." }
 	]
   }
   

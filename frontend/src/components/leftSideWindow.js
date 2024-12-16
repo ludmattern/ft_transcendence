@@ -20,9 +20,10 @@ export function loadTabContent(tabName, container, window) {
     .then((data) => {
       const tabItems = data[tabName];
       if (tabItems) {
-        const panelItems = tabItems.map((item) =>
-          createPanelItem(item.inviter, item.actions)
-        );
+        const panelItems =
+          tabName === "info"
+            ? tabItems.map((item) => createInfoPanelItem(item))
+            : tabItems.map((item) => createCommPanelItem(item));
 
         // Clear the existing content
         container.innerHTML = "";
@@ -31,13 +32,10 @@ export function loadTabContent(tabName, container, window) {
         panelItems.forEach((panelItem) => {
           container.appendChild(panelItem);
         });
-        console.log("Tabname:", tabName);
-        // Check if the current tab is 'COMM'
+
         if (tabName === "comm") {
-          console.log("Tab COMM loaded");
-          // Check if the input container is already present
+          // Chat-specific logic (input box)
           if (!document.getElementById("message-input")) {
-            // Create and append the input container
             const inputContainer = createElement(
               "div",
               {
@@ -50,7 +48,7 @@ export function loadTabContent(tabName, container, window) {
                 type: "text",
                 id: "message-input",
                 placeholder: "Enter your message...",
-                className: "form-control w-50 me-2",
+                className: "form-control w-50 me-2 p-3",
                 style: "flex: auto; color: var(--content-color);",
               }),
               createElement(
@@ -58,13 +56,13 @@ export function loadTabContent(tabName, container, window) {
                 {
                   className: "btn btn-sm bi bi-send",
                 },
-                " Send"
+                "Send"
               )
             );
             window.appendChild(inputContainer);
           }
         } else {
-          // Remove the input container if it exists
+          // Remove input container if not in COMM
           const inputContainer = document.getElementById(
             "message-input-container"
           );
@@ -78,28 +76,58 @@ export function loadTabContent(tabName, container, window) {
       console.error(`Error loading tab content for ${tabName}:`, error);
     });
 }
-
-// Generates a panel item
-function createPanelItem(inviter, hasActions = false) {
+function createInfoPanelItem(item) {
+  const content =
+    item.type === "friend_request"
+      ? `Friend request from: `
+      : `Tournament invite from: `;
   return createElement(
     "div",
     { className: "panel-item" },
-    createElement(
-      "span",
-      {},
-      `New tournament invite from : `,
-      createElement("b", {}, inviter)
-    ),
-    hasActions
+    createElement("span", {}, content, createElement("b", {}, item.inviter)),
+    item.actions
       ? createElement(
           "div",
           { className: "actions" },
-          createElement("button", { className: "btn bi bi-check" }, "accept"),
-          createElement("button", { className: "btn bi bi-x" }, "refuse")
+          createElement("button", { className: "btn bi bi-check" }, "Accept"),
+          createElement("button", { className: "btn bi bi-x" }, "Refuse")
         )
       : null
   );
 }
+
+function createCommPanelItem(item) {
+	const isUser = item.author === "USER";
+	return createElement(
+	  "div",
+	  {
+		className: `message ${isUser ? "user-message" : "other-message"}`,
+	  },
+	  // Crée le span author uniquement si ce n'est pas USER
+	  !isUser &&
+		createElement(
+		  "span",
+		  {
+			className: "author",
+			style: `
+			  display: block; 
+			  color: var(--content-color);
+			  font-weight: bolder;
+			  text-align: left;
+			`,
+		  },
+		  `${item.author}: `
+		),
+	  createElement(
+		"span",
+		{
+		  className: "message-content",
+		  style: `display: block; color: var(--content-color);`,
+		},
+		item.message
+	  )
+	);
+  }  
 
 export function LeftSideWindow() {
   return createElement(
