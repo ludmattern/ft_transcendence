@@ -13,55 +13,6 @@ function createNavItem(label, active = false) {
   );
 }
 
-let wireframeRenderer, wireframeScene, wireframeCamera;
-
-
-export function initWireframeScene() {
-  // Récupérer la div wireframe
-  const wireframeDiv = document.getElementById('wireframe');
-  if (!wireframeDiv) {
-    console.error("La div avec l'ID 'wireframe' n'a pas été trouvée.");
-    return;
-  }
-
-  // Initialisation de la nouvelle scène, caméra, et renderer
-   wireframeScene = new THREE.Scene();
-   wireframeCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Rapport 1:1 car la div est carrée
-   wireframeRenderer = new THREE.WebGLRenderer({ alpha: true }); // Alpha pour la transparence
-
-  // Ajuster le renderer à la taille de la div
-  const width = wireframeDiv.offsetWidth;
-  const height = wireframeDiv.offsetHeight;
-  wireframeRenderer.setSize(width, height);
-
-  // Ajouter le renderer à la div
-  wireframeDiv.appendChild(wireframeRenderer.domElement);
-
-  // Exemple d'objet dans la scène wireframe
-  const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
-  const cube = new THREE.Mesh(geometry, material);
-  wireframeScene.add(cube);
-
-  // Positionner la caméra pour voir le cube
-  wireframeCamera.position.z = 2;
-
-  // Animation pour la scène wireframe
-
-
-  animateWireframe();
-}
-
-function animateWireframe() {
-  requestAnimationFrame(animateWireframe);
-
-  // Faire tourner le cube
- 
-
-  // Rendu de la scène wireframe
-  wireframeRenderer.render(wireframeScene, wireframeCamera);
-}
-
 export function RightSideWindow() {
   return createElement(
     'div',
