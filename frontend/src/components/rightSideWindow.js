@@ -1,10 +1,10 @@
 import { createElement } from '/src/utils/mini_react.js';
 
 // Generates a nav item with a link
-function createNavItem(label, active = false) {
+function createNavItem(label, value, active = false) {
   return createElement(
     'li',
-    { className: 'nav-item' },
+    { className: 'nav-item', 'nav': value },
     createElement(
       'span',
       { className: `nav-link ${active ? 'active' : ''}` },
@@ -23,10 +23,10 @@ export function RightSideWindow() {
       createElement(
         'ul',
         { className: 'nav nav-tabs' },
-        createNavItem('OVR', true),
-        createNavItem('WEAP', false),
-        createNavItem('PWR', false),
-        createNavItem('SHLD', false),
+        createNavItem('OVR', 1, true),
+        createNavItem('WEAP', 2, false),
+        createNavItem('PWR', 3, false),
+        createNavItem('SHLD', 4, false),
         createElement(
           'li',
           { className: 'nav-item' },

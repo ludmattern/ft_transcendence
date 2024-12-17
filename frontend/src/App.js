@@ -735,10 +735,7 @@ function animate()
 buildScene();
 animate();
 
-
-
-export function initWireframeScene() 
-{
+export function initWireframeScene() {
   const wireframeDiv = document.getElementById('wireframe');
   if (!wireframeDiv) {
     console.error("La div avec l'ID 'wireframe' n'a pas été trouvée.");
@@ -746,7 +743,7 @@ export function initWireframeScene()
   }
 
   const wireframeScene = new THREE.Scene();
-  const wireframeCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); 
+  const wireframeCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
   const wireframeRenderer = new THREE.WebGLRenderer({ alpha: true });
 
   const width = wireframeDiv.offsetWidth;
@@ -756,12 +753,20 @@ export function initWireframeScene()
   wireframeDiv.appendChild(wireframeRenderer.domElement);
 
   const allowedNodes = ["_gltfNode_16", "_gltfNode_0"];
+  let wireframeModel;
+
+  const colorMap = {
+    1: 0xb0e7ec, 
+    2: 0xff0000,
+    3: 0x00ff00, 
+    4: 0x0000ff  
+  };
 
   const loader = new GLTFLoader();
   loader.load(
     "../src/assets/models/sn13.glb",
     (gltf) => {
-      const wireframeModel = new THREE.Group();
+      wireframeModel = new THREE.Group();
 
       gltf.scene.traverse((child) => {
         if (child.isMesh && allowedNodes.includes(child.name)) {
@@ -772,7 +777,7 @@ export function initWireframeScene()
       wireframeModel.traverse((child) => {
         if (child.isMesh) {
           child.material = new THREE.MeshBasicMaterial({
-            color: 0Xb0e7ec,
+            color: colorMap[1],
             wireframe: true,
           });
         }
@@ -782,13 +787,10 @@ export function initWireframeScene()
       wireframeModel.rotation.set(Math.PI, 0, 0);
 
       wireframeScene.add(wireframeModel);
-
-
       wireframeCamera.position.set(0, -60, -50);
       wireframeCamera.lookAt(wireframeModel.position);
 
-      function animateWireframe() 
-      {
+      function animateWireframe() {
         requestAnimationFrame(animateWireframe);
         wireframeModel.rotation.z += 0.006;
         wireframeRenderer.render(wireframeScene, wireframeCamera);
@@ -805,12 +807,26 @@ export function initWireframeScene()
   function onWireframeResize() {
     const newWidth = wireframeDiv.offsetWidth;
     const newHeight = wireframeDiv.offsetHeight;
-
     wireframeRenderer.setSize(newWidth, newHeight);
-
     wireframeCamera.aspect = newWidth / newHeight;
     wireframeCamera.updateProjectionMatrix();
   }
 
   window.addEventListener("resize", onWireframeResize);
+
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach((item) => {
+    item.addEventListener('click', () => {
+      const value = item.getAttribute('nav');
+      const newColor = colorMap[value];
+
+      if (wireframeModel) {
+        wireframeModel.traverse((child) => {
+          if (child.isMesh) {
+            child.material.color.set(newColor);
+          }
+        });
+      }
+    });
+  });
 }
