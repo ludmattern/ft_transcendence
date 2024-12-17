@@ -5,7 +5,6 @@ import { CSS3DRenderer, CSS3DObject } from 'https://esm.sh/three/examples/jsm/re
 import { EffectComposer } from 'https://esm.sh/three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'https://esm.sh/three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://esm.sh/three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { ShaderPass } from 'https://esm.sh/three/examples/jsm/postprocessing/ShaderPass.js';
 
 
 /*6h4vl9mc0gk0   lfr8v60tfjk  4h64avzyz1y0   https://tools.wwwtyro.net/space-3d/index.html#animationSpeed=0.8199880281747889&fov=150&nebulae=true&pointStars=true&resolution=1024&seed=6h4vl9mc0gk0&stars=true&sun=false */
@@ -749,18 +748,10 @@ export function initWireframeScene() {
   const width = wireframeDiv.offsetWidth;
   const height = wireframeDiv.offsetHeight;
   wireframeRenderer.setSize(width, height);
-
   wireframeDiv.appendChild(wireframeRenderer.domElement);
 
-  const allowedNodes = ["_gltfNode_16", "_gltfNode_0"];
   let wireframeModel;
 
-  const colorMap = {
-    1: 0xb0e7ec, 
-    2: 0xff0000,
-    3: 0x00ff00, 
-    4: 0x0000ff  
-  };
 
   const loader = new GLTFLoader();
   loader.load(
@@ -769,30 +760,40 @@ export function initWireframeScene() {
       wireframeModel = new THREE.Group();
 
       gltf.scene.traverse((child) => {
-        if (child.isMesh && allowedNodes.includes(child.name)) {
-          wireframeModel.add(child.clone());
-        }
-      });
+        if (child.isMesh) 
+        {
+          const faceMaterial = new THREE.MeshBasicMaterial({
+            color: 0Xb0e7ec,
+            transparent: true,
+            opacity: 1,
+          });
 
-      wireframeModel.traverse((child) => {
-        if (child.isMesh) {
-          child.material = new THREE.MeshBasicMaterial({
-            color: colorMap[1],
+          const wireframeMaterial = new THREE.MeshBasicMaterial({
+            color: 0x000000,
             wireframe: true,
           });
+
+          const faceMesh = child.clone();
+          faceMesh.material = faceMaterial;
+
+          const wireframeMesh = child.clone();
+          wireframeMesh.material = wireframeMaterial;
+
+          wireframeModel.add(faceMesh);
+          wireframeModel.add(wireframeMesh);
         }
       });
 
-      wireframeModel.scale.set(0.07, 0.07, 0.07);
+      wireframeModel.scale.set(0.1, 0.1, 0.1);
       wireframeModel.rotation.set(Math.PI, 0, 0);
-
+      wireframeModel.position.set(0,0,0);
       wireframeScene.add(wireframeModel);
-      wireframeCamera.position.set(0, -60, -50);
+      wireframeCamera.position.set(0, -40, -70);
       wireframeCamera.lookAt(wireframeModel.position);
 
       function animateWireframe() {
         requestAnimationFrame(animateWireframe);
-        wireframeModel.rotation.z += 0.006;
+        wireframeModel.rotation.z += 0.004;
         wireframeRenderer.render(wireframeScene, wireframeCamera);
       }
 
@@ -818,7 +819,7 @@ export function initWireframeScene() {
   navItems.forEach((item) => {
     item.addEventListener('click', () => {
       const value = item.getAttribute('nav');
-      const newColor = colorMap[value];
+      //const nav = map[value];
 
       if (wireframeModel) {
         wireframeModel.traverse((child) => {
