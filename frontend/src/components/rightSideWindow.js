@@ -23,10 +23,7 @@ export function RightSideWindow() {
       createElement(
         'ul',
         { className: 'nav nav-tabs' },
-        createNavItem('OVR', 1, true),
-        createNavItem('WEAP', 2, false),
-        createNavItem('PWR', 3, false),
-        createNavItem('SHLD', 4, false),
+        createNavItem('OVERVIEW', 1, true),
         createElement(
           'li',
           { className: 'nav-item' },

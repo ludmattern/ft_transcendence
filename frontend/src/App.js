@@ -5,6 +5,7 @@ import { CSS3DRenderer, CSS3DObject } from 'https://esm.sh/three/examples/jsm/re
 import { EffectComposer } from 'https://esm.sh/three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'https://esm.sh/three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://esm.sh/three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OrbitControls } from 'https://esm.sh/three/examples/jsm/controls/OrbitControls.js';
 
 
 /*6h4vl9mc0gk0   lfr8v60tfjk  4h64avzyz1y0   https://tools.wwwtyro.net/space-3d/index.html#animationSpeed=0.8199880281747889&fov=150&nebulae=true&pointStars=true&resolution=1024&seed=6h4vl9mc0gk0&stars=true&sun=false */
@@ -234,9 +235,6 @@ function initSkybox() {
   scene.background = skyboxTexture;
 }
 
-
-let node18 = null;
-let node19= null;
 function loadModels() 
 {
 const loadingScreen = document.getElementById("loading-screen");
@@ -331,7 +329,7 @@ loader.load(
 
     screenObject1 = model.getObjectByName("_gltfNode_6");
     screenObject2 = model.getObjectByName("_gltfNode_13");
-  screenObject3 = model.getObjectByName("_gltfNode_7");
+    screenObject3 = model.getObjectByName("_gltfNode_7");
     const node0 = model.getObjectByName("_gltfNode_0");
     node0.material.metalness = 0.9;
     node0.material.roughness = 0.9;
@@ -340,9 +338,6 @@ loader.load(
     emissiveIntensity: 1, 
     color: new THREE.Color(0x050505), 
   });
-  node18 = model.getObjectByName("_gltfNode_18");
-
-  node19 = model.getObjectByName("_gltfNode_19");
 
   screenObject1.material = material;
   screenObject2.material = material;
@@ -700,7 +695,7 @@ export function buildScene()
 
   const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.5,   // intensité du bloom
+    1,   // intensité du bloom
     1,   // rayon
     0.2   // threshold
   );
@@ -788,11 +783,12 @@ export function initWireframeScene() {
       wireframeModel.rotation.set(Math.PI, 0, 0);
       wireframeModel.position.set(0,0,0);
       wireframeScene.add(wireframeModel);
-      wireframeCamera.position.set(0, -40, -70);
+      wireframeCamera.position.set(0, -60, -60);
       wireframeCamera.lookAt(wireframeModel.position);
 
       function animateWireframe() {
         requestAnimationFrame(animateWireframe);
+
         wireframeModel.rotation.z += 0.004;
         wireframeRenderer.render(wireframeScene, wireframeCamera);
       }
@@ -815,19 +811,7 @@ export function initWireframeScene() {
 
   window.addEventListener("resize", onWireframeResize);
 
-  const navItems = document.querySelectorAll('.nav-item');
-  navItems.forEach((item) => {
-    item.addEventListener('click', () => {
-      const value = item.getAttribute('nav');
-      //const nav = map[value];
 
-      if (wireframeModel) {
-        wireframeModel.traverse((child) => {
-          if (child.isMesh) {
-            child.material.color.set(newColor);
-          }
-        });
-      }
-    });
-  });
+    
+  
 }

@@ -12,7 +12,6 @@ body {
 	align-items: center;
 	justify-content: center;
 	padding: 1rem;
-	backdrop-filter: blur(4px);
 	margin: 0;
 	padding: 0;
 	height: 900px;
@@ -152,9 +151,7 @@ body {
 	height: 1050px !important;
 	width: 1350px !important;
   }
-  #app .menu1.active {
-	filter: blur(2px);
-  }
+
   #app .btn-back {
 	background: linear-gradient(90deg, #0ff, #04f);
 	color: #000 !important;

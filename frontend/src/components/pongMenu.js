@@ -356,9 +356,9 @@ function TournamentJoinContent() {
             createElement(
               'tr',
               {},
-              createElement('th', { style: 'background-color: #000000; color: white;' }, 'Name'),
-              createElement('th', { style: 'background-color: #000000; color: white;' }, 'Players'),
-              createElement('th', { style: 'background-color: #000000; color: white;' })
+              createElement('th', { style: 'background: transparent; color: white;' }, 'Name'),
+              createElement('th', { style: 'background: transparent; color: white;' }, 'Players'),
+              createElement('th', { style: 'background:transparent; color: white;' })
             )
           ),
           createElement(
@@ -368,11 +368,11 @@ function TournamentJoinContent() {
               createElement(
                 'tr',
                 {},
-                createElement('td', { style: 'background-color: #000000; color: white;' }, 'Tournoi A'),
-                createElement('td', { style: 'background-color: #000000; color: white;' }, '5/8'),
+                createElement('td', { style: 'background: transparent; color: white;' }, 'Tournoi A'),
+                createElement('td', { style: 'background: transparent; color: white;' }, '5/8'),
                 createElement(
                   'td',
-                  { style: 'background-color: #000000; color: white;' },
+                  { style: 'background: transparent; color: white;' },
                   createElement(
                     'button',
                     { className: 'btn btn-primary btn-sm tab', onClick: () => joinTournament() },
@@ -634,9 +634,9 @@ function LeaderboardSection() {
                 createElement(
                   'tr',
                   {},
-                  createElement('th', { style: 'background-color: #000000; color: white;' }, 'Rank'),
-                  createElement('th', { style: 'background-color: #000000; color: white;' }, 'Player'),
-                  createElement('th', { style: 'background-color: #000000; color: white;' }, 'Score')
+                  createElement('th', { style: 'background: transparent; color: white;' }, 'Rank'),
+                  createElement('th', { style: 'background: transparent; color: white;' }, 'Player'),
+                  createElement('th', { style: 'background: transparent; color: white;' }, 'Score')
                 )
               ),
               createElement(
@@ -646,9 +646,9 @@ function LeaderboardSection() {
                   createElement(
                     'tr',
                     {},
-                    createElement('td', { style:'background-color: #000000; color: white;'}, '1'),
-                    createElement('td', { style:'background-color: #000000; color: white;'}, 'PlayerOne'),
-                    createElement('td', { style:'background-color: #000000; color: white;'}, '2500')
+                    createElement('td', { style:'background: transparent; color: white;'}, '1'),
+                    createElement('td', { style:'background: transparent; color: white;'}, 'PlayerOne'),
+                    createElement('td', { style:'background:transparent; color: white;'}, '2500')
                   )
                 )
               )
