@@ -750,7 +750,7 @@ export function initWireframeScene() {
 
   const loader = new GLTFLoader();
   loader.load(
-    "../src/assets/models/wire2.glb",
+    "../src/assets/models/wire3.glb",
     (gltf) => {
       wireframeModel = new THREE.Group();
 
