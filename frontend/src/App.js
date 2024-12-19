@@ -111,10 +111,7 @@ function initCamera() {
   cameraLight3.shadow.camera.near = 0.5;
   cameraLight3.shadow.camera.far = 50; 
 
-
   scene.add(camera)
-
-
 }
 
 function initRenderer() {
@@ -261,7 +258,7 @@ satLoader.load(
 );
 
 loader.load(
-  "../src/assets/models/sn13.glb",
+  "../src/assets/models/sn16.glb",
   (gltf) => {
     model = gltf.scene;
     model.position.set(3.5, -17, -1);
@@ -634,9 +631,6 @@ function onFreeViewMouseMove(event) {
   camera.updateMatrixWorld(true);
 }
 
-
-
-
 export function buildScene() 
 {
   initScene();
@@ -645,7 +639,7 @@ export function buildScene()
   initCSSRenderer();
   initSkybox();
   initLights();
-  initControls();
+  //initControls();
   loadModels();
   addEventListeners();
   initialCameraRotation.x = camera.rotation.x;
@@ -659,13 +653,10 @@ export function buildScene()
     1,   // radius
     0.2   // threshold
   );
-
     composer = new EffectComposer(renderer);
     const renderScene = new RenderPass(scene, camera);
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
-
-
 }
 
 let composer;
@@ -708,7 +699,7 @@ export function initWireframeScene() {
 
   const loader = new GLTFLoader();
   loader.load(
-    "../src/assets/models/sn13.glb",
+    "../src/assets/models/sn14.glb",
     (gltf) => {
       wireframeModel = new THREE.Group();
 
@@ -745,14 +736,17 @@ export function initWireframeScene() {
       wireframeScene.add(wireframeModel);
       wireframeCamera.position.set(0, -60, -60);
 	    wireframeCamera.aspect = width / height;
+      wireframeCamera.updateProjectionMatrix();
       wireframeCamera.lookAt(wireframeModel.position.x, wireframeModel.position.y - 20, wireframeModel.position.z);
-      function animateWireframe() {
+      function animateWireframe()
+      {
         requestAnimationFrame(animateWireframe);
 
         if (wireframeModel) 
         {
           wireframeModel.rotation.z += 0.004;
-        }        wireframeRenderer.render(wireframeScene, wireframeCamera);
+        }       
+        wireframeRenderer.render(wireframeScene, wireframeCamera);
       }
 
       animateWireframe();
@@ -762,8 +756,9 @@ export function initWireframeScene() {
       console.error("Error on wireframe loading :", error);
     }
   );
-  
-  function onWireframeResize() {
+
+  function onWireframeResize() 
+  {
     const newWidth = wireframeDiv.offsetWidth;
     const newHeight = wireframeDiv.offsetHeight;
     wireframeRenderer.setSize(newWidth, newHeight);
