@@ -5,8 +5,6 @@ import { CSS3DRenderer, CSS3DObject } from 'https://esm.sh/three/examples/jsm/re
 import { EffectComposer } from 'https://esm.sh/three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'https://esm.sh/three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://esm.sh/three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { OrbitControls } from 'https://esm.sh/three/examples/jsm/controls/OrbitControls.js';
-
 
 /*6h4vl9mc0gk0   lfr8v60tfjk  4h64avzyz1y0   https://tools.wwwtyro.net/space-3d/index.html#animationSpeed=0.8199880281747889&fov=150&nebulae=true&pointStars=true&resolution=1024&seed=6h4vl9mc0gk0&stars=true&sun=false */
 
@@ -65,7 +63,8 @@ const saturnConfig = {
   scale: 5,
 };
 
-function initScene() {
+function initScene() 
+{
   scene = new THREE.Scene();
 }
 
@@ -116,45 +115,9 @@ function initCamera() {
   cameraLight3.shadow.camera.far = 50; 
 
 
-/*
-    const rectLight = new THREE.RectAreaLight(0Xb0e7ec, 3,  3.3, 2 );
-    rectLight.position.set(-0.2, 6.4, -1.75);
-    rectLight.lookAt( 0, 0, 1 );
-    scene.add( rectLight )
-   // const rectLightHelper = createRectAreaLightHelper(rectLight);
-  //  scene.add(rectLightHelper);
-
-    const rectLight2 = new THREE.RectAreaLight(0Xb0e7ec, 3,  2.5, 2 );
-    rectLight2.position.set(-3.6, 4, -1.8);
-
-    rectLight2.lookAt( 0, 0, 1 );
-    scene.add( rectLight2 )
-    //const rectLightHelper2 = createRectAreaLightHelper(rectLight2);
-   // scene.add(rectLightHelper2);
-
-    const rectLight3 = new THREE.RectAreaLight(0Xb0e7ec, 3,  2.5, 2 );
-    rectLight3.position.set(3.1, 4.1, -1.85);
-
-    rectLight3.lookAt( 0, 0, 1 );
-    scene.add( rectLight3 )
-    //const rectLightHelper3 = createRectAreaLightHelper(rectLight3);
-    //scene.add(rectLightHelper3);
-*/
   scene.add(camera)
 
-  /*
-  const cameraLight = new THREE.PointLight(0Xb0e7ec,  10, 1000); // Lumière blanche avec intensité 1
-  cameraLight.position.set(0, 6, 1);
-  cameraLight.castShadow = true; // Active les ombres projetées
-  cameraLight.shadow.bias = -0.005; 
-  const pointLightHelper = new THREE.PointLightHelper(cameraLight, 0.1);
-  scene.add(pointLightHelper);
-  scene.add(cameraLight);
-  cameraLight.shadow.mapSize.width = 2048;
-  cameraLight.shadow.mapSize.height = 2048;
-  cameraLight.shadow.camera.near =0;
-  cameraLight.shadow.camera.far = 500; 
-  */
+
 }
 
 function initRenderer() {
@@ -359,7 +322,7 @@ function initLights()
   sunLight.castShadow = true;
   sunLight.receiveShadow = true
   const target = new THREE.Object3D();
-target.position.set(100, 0, -100);
+  target.position.set(100, 0, -100);
   sunLight.target = target
   sunLight.shadow.camera.near = 0.1; 
   sunLight.shadow.camera.far = 2000000;  
@@ -783,8 +746,8 @@ export function initWireframeScene() {
       wireframeModel.rotation.set(Math.PI, 0, 0);
       wireframeModel.position.set(0,0,0);
       wireframeScene.add(wireframeModel);
-      wireframeCamera.position.set(0, -60, -60);
-      wireframeCamera.lookAt(wireframeModel.position);
+      wireframeCamera.position.set(0, 0, -60);
+      wireframeCamera.lookAt(wireframeModel.position.x, wireframeModel.position.y, wireframeModel.position.z);
 
       function animateWireframe() {
         requestAnimationFrame(animateWireframe);
@@ -811,7 +774,4 @@ export function initWireframeScene() {
 
   window.addEventListener("resize", onWireframeResize);
 
-
-    
-  
 }
