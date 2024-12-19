@@ -715,7 +715,7 @@ export function initWireframeScene() {
 
   const loader = new GLTFLoader();
   loader.load(
-    "../src/assets/models/wire3.glb",
+    "../src/assets/models/sn13.glb",
     (gltf) => {
       wireframeModel = new THREE.Group();
 
@@ -723,13 +723,15 @@ export function initWireframeScene() {
         if (child.isMesh) 
         {
           const faceMaterial = new THREE.MeshBasicMaterial({
-            color: 0Xb0e7ec,
+            color: 0Xffffff,
             transparent: true,
-            opacity: 1,
+            opacity: 0.2,
           });
 
           const wireframeMaterial = new THREE.MeshBasicMaterial({
-            color: 0x000000,
+            color: 0x66ccff,
+            transparent: true,
+			opacity: 1,
             wireframe: true,
           });
 
@@ -749,6 +751,7 @@ export function initWireframeScene() {
       wireframeModel.position.set(0,0,0);
       wireframeScene.add(wireframeModel);
       wireframeCamera.position.set(0, -60, -60);
+	  wireframeCamera.aspect = width / height;
       wireframeCamera.lookAt(wireframeModel.position.x, wireframeModel.position.y - 20, wireframeModel.position.z);
 
       function animateWireframe() {
