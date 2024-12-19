@@ -701,8 +701,10 @@ export function initWireframeScene() {
 
   const wireframeScene = new THREE.Scene();
   const wireframeCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-  const wireframeRenderer = new THREE.WebGLRenderer({ alpha: true });
-
+  const wireframeRenderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true
+  });
   const width = wireframeDiv.offsetWidth;
   const height = wireframeDiv.offsetHeight;
   wireframeRenderer.setSize(width, height);
@@ -746,13 +748,13 @@ export function initWireframeScene() {
       wireframeModel.rotation.set(Math.PI, 0, 0);
       wireframeModel.position.set(0,0,0);
       wireframeScene.add(wireframeModel);
-      wireframeCamera.position.set(0, 0, -60);
-      wireframeCamera.lookAt(wireframeModel.position.x, wireframeModel.position.y, wireframeModel.position.z);
+      wireframeCamera.position.set(0, -60, -60);
+      wireframeCamera.lookAt(wireframeModel.position.x, wireframeModel.position.y - 20, wireframeModel.position.z);
 
       function animateWireframe() {
         requestAnimationFrame(animateWireframe);
 
-        wireframeModel.rotation.z += 0.004;
+        wireframeModel.rotation.z += 0.003;
         wireframeRenderer.render(wireframeScene, wireframeCamera);
       }
 
