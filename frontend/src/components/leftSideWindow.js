@@ -42,7 +42,6 @@ export function loadTabContent(tabName, container, window) {
                   className: "message-text",
                   style: `
 					  margin-top: 0.5rem; 
-					  font-size: 1rem; 
 					`,
                 },
                 item.message
@@ -362,7 +361,7 @@ function createCommPanelItem(item) {
           ),
         createElement(
           "span",
-          { className: "timestamp", style: "font-size: 0.8rem;" },
+          { className: "timestamp", },
           item.timestamp || "Just now"
         )
       ),
@@ -373,7 +372,6 @@ function createCommPanelItem(item) {
           className: "message-text",
           style: `
 			  margin-top: 0.5rem; 
-			  font-size: 1rem;
 			`,
         },
         item.message

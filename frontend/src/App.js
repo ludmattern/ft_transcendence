@@ -325,7 +325,7 @@ function initLights()
   target.position.set(100, 0, -100);
   sunLight.target = target
   sunLight.shadow.camera.near = 0.1; 
-  sunLight.shadow.camera.far = 2000000;  
+  sunLight.shadow.camera.far = 20;  
   sunLight.shadow.camera.left = -10;
   sunLight.shadow.camera.right = 10;
   sunLight.shadow.camera.top = 10;
@@ -339,7 +339,7 @@ function initLights()
 
 function initControls() {
   controls = new FlyControls(camera, renderer.domElement);
-  controls.movementSpeed = 20;
+  controls.movementSpeed = 20000;
   controls.rollSpeed = Math.PI / 2;
   controls.dragToLook = true;
 }
