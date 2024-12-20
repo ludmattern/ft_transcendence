@@ -6,9 +6,6 @@ import { EffectComposer } from 'https://esm.sh/three/examples/jsm/postprocessing
 import { RenderPass } from 'https://esm.sh/three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://esm.sh/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
-/*6h4vl9mc0gk0   lfr8v60tfjk  4h64avzyz1y0   https://tools.wwwtyro.net/space-3d/index.html#animationSpeed=0.8199880281747889&fov=150&nebulae=true&pointStars=true&resolution=1024&seed=6h4vl9mc0gk0&stars=true&sun=false */
-
-
 function createRectAreaLightHelper(light) 
 {
   if (!light.isRectAreaLight) {
@@ -114,10 +111,7 @@ function initCamera() {
   cameraLight3.shadow.camera.near = 0.5;
   cameraLight3.shadow.camera.far = 50; 
 
-
   scene.add(camera)
-
-
 }
 
 function initRenderer() {
@@ -259,12 +253,12 @@ satLoader.load(
   },
   onProgress,
   (error) => {
-    console.error('Erreur lors du chargement du modèle Saturn:', error);
+    console.error('Error on saturn loading :', error);
   }
 );
 
 loader.load(
-  "../src/assets/models/sn13.glb",
+  "../src/assets/models/sn16.glb",
   (gltf) => {
     model = gltf.scene;
     model.position.set(3.5, -17, -1);
@@ -310,7 +304,7 @@ loader.load(
   },
   onProgress,
   (error) => {
-    console.error("Erreur lors du chargement du modèle SN6:", error);
+    console.error("error on model loading :", error);
   }
 );
 }
@@ -637,9 +631,6 @@ function onFreeViewMouseMove(event) {
   camera.updateMatrixWorld(true);
 }
 
-
-
-
 export function buildScene() 
 {
   initScene();
@@ -648,7 +639,7 @@ export function buildScene()
   initCSSRenderer();
   initSkybox();
   initLights();
-  initControls();
+  //initControls();
   loadModels();
   addEventListeners();
   initialCameraRotation.x = camera.rotation.x;
@@ -658,36 +649,30 @@ export function buildScene()
 
   const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1,   // intensité du bloom
-    1,   // rayon
+    1,   // intensity
+    1,   // radius
     0.2   // threshold
   );
-
     composer = new EffectComposer(renderer);
     const renderScene = new RenderPass(scene, camera);
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
-
-
 }
-
 
 let composer;
 
-
-
-
-function animate() 
-{
+function animate() {
   requestAnimationFrame(animate);
+
   if (controls) 
     controls.update(0.01);
+
   if (composer) 
     composer.render(scene, camera);
+
   if (cssRenderer && scene && camera) 
     cssRenderer.render(scene, camera);
 }
-
 
 buildScene();
 animate();
@@ -695,7 +680,7 @@ animate();
 export function initWireframeScene() {
   const wireframeDiv = document.getElementById('wireframe');
   if (!wireframeDiv) {
-    console.error("La div avec l'ID 'wireframe' n'a pas été trouvée.");
+    console.error("Div 'wireframe' not fine");
     return;
   }
 
@@ -712,10 +697,9 @@ export function initWireframeScene() {
 
   let wireframeModel;
 
-
   const loader = new GLTFLoader();
   loader.load(
-    "../src/assets/models/sn13.glb",
+    "../src/assets/models/sn14.glb",
     (gltf) => {
       wireframeModel = new THREE.Group();
 
@@ -751,13 +735,17 @@ export function initWireframeScene() {
       wireframeModel.position.set(0,0,0);
       wireframeScene.add(wireframeModel);
       wireframeCamera.position.set(0, -60, -60);
-	  wireframeCamera.aspect = width / height;
+	    wireframeCamera.aspect = width / height;
+      wireframeCamera.updateProjectionMatrix();
       wireframeCamera.lookAt(wireframeModel.position.x, wireframeModel.position.y - 20, wireframeModel.position.z);
-
-      function animateWireframe() {
+      function animateWireframe()
+      {
         requestAnimationFrame(animateWireframe);
 
-        wireframeModel.rotation.z += 0.003;
+        if (wireframeModel) 
+        {
+          wireframeModel.rotation.z += 0.004;
+        }       
         wireframeRenderer.render(wireframeScene, wireframeCamera);
       }
 
@@ -765,18 +753,17 @@ export function initWireframeScene() {
     },
     undefined,
     (error) => {
-      console.error("Erreur lors du chargement du modèle :", error);
+      console.error("Error on wireframe loading :", error);
     }
   );
 
-  function onWireframeResize() {
+  function onWireframeResize() 
+  {
     const newWidth = wireframeDiv.offsetWidth;
     const newHeight = wireframeDiv.offsetHeight;
     wireframeRenderer.setSize(newWidth, newHeight);
     wireframeCamera.aspect = newWidth / newHeight;
     wireframeCamera.updateProjectionMatrix();
   }
-
   window.addEventListener("resize", onWireframeResize);
-
 }
