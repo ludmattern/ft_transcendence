@@ -258,7 +258,7 @@ satLoader.load(
 );
 
 loader.load(
-  "../src/assets/models/sn16.glb",
+  "../src/assets/models/sn13.glb",
   (gltf) => {
     model = gltf.scene;
     model.position.set(3.5, -17, -1);
