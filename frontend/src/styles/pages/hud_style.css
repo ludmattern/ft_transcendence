@@ -80,7 +80,7 @@ a {
 .hud-title {
   position: relative;
   font-size: clamp(1rem, calc(1.8rem + ((100vw - 1920px) * 0.0083333)), 3rem);
-  top: calc(0.2rem + calc(100vw - 1920px)* 0.012);
+  top: calc(0.2rem + calc(100vw - 1920px) * 0.012);
   font-weight: 700;
   color: var(--content-color);
   text-transform: uppercase;
@@ -393,7 +393,7 @@ button {
   display: flex;
 }
 
- @media (min-width: 900px) {
+@media (min-width: 900px) {
   .hud-header .left-menu,
   .hud-header .right-menu {
     position: relative;
@@ -402,29 +402,29 @@ button {
 
   .hud-header .left-menu > .nav-item:first-child {
     position: relative;
-	left: calc(2rem - calc(100vw - 1920px)* 0.16);
-	top: calc(-0.5rem + calc(100vw - 1920px)* 0.01);
+    left: calc(2rem - calc(100vw - 1920px) * 0.16);
+    top: calc(-0.5rem + calc(100vw - 1920px) * 0.01);
     rotate: 9deg;
   }
 
   .hud-header .left-menu > .nav-item:last-child {
     position: relative;
-	left: calc(5rem - calc(100vw - 1920px)* 0.13);
-	top: calc(0.6rem + calc(100vw - 1920px)* 0.018);
+    left: calc(5rem - calc(100vw - 1920px) * 0.13);
+    top: calc(0.6rem + calc(100vw - 1920px) * 0.018);
     rotate: 7deg;
   }
 
   .hud-header .right-menu > .nav-item:first-child {
     position: relative;
-	right: calc(5rem - calc(100vw - 1920px)* 0.13);
-	top: calc(0.6rem + calc(100vw - 1920px)* 0.018);
+    right: calc(5rem - calc(100vw - 1920px) * 0.13);
+    top: calc(0.6rem + calc(100vw - 1920px) * 0.018);
     rotate: -7deg;
   }
 
   .hud-header .right-menu > .nav-item:last-child {
     position: relative;
-	right: calc(2rem - calc(100vw - 1920px)* 0.16);
-	top: calc(-0.5rem + calc(100vw - 1920px)* 0.01);
+    right: calc(2rem - calc(100vw - 1920px) * 0.16);
+    top: calc(-0.5rem + calc(100vw - 1920px) * 0.01);
     rotate: -9deg;
   }
 
@@ -442,19 +442,19 @@ button {
   }
 
   .hud-header .first-game {
-	left: calc(1.5rem - calc(100vw - 1920px)* 0.055);
-	top: calc(0.5rem + calc(100vw - 1920px)* 0.028);
-	position: relative;
+    left: calc(1.5rem - calc(100vw - 1920px) * 0.055);
+    top: calc(0.5rem + calc(100vw - 1920px) * 0.028);
+    position: relative;
     rotate: 2deg;
   }
-  
+
   .hud-header .second-game {
     position: relative;
-	right: calc(0.5rem - calc(100vw - 1920px)* 0.055);
-	top: calc(0.5rem + calc(100vw - 1920px)* 0.028);
+    right: calc(0.5rem - calc(100vw - 1920px) * 0.055);
+    top: calc(0.5rem + calc(100vw - 1920px) * 0.028);
     rotate: -3deg;
   }
- }
+}
 
 /* Container Styling */
 .left-side-window {
@@ -644,17 +644,6 @@ button {
   text-shadow: -8px 0px 20px var(--active-menu-color),
     8px 0px 20px var(--active-menu-color);
   transition: color 0.2s ease, text-shadow 0.2s ease;
-}
-
-.hud-header .active::after {
-  content: "";
-  width: 83%;
-  position: fixed;
-  translate: -98% 15%;
-  height: clamp(1rem, calc(1rem + ((100vw - 1920px) * 0.0083333)), 2rem);
-  border: 1px solid var(--active-menu-color);
-  pointer-events: none;
-  transition: border-color 0.2s ease, width 0.2s ease, height 0.2s ease;
 }
 
 .background-svg .cls-1 {
@@ -942,6 +931,12 @@ p {
   margin: 1rem;
 }
 
-.container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
-    --bs-gutter-x: 0;
+.container,
+.container-fluid,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl,
+.container-xxl {
+  --bs-gutter-x: 0;
 }
