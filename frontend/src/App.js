@@ -488,8 +488,8 @@ export function animateCameraBackToInitialPosition() {
 
   const endPosition = new THREE.Vector3(
     0,
-    0.06275803512326787,
-    1.9990151147571098
+    0,
+    1.45
   );
   const lookAtTarget = new THREE.Vector3(0, 50, -15);
 
