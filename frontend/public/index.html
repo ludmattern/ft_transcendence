@@ -20,8 +20,8 @@
     <script type="module" src="/src/index.js"></script>
   </head>
   <body>
-	<!-- custom cursor -->
-	<!-- <div class="cursor"></div> -->
+    <!-- custom cursor -->
+    <!-- <div class="cursor"></div> -->
     <div id="waiting-screen-effect" class="waiting-screen-effect"></div>
     <div id="blur-screen-effect" class="blur-screen-effect"></div>
     <div class="hud_screen-effect">
@@ -32,8 +32,11 @@
       <header-placeholder></header-placeholder>
 
       <div class="hud-body">
-        <div class="row full-height w-100" style="display: flex; justify-content: center;">
-		<left-window-placeholder></left-window-placeholder>
+        <div
+          class="row full-height w-100"
+          style="display: flex; justify-content: center"
+        >
+          <left-window-placeholder></left-window-placeholder>
 
           <div
             class="d-flex flex-column align-items-center col-md-6 justify-content-around"
@@ -69,6 +72,62 @@
                 free view
               </button>
             </div>
+            <div class="body">
+              <div class="compass">
+                <div class="points" id="points">
+                  <div class="point">N</div>
+                  <div class="point"></div>
+                  <div class="point">15</div>
+                  <div class="point"></div>
+                  <div class="point">30</div>
+                  <div class="point"></div>
+                  <div class="point">NE</div>
+                  <div class="point"></div>
+                  <div class="point">60</div>
+                  <div class="point"></div>
+                  <div class="point">75</div>
+                  <div class="point"></div>
+                  <div class="point">E</div>
+                  <div class="point"></div>
+                  <div class="point">105</div>
+                  <div class="point"></div>
+                  <div class="point">120</div>
+                  <div class="point"></div>
+                  <div class="point">SE</div>
+                  <div class="point"></div>
+                  <div class="point">150</div>
+                  <div class="point"></div>
+                  <div class="point">165</div>
+                  <div class="point"></div>
+                  <div class="point">S</div>
+                  <div class="point"></div>
+                  <div class="point">195</div>
+                  <div class="point"></div>
+                  <div class="point">210</div>
+                  <div class="point"></div>
+                  <div class="point">SW</div>
+                  <div class="point"></div>
+                  <div class="point">240</div>
+                  <div class="point"></div>
+                  <div class="point">255</div>
+                  <div class="point"></div>
+                  <div class="point">W</div>
+                  <div class="point"></div>
+                  <div class="point">285</div>
+                  <div class="point"></div>
+                  <div class="point">300</div>
+                  <div class="point"></div>
+                  <div class="point">NW</div>
+                  <div class="point"></div>
+                  <div class="point">330</div>
+                  <div class="point"></div>
+                  <div class="point">345</div>
+                  <div class="point"></div>
+                  <div class="point">N</div>
+                </div>
+              </div>
+            </div>
+            <div id="mouse-pos"></div>
           </div>
         </div>
       </footer>
@@ -96,7 +155,99 @@
     <script type="module" src="/src/App.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-	<!-- <script>
+    <style>
+      .body {
+        font-family: sans-serif;
+        justify-content: center;
+        align-items: center;
+		height: 3.77vw;
+		width: 33.54vw;
+        --angle: 0;
+        margin: 0 auto;
+      }
+
+      .compass {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        mask-image: linear-gradient(
+          90deg,
+          transparent,
+          #000 15%,
+          #000 85%,
+          transparent 100%
+        );
+      }
+
+      .points {
+        width: 100%;
+    	height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+
+      .point {
+        position: absolute;
+        font-weight: 900;
+        font-size: clamp(0.8rem, calc(0.8rem + ((100vw - 1920px)* 0.0083333)), 1.25rem);
+        width: 3rem;
+        height: 3rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .point::before {
+        content: "";
+        position: absolute;
+        bottom: 80%;
+        left: calc(50% - 1px);
+        width: 2px;
+        height: 1rem;
+        background: currentColor;
+      }
+    </style>
+
+    <script>
+      const points = document.querySelectorAll(".point");
+      const compass = document.querySelector(".compass");
+      const radius = 800;
+      const baseheight = 5;
+      const curve = 110 * (1.5 / (window.innerWidth / 3840));
+      const rotationRatio = 2;
+
+      function positionPoints() {
+        const totalPoints = points.length;
+        points.forEach((point, index) => {
+          const angle =
+            (index / totalPoints) * Math.PI + -180 * (Math.PI / 180); // Half circle (pi radians)
+          const x = radius * Math.cos(angle) + compass.offsetWidth / 2;
+          const y = ((curve * Math.sin(angle)) % curve) + curve;
+          point.style.left = `${x}px`;
+		  point.style.top = Math.abs(y + baseheight) + "px";
+        });
+      }
+
+        window.addEventListener("mousemove", (event) => {
+          const percent = event.clientX / window.innerWidth - 0.5;
+          const offset = percent * rotationRatio + 180; // Rotate points
+          points.forEach((point, index) => {
+            const totalPoints = points.length;
+            const angle =
+              (index / totalPoints) * Math.PI + offset * (Math.PI / 180);
+            const x = radius * Math.cos(angle) + compass.offsetWidth / 2;
+			const y = ((curve * Math.sin(angle)) % curve) + curve;
+            point.style.left = `${x}px`;
+			point.style.top = Math.abs(y + baseheight) + "px";
+          });
+        });
+
+      positionPoints();
+    </script>
+    <!-- <script>
 		const cursor = document.querySelector('.cursor');
 		const positionElement = (e)=> {
 			const mouseY = e.clientY;
@@ -105,5 +256,5 @@
 		}
 		window.addEventListener('mousemove', positionElement);
 	</script> -->
-	</body>
+  </body>
 </html>

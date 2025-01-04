@@ -683,7 +683,7 @@ const sceneCube = new THREE.Scene();
 const cameraCube = new THREE.PerspectiveCamera(25, 1, 0.1, 1000); 
 cameraCube.position.z = 7; 
 
-const geometryCube = new THREE.BoxGeometry(1, 1.5, 1);
+const geometryCube = new THREE.BoxGeometry(1, 1, 1);
 const materialCube = new THREE.MeshStandardMaterial({
   color: 0xff0000,
   emissive: 0xff0000,
@@ -694,7 +694,7 @@ sceneCube.add(meshCube);
 
 sceneCube.add(new THREE.AmbientLight(0xffffff, 1));
 
-const renderTargetCube = new THREE.WebGLRenderTarget(2000,1000, {
+const renderTargetCube = new THREE.WebGLRenderTarget(192,192, {
   minFilter: THREE.LinearFilter,
   magFilter: THREE.LinearFilter,
 });
@@ -706,7 +706,7 @@ const screenMaterial = new THREE.MeshStandardMaterial({
 });
 
 let lastRenderTime = 0;
-const targetFPS = 25; 
+const targetFPS = 144; 
 const frameInterval = 1000 / targetFPS; 
 
 function animate() {
