@@ -15,6 +15,7 @@ import { midScreen } from "/src/components/midScreen.js";
 import { HelmetSVG } from "/src/components/HelmetSVG.js";
 import { HUDSVG } from "/src/components/HUDSVG.js";
 import { game2 } from "/src/components/game2.js";
+import { buildScene } from "./App.js";
 
 async function initializeApp() {
   loadSVGComponents();
@@ -25,7 +26,8 @@ async function initializeApp() {
     navigateToLogin();
     return;
   }
-  
+  buildScene();
+
   document.getElementById("waiting-screen-effect").classList.add("d-none");
   document.getElementById("blur-screen-effect").classList.add("d-none");
 

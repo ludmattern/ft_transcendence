@@ -474,13 +474,14 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
       initialCameraRotation.y = camera.rotation.y;
       cameraRotation.x = camera.rotation.x;
       cameraRotation.y = camera.rotation.y;
-      document.addEventListener("mousemove", onBaseMouseMove, false);
+      onScreen = true;
     },
   });
-  onScreen = true;
+  
 }
 
-export function animateCameraBackToInitialPosition() {
+export function animateCameraBackToInitialPosition() 
+{
   document.removeEventListener("mousemove", onBaseMouseMove, false);
 
   const startPosition = camera.position.clone();
@@ -608,7 +609,6 @@ function enableFreeView() {
   menuElement.style.pointerEvents = "none";
   menuElement2.style.pointerEvents = "none";
   menuElement3.style.pointerEvents = "none";
-
   document.addEventListener("mousemove", onFreeViewMouseMove, false);
 }
 
@@ -672,14 +672,11 @@ export function buildScene()
     const renderScene = new RenderPass(scene, camera);
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
-
+    animate();
 
 }
 
 let composer;
-
-
-
 
 const sceneCube = new THREE.Scene();
 const cameraCube = new THREE.PerspectiveCamera(25, 1, 0.1, 1000); 
@@ -739,8 +736,6 @@ function animate() {
 }
 
 
-buildScene();
-animate();
 
 export function initWireframeScene() {
   const wireframeDiv = document.getElementById('wireframe');
