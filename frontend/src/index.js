@@ -25,7 +25,7 @@ async function initializeApp() {
     navigateToLogin();
     return;
   }
-
+  
   document.getElementById("waiting-screen-effect").classList.add("d-none");
   document.getElementById("blur-screen-effect").classList.add("d-none");
 

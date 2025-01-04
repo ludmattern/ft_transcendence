@@ -45,7 +45,11 @@ let menuElement, menuElement2, menuElement3;
 let onScreen = false;
 let screenObject1, screenObject2, screenObject3;
 let planet, model;
-
+const material = new THREE.MeshStandardMaterial({
+  emissive: new THREE.Color(0x050505), 
+  emissiveIntensity: 1, 
+  color: new THREE.Color(0x050505), 
+});
 
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
@@ -290,16 +294,12 @@ loader.load(
     const node0 = model.getObjectByName("_gltfNode_0");
     node0.material.metalness = 0.9;
     node0.material.roughness = 0.9;
-  const material = new THREE.MeshStandardMaterial({
-    emissive: new THREE.Color(0x050505), 
-    emissiveIntensity: 1, 
-    color: new THREE.Color(0x050505), 
-  });
+
 
   screenObject1.material = material;
   screenObject2.material = material;
   screenObject3.material = material;
-
+  
     loadingScreen.style.display = 'none';
   },
   onProgress,
@@ -457,12 +457,19 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
     },
     onComplete: () => {
       //controls.enabled = true;
-      if (nb == 1) menuElement.classList.remove("active");
+      if (nb == 1) 
+      {
+        screenObject1.material = screenMaterial;
+        menuElement.classList.remove("active");
+      }
       if (nb == 2) {
         menuElement2.classList.remove("active");
       }
-      if (nb == 3) menuElement3.classList.remove("active");
-
+      if (nb == 3) 
+      {
+        screenObject3.materal = screenMaterial;
+        menuElement3.classList.remove("active");
+      }
       initialCameraRotation.x = camera.rotation.x;
       initialCameraRotation.y = camera.rotation.y;
       cameraRotation.x = camera.rotation.x;
@@ -493,9 +500,17 @@ export function animateCameraBackToInitialPosition() {
   camera.position.copy(startPosition);
   camera.quaternion.copy(startQuaternion);
   //controls.enabled = false;
-  if (menuElement) menuElement.classList.add("active");
-  if (menuElement2) menuElement2.classList.add("active");
-  if (menuElement3) menuElement3.classList.add("active");
+  if (menuElement)
+  {
+    menuElement.classList.add("active");
+    screenObject1.material = material;
+  }
+  if (menuElement2) 
+    menuElement2.classList.add("active");
+  if (menuElement3) 
+  {
+    menuElement3.classList.add("active");
+  }
 
   const dummy = { t: 0 };
   gsap.to(dummy, {
@@ -657,22 +672,72 @@ export function buildScene()
     const renderScene = new RenderPass(scene, camera);
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
+
+
 }
 
 let composer;
 
+
+
+
+const sceneCube = new THREE.Scene();
+const cameraCube = new THREE.PerspectiveCamera(25, 1, 0.1, 1000); 
+cameraCube.position.z = 7; 
+
+const geometryCube = new THREE.BoxGeometry(1, 1.5, 1);
+const materialCube = new THREE.MeshStandardMaterial({
+  color: 0xff0000,
+  emissive: 0xff0000,
+  emissiveIntensity: 1,
+});
+const meshCube = new THREE.Mesh(geometryCube, materialCube);
+sceneCube.add(meshCube);
+
+sceneCube.add(new THREE.AmbientLight(0xffffff, 1));
+
+const renderTargetCube = new THREE.WebGLRenderTarget(2000,1000, {
+  minFilter: THREE.LinearFilter,
+  magFilter: THREE.LinearFilter,
+});
+
+const screenMaterial = new THREE.MeshStandardMaterial({
+  map: renderTargetCube.texture,
+  emissive: 0x000000,
+  emissiveIntensity: 0.1,
+});
+
+let lastRenderTime = 0;
+const targetFPS = 25; 
+const frameInterval = 1000 / targetFPS; 
+
 function animate() {
   requestAnimationFrame(animate);
 
-  if (controls) 
-    controls.update(0.01);
+  const currentTime = Date.now();
+    meshCube.rotation.x += 0.01;
+    meshCube.rotation.y += 0.01;
+  if (currentTime - lastRenderTime >= frameInterval) {
+    lastRenderTime = currentTime;
 
-  if (composer) 
+
+
+    renderer.setRenderTarget(renderTargetCube);
+    renderer.render(sceneCube, cameraCube);
+    renderer.setRenderTarget(null);
+  }
+
+  if (composer) {
     composer.render(scene, camera);
+  } else {
+    renderer.render(scene, camera);
+  }
 
-  if (cssRenderer && scene && camera) 
+  if (cssRenderer && scene && camera) {
     cssRenderer.render(scene, camera);
+  }
 }
+
 
 buildScene();
 animate();
@@ -715,7 +780,7 @@ export function initWireframeScene() {
           const wireframeMaterial = new THREE.MeshBasicMaterial({
             color: 0x66ccff,
             transparent: true,
-			opacity: 1,
+			      opacity: 1,
             wireframe: true,
           });
 
@@ -748,7 +813,6 @@ export function initWireframeScene() {
         }       
         wireframeRenderer.render(wireframeScene, wireframeCamera);
       }
-
       animateWireframe();
     },
     undefined,
