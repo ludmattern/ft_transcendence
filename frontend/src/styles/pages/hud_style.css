@@ -73,8 +73,23 @@ a {
 #hud-body .hud-header,
 #hud-body .hud-body,
 #hud-body .hud-footer,
+#hud-body h5,
+#hud-body h6,
+#hud-body input,
+#hud-body select,
 #hud-body .btn {
   font-size: clamp(1rem, calc(1rem + ((100vw - 1920px) * 0.0083333)), 2rem);
+}
+
+.profile-details .profile-status {
+  display: flex;
+  width: 100%;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
 }
 
 .hud-title {
@@ -515,11 +530,12 @@ button {
   color: var(--menu-color);
   background-color: transparent;
   text-align: center;
-  padding: 10px;
   border: none;
   padding: 0px;
+  padding-top: clamp(1px, calc(1px + ((100vw - 1920px) * 0.003333)), 6px);
   text-align: center;
   border: none;
+  height: 100%;
 }
 
 .nav-tabs .nav-link.active {
@@ -530,6 +546,14 @@ button {
 .l-side-window .nav-tabs a:hover {
   color: var(--active-menu-color);
   transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.l-side-window .nav-link a,
+.r-side-window .nav-link a {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .l-side-window .nav-tabs .active > a {
@@ -686,12 +710,26 @@ button {
   -webkit-mask-repeat: no-repeat;
 }
 
+.container:has(> .left-side-window-expander),
+.container:has(> .right-side-window-expander) {
+  height: 100%;
+}
+
+.left-side-window-expander,
+.right-side-window-expander {
+  display: flex;
+  flex-direction: column;
+  height: inherit;
+  justify-content: center;
+}
+
 .left-side-window-expander .l-line,
 .right-side-window-expander .r-line {
-  width: 19px;
+  width: clamp(1rem, calc(1rem + ((100vw - 1920px) * 0.0083333)), 2rem);
   height: 2px;
+  max-width: 30px;
   display: block;
-  margin: 4px auto;
+  margin: clamp(2px, calc((100vw - 1920px) * 0.0083333), 4px) auto;
   -webkit-transition: all 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
   background-color: var(--menu-color);
@@ -888,6 +926,11 @@ p {
 
 .profile-match-history .match-item {
   overflow-wrap: break-word;
+}
+
+.message .profile-picture {
+  width: 12%;
+  height: 12%;
 }
 
 .profile-match-history .match-item,

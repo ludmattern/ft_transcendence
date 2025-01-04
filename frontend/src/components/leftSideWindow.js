@@ -331,8 +331,6 @@ function createCommPanelItem(item) {
         src: item.profilePicture || "https://via.placeholder.com/40",
         alt: `${item.author}'s profile picture`,
         style: `
-			  width: 40px; 
-			  height: 40px; 
 			  object-fit: cover;
 			`,
       }),
