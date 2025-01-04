@@ -474,6 +474,7 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
       initialCameraRotation.y = camera.rotation.y;
       cameraRotation.x = camera.rotation.x;
       cameraRotation.y = camera.rotation.y;
+      document.addEventListener("mousemove", onBaseMouseMove, false);
       onScreen = true;
     },
   });
