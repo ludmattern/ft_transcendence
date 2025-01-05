@@ -75,55 +75,55 @@
             <div class="body">
               <div class="compass">
                 <div class="points" id="points">
-                  <div class="point">N</div>
+                  <div class="point fw-bold">N</div>
                   <div class="point"></div>
                   <div class="point">15</div>
                   <div class="point"></div>
                   <div class="point">30</div>
                   <div class="point"></div>
-                  <div class="point">NE</div>
+                  <div class="point fw-bold">NE</div>
                   <div class="point"></div>
                   <div class="point">60</div>
                   <div class="point"></div>
                   <div class="point">75</div>
                   <div class="point"></div>
-                  <div class="point">E</div>
+                  <div class="point fw-bold">E</div>
                   <div class="point"></div>
                   <div class="point">105</div>
                   <div class="point"></div>
                   <div class="point">120</div>
                   <div class="point"></div>
-                  <div class="point">SE</div>
+                  <div class="point fw-bold">SE</div>
                   <div class="point"></div>
                   <div class="point">150</div>
                   <div class="point"></div>
                   <div class="point">165</div>
                   <div class="point"></div>
-                  <div class="point">S</div>
+                  <div class="point fw-bold">S</div>
                   <div class="point"></div>
                   <div class="point">195</div>
                   <div class="point"></div>
                   <div class="point">210</div>
                   <div class="point"></div>
-                  <div class="point">SW</div>
+                  <div class="point fw-bold">SW</div>
                   <div class="point"></div>
                   <div class="point">240</div>
                   <div class="point"></div>
                   <div class="point">255</div>
                   <div class="point"></div>
-                  <div class="point">W</div>
+                  <div class="point fw-bold">W</div>
                   <div class="point"></div>
                   <div class="point">285</div>
                   <div class="point"></div>
                   <div class="point">300</div>
                   <div class="point"></div>
-                  <div class="point">NW</div>
+                  <div class="point fw-bold">NW</div>
                   <div class="point"></div>
                   <div class="point">330</div>
                   <div class="point"></div>
                   <div class="point">345</div>
                   <div class="point"></div>
-                  <div class="point">N</div>
+                  <div class="point fw-bold">N</div>
                 </div>
               </div>
             </div>
@@ -160,8 +160,8 @@
         font-family: sans-serif;
         justify-content: center;
         align-items: center;
-		height: 3.77vw;
-		width: 33.54vw;
+        height: 3.77vw;
+        width: 33.54vw;
         --angle: 0;
         margin: 0 auto;
       }
@@ -182,17 +182,35 @@
 
       .points {
         width: 100%;
-    	height: 100%;
+        height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
         position: relative;
       }
 
-      .point {
+	  .points {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+	}
+	
+	.point.fw-bold {
+		color: white;
+	}
+	
+	.point {
+		  color: var(--menu-color);
         position: absolute;
-        font-weight: 900;
-        font-size: clamp(0.8rem, calc(0.8rem + ((100vw - 1920px)* 0.0083333)), 1.25rem);
+        font-weight: 700;
+        font-size: clamp(
+          0.8rem,
+          calc(0.8rem + ((100vw - 1920px) * 0.0083333)),
+          1.25rem
+        );
         width: 3rem;
         height: 3rem;
         display: flex;
@@ -211,42 +229,50 @@
       }
     </style>
 
-    <script>
-      const points = document.querySelectorAll(".point");
-      const compass = document.querySelector(".compass");
-      const radius = 800;
-      const baseheight = 5;
-      const curve = 110 * (1.5 / (window.innerWidth / 3840));
-      const rotationRatio = 2;
+<script>
+	// Variables globales
+	const points = document.querySelectorAll(".point");
+	const compass = document.querySelector(".compass");
+	const radius = 800;
+	const baseheight = 5;
+	const rotationRatio = 2;
 
-      function positionPoints() {
-        const totalPoints = points.length;
-        points.forEach((point, index) => {
-          const angle =
-            (index / totalPoints) * Math.PI + -180 * (Math.PI / 180); // Half circle (pi radians)
-          const x = radius * Math.cos(angle) + compass.offsetWidth / 2;
-          const y = ((curve * Math.sin(angle)) % curve) + curve;
-          point.style.left = `${x}px`;
-		  point.style.top = Math.abs(y + baseheight) + "px";
-        });
-      }
+	// Fonction pour positionner les points initialement
+	function positionPoints(offset = 180) {
+	  const curve = 110 * (1.2 / (window.innerWidth / 3840));
+	  const totalPoints = points.length;
 
-        window.addEventListener("mousemove", (event) => {
-          const percent = event.clientX / window.innerWidth - 0.5;
-          const offset = percent * rotationRatio + 180; // Rotate points
-          points.forEach((point, index) => {
-            const totalPoints = points.length;
-            const angle =
-              (index / totalPoints) * Math.PI + offset * (Math.PI / 180);
-            const x = radius * Math.cos(angle) + compass.offsetWidth / 2;
-			const y = ((curve * Math.sin(angle)) % curve) + curve;
-            point.style.left = `${x}px`;
-			point.style.top = Math.abs(y + baseheight) + "px";
-          });
-        });
+	  points.forEach((point, index) => {
+		const angle =
+		  (index / totalPoints) * Math.PI + offset * (Math.PI / 180);
+		const x = radius * Math.cos(angle) + compass.offsetWidth / 2;
+		const y = ((curve * Math.sin(angle)) % curve) + curve;
+		point.style.left = `${x}px`;
+		point.style.top = Math.abs(y + baseheight) + "px";
+	  });
+	}
 
-      positionPoints();
-    </script>
+	// Fonction pour gérer le déplacement en fonction de la souris
+	function handleMouseMove(event) {
+	  const curve = 110 * (1.2 / (window.innerWidth / 3840));
+	  const percent = event.clientX / window.innerWidth - 0.5;
+	  const offset = percent * rotationRatio + 180;
+	  positionPoints(offset);
+	}
+
+	// Fonction pour gérer le redimensionnement de la fenêtre
+	function handleResize() {
+	  positionPoints(); // Réinitialise avec l'offset par défaut
+	}
+
+	// Écouteurs d'événements
+	window.addEventListener("mousemove", handleMouseMove);
+	window.addEventListener("resize", handleResize);
+
+	// Position initiale des points
+	positionPoints();
+  </script>
+
     <!-- <script>
 		const cursor = document.querySelector('.cursor');
 		const positionElement = (e)=> {
