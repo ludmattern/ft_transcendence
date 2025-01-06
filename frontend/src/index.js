@@ -18,8 +18,6 @@ import { HUDSVG } from "/src/components/HUDSVG.js";
 import { Footer } from "/src/components/footer.js";
 import { buildScene } from "/src/3d/mainScene.js";
 
-
-
 async function initializeApp() {
   loadSVGComponents();
 
@@ -29,6 +27,7 @@ async function initializeApp() {
     navigateToLogin();
     return;
   }
+
   buildScene();
 
   document.getElementById("waiting-screen-effect").classList.add("d-none");
@@ -39,8 +38,6 @@ async function initializeApp() {
   setupEventListeners();
 }
 
-
-// Gestion des SVG
 function loadSVGComponents() {
   document.addEventListener("DOMContentLoaded", () => {
     loadComponent("helmet-svg-placeholder", HelmetSVG, "", () => {});
@@ -48,7 +45,6 @@ function loadSVGComponents() {
   });
 }
 
-// Composants à charger après authentification
 function loadAuthenticatedComponents() {
   loadComponent("header-placeholder", Header, "", () => {});
   loadComponent("footer-placeholder", Footer, "footer", () => {});
@@ -59,9 +55,19 @@ function loadAuthenticatedComponents() {
   loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {});
 }
 
-// Gérer les routes
-export function handleRoute(route) {
+export async function handleRoute(route) {
   console.debug(`Handling route: ${route}`);
+
+  const isAuthenticated = await isClientAuthenticated();
+
+  if (!isAuthenticated) {
+    navigateToLogin();
+	//flag to signal the unload of the game
+    return;
+  }
+
+  //if already unloaded then reaload
+  //if not then continue to route
 
   switch (true) {
     case route === "/":
@@ -85,10 +91,10 @@ export function handleRoute(route) {
     case route === "/logout":
       navigateToLogout();
       break;
-    case route.startsWith("/social?pilot="): // Vérifie si la route commence par "/social?pilot="
-      const pilot = route.split("=")[1]; // Extrait le nom du pilote de la route
+    case route.startsWith("/social?pilot="):
+      const pilot = route.split("=")[1];
       console.debug(`Pilot: ${pilot}`);
-      navigateToOtherProfile(pilot); // Passe "pilot" comme argument
+      navigateToOtherProfile(pilot);
       break;
     default:
       console.warn(`Unknown route: ${route}`);
@@ -102,13 +108,12 @@ function navigateToSocial() {
   setActiveLink("social-link");
 }
 
-// Navigation spécifique pour chaque route
 function navigateToLogin() {
   loadComponent("#central-window", LoginForm, "loginForm", () => {});
   console.debug("LoginForm loaded as user is not authenticated.");
 }
 
-function navigateToHome() {
+export function navigateToHome() {
   switchwindow(null);
   loadComponent("#central-window", null, "", () => {});
   document.getElementById("blur-screen-effect").classList.add("d-none");
@@ -155,7 +160,6 @@ function navigateToLogout() {
   setActiveLink("logout-link");
 }
 
-// Gestion des liens actifs
 function setActiveLink(linkId) {
   document.querySelectorAll("header a").forEach((link) => {
     link.classList.remove("active");
@@ -169,7 +173,6 @@ function setActiveLink(linkId) {
   }
 }
 
-// Ajout des écouteurs pour les clics de navigation
 function setupEventListeners() {
   const navigationLinks = {
     "home-link": "/",
@@ -193,7 +196,6 @@ function setupEventListeners() {
   });
 }
 
-// Gérer l'événement popstate
 window.addEventListener("popstate", (event) => {
   const path = window.location.pathname;
   handleRoute(path);

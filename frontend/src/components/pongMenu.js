@@ -1,5 +1,5 @@
 import { createElement } from '/src/utils/mini_react.js';
-import { animateCameraBackToInitialPosition } from '/src/3d/mainScene.js';
+import { handleRoute } from '/src/index.js';
 
 function joinTournament() {
   document.getElementById('tournamentList').classList.add('d-none');
@@ -82,7 +82,8 @@ function HeaderNav() {
       { className: 'col text-end' },
       createElement('button', { className: 'btn btn-back mt-0 pt-2 pb-2 ps-3 pe-3', 
         onClick: () => {
-          animateCameraBackToInitialPosition();
+		  handleRoute('/');
+		  history.pushState(null, "", '/');
         },
        }, 'Back')
     )

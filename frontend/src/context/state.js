@@ -5,7 +5,7 @@ export const appState = {
 
 export function setPage(page) {
     appState.currentPage = page;
-    appState.isHUDdisplayed = true; // Exemple de mise à jour liée
+    appState.isHUDdisplayed = true;
     console.debug(`Current page set to: ${page}`);
 }
 

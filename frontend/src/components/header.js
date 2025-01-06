@@ -14,7 +14,7 @@ export function Header() {
         createElement(
           'h1',
           { className: 'hud-title interactive' },
-          createElement('a', { id: 'home-link', href: '#' }, 'ft_transcendence')
+          createElement('a', { id: 'home-link', href: '/' }, 'ft_transcendence')
         )
       )
     ),
@@ -41,7 +41,7 @@ export function Header() {
             createElement(
               'span',
               { className: 'nav-link text-white' },
-              createElement('a', { href: '#', id: 'pong-link' }, 'pong')
+              createElement('a', { href: '/pong', id: 'pong-link' }, 'pong')
             )
           ),
           createElement(
@@ -50,7 +50,7 @@ export function Header() {
             createElement(
               'span',
               { className: 'nav-link text-white' },
-              createElement('a', { href: '#', id: 'race-link' }, 'race')
+              createElement('a', { href: '/race', id: 'race-link' }, 'race')
             )
           ),
           // Menu droit
@@ -80,21 +80,7 @@ function createNavItem(text, id = '') {
     createElement(
       'span',
       { className: 'nav-link text-white' },
-      createElement('a', { href: '#', id }, text)
+      createElement('a', { href: '/' + text, id }, text)
     )
-  );
-}
-
-/**
- * Crée un lien de navigation (<span> contenant un <a>)
- *
- * @param {string} text - Le texte du lien
- * @returns {HTMLElement} - L'élément <span> créé
- */
-function createNavLink(text) {
-  return createElement(
-    'span',
-    { className: 'nav-link text-white' },
-    createElement('a', { href: '#' }, text)
   );
 }
