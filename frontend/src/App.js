@@ -1,16 +1,59 @@
-import * as THREE from 'https://esm.sh/three';
-import { GLTFLoader } from 'https://esm.sh/three/examples/jsm/loaders/GLTFLoader.js';
-import { FlyControls } from 'https://esm.sh/three/examples/jsm/controls/FlyControls.js';
-import { CSS3DRenderer, CSS3DObject } from 'https://esm.sh/three/examples/jsm/renderers/CSS3DRenderer.js';
-import { EffectComposer } from 'https://esm.sh/three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'https://esm.sh/three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'https://esm.sh/three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import * as THREE from "https://esm.sh/three";
+import { GLTFLoader } from "https://esm.sh/three/examples/jsm/loaders/GLTFLoader.js";
+import { FlyControls } from "https://esm.sh/three/examples/jsm/controls/FlyControls.js";
+import {
+  CSS3DRenderer,
+  CSS3DObject,
+} from "https://esm.sh/three/examples/jsm/renderers/CSS3DRenderer.js";
+import { EffectComposer } from "https://esm.sh/three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "https://esm.sh/three/examples/jsm/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "https://esm.sh/three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
-function createRectAreaLightHelper(light) 
-{
+const points = document.querySelectorAll(".point");
+const compass = document.querySelector(".compass");
+const radius = 800;
+const baseheight = 5;
+const rotationRatio = 0.1;
+
+// Fonction pour positionner les points initialement
+function positionPoints(offset = 180) {
+  const curve = 110 * (1.2 / (window.innerWidth / 3840));
+  const totalPoints = points.length;
+
+  points.forEach((point, index) => {
+    const angle = (index / totalPoints) * Math.PI + offset * (Math.PI / 180);
+    const x = radius * Math.cos(angle) + compass.offsetWidth / 2;
+    const y = ((curve * Math.sin(angle)) % curve) + curve;
+    point.style.left = `${x}px`;
+    point.style.top = Math.abs(y + baseheight) + "px";
+  });
+}
+
+// Fonction pour gérer le redimensionnement de la fenêtre
+function handleResize() {
+  positionPoints(); // Réinitialise avec l'offset par défaut
+}
+
+// Écouteurs d'événements
+window.addEventListener("resize", handleResize);
+
+function headIsMoving(rotationValue) {
+  console.log("camera orientation y:", rotationValue);
+  const curve = 110 * (1.2 / (window.innerWidth / 3840));
+  const percent = (rotationValue + 1) / 2; // Convertir quaternion.y (-1 à 1) en proportion (0 à 1)
+  const offset = percent * 360 * rotationRatio + 180;
+  positionPoints(offset);
+}
+
+// Initialisation
+document.addEventListener("DOMContentLoaded", () => {
+  positionPoints();
+});
+
+function createRectAreaLightHelper(light) {
   if (!light.isRectAreaLight) {
-      console.error('Provided object is not a RectAreaLight.');
-      return null;
+    console.error("Provided object is not a RectAreaLight.");
+    return null;
   }
 
   const width = light.width;
@@ -18,13 +61,23 @@ function createRectAreaLightHelper(light)
 
   const geometry = new THREE.BufferGeometry();
   const vertices = new Float32Array([
-      -width / 2, -height / 2, 0,
-       width / 2, -height / 2, 0,
-       width / 2,  height / 2, 0,
-      -width / 2,  height / 2, 0,
-      -width / 2, -height / 2, 0,
+    -width / 2,
+    -height / 2,
+    0,
+    width / 2,
+    -height / 2,
+    0,
+    width / 2,
+    height / 2,
+    0,
+    -width / 2,
+    height / 2,
+    0,
+    -width / 2,
+    -height / 2,
+    0,
   ]);
-  geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
 
   const material = new THREE.LineBasicMaterial({ color: 0xffcc00 });
 
@@ -38,7 +91,6 @@ function createRectAreaLightHelper(light)
   return helper;
 }
 
-
 let scene, camera, renderer, cssRenderer, controls;
 let menuObject, menuObject2, menuObject3;
 let menuElement, menuElement2, menuElement3;
@@ -46,9 +98,9 @@ let onScreen = false;
 let screenObject1, screenObject2, screenObject3;
 let planet, model;
 const material = new THREE.MeshStandardMaterial({
-  emissive: new THREE.Color(0x050505), 
-  emissiveIntensity: 1, 
-  color: new THREE.Color(0x050505), 
+  emissive: new THREE.Color(0x050505),
+  emissiveIntensity: 1,
+  color: new THREE.Color(0x050505),
 });
 
 const raycaster = new THREE.Raycaster();
@@ -64,8 +116,7 @@ const saturnConfig = {
   scale: 5,
 };
 
-function initScene() 
-{
+function initScene() {
   scene = new THREE.Scene();
 }
 
@@ -79,21 +130,21 @@ function initCamera() {
   camera.position.set(0, 0.06275803512326787, 1.9990151147571098);
   camera.lookAt(0, 50, -12);
 
-  const cameraLight = new THREE.PointLight(0Xb0e7ec,  1, 6);
+  const cameraLight = new THREE.PointLight(0xb0e7ec, 1, 6);
   cameraLight.position.set(0, 5.5, -1.5);
   cameraLight.castShadow = false;
-  cameraLight.shadow.bias = -0.005; 
+  cameraLight.shadow.bias = -0.005;
   const pointLightHelper = new THREE.PointLightHelper(cameraLight, 0.1);
   //scene.add(pointLightHelper);
   scene.add(cameraLight);
   cameraLight.shadow.mapSize.width = 1024;
   cameraLight.shadow.mapSize.height = 1024;
-  cameraLight.shadow.camera.near =0.5;
-  cameraLight.shadow.camera.far = 50; 
+  cameraLight.shadow.camera.near = 0.5;
+  cameraLight.shadow.camera.far = 50;
 
-  const cameraLight2 = new THREE.PointLight(0Xb0e7ec, 1, 6); 
+  const cameraLight2 = new THREE.PointLight(0xb0e7ec, 1, 6);
   cameraLight2.position.set(-3, 3, -1.5);
-  cameraLight2.castShadow = false; 
+  cameraLight2.castShadow = false;
   cameraLight2.shadow.bias = -0.005;
   const pointLightHelper2 = new THREE.PointLightHelper(cameraLight2, 0.1);
   //scene.add(pointLightHelper2);
@@ -101,21 +152,21 @@ function initCamera() {
   cameraLight2.shadow.mapSize.width = 1024;
   cameraLight2.shadow.mapSize.height = 1024;
   cameraLight2.shadow.camera.near = 0.5;
-  cameraLight2.shadow.camera.far = 50; 
+  cameraLight2.shadow.camera.far = 50;
 
-  const cameraLight3 = new THREE.PointLight(0Xb0e7ec, 1, 6); 
+  const cameraLight3 = new THREE.PointLight(0xb0e7ec, 1, 6);
   cameraLight3.position.set(3, 3, -1.5);
-  cameraLight3.castShadow = false; 
-  cameraLight3.shadow.bias = -0.005; 
+  cameraLight3.castShadow = false;
+  cameraLight3.shadow.bias = -0.005;
   const pointLightHelper3 = new THREE.PointLightHelper(cameraLight3, 0.1);
   //scene.add(pointLightHelper3);
   scene.add(cameraLight3);
   cameraLight3.shadow.mapSize.width = 1024;
   cameraLight3.shadow.mapSize.height = 1024;
   cameraLight3.shadow.camera.near = 0.5;
-  cameraLight3.shadow.camera.far = 50; 
+  cameraLight3.shadow.camera.far = 50;
 
-  scene.add(camera)
+  scene.add(camera);
 }
 
 function initRenderer() {
@@ -196,141 +247,136 @@ function initSkybox() {
   scene.background = skyboxTexture;
 }
 
-function loadModels() 
-{
-const loadingScreen = document.getElementById("loading-screen");
-const progressBar = document.getElementById("progress-bar");
-loadingScreen.style.display = "block";
+function loadModels() {
+  const loadingScreen = document.getElementById("loading-screen");
+  const progressBar = document.getElementById("progress-bar");
+  loadingScreen.style.display = "block";
 
-const loader = new GLTFLoader();
+  const loader = new GLTFLoader();
 
-function onProgress(xhr) 
-{
-  if (xhr.lengthComputable) {
-    const percentComplete = (xhr.loaded / xhr.total) * 100;
-    progressBar.style.width = percentComplete + "%";
+  function onProgress(xhr) {
+    if (xhr.lengthComputable) {
+      const percentComplete = (xhr.loaded / xhr.total) * 100;
+      progressBar.style.width = percentComplete + "%";
+    }
   }
-}
 
-const satLoader = new GLTFLoader();
-satLoader.load(
-  '../src/assets/models/saturn.glb',
-  (gltf) => {
-    planet = gltf.scene;
-    planet.position.set(saturnConfig.positionX, saturnConfig.positionY, saturnConfig.positionZ);
-    planet.rotation.set(
-      THREE.MathUtils.degToRad(saturnConfig.rotationX),
-      THREE.MathUtils.degToRad(saturnConfig.rotationY),
-      THREE.MathUtils.degToRad(saturnConfig.rotationZ)
-    );
-    planet.scale.set(saturnConfig.scale, saturnConfig.scale, saturnConfig.scale);
+  const satLoader = new GLTFLoader();
+  satLoader.load(
+    "../src/assets/models/saturn.glb",
+    (gltf) => {
+      planet = gltf.scene;
+      planet.position.set(
+        saturnConfig.positionX,
+        saturnConfig.positionY,
+        saturnConfig.positionZ
+      );
+      planet.rotation.set(
+        THREE.MathUtils.degToRad(saturnConfig.rotationX),
+        THREE.MathUtils.degToRad(saturnConfig.rotationY),
+        THREE.MathUtils.degToRad(saturnConfig.rotationZ)
+      );
+      planet.scale.set(
+        saturnConfig.scale,
+        saturnConfig.scale,
+        saturnConfig.scale
+      );
 
-    planet.traverse((child) => {
-      if (child.isMesh) {
-        const oldMaterial = child.material;
-        if (oldMaterial.isGLTFSpecularGlossinessMaterial) {
-          const newMaterial = new THREE.MeshStandardMaterial({
-            map: oldMaterial.map,
-            color: oldMaterial.color,
-            metalness: 0.1,
-            roughness: 0.7,
-            normalMap: oldMaterial.normalMap,
-            emissive: oldMaterial.emissive,
-            emissiveMap: oldMaterial.emissiveMap,
-            emissiveIntensity: oldMaterial.emissiveIntensity,
-            alphaMap: oldMaterial.alphaMap,
-            transparent: oldMaterial.transparent,
-            opacity: oldMaterial.opacity,
-            side: oldMaterial.side,
-            envMap: oldMaterial.envMap,
-            lightMap: oldMaterial.lightMap,
-            lightMapIntensity: oldMaterial.lightMapIntensity,
-          });
-          child.material = newMaterial;
-        
+      planet.traverse((child) => {
+        if (child.isMesh) {
+          const oldMaterial = child.material;
+          if (oldMaterial.isGLTFSpecularGlossinessMaterial) {
+            const newMaterial = new THREE.MeshStandardMaterial({
+              map: oldMaterial.map,
+              color: oldMaterial.color,
+              metalness: 0.1,
+              roughness: 0.7,
+              normalMap: oldMaterial.normalMap,
+              emissive: oldMaterial.emissive,
+              emissiveMap: oldMaterial.emissiveMap,
+              emissiveIntensity: oldMaterial.emissiveIntensity,
+              alphaMap: oldMaterial.alphaMap,
+              transparent: oldMaterial.transparent,
+              opacity: oldMaterial.opacity,
+              side: oldMaterial.side,
+              envMap: oldMaterial.envMap,
+              lightMap: oldMaterial.lightMap,
+              lightMapIntensity: oldMaterial.lightMapIntensity,
+            });
+            child.material = newMaterial;
+          }
         }
+      });
 
-      }
-    });
+      scene.add(planet);
+    },
+    onProgress,
+    (error) => {
+      console.error("Error on saturn loading :", error);
+    }
+  );
 
-    scene.add(planet);
-  },
-  onProgress,
-  (error) => {
-    console.error('Error on saturn loading :', error);
-  }
-);
+  loader.load(
+    "../src/assets/models/sn13.glb",
+    (gltf) => {
+      model = gltf.scene;
+      model.position.set(3.5, -17, -1);
+      model.rotation.set(0, 0, 0);
+      model.scale.set(0.125, 0.125, 0.125);
+      model.lookAt(0, 1000, -180);
 
-loader.load(
-  "../src/assets/models/sn13.glb",
-  (gltf) => {
-    model = gltf.scene;
-    model.position.set(3.5, -17, -1);
-    model.rotation.set(0, 0, 0);
-    model.scale.set(0.125, 0.125, 0.125);
-    model.lookAt(0, 1000, -180);
+      model.traverse((child) => {
+        if (child.isMesh) {
+          child.material.color.multiplyScalar(3);
+          child.material.metalness = 0.2;
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
 
-    model.traverse((child) => {
-      if (child.isMesh) {
-        child.material.color.multiplyScalar(3);
-        child.material.metalness = 0.2;
-        child.castShadow = true;
-        child.receiveShadow = true;
-      }
-    });
-    
-    scene.add(model);
+      scene.add(model);
 
-    if (menuObject2) 
-      scene.add(menuObject2);
-    if (menuObject3) 
-      scene.add(menuObject3);
-    if (menuObject) 
-      scene.add(menuObject);
+      if (menuObject2) scene.add(menuObject2);
+      if (menuObject3) scene.add(menuObject3);
+      if (menuObject) scene.add(menuObject);
 
-    screenObject1 = model.getObjectByName("_gltfNode_6");
-    screenObject2 = model.getObjectByName("_gltfNode_13");
-    screenObject3 = model.getObjectByName("_gltfNode_7");
-    const node0 = model.getObjectByName("_gltfNode_0");
-    node0.material.metalness = 0.9;
-    node0.material.roughness = 0.9;
+      screenObject1 = model.getObjectByName("_gltfNode_6");
+      screenObject2 = model.getObjectByName("_gltfNode_13");
+      screenObject3 = model.getObjectByName("_gltfNode_7");
+      const node0 = model.getObjectByName("_gltfNode_0");
+      node0.material.metalness = 0.9;
+      node0.material.roughness = 0.9;
 
+      screenObject1.material = material;
+      screenObject2.material = material;
+      screenObject3.material = material;
 
-  screenObject1.material = material;
-  screenObject2.material = material;
-  screenObject3.material = material;
-  
-  
-    loadingScreen.style.display = 'none';
-  },
-  onProgress,
-  (error) => {
-    console.error("error on model loading :", error);
-  }
-);
+      loadingScreen.style.display = "none";
+    },
+    onProgress,
+    (error) => {
+      console.error("error on model loading :", error);
+    }
+  );
 }
 
-function initLights() 
-{
+function initLights() {
   const sunLight = new THREE.DirectionalLight(0xffffff, 1);
   sunLight.position.set(-15000, 280210.384550551276, -9601.008032820177);
   sunLight.castShadow = true;
-  sunLight.receiveShadow = true
+  sunLight.receiveShadow = true;
   const target = new THREE.Object3D();
   target.position.set(100, 0, -100);
-  sunLight.target = target
-  sunLight.shadow.camera.near = 0.1; 
-  sunLight.shadow.camera.far = 20;  
+  sunLight.target = target;
+  sunLight.shadow.camera.near = 0.1;
+  sunLight.shadow.camera.far = 20;
   sunLight.shadow.camera.left = -10;
   sunLight.shadow.camera.right = 10;
   sunLight.shadow.camera.top = 10;
   sunLight.shadow.camera.bottom = -10;
-  
-  
 
   scene.add(sunLight);
 }
-
 
 function initControls() {
   controls = new FlyControls(camera, renderer.domElement);
@@ -455,19 +501,18 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
       const t = dummy.t;
       camera.position.lerpVectors(startPosition, endPosition, t);
       camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, t);
+      headIsMoving(camera.rotation.y);
     },
     onComplete: () => {
       //controls.enabled = true;
-      if (nb == 1) 
-      {
+      if (nb == 1) {
         screenObject1.material = screenMaterial;
         menuElement.classList.remove("active");
       }
       if (nb == 2) {
         menuElement2.classList.remove("active");
       }
-      if (nb == 3) 
-      {
+      if (nb == 3) {
         screenObject3.materal = screenMaterial;
         menuElement3.classList.remove("active");
       }
@@ -479,21 +524,15 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
       onScreen = true;
     },
   });
-  
 }
 
-export function animateCameraBackToInitialPosition() 
-{
+export function animateCameraBackToInitialPosition() {
   document.removeEventListener("mousemove", onBaseMouseMove, false);
 
   const startPosition = camera.position.clone();
   const startQuaternion = camera.quaternion.clone();
 
-  const endPosition = new THREE.Vector3(
-    0,
-    0,
-    1.45
-  );
+  const endPosition = new THREE.Vector3(0, 0, 1.45);
   const lookAtTarget = new THREE.Vector3(0, 50, -12);
 
   camera.position.copy(endPosition);
@@ -503,15 +542,12 @@ export function animateCameraBackToInitialPosition()
   camera.position.copy(startPosition);
   camera.quaternion.copy(startQuaternion);
   //controls.enabled = false;
-  if (menuElement)
-  {
+  if (menuElement) {
     menuElement.classList.add("active");
     screenObject1.material = material;
   }
-  if (menuElement2) 
-    menuElement2.classList.add("active");
-  if (menuElement3) 
-  {
+  if (menuElement2) menuElement2.classList.add("active");
+  if (menuElement3) {
     menuElement3.classList.add("active");
   }
 
@@ -524,6 +560,7 @@ export function animateCameraBackToInitialPosition()
       const t = dummy.t;
       camera.position.lerpVectors(startPosition, endPosition, t);
       camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, t);
+      headIsMoving(camera.rotation.y);
     },
     onComplete: () => {
       camera.position.copy(endPosition);
@@ -591,6 +628,7 @@ function onBaseMouseMove(event) {
     camera.rotation.z,
     "XYZ"
   );
+  headIsMoving(camera.rotation.y);
   camera.updateMatrixWorld(true);
 }
 document.addEventListener("pointerlockchange", () => {
@@ -603,6 +641,7 @@ document.addEventListener("pointerlockchange", () => {
 });
 
 function enableFreeView() {
+  document.removeEventListener("mousemove", onBaseMouseMove, false);
   initialCameraRotation.x = camera.rotation.x;
   initialCameraRotation.y = camera.rotation.y;
   cameraRotation.x = camera.rotation.x;
@@ -620,6 +659,7 @@ function disableFreeView() {
   menuElement2.style.pointerEvents = "auto";
   menuElement3.style.pointerEvents = "auto";
   document.removeEventListener("mousemove", onFreeViewMouseMove, false);
+  document.addEventListener("mousemove", onBaseMouseMove, false);
 }
 
 function onFreeViewMouseMove(event) {
@@ -645,11 +685,11 @@ function onFreeViewMouseMove(event) {
   );
 
   camera.rotation.set(cameraRotation.x, cameraRotation.y, 0, "XYZ");
+  headIsMoving(camera.rotation.y);
   camera.updateMatrixWorld(true);
 }
 
-export function buildScene() 
-{
+export function buildScene() {
   initScene();
   initRenderer();
   initCamera();
@@ -666,23 +706,22 @@ export function buildScene()
 
   const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1,   // intensity
-    1,   // radius
-    0.2   // threshold
+    1, // intensity
+    1, // radius
+    0.2 // threshold
   );
-    composer = new EffectComposer(renderer);
-    const renderScene = new RenderPass(scene, camera);
-    composer.addPass(renderScene);
-    composer.addPass(bloomPass);
-    animate();
-
+  composer = new EffectComposer(renderer);
+  const renderScene = new RenderPass(scene, camera);
+  composer.addPass(renderScene);
+  composer.addPass(bloomPass);
+  animate();
 }
 
 let composer;
 
 const sceneCube = new THREE.Scene();
-const cameraCube = new THREE.PerspectiveCamera(25, 1, 0.1, 1000); 
-cameraCube.position.z = 7; 
+const cameraCube = new THREE.PerspectiveCamera(25, 1, 0.1, 1000);
+cameraCube.position.z = 7;
 cameraCube.aspect = 636 / 512;
 cameraCube.updateProjectionMatrix();
 const geometryCube = new THREE.BoxGeometry(1, 1, 1);
@@ -696,9 +735,7 @@ sceneCube.add(meshCube);
 
 sceneCube.add(new THREE.AmbientLight(0xffffff, 1));
 
-
-
-const renderTargetCube = new THREE.WebGLRenderTarget(1024, 1024, { 
+const renderTargetCube = new THREE.WebGLRenderTarget(1024, 1024, {
   minFilter: THREE.LinearFilter,
   magFilter: THREE.LinearFilter,
 });
@@ -709,19 +746,17 @@ const screenMaterial = new THREE.MeshStandardMaterial({
   emissiveIntensity: 0.1,
 });
 let lastRenderTime = 0;
-const targetFPS = 30; 
-const frameInterval = 1000 / targetFPS; 
+const targetFPS = 30;
+const frameInterval = 1000 / targetFPS;
 
 function animate() {
   requestAnimationFrame(animate);
 
   const currentTime = Date.now();
-    meshCube.rotation.x += 0.01;
-    meshCube.rotation.y += 0.01;
+  meshCube.rotation.x += 0.01;
+  meshCube.rotation.y += 0.01;
   if (currentTime - lastRenderTime >= frameInterval) {
     lastRenderTime = currentTime;
-
-
 
     renderer.setRenderTarget(renderTargetCube);
     renderer.render(sceneCube, cameraCube);
@@ -739,10 +774,8 @@ function animate() {
   }
 }
 
-
-
 export function initWireframeScene() {
-  const wireframeDiv = document.getElementById('wireframe');
+  const wireframeDiv = document.getElementById("wireframe");
   if (!wireframeDiv) {
     console.error("Div 'wireframe' not fine");
     return;
@@ -752,7 +785,7 @@ export function initWireframeScene() {
   const wireframeCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
   const wireframeRenderer = new THREE.WebGLRenderer({
     antialias: true,
-    alpha: true
+    alpha: true,
   });
   const width = wireframeDiv.offsetWidth;
   const height = wireframeDiv.offsetHeight;
@@ -768,10 +801,9 @@ export function initWireframeScene() {
       wireframeModel = new THREE.Group();
 
       gltf.scene.traverse((child) => {
-        if (child.isMesh) 
-        {
+        if (child.isMesh) {
           const faceMaterial = new THREE.MeshBasicMaterial({
-            color: 0Xffffff,
+            color: 0xffffff,
             transparent: true,
             opacity: 0.2,
           });
@@ -779,7 +811,7 @@ export function initWireframeScene() {
           const wireframeMaterial = new THREE.MeshBasicMaterial({
             color: 0x66ccff,
             transparent: true,
-			      opacity: 1,
+            opacity: 1,
             wireframe: true,
           });
 
@@ -796,20 +828,22 @@ export function initWireframeScene() {
 
       wireframeModel.scale.set(0.1, 0.1, 0.1);
       wireframeModel.rotation.set(Math.PI, 0, 0);
-      wireframeModel.position.set(0,0,0);
+      wireframeModel.position.set(0, 0, 0);
       wireframeScene.add(wireframeModel);
       wireframeCamera.position.set(0, -60, -60);
-	    wireframeCamera.aspect = width / height;
+      wireframeCamera.aspect = width / height;
       wireframeCamera.updateProjectionMatrix();
-      wireframeCamera.lookAt(wireframeModel.position.x, wireframeModel.position.y - 20, wireframeModel.position.z);
-      function animateWireframe()
-      {
+      wireframeCamera.lookAt(
+        wireframeModel.position.x,
+        wireframeModel.position.y - 20,
+        wireframeModel.position.z
+      );
+      function animateWireframe() {
         requestAnimationFrame(animateWireframe);
 
-        if (wireframeModel) 
-        {
+        if (wireframeModel) {
           wireframeModel.rotation.z += 0.004;
-        }       
+        }
         wireframeRenderer.render(wireframeScene, wireframeCamera);
       }
       animateWireframe();
@@ -820,8 +854,7 @@ export function initWireframeScene() {
     }
   );
 
-  function onWireframeResize() 
-  {
+  function onWireframeResize() {
     const newWidth = wireframeDiv.offsetWidth;
     const newHeight = wireframeDiv.offsetHeight;
     wireframeRenderer.setSize(newWidth, newHeight);
