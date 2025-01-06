@@ -1,50 +1,34 @@
 import * as THREE from "https://esm.sh/three";
 import { GLTFLoader } from "https://esm.sh/three/examples/jsm/loaders/GLTFLoader.js";
 import { FlyControls } from "https://esm.sh/three/examples/jsm/controls/FlyControls.js";
-import {
-  CSS3DRenderer,
-  CSS3DObject,
-} from "https://esm.sh/three/examples/jsm/renderers/CSS3DRenderer.js";
+import { CSS3DRenderer,  CSS3DObject } from "https://esm.sh/three/examples/jsm/renderers/CSS3DRenderer.js";
 import { EffectComposer } from "https://esm.sh/three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "https://esm.sh/three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "https://esm.sh/three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
-const points = document.querySelectorAll(".point");
-const compass = document.querySelector(".compass");
-const radius = 800;
-const baseheight = 5;
-const rotationRatio = 0.1;
+export let cameraRotationEvent = 0;
+export let listeners = [];
 
-function positionPoints(offset = 180) {
-  const curve = 110 * (1.2 / (window.innerWidth / 3840));
-  const totalPoints = points.length;
-
-  points.forEach((point, index) => {
-    const angle = (index / totalPoints) * Math.PI + offset * (Math.PI / 180);
-    const x = radius * Math.cos(angle) + compass.offsetWidth / 2;
-    const y = ((curve * Math.sin(angle)) % curve) + curve;
-    point.style.left = `${x}px`;
-    point.style.top = Math.abs(y + baseheight) + "px";
-  });
+function setCameraRotation(value) {
+  cameraRotationEvent = value;
+  listeners.forEach((listener) => listener(cameraRotationEvent));
 }
 
-function handleResize() {
-  positionPoints(); 
+export function addCameraRotationListener(listener) {
+  listeners.push(listener);
 }
 
-window.addEventListener("resize", handleResize);
-
-function headIsMoving(rotationValue) {
-  console.log("camera orientation y:", rotationValue);
-  const curve = 110 * (1.2 / (window.innerWidth / 3840));
-  const percent = (rotationValue + 1) / 2; 
-  const offset = percent * 360 * rotationRatio + 180;
-  positionPoints(offset);
+export function toggleFreeView() {
+  freeViewEnabled = !freeViewEnabled;
+  if (freeViewEnabled) {
+    onScreen = true;
+    enableFreeView();
+  } else {
+    onScreen = false;
+    disableFreeView();
+    animateCameraBackToInitialPosition();
+  }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  positionPoints();
-});
 
 function createRectAreaLightHelper(light) {
   if (!light.isRectAreaLight) {
@@ -465,15 +449,15 @@ function onMouseClick(event) {
   }
 }
 
-let currentTween = null; 
+let currentTween = null;
 
 function animateCameraToTarget(endPosition, endRotation, nb) {
   document.removeEventListener("mousemove", onBaseMouseMove, false);
 
   if (currentTween) {
     currentTween.kill();
-    camera.position.copy(camera.position); 
-    camera.quaternion.copy(camera.quaternion); 
+    camera.position.copy(camera.position);
+    camera.quaternion.copy(camera.quaternion);
   }
 
   const startPosition = camera.position.clone();
@@ -503,7 +487,7 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
       const t = dummy.t;
       camera.position.lerpVectors(startPosition, endPosition, t);
       camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, t);
-      headIsMoving(camera.rotation.y);
+      setCameraRotation(camera.rotation.y);
     },
     onComplete: () => {
       currentTween = null;
@@ -526,8 +510,6 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
     },
   });
 }
-
-
 
 export function animateCameraBackToInitialPosition() {
   document.removeEventListener("mousemove", onBaseMouseMove, false);
@@ -563,7 +545,7 @@ export function animateCameraBackToInitialPosition() {
       const t = dummy.t;
       camera.position.lerpVectors(startPosition, endPosition, t);
       camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, t);
-      headIsMoving(camera.rotation.y);
+      setCameraRotation(camera.rotation.y);
     },
     onComplete: () => {
       camera.position.copy(endPosition);
@@ -586,20 +568,6 @@ function addEventListeners() {
 let freeViewEnabled = false;
 let cameraRotation = { x: 0, y: 0, z: 0 };
 let initialCameraRotation = { x: 0, y: 0, z: 0 };
-
-document.getElementById("free-view").addEventListener("click", () => {
-  freeViewEnabled = !freeViewEnabled;
-  if (freeViewEnabled) {
-    onScreen = true;
-
-    enableFreeView();
-  } else {
-    onScreen = false;
-
-    disableFreeView();
-    animateCameraBackToInitialPosition();
-  }
-});
 
 //document.addEventListener('mousemove', onBaseMouseMove, false);
 
@@ -631,7 +599,7 @@ function onBaseMouseMove(event) {
     camera.rotation.z,
     "XYZ"
   );
-  headIsMoving(camera.rotation.y);
+  setCameraRotation(camera.rotation.y);
   camera.updateMatrixWorld(true);
 }
 document.addEventListener("pointerlockchange", () => {
@@ -643,7 +611,7 @@ document.addEventListener("pointerlockchange", () => {
   }
 });
 
-function enableFreeView() {
+export function enableFreeView() {
   document.removeEventListener("mousemove", onBaseMouseMove, false);
   initialCameraRotation.x = camera.rotation.x;
   initialCameraRotation.y = camera.rotation.y;
@@ -656,7 +624,7 @@ function enableFreeView() {
   document.addEventListener("mousemove", onFreeViewMouseMove, false);
 }
 
-function disableFreeView() {
+export function disableFreeView() {
   document.exitPointerLock();
   menuElement.style.pointerEvents = "auto";
   menuElement2.style.pointerEvents = "auto";
@@ -688,7 +656,7 @@ function onFreeViewMouseMove(event) {
   );
 
   camera.rotation.set(cameraRotation.x, cameraRotation.y, 0, "XYZ");
-  headIsMoving(camera.rotation.y);
+  setCameraRotation(camera.rotation.y);
   camera.updateMatrixWorld(true);
 }
 

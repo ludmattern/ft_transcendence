@@ -1,4 +1,4 @@
-# Utiliser l'image officielle Traefik comme base
+# Utiliser l'image officielle nginx comme base
 FROM nginx:1.27
 
 # Copier les fichiers

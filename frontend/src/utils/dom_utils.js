@@ -12,6 +12,7 @@ export const modules = {
   loginForm: '/src/pages/hud/loginForm.js',
   settingsForm: '/src/pages/hud/settingsForm.js',
   socialForm: '/src/pages/hud/socialForm.js',
+  footer: '/src/pages/hud/footer.js',
 };
 
 /**
