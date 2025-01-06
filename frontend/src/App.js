@@ -77,7 +77,7 @@ function initCamera() {
     10000
   );
   camera.position.set(0, 0.06275803512326787, 1.9990151147571098);
-  camera.lookAt(0, 50, -15);
+  camera.lookAt(0, 50, -12);
 
   const cameraLight = new THREE.PointLight(0Xb0e7ec,  1, 6);
   cameraLight.position.set(0, 5.5, -1.5);
@@ -300,6 +300,7 @@ loader.load(
   screenObject2.material = material;
   screenObject3.material = material;
   
+  
     loadingScreen.style.display = 'none';
   },
   onProgress,
@@ -493,7 +494,7 @@ export function animateCameraBackToInitialPosition()
     0,
     1.45
   );
-  const lookAtTarget = new THREE.Vector3(0, 50, -15);
+  const lookAtTarget = new THREE.Vector3(0, 50, -12);
 
   camera.position.copy(endPosition);
   camera.lookAt(lookAtTarget);
@@ -682,7 +683,8 @@ let composer;
 const sceneCube = new THREE.Scene();
 const cameraCube = new THREE.PerspectiveCamera(25, 1, 0.1, 1000); 
 cameraCube.position.z = 7; 
-
+cameraCube.aspect = 636 / 512;
+cameraCube.updateProjectionMatrix();
 const geometryCube = new THREE.BoxGeometry(1, 1, 1);
 const materialCube = new THREE.MeshStandardMaterial({
   color: 0xff0000,
@@ -694,7 +696,9 @@ sceneCube.add(meshCube);
 
 sceneCube.add(new THREE.AmbientLight(0xffffff, 1));
 
-const renderTargetCube = new THREE.WebGLRenderTarget(192,192, {
+
+
+const renderTargetCube = new THREE.WebGLRenderTarget(1024, 1024, { 
   minFilter: THREE.LinearFilter,
   magFilter: THREE.LinearFilter,
 });
@@ -704,9 +708,8 @@ const screenMaterial = new THREE.MeshStandardMaterial({
   emissive: 0x000000,
   emissiveIntensity: 0.1,
 });
-
 let lastRenderTime = 0;
-const targetFPS = 144; 
+const targetFPS = 30; 
 const frameInterval = 1000 / targetFPS; 
 
 function animate() {
