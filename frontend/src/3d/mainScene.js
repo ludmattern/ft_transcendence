@@ -139,6 +139,13 @@ export function initM1() {
   menuObject2.scale.set(0.002, 0.002, 0.002);
   menuElement2.style.pointerEvents = "auto";
   menuElement2.classList.add("active");
+  document.getElementById("launch").addEventListener('click', () => {
+    animateCameraToTarget(
+      new THREE.Vector3(-0.2, 5.257378802731586, -0.8900580859235202),
+      { x: Math.PI / 3, y: 0, z: 0 },
+      1
+    );
+  });
 }
 
 export function initM3() {
@@ -283,6 +290,7 @@ function onWindowResize() {
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
 }
+
 
 export function switchwindow(screen) {
   if (screen === null) {
@@ -435,6 +443,7 @@ export function animateCameraBackToInitialPosition() {
 
 function addEventListeners() {
   window.addEventListener("resize", onWindowResize);
+
 }
 
 let freeViewEnabled = false;

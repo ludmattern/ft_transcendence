@@ -117,7 +117,7 @@ function SoloContent() {
       createElement('option', { value: 'hard' }, 'Hard')
     ),
     createElement('div', { className: 'd-flex justify-content-center mt-5' },
-      createElement('button', { className: 'btn btn-primary mt-3' }, 'Launch')
+      createElement('button', { className: 'btn btn-primary mt-3', id: 'launch' }, 'Launch')
     )
   );
 }
