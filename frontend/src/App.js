@@ -15,7 +15,6 @@ const radius = 800;
 const baseheight = 5;
 const rotationRatio = 0.1;
 
-// Fonction pour positionner les points initialement
 function positionPoints(offset = 180) {
   const curve = 110 * (1.2 / (window.innerWidth / 3840));
   const totalPoints = points.length;
@@ -29,23 +28,20 @@ function positionPoints(offset = 180) {
   });
 }
 
-// Fonction pour gérer le redimensionnement de la fenêtre
 function handleResize() {
-  positionPoints(); // Réinitialise avec l'offset par défaut
+  positionPoints(); 
 }
 
-// Écouteurs d'événements
 window.addEventListener("resize", handleResize);
 
 function headIsMoving(rotationValue) {
   console.log("camera orientation y:", rotationValue);
   const curve = 110 * (1.2 / (window.innerWidth / 3840));
-  const percent = (rotationValue + 1) / 2; // Convertir quaternion.y (-1 à 1) en proportion (0 à 1)
+  const percent = (rotationValue + 1) / 2; 
   const offset = percent * 360 * rotationRatio + 180;
   positionPoints(offset);
 }
 
-// Initialisation
 document.addEventListener("DOMContentLoaded", () => {
   positionPoints();
 });
@@ -519,7 +515,6 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
         menuElement2.classList.remove("active");
       }
       if (nb == 3) {
-        screenObject3.material = screenMaterial;
         menuElement3.classList.remove("active");
       }
       initialCameraRotation.x = camera.rotation.x;
