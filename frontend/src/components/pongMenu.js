@@ -1,7 +1,5 @@
 import { createElement } from '/src/utils/mini_react.js';
-import { animateCameraBackToInitialPosition } from '/src/App.js';
-
-
+import { animateCameraBackToInitialPosition } from '/src/3d/mainScene.js';
 
 function joinTournament() {
   document.getElementById('tournamentList').classList.add('d-none');

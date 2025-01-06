@@ -1,4 +1,4 @@
-import { switchwindow } from "/src/App.js";
+import { switchwindow } from "/src/3d/mainScene.js";
 import { loadComponent } from "/src/utils/dom_utils.js";
 import { LoginForm } from "/src/components/loginForm.js";
 import { ProfileForm } from "/src/components/profileForm.js";
@@ -11,11 +11,13 @@ import { Header } from "/src/components/header.js";
 import { LeftSideWindow } from "/src/components/leftSideWindow.js";
 import { RightSideWindow } from "/src/components/rightSideWindow.js";
 import { PongMenu } from "/src/components/pongMenu.js";
+import { game2 } from "/src/components/game2.js";
 import { midScreen } from "/src/components/midScreen.js";
 import { HelmetSVG } from "/src/components/HelmetSVG.js";
 import { HUDSVG } from "/src/components/HUDSVG.js";
-import { game2 } from "/src/components/game2.js";
-import { buildScene } from "./App.js";
+import { buildScene } from "/src/3d/mainScene.js";
+
+
 
 async function initializeApp() {
   loadSVGComponents();
@@ -32,9 +34,10 @@ async function initializeApp() {
   document.getElementById("blur-screen-effect").classList.add("d-none");
 
   loadAuthenticatedComponents();
-  handleRoute(window.location.pathname); // Gestion de la route actuelle
+  handleRoute(window.location.pathname); 
   setupEventListeners();
 }
+
 
 // Gestion des SVG
 function loadSVGComponents() {
@@ -67,6 +70,7 @@ function loadAuthenticatedComponents() {
 // Gérer les routes
 export function handleRoute(route) {
   console.debug(`Handling route: ${route}`);
+
   switch (true) {
     case route === "/":
       navigateToHome();

@@ -1,6 +1,5 @@
 import * as THREE from "https://esm.sh/three";
 import { GLTFLoader } from "https://esm.sh/three/examples/jsm/loaders/GLTFLoader.js";
-import { FlyControls } from "https://esm.sh/three/examples/jsm/controls/FlyControls.js";
 import {
   CSS3DRenderer,
   CSS3DObject,
@@ -8,6 +7,7 @@ import {
 import { EffectComposer } from "https://esm.sh/three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "https://esm.sh/three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "https://esm.sh/three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { screenMaterial, animatePong } from '/src/3d/pongScene.js';
 
 const points = document.querySelectorAll(".point");
 const compass = document.querySelector(".compass");
@@ -18,7 +18,6 @@ const rotationRatio = 0.1;
 function positionPoints(offset = 180) {
   const curve = 110 * (1.2 / (window.innerWidth / 3840));
   const totalPoints = points.length;
-
   points.forEach((point, index) => {
     const angle = (index / totalPoints) * Math.PI + offset * (Math.PI / 180);
     const x = radius * Math.cos(angle) + compass.offsetWidth / 2;
@@ -35,7 +34,6 @@ function handleResize() {
 window.addEventListener("resize", handleResize);
 
 function headIsMoving(rotationValue) {
-  console.log("camera orientation y:", rotationValue);
   const curve = 110 * (1.2 / (window.innerWidth / 3840));
   const percent = (rotationValue + 1) / 2; 
   const offset = percent * 360 * rotationRatio + 180;
@@ -46,48 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
   positionPoints();
 });
 
-function createRectAreaLightHelper(light) {
-  if (!light.isRectAreaLight) {
-    console.error("Provided object is not a RectAreaLight.");
-    return null;
-  }
 
-  const width = light.width;
-  const height = light.height;
-
-  const geometry = new THREE.BufferGeometry();
-  const vertices = new Float32Array([
-    -width / 2,
-    -height / 2,
-    0,
-    width / 2,
-    -height / 2,
-    0,
-    width / 2,
-    height / 2,
-    0,
-    -width / 2,
-    height / 2,
-    0,
-    -width / 2,
-    -height / 2,
-    0,
-  ]);
-  geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
-
-  const material = new THREE.LineBasicMaterial({ color: 0xffcc00 });
-
-  const helper = new THREE.Line(geometry, material);
-
-  helper.position.copy(light.position);
-  helper.rotation.copy(light.rotation);
-
-  light.add(helper);
-
-  return helper;
-}
-
-let scene, camera, renderer, cssRenderer, controls;
+let scene, camera, renderer, cssRenderer, composer;
 let menuObject, menuObject2, menuObject3;
 let menuElement, menuElement2, menuElement3;
 let onScreen = false;
@@ -98,9 +56,6 @@ const material = new THREE.MeshStandardMaterial({
   emissiveIntensity: 1,
   color: new THREE.Color(0x050505),
 });
-
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
 
 const saturnConfig = {
   positionX: 3247,
@@ -130,37 +85,21 @@ function initCamera() {
   cameraLight.position.set(0, 5.5, -1.5);
   cameraLight.castShadow = false;
   cameraLight.shadow.bias = -0.005;
-  const pointLightHelper = new THREE.PointLightHelper(cameraLight, 0.1);
-  //scene.add(pointLightHelper);
+
   scene.add(cameraLight);
-  cameraLight.shadow.mapSize.width = 1024;
-  cameraLight.shadow.mapSize.height = 1024;
-  cameraLight.shadow.camera.near = 0.5;
-  cameraLight.shadow.camera.far = 50;
 
   const cameraLight2 = new THREE.PointLight(0xb0e7ec, 1, 6);
   cameraLight2.position.set(-3, 3, -1.5);
   cameraLight2.castShadow = false;
   cameraLight2.shadow.bias = -0.005;
-  const pointLightHelper2 = new THREE.PointLightHelper(cameraLight2, 0.1);
-  //scene.add(pointLightHelper2);
+
   scene.add(cameraLight2);
-  cameraLight2.shadow.mapSize.width = 1024;
-  cameraLight2.shadow.mapSize.height = 1024;
-  cameraLight2.shadow.camera.near = 0.5;
-  cameraLight2.shadow.camera.far = 50;
 
   const cameraLight3 = new THREE.PointLight(0xb0e7ec, 1, 6);
   cameraLight3.position.set(3, 3, -1.5);
   cameraLight3.castShadow = false;
   cameraLight3.shadow.bias = -0.005;
-  const pointLightHelper3 = new THREE.PointLightHelper(cameraLight3, 0.1);
-  //scene.add(pointLightHelper3);
   scene.add(cameraLight3);
-  cameraLight3.shadow.mapSize.width = 1024;
-  cameraLight3.shadow.mapSize.height = 1024;
-  cameraLight3.shadow.camera.near = 0.5;
-  cameraLight3.shadow.camera.far = 50;
 
   scene.add(camera);
 }
@@ -170,7 +109,6 @@ function initRenderer() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.shadowMap.enabled = true;
-
   document.getElementById("app").appendChild(renderer.domElement);
 }
 
@@ -184,14 +122,14 @@ function initCSSRenderer() {
   document.getElementById("app").appendChild(cssRenderer.domElement);
 }
 
-export function initM2() {
+export function initM2() 
+{
   menuElement = document.getElementById("gameScreen");
   if (!menuElement) {
     console.error("The element with ID 'gameScreen' was not found.");
     return;
   }
   menuObject = new CSS3DObject(menuElement);
-
   menuElement.style.pointerEvents = "auto";
   menuObject.position.set(-0.2, 6.6, -1.75);
   menuObject.rotation.set(-5.2, 0, 0);
@@ -210,7 +148,6 @@ export function initM1() {
 
   menuObject2 = new CSS3DObject(menuElement2);
   menuObject2.position.set(-3.6, 4.6, -1.8);
-
   menuObject2.rotation.set(-5.2, 0.63, 0.2);
   menuObject2.scale.set(0.002, 0.002, 0.002);
   menuElement2.style.pointerEvents = "auto";
@@ -243,20 +180,19 @@ function initSkybox() {
   scene.background = skyboxTexture;
 }
 
-function loadModels() {
+function loadModels() 
+{
   const loadingScreen = document.getElementById("loading-screen");
   const progressBar = document.getElementById("progress-bar");
   loadingScreen.style.display = "block";
 
   const loader = new GLTFLoader();
-
   function onProgress(xhr) {
     if (xhr.lengthComputable) {
       const percentComplete = (xhr.loaded / xhr.total) * 100;
       progressBar.style.width = percentComplete + "%";
     }
   }
-
   const satLoader = new GLTFLoader();
   satLoader.load(
     "../src/assets/models/saturn.glb",
@@ -277,33 +213,17 @@ function loadModels() {
         saturnConfig.scale,
         saturnConfig.scale
       );
-
       planet.traverse((child) => {
         if (child.isMesh) {
           const oldMaterial = child.material;
           if (oldMaterial.isGLTFSpecularGlossinessMaterial) {
             const newMaterial = new THREE.MeshStandardMaterial({
               map: oldMaterial.map,
-              color: oldMaterial.color,
-              metalness: 0.1,
-              roughness: 0.7,
-              normalMap: oldMaterial.normalMap,
-              emissive: oldMaterial.emissive,
-              emissiveMap: oldMaterial.emissiveMap,
-              emissiveIntensity: oldMaterial.emissiveIntensity,
-              alphaMap: oldMaterial.alphaMap,
-              transparent: oldMaterial.transparent,
-              opacity: oldMaterial.opacity,
-              side: oldMaterial.side,
-              envMap: oldMaterial.envMap,
-              lightMap: oldMaterial.lightMap,
-              lightMapIntensity: oldMaterial.lightMapIntensity,
             });
             child.material = newMaterial;
           }
         }
       });
-
       scene.add(planet);
     },
     onProgress,
@@ -329,7 +249,6 @@ function loadModels() {
           child.receiveShadow = true;
         }
       });
-
       scene.add(model);
 
       if (menuObject2) scene.add(menuObject2);
@@ -346,7 +265,6 @@ function loadModels() {
       screenObject1.material = material;
       screenObject2.material = material;
       screenObject3.material = material;
-
       loadingScreen.style.display = "none";
     },
     onProgress,
@@ -364,21 +282,8 @@ function initLights() {
   const target = new THREE.Object3D();
   target.position.set(100, 0, -100);
   sunLight.target = target;
-  sunLight.shadow.camera.near = 0.1;
-  sunLight.shadow.camera.far = 20;
-  sunLight.shadow.camera.left = -10;
-  sunLight.shadow.camera.right = 10;
-  sunLight.shadow.camera.top = 10;
-  sunLight.shadow.camera.bottom = -10;
 
   scene.add(sunLight);
-}
-
-function initControls() {
-  controls = new FlyControls(camera, renderer.domElement);
-  controls.movementSpeed = 20000;
-  controls.rollSpeed = Math.PI / 2;
-  controls.dragToLook = true;
 }
 
 function onWindowResize() {
@@ -424,50 +329,10 @@ export function switchwindow(screen) {
   }
 }
 
-function onMouseClick(event) {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-
-  if (screenObject1 && !onScreen) {
-    const intersects1 = raycaster.intersectObject(screenObject1, true);
-    const intersects2 = raycaster.intersectObject(screenObject2, true);
-    const intersects3 = raycaster.intersectObject(screenObject3, true);
-
-    if (intersects1.length > 0) {
-      animateCameraToTarget(
-        new THREE.Vector3(-0.2, 5.257378802731586, -0.8900580859235202),
-        { x: Math.PI / 3, y: 0, z: 0 },
-        1
-      );
-    } else if (intersects2.length > 0) {
-      animateCameraToTarget(
-        new THREE.Vector3(
-          1.9765430745879866,
-          3.434172967891374,
-          -0.9419868064632663
-        ),
-        { x: Math.PI / 3.2, y: Math.PI / -5.5, z: -Math.PI / 12 },
-        3
-      );
-    } else if (intersects3.length > 0) {
-      animateCameraToTarget(
-        new THREE.Vector3(
-          -2.559453657498437,
-          3.253545045816075,
-          -0.7922370317858861
-        ),
-        { x: Math.PI / 3.2, y: Math.PI / 5.5, z: -Math.PI / -12 },
-        2
-      );
-    }
-  }
-}
-
 let currentTween = null; 
 
-function animateCameraToTarget(endPosition, endRotation, nb) {
+function animateCameraToTarget(endPosition, endRotation, nb) 
+{
   document.removeEventListener("mousemove", onBaseMouseMove, false);
 
   if (currentTween) {
@@ -527,8 +392,6 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
   });
 }
 
-
-
 export function animateCameraBackToInitialPosition() {
   document.removeEventListener("mousemove", onBaseMouseMove, false);
 
@@ -579,7 +442,6 @@ export function animateCameraBackToInitialPosition() {
 }
 
 function addEventListeners() {
-  window.addEventListener("click", onMouseClick);
   window.addEventListener("resize", onWindowResize);
 }
 
@@ -699,7 +561,6 @@ export function buildScene() {
   initCSSRenderer();
   initSkybox();
   initLights();
-  //initControls();
   loadModels();
   addEventListeners();
   initialCameraRotation.x = camera.rotation.x;
@@ -720,149 +581,14 @@ export function buildScene() {
   animate();
 }
 
-let composer;
-
-const sceneCube = new THREE.Scene();
-const cameraCube = new THREE.PerspectiveCamera(25, 1, 0.1, 1000);
-cameraCube.position.z = 7;
-cameraCube.aspect = 636 / 512;
-cameraCube.updateProjectionMatrix();
-const geometryCube = new THREE.BoxGeometry(1, 1, 1);
-const materialCube = new THREE.MeshStandardMaterial({
-  color: 0xff0000,
-  emissive: 0xff0000,
-  emissiveIntensity: 1,
-});
-const meshCube = new THREE.Mesh(geometryCube, materialCube);
-sceneCube.add(meshCube);
-
-sceneCube.add(new THREE.AmbientLight(0xffffff, 1));
-
-const renderTargetCube = new THREE.WebGLRenderTarget(1024, 1024, {
-  minFilter: THREE.LinearFilter,
-  magFilter: THREE.LinearFilter,
-});
-
-const screenMaterial = new THREE.MeshStandardMaterial({
-  map: renderTargetCube.texture,
-  emissive: 0x000000,
-  emissiveIntensity: 0.1,
-});
-let lastRenderTime = 0;
-const targetFPS = 30;
-const frameInterval = 1000 / targetFPS;
-
-function animate() {
+function animate() 
+{
   requestAnimationFrame(animate);
-
-  const currentTime = Date.now();
-  meshCube.rotation.x += 0.01;
-  meshCube.rotation.y += 0.01;
-  if (currentTime - lastRenderTime >= frameInterval) {
-    lastRenderTime = currentTime;
-
-    renderer.setRenderTarget(renderTargetCube);
-    renderer.render(sceneCube, cameraCube);
-    renderer.setRenderTarget(null);
-  }
-
-  if (composer) {
+  animatePong(renderer);
+  if (composer) 
     composer.render(scene, camera);
-  } else {
+  else 
     renderer.render(scene, camera);
-  }
-
-  if (cssRenderer && scene && camera) {
+  if (cssRenderer && scene && camera) 
     cssRenderer.render(scene, camera);
-  }
-}
-
-export function initWireframeScene() {
-  const wireframeDiv = document.getElementById("wireframe");
-  if (!wireframeDiv) {
-    console.error("Div 'wireframe' not fine");
-    return;
-  }
-
-  const wireframeScene = new THREE.Scene();
-  const wireframeCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-  const wireframeRenderer = new THREE.WebGLRenderer({
-    antialias: true,
-    alpha: true,
-  });
-  const width = wireframeDiv.offsetWidth;
-  const height = wireframeDiv.offsetHeight;
-  wireframeRenderer.setSize(width, height);
-  wireframeDiv.appendChild(wireframeRenderer.domElement);
-
-  let wireframeModel;
-
-  const loader = new GLTFLoader();
-  loader.load(
-    "../src/assets/models/sn14.glb",
-    (gltf) => {
-      wireframeModel = new THREE.Group();
-
-      gltf.scene.traverse((child) => {
-        if (child.isMesh) {
-          const faceMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.2,
-          });
-
-          const wireframeMaterial = new THREE.MeshBasicMaterial({
-            color: 0x66ccff,
-            transparent: true,
-            opacity: 1,
-            wireframe: true,
-          });
-
-          const faceMesh = child.clone();
-          faceMesh.material = faceMaterial;
-
-          const wireframeMesh = child.clone();
-          wireframeMesh.material = wireframeMaterial;
-
-          wireframeModel.add(faceMesh);
-          wireframeModel.add(wireframeMesh);
-        }
-      });
-
-      wireframeModel.scale.set(0.1, 0.1, 0.1);
-      wireframeModel.rotation.set(Math.PI, 0, 0);
-      wireframeModel.position.set(0, 0, 0);
-      wireframeScene.add(wireframeModel);
-      wireframeCamera.position.set(0, -60, -60);
-      wireframeCamera.aspect = width / height;
-      wireframeCamera.updateProjectionMatrix();
-      wireframeCamera.lookAt(
-        wireframeModel.position.x,
-        wireframeModel.position.y - 20,
-        wireframeModel.position.z
-      );
-      function animateWireframe() {
-        requestAnimationFrame(animateWireframe);
-
-        if (wireframeModel) {
-          wireframeModel.rotation.z += 0.004;
-        }
-        wireframeRenderer.render(wireframeScene, wireframeCamera);
-      }
-      animateWireframe();
-    },
-    undefined,
-    (error) => {
-      console.error("Error on wireframe loading :", error);
-    }
-  );
-
-  function onWireframeResize() {
-    const newWidth = wireframeDiv.offsetWidth;
-    const newHeight = wireframeDiv.offsetHeight;
-    wireframeRenderer.setSize(newWidth, newHeight);
-    wireframeCamera.aspect = newWidth / newHeight;
-    wireframeCamera.updateProjectionMatrix();
-  }
-  window.addEventListener("resize", onWireframeResize);
 }
