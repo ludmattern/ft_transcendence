@@ -15,6 +15,7 @@ import { game2 } from "/src/components/game2.js";
 import { midScreen } from "/src/components/midScreen.js";
 import { HelmetSVG } from "/src/components/HelmetSVG.js";
 import { HUDSVG } from "/src/components/HUDSVG.js";
+import { Footer } from "/src/components/footer.js";
 import { buildScene } from "/src/3d/mainScene.js";
 
 
@@ -50,18 +51,9 @@ function loadSVGComponents() {
 // Composants à charger après authentification
 function loadAuthenticatedComponents() {
   loadComponent("header-placeholder", Header, "", () => {});
-  loadComponent(
-    "left-window-placeholder",
-    LeftSideWindow,
-    "leftsidewindow",
-    () => {}
-  );
-  loadComponent(
-    "right-window-placeholder",
-    RightSideWindow,
-    "rightsidewindow",
-    () => {}
-  );
+  loadComponent("footer-placeholder", Footer, "footer", () => {});
+  loadComponent("left-window-placeholder", LeftSideWindow, "leftsidewindow", () => {});
+  loadComponent("right-window-placeholder", RightSideWindow, "rightsidewindow", () => {});
   loadComponent("race-placeholder", game2, "", () => {});
   loadComponent("mid-placeholder", midScreen, "", () => {});
   loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {});

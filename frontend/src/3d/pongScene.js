@@ -1,7 +1,7 @@
 import * as THREE from "https://esm.sh/three";
 
-export const sceneCube = new THREE.Scene();
-export const cameraCube = new THREE.PerspectiveCamera(25, 636 / 512, 0.1, 1000);
+const sceneCube = new THREE.Scene();
+const cameraCube = new THREE.PerspectiveCamera(25, 636 / 512, 0.1, 1000);
 cameraCube.position.z = 7;
 
 const geometryCube = new THREE.BoxGeometry(1, 1, 1);
@@ -15,7 +15,7 @@ sceneCube.add(meshCube);
 
 sceneCube.add(new THREE.AmbientLight(0xffffff, 1));
 
-export const renderTargetCube = new THREE.WebGLRenderTarget(1024, 1024, {
+const renderTargetCube = new THREE.WebGLRenderTarget(1024, 1024, {
   minFilter: THREE.LinearFilter,
   magFilter: THREE.LinearFilter,
 });
