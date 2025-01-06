@@ -469,8 +469,16 @@ function onMouseClick(event) {
   }
 }
 
+let currentTween = null; 
+
 function animateCameraToTarget(endPosition, endRotation, nb) {
   document.removeEventListener("mousemove", onBaseMouseMove, false);
+
+  if (currentTween) {
+    currentTween.kill();
+    camera.position.copy(camera.position); 
+    camera.quaternion.copy(camera.quaternion); 
+  }
 
   const startPosition = camera.position.clone();
   const startQuaternion = camera.quaternion.clone();
@@ -490,10 +498,8 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
     endQuaternion.w *= -1;
   }
 
-  //controls.enabled = false;
-
   const dummy = { t: 0 };
-  gsap.to(dummy, {
+  currentTween = gsap.to(dummy, {
     duration: 2,
     t: 1,
     ease: "power2.inOut",
@@ -504,7 +510,7 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
       headIsMoving(camera.rotation.y);
     },
     onComplete: () => {
-      //controls.enabled = true;
+      currentTween = null;
       if (nb == 1) {
         screenObject1.material = screenMaterial;
         menuElement.classList.remove("active");
@@ -513,18 +519,20 @@ function animateCameraToTarget(endPosition, endRotation, nb) {
         menuElement2.classList.remove("active");
       }
       if (nb == 3) {
-        screenObject3.materal = screenMaterial;
+        screenObject3.material = screenMaterial;
         menuElement3.classList.remove("active");
       }
       initialCameraRotation.x = camera.rotation.x;
       initialCameraRotation.y = camera.rotation.y;
       cameraRotation.x = camera.rotation.x;
       cameraRotation.y = camera.rotation.y;
-      document.addEventListener("mousemove", onBaseMouseMove, false);
       onScreen = true;
+      document.addEventListener("mousemove", onBaseMouseMove, false);
     },
   });
 }
+
+
 
 export function animateCameraBackToInitialPosition() {
   document.removeEventListener("mousemove", onBaseMouseMove, false);
