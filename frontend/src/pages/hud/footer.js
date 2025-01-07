@@ -1,4 +1,4 @@
-import { addCameraRotationListener, toggleFreeView } from '/src/3d/mainScene.js';
+import { addCameraRotationListener, toggleFreeView } from '/src/3d/freeViewHandler.js';
 
 const points = document.querySelectorAll(".point");
 const compass = document.querySelector(".compass");

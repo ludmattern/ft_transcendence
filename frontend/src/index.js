@@ -1,4 +1,4 @@
-import { switchwindow } from "/src/3d/mainScene.js";
+import { switchwindow } from "/src/3d/animation.js";
 import { loadComponent } from "/src/utils/dom_utils.js";
 import { LoginForm } from "/src/components/loginForm.js";
 import { ProfileForm } from "/src/components/profileForm.js";
@@ -16,7 +16,7 @@ import { midScreen } from "/src/components/midScreen.js";
 import { HelmetSVG } from "/src/components/HelmetSVG.js";
 import { HUDSVG } from "/src/components/HUDSVG.js";
 import { Footer } from "/src/components/footer.js";
-import { buildScene } from "/src/3d/mainScene.js";
+import { buildScene } from "/src/3d/main.js";
 
 async function initializeApp() {
   loadSVGComponents();
