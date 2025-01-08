@@ -31,6 +31,7 @@ export function initCamera() {
   
     Store.scene.add(Store.camera);
   }
+
 export function initRenderer() {
     Store.renderer = new THREE.WebGLRenderer({ antialias: true });
     Store.renderer.setSize(window.innerWidth, window.innerHeight);

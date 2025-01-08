@@ -1,4 +1,3 @@
-// mainWithStore.js
 import * as THREE from "https://esm.sh/three";
 
 import Store from './store.js';

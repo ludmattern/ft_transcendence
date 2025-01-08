@@ -30,7 +30,7 @@ export function switchwindow(screen) {
     }
   }
   
-  // =============== GASP ANIMATION ===============
+  // =============== GSAP ANIMATION ===============
   export function animateCameraToTarget(endPosition, endRotation, nb) {
     document.removeEventListener("mousemove", onBaseMouseMove, false);
   
