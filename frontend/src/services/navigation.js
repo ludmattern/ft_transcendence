@@ -1,9 +1,6 @@
 import { loadComponent } from "/src/utils/dom_utils.js";
 import { setActiveLink } from "/src/index.js"
 import { switchwindow } from "/src/3d/animation.js";
-import { otherProfileForm } from "/src/components/otherProfileForm.js";
-import { SettingsForm } from "/src/components/settingsForm.js";
-import { LogoutForm } from "/src/components/logoutForm.js";
 import { renderPage } from "/src/pages/hud/pageRenderer.js";
 
 export function navigateToSocial() {
@@ -60,18 +57,18 @@ export function navigateToOtherProfile(argument) {
 	if (argument) {
 	  renderPage("otherprofile");
 	  document.getElementById("blur-screen-effect").classList.remove("d-none");
-	  setActiveLink(null);
+	  setActiveLink("social-link");
 	}
   }
   
 export function navigateToSettings() {
-	loadComponent("#central-window", SettingsForm, "settingsForm", () => {});
+	renderPage("settings");
 	document.getElementById("blur-screen-effect").classList.remove("d-none");
 	setActiveLink("settings-link");
   }
   
 export function navigateToLogout() {
-	loadComponent("#central-window", LogoutForm, "", () => {});
+	renderPage("logout");
 	document.getElementById("blur-screen-effect").classList.remove("d-none");
 	setActiveLink("logout-link");
   }

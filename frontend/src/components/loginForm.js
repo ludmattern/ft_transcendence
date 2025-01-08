@@ -3,6 +3,7 @@ import { testloadComponent } from "/src/utils/virtualDOM.js";
 import { subscribeForm } from "/src/components/subscribeForm.js"; // Exemple d'un sous-composant
 import { unloadComponent } from "/src/utils/virtualDOM.js";
 import { handleRoute } from "/src/services/router.js";
+import { loginUser } from "/src/services/auth.js";
 
 export const loginForm = createComponent({
   tag: "loginForm",
@@ -38,9 +39,27 @@ export const loginForm = createComponent({
       console.info("SubscribeForm loaded on click.");
     });
 
-    el.querySelector("form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      console.log("Login submitted!");
-    });
+	el.querySelector("form").addEventListener("submit", async (e) => {
+		e.preventDefault(); // Empêche la soumission par défaut du formulaire
+	  
+		// Récupère les valeurs des champs
+		const pilotId = el.querySelector("#pilot-id").value;
+		const password = el.querySelector("#password").value;
+	  
+		try {
+		  // Appelle la fonction asynchrone et attend sa réponse
+		  await loginUser(pilotId, password);
+	  
+		  // Si la promesse est résolue, on redirige vers "/"
+		  handleRoute("/");
+		  console.log("Login successful!");
+		} catch (err) {
+		  // Si la promesse est rejetée, on affiche une erreur
+		  console.error("Login failed:", err.message);
+		  alert("Login failed! Please try again.");
+		}
+	  
+		console.log("Login submitted!");
+	  });
   },
 });

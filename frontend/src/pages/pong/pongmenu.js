@@ -5,4 +5,4 @@ import { initWireframeScene } from '/src/3d/wireframeScene.js';
 initM1();
 initM2();
 initM3();
-initWireframeScene();
+// initWireframeScene();

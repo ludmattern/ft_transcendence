@@ -30,3 +30,33 @@ export async function ensureAuthenticated(callback, allowUnauthenticated = false
 	history.pushState(null, "", route);
 	return false;
   }
+
+  export async function logoutUser() {
+	// Simule une requête API pour déconnecter l'utilisateur
+	return new Promise((resolve, reject) => {
+	  setTimeout(() => {
+		const success = true; // Simule un succès (ou remplace par une logique réelle)
+		if (success) {
+		  localStorage.removeItem('authToken'); // Suppression du jeton local
+		  resolve();
+		} else {
+		  reject(new Error('Logout failed!'));
+		}
+	  }, 500); // Délai simulé
+	});
+  }
+  
+  export async function loginUser(username, password) {
+	// Simule une requête API pour connecter l'utilisateur
+	return new Promise((resolve, reject) => {
+	  setTimeout(() => {
+		const success = true; // Simule un succès (ou remplace par une logique réelle)
+		if (success) {
+		  localStorage.setItem('authToken', '1234567890'); // Stockage du jeton local
+		  resolve();
+		} else {
+		  reject(new Error('Login failed!'));
+		}
+	  }, 500); // Délai simulé
+	});
+  }

@@ -7,31 +7,28 @@ import { game2 } from "/src/components/game2.js";
 import { midScreen } from "/src/components/midScreen.js";
 import { HelmetSVG } from "/src/components/HelmetSVG.js";
 import { HUDSVG } from "/src/components/HUDSVG.js";
-import { Footer } from "/src/components/footer.js";
 import { buildScene } from "/src/3d/main.js";
 import { isClientAuthenticated } from "/src/services/auth.js";
 import { handleRoute } from "/src/services/router.js";
 import { navigateToLogin } from "/src/services/navigation.js";
 
 async function initializeApp() {
-
-	console.log("App initialized");
+  console.log("App initialized");
   loadSVGComponents();
 
   const isAuthenticated = await isClientAuthenticated();
 
   if (!isAuthenticated) {
-    navigateToLogin();
-    return;
+    handleRoute("/login");
+  } else {
+    document.getElementById("waiting-screen-effect").classList.add("d-none");
+    handleRoute(window.location.pathname);
   }
 
+  loadComponent("race-placeholder", game2, "", () => {});
+  loadComponent("mid-placeholder", midScreen, "", () => {});
+  loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {});
   buildScene();
-
-  document.getElementById("waiting-screen-effect").classList.add("d-none");
-  document.getElementById("blur-screen-effect").classList.add("d-none");
-
-  loadAuthenticatedComponents();
-  handleRoute(window.location.pathname); 
 }
 
 function loadSVGComponents() {
@@ -39,16 +36,6 @@ function loadSVGComponents() {
     loadComponent("helmet-svg-placeholder", HelmetSVG, "", () => {});
     loadComponent("hud-svg-placeholder", HUDSVG, "", () => {});
   });
-}
-
-function loadAuthenticatedComponents() {
-//   loadComponent("header-placeholder", Header, "", () => {});
-  loadComponent("footer-placeholder", Footer, "footer", () => {});
-  loadComponent("left-window-placeholder", LeftSideWindow, "leftsidewindow", () => {});
-  loadComponent("right-window-placeholder", RightSideWindow, "rightsidewindow", () => {});
-  loadComponent("race-placeholder", game2, "", () => {});
-  loadComponent("mid-placeholder", midScreen, "", () => {});
-  loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {});
 }
 
 export function setActiveLink(linkId) {
