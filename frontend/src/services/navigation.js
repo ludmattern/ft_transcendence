@@ -1,40 +1,43 @@
-import { testloadComponent } from "/src/utils/virtualDOM.js";
 import { loadComponent } from "/src/utils/dom_utils.js";
 import { setActiveLink } from "/src/index.js"
 import { switchwindow } from "/src/3d/animation.js";
-import { ProfileForm } from "/src/components/profileForm.js";
-import { OtherProfileForm } from "/src/components/otherProfileForm.js";
+import { otherProfileForm } from "/src/components/otherProfileForm.js";
 import { SettingsForm } from "/src/components/settingsForm.js";
 import { LogoutForm } from "/src/components/logoutForm.js";
-import { SocialForm } from "/src/components/socialForm.js";
-import { renderLoginPage } from "/src/pages/hud/loginPage.js";
-import { renderSubscribePage } from "/src/pages/hud/subscribePage.js";
+import { renderPage } from "/src/pages/hud/pageRenderer.js";
 
 export function navigateToSocial() {
-	loadComponent("#central-window", SocialForm, "socialForm", () => {});
+	renderPage("social");
 	document.getElementById("blur-screen-effect").classList.remove("d-none");
 	setActiveLink("social-link");
   }
   
 export function navigateToLogin() {
-	renderLoginPage();
-	console.debug("LoginForm loaded as user is not authenticated.");
+	renderPage("login");
+	document.getElementById("blur-screen-effect").classList.remove("d-none");
   }
 
 export function navigateToSubscribe() {
-	renderSubscribePage();
-	console.debug("SubscribeForm loaded as user is not authenticated.");
+	renderPage("subscribe");
+	document.getElementById("blur-screen-effect").classList.remove("d-none");
   }
   
+export function navigateToDeleteAccount()
+{
+	renderPage("deleteAccount");
+	document.getElementById("blur-screen-effect").classList.remove("d-none");
+	setActiveLink("settings-link");
+}
+
 export function navigateToHome() {
 	switchwindow(null);
-	loadComponent("#central-window", null, "", () => {});
+	renderPage("home");
 	document.getElementById("blur-screen-effect").classList.add("d-none");
 	setActiveLink(null);
   }
   
 export function navigateToProfile() {
-	loadComponent("#central-window", ProfileForm, "", () => {});
+	renderPage("profile");
 	document.getElementById("blur-screen-effect").classList.remove("d-none");
 	setActiveLink("profile-link");
   }
@@ -55,7 +58,7 @@ export function navigateToRace() {
   
 export function navigateToOtherProfile(argument) {
 	if (argument) {
-	  loadComponent("#central-window", OtherProfileForm, "", () => {});
+	  renderPage("otherprofile");
 	  document.getElementById("blur-screen-effect").classList.remove("d-none");
 	  setActiveLink(null);
 	}

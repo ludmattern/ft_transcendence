@@ -1,5 +1,5 @@
 import { loadComponent } from "/src/utils/dom_utils.js";
-import { Header } from "/src/components/header.js";
+// import { Header } from "/src/components/header.js";
 import { LeftSideWindow } from "/src/components/leftSideWindow.js";
 import { RightSideWindow } from "/src/components/rightSideWindow.js";
 import { PongMenu } from "/src/components/pongMenu.js";
@@ -32,7 +32,6 @@ async function initializeApp() {
 
   loadAuthenticatedComponents();
   handleRoute(window.location.pathname); 
-  setupEventListeners();
 }
 
 function loadSVGComponents() {
@@ -43,7 +42,7 @@ function loadSVGComponents() {
 }
 
 function loadAuthenticatedComponents() {
-  loadComponent("header-placeholder", Header, "", () => {});
+//   loadComponent("header-placeholder", Header, "", () => {});
   loadComponent("footer-placeholder", Footer, "footer", () => {});
   loadComponent("left-window-placeholder", LeftSideWindow, "leftsidewindow", () => {});
   loadComponent("right-window-placeholder", RightSideWindow, "rightsidewindow", () => {});
@@ -63,29 +62,6 @@ export function setActiveLink(linkId) {
   if (activeLink) {
     activeLink.classList.add("active");
   }
-}
-
-function setupEventListeners() {
-  const navigationLinks = {
-    "home-link": "/",
-    "profile-link": "/profile",
-    "pong-link": "/pong",
-    "race-link": "/race",
-    "social-link": "/social",
-    "settings-link": "/settings",
-    "logout-link": "/logout",
-  };
-
-  Object.entries(navigationLinks).forEach(([linkId, route]) => {
-    const linkElement = document.getElementById(linkId);
-    if (linkElement) {
-      linkElement.addEventListener("click", (e) => {
-        e.preventDefault();
-        history.pushState(null, "", route);
-        handleRoute(route);
-      });
-    }
-  });
 }
 
 initializeApp();
