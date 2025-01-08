@@ -8,8 +8,10 @@ services:
     networks:
       - backend_network
       - frontend_network
-    volumes:
-      - auth_service_volume:/app
+  #  volumes:
+  #   - auth_service_volume:/app
+    ports:
+      - "8000:8000"
 
   postgres:
     build:
@@ -21,6 +23,7 @@ services:
       - postgres_data_volume:/var/lib/postgresql/data
     networks:
       - backend_network
+
 
   nginx:
     build:
@@ -44,7 +47,7 @@ networks:
     name: frontend_network
 
 volumes:
-  auth_service_volume:
-    name: auth_service_volume
+  #auth_service_volume:
+  #  name: auth_service_volume
   postgres_data_volume:
     name: postgres_data_volume

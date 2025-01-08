@@ -7,7 +7,6 @@ export async function isClientAuthenticated() {
       console.error("Failed to load authenticated.json");
       return false;
     }
-
     const data = await response.json();
 
     return data.token === true;
