@@ -75,6 +75,20 @@ const pages = {
       testloadComponent("#footer-container", footer);
     },
   },
+  race: {
+    components: ["header", "footer"],
+    render: () => {
+      testloadComponent("#header-container", header);
+      testloadComponent("#footer-container", footer);
+    },
+  },
+  pong: {
+    components: ["header", "footer"],
+    render: () => {
+      testloadComponent("#header-container", header);
+      testloadComponent("#footer-container", footer);
+    },
+  },
 };
 
 export function renderPage(pageKey) {

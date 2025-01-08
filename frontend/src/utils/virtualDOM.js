@@ -57,12 +57,13 @@ export function replaceComponent(target, component) {
   testloadComponent(target, component);     // Charge le nouveau
 }
 
+// Décharge les composants inutiles
 export function cleanupComponents(requiredComponents) {
 	const mountedComponents = document.querySelectorAll('[data-component]');
 	mountedComponents.forEach((el) => {
 	  const tag = el.dataset.component;
 	  if (!requiredComponents.includes(tag)) {
-		unloadComponent(tag); // Décharge les composants inutiles
+		unloadComponent(tag);
 	  }
 	});
   }
