@@ -15,7 +15,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Ajoute tes applications ici
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -47,11 +47,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'transcendance.wsgi.application'
-# Pour commencer avec SQLite pour les teste prochaine etape changer avec notre db postge
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'postgres'),
+        'USER': os.getenv('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),
+        'HOST': os.getenv('DB_HOST', 'postgres_db'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
@@ -79,3 +83,18 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+
+
+
+#POUR ADD MANUELEMENT DANS LA DB faire ca sur le shell de django
+
+#from myapp.models import ManualUser
+
+#user = ManualUser.objects.create(
+#    username='jane_doe',
+ #   email='jane@example.com',
+ #   password='super-hash',
+ #   is_2fa_enabled=True
+#)
+#print(user)  # <ManualUser: ManualUser object (123)>
+
