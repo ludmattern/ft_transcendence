@@ -1,5 +1,4 @@
 import { loadComponent } from '/src/utils/dom_utils.js';
-import { navigateToLogin } from '/src/index.js';
 
 document.querySelector('#central-window').addEventListener('click', (e) => {
     if (e.target.matches('#enlist-link')) {

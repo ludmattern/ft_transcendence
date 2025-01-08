@@ -1,3 +1,5 @@
+import { navigateToLogin } from "/src/services/navigation.js";
+
 export async function isClientAuthenticated() {
   try {
     const response = await fetch("/src/context/authenticated.json");
@@ -6,13 +8,21 @@ export async function isClientAuthenticated() {
       return false;
     }
 
-    // Lire et analyser le fichier JSON
     const data = await response.json();
 
-    // Vérifier si le token est à true
     return data.token === true;
   } catch (error) {
     console.error("Error checking authentication:", error);
-    return false; // En cas d'erreur, retourner false
+    return false;
   }
 }
+
+export async function ensureAuthenticated(callback) {
+	const isAuthenticated = await isClientAuthenticated();
+	if (!isAuthenticated) {
+	  navigateToLogin();
+	  return false;
+	}
+	callback();
+	return true;
+  }

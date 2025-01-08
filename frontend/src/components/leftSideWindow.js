@@ -1,5 +1,5 @@
 import { createElement } from "/src/utils/mini_react.js";
-import { handleRoute } from "/src/index.js";
+import { handleRoute } from "/src/services/router.js";
 
 // Generates a nav item with a link
 function createNavItem(label, active = false) {
