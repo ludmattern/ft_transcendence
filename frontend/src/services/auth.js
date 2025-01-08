@@ -16,12 +16,17 @@ export async function isClientAuthenticated() {
   }
 }
 
-export async function ensureAuthenticated(callback) {
+export async function ensureAuthenticated(callback, allowUnauthenticated = false) {
 	const isAuthenticated = await isClientAuthenticated();
-	if (!isAuthenticated) {
-	  navigateToLogin();
-	  return false;
+  
+	// Si l'accès non authentifié est autorisé, exécuter directement le callback
+	if (allowUnauthenticated || isAuthenticated) {
+	  callback();
+	  return true;
 	}
-	callback();
-	return true;
+  
+	// Sinon, rediriger vers la page de connexion
+	navigateToLogin();
+	history.pushState(null, "", route);
+	return false;
   }

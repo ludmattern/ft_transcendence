@@ -88,9 +88,4 @@ function setupEventListeners() {
   });
 }
 
-window.addEventListener("popstate", (event) => {
-  const path = window.location.pathname;
-  handleRoute(path);
-});
-
 initializeApp();

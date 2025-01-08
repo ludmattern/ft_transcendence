@@ -1,12 +1,14 @@
+import { testloadComponent } from "/src/utils/virtualDOM.js";
 import { loadComponent } from "/src/utils/dom_utils.js";
 import { setActiveLink } from "/src/index.js"
 import { switchwindow } from "/src/3d/animation.js";
-import { LoginForm } from "/src/components/loginForm.js";
 import { ProfileForm } from "/src/components/profileForm.js";
 import { OtherProfileForm } from "/src/components/otherProfileForm.js";
 import { SettingsForm } from "/src/components/settingsForm.js";
 import { LogoutForm } from "/src/components/logoutForm.js";
 import { SocialForm } from "/src/components/socialForm.js";
+import { renderLoginPage } from "/src/pages/hud/loginPage.js";
+import { renderSubscribePage } from "/src/pages/hud/subscribePage.js";
 
 export function navigateToSocial() {
 	loadComponent("#central-window", SocialForm, "socialForm", () => {});
@@ -15,8 +17,13 @@ export function navigateToSocial() {
   }
   
 export function navigateToLogin() {
-	loadComponent("#central-window", LoginForm, "loginForm", () => {});
+	renderLoginPage();
 	console.debug("LoginForm loaded as user is not authenticated.");
+  }
+
+export function navigateToSubscribe() {
+	renderSubscribePage();
+	console.debug("SubscribeForm loaded as user is not authenticated.");
   }
   
 export function navigateToHome() {
