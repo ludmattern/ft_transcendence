@@ -983,3 +983,75 @@ p {
 .container-xxl {
   --bs-gutter-x: 0;
 }
+
+footer .body {
+  font-family: sans-serif;
+  justify-content: center;
+  align-items: center;
+  height: 3.77vw;
+  width: 33.54vw;
+  --angle: 0;
+  margin: 0 auto;
+}
+
+footer .compass {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(
+	90deg,
+	transparent,
+	#000 15%,
+	#000 85%,
+	transparent 100%
+  );
+}
+
+footer .points {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+footer .points {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+footer .point.fw-bold {
+  color: white;
+}
+
+footer .point {
+  color: var(--menu-color);
+  position: absolute;
+  font-weight: 700;
+  font-size: clamp(
+	0.8rem,
+	calc(0.8rem + ((100vw - 1920px) * 0.0083333)),
+	1.25rem
+  );
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+footer .point::before {
+  content: "";
+  position: absolute;
+  bottom: 80%;
+  left: calc(50% - 1px);
+  width: 2px;
+  height: 1rem;
+  background: currentColor;
+}
