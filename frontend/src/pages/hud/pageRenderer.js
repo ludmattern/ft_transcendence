@@ -13,117 +13,77 @@ import { logoutForm } from "/src/components/logoutForm.js";
 import { leftSideWindow } from "/src/components/leftSideWindow.js";
 import { rightSideWindow } from "/src/components/rightSideWindow.js";
 
-const pages = {
-  login: {
-    components: ["loginForm"],
-    render: () => testloadComponent("#central-window", loginForm),
-  },
-  profile: {
-    components: ["header", "leftSideWindow", "rightSideWindow", "profileForm", "footer"],
-    render: () => {
-      testloadComponent("#header-container", header);
-	  testloadComponent("#left-window-container", leftSideWindow);
-	  testloadComponent("#right-window-container", rightSideWindow);
-      testloadComponent("#central-window", profileForm);
-      testloadComponent("#footer-container", footer);
-    },
-  },
-  deleteAccount: {
-    components: ["deleteAccountForm", "header", "leftSideWindow", "rightSideWindow", "footer"],
-    render: () => {
-      testloadComponent("#header-container", header);
-	  testloadComponent("#left-window-container", leftSideWindow);
-	  testloadComponent("#right-window-container", rightSideWindow);
-      testloadComponent("#central-window", deleteAccountForm);
-      testloadComponent("#footer-container", footer);
-    },
-  },
-  subscribe: {
-    components: ["subscribeForm"],
-    render: () => testloadComponent("#central-window", subscribeForm),
-  },
-  home: {
-    components: ["header", "leftSideWindow", "rightSideWindow", "footer"],
-    render: () => {
-      testloadComponent("#header-container", header);
-	  testloadComponent("#left-window-container", leftSideWindow);
-	  testloadComponent("#right-window-container", rightSideWindow);
-      testloadComponent("#footer-container", footer);
-    },
-  },
-  social: {
-    components: ["socialForm", "header", "leftSideWindow", "rightSideWindow", "footer"],
-    render: () => {
-      testloadComponent("#header-container", header);
-	  testloadComponent("#left-window-container", leftSideWindow);
-	  testloadComponent("#right-window-container", rightSideWindow);
-      testloadComponent("#central-window", socialForm);
-      testloadComponent("#footer-container", footer);
-    },
-  },
-  otherprofile: {
-    components: ["otherProfileForm", "header", "leftSideWindow", "rightSideWindow", "footer"],
-    render: () => {
-      testloadComponent("#header-container", header);
-	  testloadComponent("#left-window-container", leftSideWindow);
-	  testloadComponent("#right-window-container", rightSideWindow);
-      testloadComponent("#central-window", otherProfileForm);
-      testloadComponent("#footer-container", footer);
-    },
-  },
-  settings: {
-    components: ["header", "leftSideWindow", "rightSideWindow", "settingsForm", "footer"],
-    render: () => {
-      testloadComponent("#header-container", header);
-	  testloadComponent("#left-window-container", leftSideWindow);
-	  testloadComponent("#right-window-container", rightSideWindow);
-      testloadComponent("#central-window", settingsForm);
-      testloadComponent("#footer-container", footer);
-    },
-  },
-  logout: {
-    components: ["header", "leftSideWindow", "rightSideWindow", "footer", "logoutForm"],
-    render: () => {
-		testloadComponent("#header-container", header);
-		testloadComponent("#left-window-container", leftSideWindow);
-		testloadComponent("#right-window-container", rightSideWindow);
-		testloadComponent("#central-window", logoutForm);
-      testloadComponent("#footer-container", footer);
-    },
-  },
-  race: {
-    components: ["header", "leftSideWindow", "rightSideWindow", "footer"],
-    render: () => {
-      testloadComponent("#header-container", header);
-	  testloadComponent("#left-window-container", leftSideWindow);
-	  testloadComponent("#right-window-container", rightSideWindow);
-      testloadComponent("#footer-container", footer);
-    },
-  },
-  pong: {
-    components: ["header", "leftSideWindow", "rightSideWindow", "footer"],
-    render: () => {
-      testloadComponent("#header-container", header);
-	  testloadComponent("#left-window-container", leftSideWindow);
-	  testloadComponent("#right-window-container", rightSideWindow);
-      testloadComponent("#footer-container", footer);
-    },
-  },
+/**
+ * Composants globaux par défaut
+ */
+const globalComponents = {
+  header: { selector: "#header-container", component: header },
+  leftSideWindow: { selector: "#left-window-container", component: leftSideWindow },
+  rightSideWindow: { selector: "#right-window-container", component: rightSideWindow },
+  footer: { selector: "#footer-container", component: footer },
 };
 
-export function renderPage(pageKey) {
-  const page = pages[pageKey];
+/**
+ * Définition des pages
+ */
+const pages = {
+  login: 			{ useGlobals: false, mainComponent: loginForm },
+  profile: 			{ useGlobals: true, mainComponent: profileForm },
+  deleteAccount: 	{ useGlobals: true, mainComponent: deleteAccountForm },
+  subscribe: 		{ useGlobals: false, mainComponent: subscribeForm },
+  social: 			{ useGlobals: true, mainComponent: socialForm },
+  otherprofile: 	{ useGlobals: true, mainComponent: otherProfileForm },
+  settings: 		{ useGlobals: true, mainComponent: settingsForm },
+  logout: 			{ useGlobals: true, mainComponent: logoutForm },
+  home: 			{ useGlobals: true },
+  race: 			{ useGlobals: true },
+  pong: 			{ useGlobals: true },
+};
 
+/**
+ * Sélecteur par défaut pour le composant principal
+ */
+const defaultSelector = "#central-window";
+
+/**
+ * Génère une liste complète de composants à rendre pour une page donnée.
+ * @param {string} pageKey - Clé de la page
+ * @returns {Array} - Liste des composants à rendre
+ */
+function getComponentsForPage(pageKey) {
+  const page = pages[pageKey];
   if (!page) {
     console.warn(`Page "${pageKey}" introuvable.`);
-    return;
+    return [];
   }
 
+  const global = page.useGlobals ? Object.values(globalComponents) : [];
+  const specific = page.mainComponent
+    ? [{ selector: defaultSelector, component: page.mainComponent }]
+    : [];
+
+  return [...global, ...specific];
+}
+
+/**
+ * Rendu des pages
+ * @param {string} pageKey - Nom de la page à rendre
+ */
+export function renderPage(pageKey) {
   console.debug(`Rendering ${pageKey} Page...`);
 
-  cleanupComponents(page.components);
+  const componentsToRender = getComponentsForPage(pageKey);
 
-  page.render();
+  // Liste des noms des composants pour le nettoyage
+  const componentKeys = componentsToRender.map(({ component }) => component.tag);
+
+  // Nettoie les composants existants
+  cleanupComponents(componentKeys);
+
+  // Charge les nouveaux composants
+  componentsToRender.forEach(({ selector, component }) => {
+    testloadComponent(selector, component);
+  });
 
   console.debug(`${pageKey} Page rendered.`);
 }

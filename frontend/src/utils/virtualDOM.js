@@ -4,7 +4,7 @@ const mountedComponents = {}; // Suivi des composants montés
 export function testloadComponent(target, component) {
   // Vérifier si déjà monté
   if (mountedComponents[component.tag]) {
-    console.warn(`${component.tag} est déjà monté.`);
+    console.debug(`${component.tag} est déjà monté.`);
     return;
   }
 
