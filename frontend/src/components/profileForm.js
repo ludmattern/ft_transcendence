@@ -1,6 +1,4 @@
 import { createComponent } from '/src/utils/component.js';
-// import { testloadComponent } from '/src/utils/virtualDOM.js';
-// import { otherProfileForm } from '/src/components/otherProfileForm.js'; // Suppose que ce composant existe
 
 export const profileForm = createComponent({
   tag: 'profileForm',

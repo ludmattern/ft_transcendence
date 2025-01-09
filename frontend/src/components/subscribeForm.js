@@ -1,8 +1,8 @@
-import { createComponent } from '/src/utils/component.js';
-import { handleRoute } from '/src/services/router.js';
+import { createComponent } from "/src/utils/component.js";
+import { handleRoute } from "/src/services/router.js";
 
 export const subscribeForm = createComponent({
-  tag: 'subscribeForm',
+  tag: "subscribeForm",
 
   // Générer le HTML
   render: () => `
@@ -52,24 +52,24 @@ export const subscribeForm = createComponent({
   // Ajouter les événements après le chargement
   attachEvents: (el) => {
     // Gestion du clic sur "Log In"
-    el.querySelector('#login-link').addEventListener('click', (e) => {
+    el.querySelector("#login-link").addEventListener("click", (e) => {
       e.preventDefault();
-	  handleRoute('/login');
-      console.debug('LoginForm loaded on click.');
+      handleRoute("/login");
+      console.debug("LoginForm loaded on click.");
     });
 
     // Gestion de la soumission du formulaire
-    el.querySelector('form').addEventListener('submit', (e) => {
+    el.querySelector("form").addEventListener("submit", (e) => {
       e.preventDefault();
-      console.log('Subscription form submitted!');
+      console.log("Subscription form submitted!");
 
       // Exemple : validation simple
-      const id = el.querySelector('#new-pilot-id').value;
-      const password = el.querySelector('#new-password').value;
-      const confirmPassword = el.querySelector('#confirm-password').value;
+      const id = el.querySelector("#new-pilot-id").value;
+      const password = el.querySelector("#new-password").value;
+      const confirmPassword = el.querySelector("#confirm-password").value;
 
       if (password !== confirmPassword) {
-        alert('Passwords do not match!');
+        alert("Passwords do not match!");
       } else {
         console.log(`User ${id} registered successfully.`);
       }

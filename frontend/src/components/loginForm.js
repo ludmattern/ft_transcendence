@@ -32,31 +32,31 @@ export const loginForm = createComponent({
   attachEvents: (el) => {
     el.querySelector("#enlist-link").addEventListener("click", (e) => {
       e.preventDefault();
-	  handleRoute("/subscribe");
+      handleRoute("/subscribe");
       console.info("SubscribeForm loaded on click.");
     });
 
-	el.querySelector("form").addEventListener("submit", async (e) => {
-		e.preventDefault(); // Empêche la soumission par défaut du formulaire
-	  
-		// Récupère les valeurs des champs
-		const pilotId = el.querySelector("#pilot-id").value;
-		const password = el.querySelector("#password").value;
-	  
-		try {
-		  // Appelle la fonction asynchrone et attend sa réponse
-		  await loginUser(pilotId, password);
-	  
-		  // Si la promesse est résolue, on redirige vers "/"
-		  handleRoute("/");
-		  console.log("Login successful!");
-		} catch (err) {
-		  // Si la promesse est rejetée, on affiche une erreur
-		  console.error("Login failed:", err.message);
-		  alert("Login failed! Please try again.");
-		}
-	  
-		console.log("Login submitted!");
-	  });
+    el.querySelector("form").addEventListener("submit", async (e) => {
+      e.preventDefault(); // Empêche la soumission par défaut du formulaire
+
+      // Récupère les valeurs des champs
+      const pilotId = el.querySelector("#pilot-id").value;
+      const password = el.querySelector("#password").value;
+
+      try {
+        // Appelle la fonction asynchrone et attend sa réponse
+        await loginUser(pilotId, password);
+
+        // Si la promesse est résolue, on redirige vers "/"
+        handleRoute("/");
+        console.log("Login successful!");
+      } catch (err) {
+        // Si la promesse est rejetée, on affiche une erreur
+        console.error("Login failed:", err.message);
+        alert("Login failed! Please try again.");
+      }
+
+      console.log("Login submitted!");
+    });
   },
 });

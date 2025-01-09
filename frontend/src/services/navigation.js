@@ -1,4 +1,3 @@
-import { loadComponent } from "/src/utils/dom_utils.js";
 import { setActiveLink } from "/src/index.js";
 import { switchwindow } from "/src/3d/animation.js";
 import { renderPage } from "/src/pages/hud/pageRenderer.js";

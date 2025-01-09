@@ -1,32 +1,37 @@
 import { ensureAuthenticated } from "/src/services/auth.js";
-import { header } from "/src/components/header.js";
-import { testloadComponent, unloadComponent } from "/src/utils/virtualDOM.js";
-import { 
-  navigateToSubscribe, navigateToLogin, navigateToHome, navigateToProfile, 
-  navigateToPong, navigateToRace, navigateToSocial, navigateToSettings, 
-  navigateToLogout, navigateToOtherProfile, navigateToDeleteAccount 
+import {
+  navigateToSubscribe,
+  navigateToLogin,
+  navigateToHome,
+  navigateToProfile,
+  navigateToPong,
+  navigateToRace,
+  navigateToSocial,
+  navigateToSettings,
+  navigateToLogout,
+  navigateToOtherProfile,
+  navigateToDeleteAccount,
 } from "/src/services/navigation.js";
 
 let previousRoute = null;
 
-window.addEventListener('popstate', () => {
+window.addEventListener("popstate", () => {
   const route = window.location.pathname; // Récupère l'URL actuelle
   handleRoute(route); // Appelle la gestion des routes avec la nouvelle URL
 });
 
 export async function handleRoute(route) {
   console.debug(`Handling route: ${route}`);
-  
+
   if (window.location.pathname !== route) {
     previousRoute = window.location.pathname; // Met à jour la previousRoute
   }
 
   const unauthenticatedRoutes = ["/login", "/subscribe"];
-  
-  const isUnauthenticatedRoute = unauthenticatedRoutes.includes(route);
-  
-  ensureAuthenticated(() => {
 
+  const isUnauthenticatedRoute = unauthenticatedRoutes.includes(route);
+
+  ensureAuthenticated(() => {
     // Gestion des routes
     switch (true) {
       case route === "/":
@@ -47,14 +52,14 @@ export async function handleRoute(route) {
       case route === "/settings":
         navigateToSettings();
         break;
-	  case route === "/settings/delete-account":
-		navigateToDeleteAccount();
-		break;
+      case route === "/settings/delete-account":
+        navigateToDeleteAccount();
+        break;
       case route === "/logout":
         navigateToLogout();
         break;
       case route.startsWith("/social?pilot="):
-		console.error(`Route: ${route}`);
+        console.error(`Route: ${route}`);
         const pilot = route.split("=")[1];
         console.debug(`Pilot: ${pilot}`);
         navigateToOtherProfile(pilot);
@@ -70,7 +75,7 @@ export async function handleRoute(route) {
         break;
     }
   }, isUnauthenticatedRoute); // Passe le flag pour permettre l'accès libre
-  
+
   if (window.location.pathname !== route) {
     history.pushState(null, "", route);
   }

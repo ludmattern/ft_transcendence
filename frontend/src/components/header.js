@@ -1,8 +1,8 @@
-import { createComponent } from '/src/utils/component.js';
-import { handleRoute } from '/src/services/router.js';
+import { createComponent } from "/src/utils/component.js";
+import { handleRoute } from "/src/services/router.js";
 
 export const header = createComponent({
-  tag: 'header',
+  tag: "header",
 
   // Générer le HTML
   render: () => `
@@ -18,8 +18,8 @@ export const header = createComponent({
           <ul class="nav">
             <!-- Menu gauche -->
             <span class="left-menu">
-              ${createNavItem('profile', 'profile-link')}
-              ${createNavItem('social', 'social-link')}
+              ${createNavItem("profile", "profile-link")}
+              ${createNavItem("social", "social-link")}
             </span>
             <!-- Jeux (Menu central) -->
             <li class="nav-item first-game">
@@ -34,8 +34,8 @@ export const header = createComponent({
             </li>
             <!-- Menu droit -->
             <span class="right-menu">
-              ${createNavItem('settings', 'settings-link')}
-              ${createNavItem('logout', 'logout-link')}
+              ${createNavItem("settings", "settings-link")}
+              ${createNavItem("logout", "logout-link")}
             </span>
           </ul>
         </nav>
@@ -74,7 +74,7 @@ export const header = createComponent({
  * @param {string} id - L'ID de l'élément <a>
  * @returns {string} - HTML du menu de navigation
  */
-function createNavItem(text, id = '') {
+function createNavItem(text, id = "") {
   return `
     <li class="nav-item">
       <span class="nav-link text-white">

@@ -1,5 +1,4 @@
 import { testloadComponent, cleanupComponents } from "/src/utils/virtualDOM.js";
-
 import { loginForm } from "/src/components/loginForm.js";
 import { profileForm } from "/src/components/profileForm.js";
 import { socialForm } from "/src/components/socialForm.js";
@@ -18,8 +17,14 @@ import { rightSideWindow } from "/src/components/rightSideWindow.js";
  */
 const globalComponents = {
   header: { selector: "#header-container", component: header },
-  leftSideWindow: { selector: "#left-window-container", component: leftSideWindow },
-  rightSideWindow: { selector: "#right-window-container", component: rightSideWindow },
+  leftSideWindow: {
+    selector: "#left-window-container",
+    component: leftSideWindow,
+  },
+  rightSideWindow: {
+    selector: "#right-window-container",
+    component: rightSideWindow,
+  },
   footer: { selector: "#footer-container", component: footer },
 };
 
@@ -27,17 +32,17 @@ const globalComponents = {
  * Définition des pages
  */
 const pages = {
-  login: 			{ useGlobals: false, mainComponent: loginForm },
-  profile: 			{ useGlobals: true, mainComponent: profileForm },
-  deleteAccount: 	{ useGlobals: true, mainComponent: deleteAccountForm },
-  subscribe: 		{ useGlobals: false, mainComponent: subscribeForm },
-  social: 			{ useGlobals: true, mainComponent: socialForm },
-  otherprofile: 	{ useGlobals: true, mainComponent: otherProfileForm },
-  settings: 		{ useGlobals: true, mainComponent: settingsForm },
-  logout: 			{ useGlobals: true, mainComponent: logoutForm },
-  home: 			{ useGlobals: true },
-  race: 			{ useGlobals: true },
-  pong: 			{ useGlobals: true },
+  login: { useGlobals: false, mainComponent: loginForm },
+  profile: { useGlobals: true, mainComponent: profileForm },
+  deleteAccount: { useGlobals: true, mainComponent: deleteAccountForm },
+  subscribe: { useGlobals: false, mainComponent: subscribeForm },
+  social: { useGlobals: true, mainComponent: socialForm },
+  otherprofile: { useGlobals: true, mainComponent: otherProfileForm },
+  settings: { useGlobals: true, mainComponent: settingsForm },
+  logout: { useGlobals: true, mainComponent: logoutForm },
+  home: { useGlobals: true },
+  race: { useGlobals: true },
+  pong: { useGlobals: true },
 };
 
 /**
@@ -75,7 +80,9 @@ export function renderPage(pageKey) {
   const componentsToRender = getComponentsForPage(pageKey);
 
   // Liste des noms des composants pour le nettoyage
-  const componentKeys = componentsToRender.map(({ component }) => component.tag);
+  const componentKeys = componentsToRender.map(
+    ({ component }) => component.tag
+  );
 
   // Nettoie les composants existants
   cleanupComponents(componentKeys);

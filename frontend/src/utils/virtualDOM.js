@@ -9,9 +9,9 @@ export function testloadComponent(target, component) {
   }
 
   // Créer un conteneur pour le composant
-  const el = document.createElement('div');
+  const el = document.createElement("div");
   el.dataset.component = component.tag; // Identifiant unique
-  el.innerHTML = component.render();    // Générer le contenu HTML
+  el.innerHTML = component.render(); // Générer le contenu HTML
   document.querySelector(target).appendChild(el);
 
   // Ajouter les événements après chargement
@@ -39,8 +39,10 @@ export function unloadComponent(tag) {
   const el = mountedComponents[tag];
   if (el) {
     // Nettoyer les enfants d'abord
-    const childComponents = el.querySelectorAll('[data-component]');
-    childComponents.forEach((child) => unloadComponent(child.dataset.component));
+    const childComponents = el.querySelectorAll("[data-component]");
+    childComponents.forEach((child) =>
+      unloadComponent(child.dataset.component)
+    );
 
     // Supprimer l'élément principal
     el.remove();
@@ -53,17 +55,17 @@ export function unloadComponent(tag) {
 
 // Remplacer un composant existant
 export function replaceComponent(target, component) {
-  unloadComponent(component.tag);       // Décharge l'ancien
-  testloadComponent(target, component);     // Charge le nouveau
+  unloadComponent(component.tag); // Décharge l'ancien
+  testloadComponent(target, component); // Charge le nouveau
 }
 
 // Décharge les composants inutiles
 export function cleanupComponents(requiredComponents) {
-	const mountedComponents = document.querySelectorAll('[data-component]');
-	mountedComponents.forEach((el) => {
-	  const tag = el.dataset.component;
-	  if (!requiredComponents.includes(tag)) {
-		unloadComponent(tag);
-	  }
-	});
-  }
+  const mountedComponents = document.querySelectorAll("[data-component]");
+  mountedComponents.forEach((el) => {
+    const tag = el.dataset.component;
+    if (!requiredComponents.includes(tag)) {
+      unloadComponent(tag);
+    }
+  });
+}

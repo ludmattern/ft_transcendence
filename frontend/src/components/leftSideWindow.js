@@ -31,20 +31,20 @@ export const leftSideWindow = createComponent({
   attachEvents: (el) => {
     const tabContentContainer = el.querySelector("#l-tab-content");
     const tabs = el.querySelectorAll(".nav-link");
-	const expanders = el.querySelectorAll(".left-side-window-expander");
+    const expanders = el.querySelectorAll(".left-side-window-expander");
     const leftSideWindow = el.querySelector(".l-tab-content");
 
-	if (!expanders.length || !leftSideWindow) {
-		console.warn("Expanders or left-side window not found in component.");
-		return;
-	  }
+    if (!expanders.length || !leftSideWindow) {
+      console.warn("Expanders or left-side window not found in component.");
+      return;
+    }
 
-	  expanders.forEach((expander) => {
-		expander.addEventListener("click", () => {
-		  expander.classList.toggle("active");
-		  leftSideWindow.classList.toggle("well-hidden");
-		});
-	  });
+    expanders.forEach((expander) => {
+      expander.addEventListener("click", () => {
+        expander.classList.toggle("active");
+        leftSideWindow.classList.toggle("well-hidden");
+      });
+    });
 
     // Gérer le clic sur les onglets
     tabs.forEach((tab) =>
@@ -79,7 +79,9 @@ export const leftSideWindow = createComponent({
 function createNavItem(label, active = false) {
   return `
     <li class="nav-item">
-      <span class="nav-link ${active ? "active" : ""}" data-tab="${label.toLowerCase()}">${label}</span>
+      <span class="nav-link ${
+        active ? "active" : ""
+      }" data-tab="${label.toLowerCase()}">${label}</span>
     </li>
   `;
 }
@@ -138,7 +140,9 @@ function handleCommTab(item, container) {
         ${item.message}
       </div>
     `;
-    lastChild.querySelector(".message-content-wrapper").insertAdjacentHTML("beforeend", messageText);
+    lastChild
+      .querySelector(".message-content-wrapper")
+      .insertAdjacentHTML("beforeend", messageText);
   } else {
     const panelItem = commMessage.render(item);
     container.insertAdjacentHTML("beforeend", panelItem);
@@ -155,15 +159,15 @@ function handleCommTab(item, container) {
  * Configure la zone d'entrée pour l'onglet "COMM".
  */
 function setupChatInput() {
-	const container = document.querySelector("#l-tab-content-container"); // Sélectionne le conteneur approprié
-  
-	if (!container) {
-	  console.error("l-tab-content-container not found.");
-	  return;
-	}
-  
-	if (!container.querySelector("#message-input-container")) {
-	  const inputContainer = `
+  const container = document.querySelector("#l-tab-content-container"); // Sélectionne le conteneur approprié
+
+  if (!container) {
+    console.error("l-tab-content-container not found.");
+    return;
+  }
+
+  if (!container.querySelector("#message-input-container")) {
+    const inputContainer = `
 		<div class="d-flex" 
 			 style="flex-wrap: wrap; background: #ffffff07; position: absolute; width: 100%;" 
 			 id="message-input-container">
@@ -173,10 +177,9 @@ function setupChatInput() {
 		  <button class="btn btn-sm bi bi-send">Send</button>
 		</div>
 	  `;
-	  container.insertAdjacentHTML("beforeend", inputContainer); // Ajoute dans le bon conteneur
-	}
+    container.insertAdjacentHTML("beforeend", inputContainer); // Ajoute dans le bon conteneur
   }
-  
+}
 
 /**
  * Supprime la zone d'entrée pour les onglets autres que "COMM".

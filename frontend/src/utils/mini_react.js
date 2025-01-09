@@ -18,32 +18,32 @@ const effectsQueue = new Set();
 export function createElement(type, props = {}, ...children) {
   // Determine if the element is an SVG element or not
   const isSVG = [
-    'svg',
-    'path',
-    'circle',
-    'rect',
-    'line',
-    'polygon',
-    'polyline',
-    'g',
-    'defs',
-    'linearGradient',
-    'radialGradient',
-    'stop',
+    "svg",
+    "path",
+    "circle",
+    "rect",
+    "line",
+    "polygon",
+    "polyline",
+    "g",
+    "defs",
+    "linearGradient",
+    "radialGradient",
+    "stop",
   ].includes(type);
   const element = isSVG
-    ? document.createElementNS('http://www.w3.org/2000/svg', type)
+    ? document.createElementNS("http://www.w3.org/2000/svg", type)
     : document.createElement(type);
 
   // Add attributes or event listeners
   for (const [key, value] of Object.entries(props)) {
-    if (key === 'className') {
+    if (key === "className") {
       // Handle 'className' by converting it to 'class'
-      element.setAttribute('class', value);
-    } else if (key === 'htmlFor') {
+      element.setAttribute("class", value);
+    } else if (key === "htmlFor") {
       // Handle 'htmlFor' by converting it to 'for'
-      element.setAttribute('for', value);
-    } else if (key.startsWith('on') && typeof value === 'function') {
+      element.setAttribute("for", value);
+    } else if (key.startsWith("on") && typeof value === "function") {
       // Add event listeners for props starting with 'on' (e.g., 'onClick')
       element.addEventListener(key.slice(2).toLowerCase(), value);
     } else if (value !== false && value != null) {
@@ -58,7 +58,7 @@ export function createElement(type, props = {}, ...children) {
   // Add children to the element
   flatChildren.forEach((child) => {
     if (child == null || child === false) return; // Ignore null, undefined, or false children
-    if (typeof child === 'string' || typeof child === 'number') {
+    if (typeof child === "string" || typeof child === "number") {
       // If child is a string or number, create a text node
       element.appendChild(document.createTextNode(child));
     } else {
@@ -82,7 +82,7 @@ export function createElement(type, props = {}, ...children) {
  */
 export function render(component, container) {
   // Clear the container's content
-  container.innerHTML = '';
+  container.innerHTML = "";
   // Add the new component
   container.appendChild(component);
 
@@ -158,7 +158,7 @@ function runEffects() {
 
     if (hasChanged) {
       // Call the previous cleanup function if it exists
-      if (typeof cleanup === 'function') {
+      if (typeof cleanup === "function") {
         cleanup();
       }
       // Execute the effect's callback and store the cleanup function
@@ -172,7 +172,7 @@ function runEffects() {
 // Clean up effects (e.g., when unmounting a component)
 export function cleanupEffects() {
   effectsQueue.forEach((effect) => {
-    if (typeof effect.cleanup === 'function') {
+    if (typeof effect.cleanup === "function") {
       effect.cleanup();
     }
   });
@@ -196,22 +196,22 @@ export function Router(routes) {
   const navigate = () => {
     const path = window.location.pathname;
     // Find the corresponding route or use '/404' by default
-    const route = routes[path] || routes['/404'];
+    const route = routes[path] || routes["/404"];
     // Render the route's component into the 'app' container
-    render(route(), document.getElementById('app'));
+    render(route(), document.getElementById("app"));
   };
 
   // Handle browser navigation (back/forward buttons)
   window.onpopstate = navigate;
 
   // Event delegation to handle navigation links
-  document.addEventListener('click', (event) => {
+  document.addEventListener("click", (event) => {
     // Find the closest <a> element with 'data-link' attribute
-    const anchor = event.target.closest('a[data-link]');
+    const anchor = event.target.closest("a[data-link]");
     if (anchor) {
       event.preventDefault();
       // Update the browser's history
-      window.history.pushState({}, '', anchor.href);
+      window.history.pushState({}, "", anchor.href);
       // Navigate to the new route
       navigate();
     }
@@ -235,7 +235,7 @@ export function Router(routes) {
  */
 export function Link({ to, children }) {
   // Create an <a> element with 'href' and 'data-link' attributes
-  return createElement('a', { href: to, 'data-link': true }, ...children);
+  return createElement("a", { href: to, "data-link": true }, ...children);
 }
 
 /*
@@ -262,13 +262,13 @@ export function Counter() {
   // Function to render the component
   const renderComponent = () => {
     const newElement = createElement(
-      'div',
+      "div",
       {},
-      createElement('p', {}, `Counter: ${getState()}`),
+      createElement("p", {}, `Counter: ${getState()}`),
       createElement(
-        'button',
+        "button",
         { onClick: () => setState(getState() + 1) },
-        'Increment'
+        "Increment"
       )
     );
 
@@ -289,11 +289,11 @@ export function Counter() {
 
   // Example usage of useEffect
   useEffect(() => {
-    console.log('Counter component mounted');
+    console.log("Counter component mounted");
 
     // Cleanup function to be called upon unmounting
     return () => {
-      console.log('Counter component unmounted');
+      console.log("Counter component unmounted");
     };
   }, []); // Executed only once after the first render
 
@@ -309,10 +309,10 @@ export function Counter() {
  */
 export function AppRouter() {
   const routes = {
-    '/': () => createElement('h1', {}, 'Home'),
-    '/about': () => createElement('h1', {}, 'About'),
-    '/counter': () => Counter(),
-    '/404': () => createElement('h1', {}, 'Page not found'),
+    "/": () => createElement("h1", {}, "Home"),
+    "/about": () => createElement("h1", {}, "About"),
+    "/counter": () => Counter(),
+    "/404": () => createElement("h1", {}, "Page not found"),
   };
 
   // Initialize the router with the defined routes
@@ -330,14 +330,14 @@ export function AppRouter() {
  */
 export function Navigation() {
   return createElement(
-    'nav',
+    "nav",
     {},
     createElement(
-      'ul',
+      "ul",
       {},
-      createElement('li', {}, Link({ to: '/', children: ['Home'] })),
-      createElement('li', {}, Link({ to: '/about', children: ['About'] })),
-      createElement('li', {}, Link({ to: '/counter', children: ['Counter'] }))
+      createElement("li", {}, Link({ to: "/", children: ["Home"] })),
+      createElement("li", {}, Link({ to: "/about", children: ["About"] })),
+      createElement("li", {}, Link({ to: "/counter", children: ["Counter"] }))
     )
   );
 }

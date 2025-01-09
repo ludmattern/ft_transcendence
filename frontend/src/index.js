@@ -7,7 +7,6 @@ import { HUDSVG } from "/src/components/HUDSVG.js";
 import { buildScene } from "/src/3d/main.js";
 import { isClientAuthenticated } from "/src/services/auth.js";
 import { handleRoute } from "/src/services/router.js";
-import { navigateToLogin } from "/src/services/navigation.js";
 
 async function initializeApp() {
   console.log("App initialized");

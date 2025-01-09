@@ -37,7 +37,6 @@ export const commMessage = createComponent({
   },
 
   attachEvents: (el, item) => {
-    // Gestion du clic pour afficher le menu contextuel
     el.addEventListener("click", () => showContextMenu(item, el));
   },
 });

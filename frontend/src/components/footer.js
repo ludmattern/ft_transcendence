@@ -1,8 +1,11 @@
-import { createComponent } from '/src/utils/component.js';
-import { addCameraRotationListener, toggleFreeView } from '/src/3d/freeViewHandler.js';
+import { createComponent } from "/src/utils/component.js";
+import {
+  addCameraRotationListener,
+  toggleFreeView,
+} from "/src/3d/freeViewHandler.js";
 
 export const footer = createComponent({
-  tag: 'footer',
+  tag: "footer",
 
   // Générer le HTML
   render: () => `
@@ -25,7 +28,7 @@ export const footer = createComponent({
   // Ajouter les événements après le chargement
   attachEvents: (el) => {
     // Événement pour le bouton "free view"
-    el.querySelector('#free-view').addEventListener('click', toggleFreeView);
+    el.querySelector("#free-view").addEventListener("click", toggleFreeView);
 
     // Gestion de la boussole
     initializeCompass(el);
@@ -38,18 +41,18 @@ export const footer = createComponent({
  * @returns {string} - HTML des points de la boussole
  */
 function generateCompassHTML() {
-  const points = [
-    'N', '', '15', '', '30', '', 'NE', '', '60', '', '75', '', 'E', '', '105', '', '120', '',
-    'SE', '', '150', '', '165', '', 'S', '', '195', '', '210', '', 'SW', '', '240', '', '255', '',
-    'W', '', '285', '', '300', '', 'NW', '', '330', '', '345', '', 'N',
-  ];
+	const points = [
+	  'N', '', '15', '', '30', '', 'NE', '', '60', '', '75', '', 'E', '', '105', '', '120', '',
+	  'SE', '', '150', '', '165', '', 'S', '', '195', '', '210', '', 'SW', '', '240', '', '255', '',
+	  'W', '', '285', '', '300', '', 'NW', '', '330', '', '345', '', 'N',
+	];
 
   return points
     .map(
       (text) =>
-        `<div class="point${isBold(text) ? ' fw-bold' : ''}">${text}</div>`
+        `<div class="point${isBold(text) ? " fw-bold" : ""}">${text}</div>`
     )
-    .join('');
+    .join("");
 }
 
 /**
@@ -59,7 +62,7 @@ function generateCompassHTML() {
  * @returns {boolean} - Retourne true si en gras
  */
 function isBold(text) {
-  return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'].includes(text);
+  return ["N", "NE", "E", "SE", "S", "SW", "W", "NW"].includes(text);
 }
 
 /**
@@ -68,8 +71,8 @@ function isBold(text) {
  * @param {HTMLElement} el - Élément racine du composant
  */
 function initializeCompass(el) {
-  const points = el.querySelectorAll('.point');
-  const compass = el.querySelector('.compass');
+  const points = el.querySelectorAll(".point");
+  const compass = el.querySelector(".compass");
   const radius = 800;
   const baseHeight = 5;
   const rotationRatio = 0.1;
@@ -78,7 +81,7 @@ function initializeCompass(el) {
   positionPoints(points, compass, radius, baseHeight, 180);
 
   // Gestion de la taille de la fenêtre
-  window.addEventListener('resize', () =>
+  window.addEventListener("resize", () =>
     positionPoints(points, compass, radius, baseHeight)
   );
 
