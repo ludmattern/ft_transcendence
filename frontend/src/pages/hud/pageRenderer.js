@@ -10,6 +10,7 @@ import { settingsForm } from "/src/components/settingsForm.js";
 import { header } from "/src/components/header.js";
 import { footer } from "/src/components/footer.js";
 import { logoutForm } from "/src/components/logoutForm.js";
+import { leftSideWindow } from "/src/components/leftSideWindow.js";
 
 const pages = {
   login: {
@@ -17,17 +18,19 @@ const pages = {
     render: () => testloadComponent("#central-window", loginForm),
   },
   profile: {
-    components: ["profileForm", "header", "footer"],
+    components: ["header", "leftSideWindow", "profileForm", "footer"],
     render: () => {
       testloadComponent("#header-container", header);
+	  testloadComponent("#left-window-container", leftSideWindow);
       testloadComponent("#central-window", profileForm);
       testloadComponent("#footer-container", footer);
     },
   },
   deleteAccount: {
-    components: ["deleteAccountForm", "header", "footer"],
+    components: ["deleteAccountForm", "header", "leftSideWindow", "footer"],
     render: () => {
       testloadComponent("#header-container", header);
+	  testloadComponent("#left-window-container", leftSideWindow);
       testloadComponent("#central-window", deleteAccountForm);
       testloadComponent("#footer-container", footer);
     },
@@ -37,55 +40,62 @@ const pages = {
     render: () => testloadComponent("#central-window", subscribeForm),
   },
   home: {
-    components: ["header", "footer"],
+    components: ["header", "leftSideWindow", "footer"],
     render: () => {
       testloadComponent("#header-container", header);
+	  testloadComponent("#left-window-container", leftSideWindow);
       testloadComponent("#footer-container", footer);
     },
   },
   social: {
-    components: ["socialForm", "header", "footer"],
+    components: ["socialForm", "header", "leftSideWindow", "footer"],
     render: () => {
       testloadComponent("#header-container", header);
+	  testloadComponent("#left-window-container", leftSideWindow);
       testloadComponent("#central-window", socialForm);
       testloadComponent("#footer-container", footer);
     },
   },
   otherprofile: {
-    components: ["otherProfileForm", "header", "footer"],
+    components: ["otherProfileForm", "header", "leftSideWindow", "footer"],
     render: () => {
       testloadComponent("#header-container", header);
+	  testloadComponent("#left-window-container", leftSideWindow);
       testloadComponent("#central-window", otherProfileForm);
       testloadComponent("#footer-container", footer);
     },
   },
   settings: {
-    components: ["header", "settingsForm", "footer"],
+    components: ["header", "leftSideWindow", "settingsForm", "footer"],
     render: () => {
       testloadComponent("#header-container", header);
+	  testloadComponent("#left-window-container", leftSideWindow);
       testloadComponent("#central-window", settingsForm);
       testloadComponent("#footer-container", footer);
     },
   },
   logout: {
-    components: ["header", "footer", "logoutForm"],
+    components: ["header", "leftSideWindow", "footer", "logoutForm"],
     render: () => {
-      testloadComponent("#central-window", logoutForm);
-      testloadComponent("#header-container", header);
+		testloadComponent("#header-container", header);
+		testloadComponent("#left-window-container", leftSideWindow);
+		testloadComponent("#central-window", logoutForm);
       testloadComponent("#footer-container", footer);
     },
   },
   race: {
-    components: ["header", "footer"],
+    components: ["header", "leftSideWindow", "footer"],
     render: () => {
       testloadComponent("#header-container", header);
+	  testloadComponent("#left-window-container", leftSideWindow);
       testloadComponent("#footer-container", footer);
     },
   },
   pong: {
-    components: ["header", "footer"],
+    components: ["header", "leftSideWindow", "footer"],
     render: () => {
       testloadComponent("#header-container", header);
+	  testloadComponent("#left-window-container", leftSideWindow);
       testloadComponent("#footer-container", footer);
     },
   },

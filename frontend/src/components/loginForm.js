@@ -1,7 +1,4 @@
 import { createComponent } from "/src/utils/component.js";
-import { testloadComponent } from "/src/utils/virtualDOM.js";
-import { subscribeForm } from "/src/components/subscribeForm.js"; // Exemple d'un sous-composant
-import { unloadComponent } from "/src/utils/virtualDOM.js";
 import { handleRoute } from "/src/services/router.js";
 import { loginUser } from "/src/services/auth.js";
 

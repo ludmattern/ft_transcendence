@@ -1,7 +1,4 @@
 import { loadComponent } from "/src/utils/dom_utils.js";
-// import { Header } from "/src/components/header.js";
-import { LeftSideWindow } from "/src/components/leftSideWindow.js";
-import { RightSideWindow } from "/src/components/rightSideWindow.js";
 import { PongMenu } from "/src/components/pongMenu.js";
 import { game2 } from "/src/components/game2.js";
 import { midScreen } from "/src/components/midScreen.js";
