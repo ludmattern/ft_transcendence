@@ -21,67 +21,49 @@ window.addEventListener("popstate", () => {
   handleRoute(route); // Appelle la gestion des routes avec la nouvelle URL
 });
 
-export async function handleRoute(route) {
-  console.debug(`Handling route: ${route}`);
-
-  if (window.location.pathname !== route) {
-    previousRoute = window.location.pathname; // Met à jour la previousRoute
+const routeMappings = {
+	"/": navigateToHome,
+	"/profile": navigateToProfile,
+	"/pong": navigateToPong,
+	"/race": navigateToRace,
+	"/social": navigateToSocial,
+	"/settings": navigateToSettings,
+	"/settings/delete-account": navigateToDeleteAccount,
+	"/logout": navigateToLogout,
+	"/login": navigateToLogin,
+	"/subscribe": navigateToSubscribe,
+  };
+  
+  export async function handleRoute(route, shouldPushState = true) {
+	console.debug(`Handling route: ${route}`);
+  
+	// if (window.location.pathname === route) {
+	//   console.debug("Route unchanged, navigation skipped.");
+	//   return;
+	// }
+  
+	previousRoute = window.location.pathname;
+  
+	const unauthenticatedRoutes = ["/login", "/subscribe"];
+	const isUnauthenticatedRoute = unauthenticatedRoutes.includes(route);
+  
+	ensureAuthenticated(() => {
+	  if (routeMappings[route]) {
+		routeMappings[route](); // Appelle la fonction de navigation correspondante
+	  } else if (route.startsWith("/social?pilot=")) {
+		const pilot = route.split("=")[1];
+		console.debug(`Pilot: ${pilot}`);
+		navigateToOtherProfile(pilot);
+	  } else {
+		navigateToLost();
+		console.warn(`Unknown route: ${route}`);
+	  }
+	}, isUnauthenticatedRoute);
+  
+	if (shouldPushState) {
+	  history.pushState(null, "", route);
+	}
   }
-
-  const unauthenticatedRoutes = ["/login", "/subscribe"];
-
-  const isUnauthenticatedRoute = unauthenticatedRoutes.includes(route);
-
-  ensureAuthenticated(() => {
-    // Gestion des routes
-    switch (true) {
-      case route === "/":
-        navigateToHome();
-        break;
-      case route === "/profile":
-        navigateToProfile();
-        break;
-      case route === "/pong":
-        navigateToPong();
-        break;
-      case route === "/race":
-        navigateToRace();
-        break;
-      case route === "/social":
-        navigateToSocial();
-        break;
-      case route === "/settings":
-        navigateToSettings();
-        break;
-      case route === "/settings/delete-account":
-        navigateToDeleteAccount();
-        break;
-      case route === "/logout":
-        navigateToLogout();
-        break;
-      case route.startsWith("/social?pilot="):
-        console.error(`Route: ${route}`);
-        const pilot = route.split("=")[1];
-        console.debug(`Pilot: ${pilot}`);
-        navigateToOtherProfile(pilot);
-        break;
-      case route === "/login": // Route non protégée
-        navigateToLogin();
-        break;
-      case route === "/subscribe": // Route non protégée
-        navigateToSubscribe();
-        break;
-      default:
-        navigateToLost();
-        console.warn(`Unknown route: ${route}`);
-        break;
-    }
-  }, isUnauthenticatedRoute); // Passe le flag pour permettre l'accès libre
-
-  if (window.location.pathname !== route) {
-    history.pushState(null, "", route);
-  }
-}
 
 export function getPreviousRoute() {
   return previousRoute || "/"; // Retourne la précédente route ou "/" par défaut

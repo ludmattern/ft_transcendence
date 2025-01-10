@@ -52,25 +52,23 @@ export const header = createComponent({
   `,
 
   attachEvents: (el) => {
-    // Attacher les gestionnaires pour chaque lien
-    Object.entries(navigationLinks).forEach(([linkId, route]) => {
-      const linkElement = el.querySelector(`#${linkId}`);
-      if (linkElement) {
-        linkElement.addEventListener("click", (e) => {
-          e.preventDefault();
-          history.pushState(null, "", route); // Mettre à jour l'URL
-          handleRoute(route); // Gérer la route
+	Object.entries(navigationLinks).forEach(([linkId, route]) => {
+	  const linkElement = el.querySelector(`#${linkId}`);
+	  if (linkElement) {
+		linkElement.addEventListener("click", (e) => {
+		  e.preventDefault();
+		  handleRoute(route); // La gestion de pushState est dans le routeur
 		  updateActiveLink(el); // Mettre à jour le lien actif
-        });
-      }
-    });
-
-    // Activer le lien correspondant à l'URL actuelle
-    updateActiveLink(el);
-
-    // Surveiller les changements d'URL (navigations arrière/avant)
-    window.addEventListener("popstate", () => updateActiveLink(el));
-  },
+		});
+	  }
+	});
+  
+	// Activer le lien correspondant à l'URL actuelle
+	updateActiveLink(el);
+  
+	// Surveiller les changements d'URL (navigations arrière/avant)
+	window.addEventListener("popstate", () => updateActiveLink(el));
+  }
 });
 
 /**
