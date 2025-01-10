@@ -1,8 +1,5 @@
 import { createComponent } from "/src/utils/component.js";
-import {
-  addCameraRotationListener,
-  toggleFreeView,
-} from "/src/3d/freeViewHandler.js";
+import { addCameraRotationListener, toggleFreeView} from "/src/3d/freeViewHandler.js";
 
 export const footer = createComponent({
   tag: "footer",

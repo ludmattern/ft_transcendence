@@ -1,5 +1,4 @@
 import * as THREE from "https://esm.sh/three";
-
 import Store from './store.js';
 import {animateCameraBackToInitialPosition} from '/src/3d/animation.js';
 
