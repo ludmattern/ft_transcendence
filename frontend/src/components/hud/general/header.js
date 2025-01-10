@@ -1,7 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { handleRoute } from "/src/services/router.js";
 
-// Centraliser le mapping entre les URL et les IDs des liens
 const navigationLinks = {
 	"home-link": "/",
 	"profile-link": "/profile",
@@ -15,7 +14,6 @@ const navigationLinks = {
 export const header = createComponent({
   tag: "header",
 
-  // Générer le HTML
   render: () => `
       <div class="row">
         <div class="col-12 text-center">
@@ -53,7 +51,6 @@ export const header = createComponent({
       </div>
   `,
 
-  // Ajouter les événements après le chargement
   attachEvents: (el) => {
     // Attacher les gestionnaires pour chaque lien
     Object.entries(navigationLinks).forEach(([linkId, route]) => {
