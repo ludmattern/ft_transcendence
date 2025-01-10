@@ -17,8 +17,8 @@ import {
 let previousRoute = null;
 
 window.addEventListener("popstate", () => {
-  const route = window.location.pathname; // Récupère l'URL actuelle
-  handleRoute(route); // Appelle la gestion des routes avec la nouvelle URL
+	const route = window.location.pathname; // Récupère l'URL actuelle
+	handleRoute(route); // Appelle la gestion des routes avec la nouvelle URL
 });
 
 const routeMappings = {
