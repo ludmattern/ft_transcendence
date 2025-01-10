@@ -3,6 +3,7 @@ import { loginForm, profileForm, header, footer, leftSideWindow, rightSideWindow
   socialForm, otherProfileForm, deleteAccountForm, subscribeForm, settingsForm,
 } from "/src/components/hud/index.js";
 import { midScreen } from "/src/components/midScreen.js";
+import { menu3 } from "/src/components/menu3.js";
 
 /**
  * Composants globaux par défaut
@@ -19,6 +20,7 @@ const globalComponents = {
   },
   footer: { selector: "#footer-container", component: footer },
   midScreen: { selector: "#mid-screen-container", component: midScreen },
+  menu3: { selector: "#menu3-container", component: menu3 },
 };
 
 /**

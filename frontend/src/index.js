@@ -12,16 +12,15 @@ async function initializeApp() {
   loadSVGComponents();
 
   const isAuthenticated = await isClientAuthenticated();
-  
+
   if (!isAuthenticated) {
-	  handleRoute("/login");
-	} else {
-		document.getElementById("waiting-screen-effect").classList.add("d-none");
-		handleRoute(window.location.pathname);
-	}
-	
-	buildScene();
-  testloadComponent("#mid-screen-container", midScreen);
+    handleRoute("/login");
+  } else {
+    document.getElementById("waiting-screen-effect").classList.add("d-none");
+    handleRoute(window.location.pathname);
+  }
+
+  buildScene();
   loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {});
 }
 
