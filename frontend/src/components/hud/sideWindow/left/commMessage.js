@@ -1,5 +1,5 @@
 import { createComponent } from "/src/utils/component.js";
-import { showContextMenu } from "/src/components/contextMenu.js";
+import { showContextMenu } from "/src/components/hud/sideWindow/left/contextMenu.js";
 
 export const commMessage = createComponent({
   tag: "commMessage",

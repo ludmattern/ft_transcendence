@@ -1,6 +1,5 @@
 import { createComponent } from "/src/utils/component.js";
-import { commMessage } from "/src/components/commMessage.js";
-import { infoPanelItem } from "/src/components/infoPanelItem.js";
+import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
 
 export const leftSideWindow = createComponent({
   tag: "leftSideWindow",

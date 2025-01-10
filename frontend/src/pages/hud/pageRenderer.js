@@ -1,16 +1,30 @@
 import { testloadComponent, cleanupComponents } from "/src/utils/virtualDOM.js";
-import { loginForm } from "/src/components/loginForm.js";
-import { profileForm } from "/src/components/profileForm.js";
-import { socialForm } from "/src/components/socialForm.js";
-import { otherProfileForm } from "/src/components/otherProfileForm.js";
-import { deleteAccountForm } from "/src/components/deleteAccountForm.js";
-import { subscribeForm } from "/src/components/subscribeForm.js";
-import { settingsForm } from "/src/components/settingsForm.js";
-import { header } from "/src/components/header.js";
-import { footer } from "/src/components/footer.js";
-import { logoutForm } from "/src/components/logoutForm.js";
-import { leftSideWindow } from "/src/components/leftSideWindow.js";
-import { rightSideWindow } from "/src/components/rightSideWindow.js";
+// import { loginForm } from "/src/components/hud/centralWindow/loginForm.js";
+// import { profileForm } from "/src/components/hud/centralWindow/profileForm.js";
+// import { socialForm } from "/src/components/hud/centralWindow/socialForm.js";
+// import { otherProfileForm } from "/src/components/hud/centralWindow/otherProfileForm.js";
+// import { deleteAccountForm } from "/src/components/hud/centralWindow/deleteAccountForm.js";
+// import { subscribeForm } from "/src/components/hud/centralWindow/subscribeForm.js";
+// import { settingsForm } from "/src/components/hud/centralWindow/settingsForm.js";
+// import { header } from "/src/components/hud/general/header.js";
+// import { footer } from "/src/components/hud/general/footer.js";
+// import { logoutForm } from "/src/components/hud/centralWindow/logoutForm.js";
+// import { leftSideWindow } from "/src/components/hud/sideWindow/left/leftSideWindow.js";
+// import { rightSideWindow } from "/src/components/hud/sideWindow/right/rightSideWindow.js";
+import {
+  loginForm,
+  profileForm,
+  header,
+  footer,
+  leftSideWindow,
+  rightSideWindow,
+  logoutForm,
+  socialForm,
+  otherProfileForm,
+  deleteAccountForm,
+  subscribeForm,
+  settingsForm,
+} from "/src/components/hud/index.js";
 
 /**
  * Composants globaux par défaut
