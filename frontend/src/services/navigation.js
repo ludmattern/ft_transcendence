@@ -24,7 +24,7 @@ export function navigateToDeleteAccount() {
 export function navigateToHome() {
   renderPage("home");
   document.getElementById("blur-screen-effect").classList.add("d-none");
-  switchwindow(null);
+  switchwindow("home");
 }
 
 export function navigateToProfile() {
