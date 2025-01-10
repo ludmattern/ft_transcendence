@@ -8,19 +8,13 @@ import { isClientAuthenticated } from "/src/services/auth.js";
 import { handleRoute } from "/src/services/router.js";
 
 async function initializeApp() {
-  console.log("App initialized");
+	console.log("App initialized");
+	buildScene();
   loadSVGComponents();
 
-  const isAuthenticated = await isClientAuthenticated();
-
-  if (!isAuthenticated) {
-    handleRoute("/login");
-  } else {
+  handleRoute(window.location.pathname);
     document.getElementById("waiting-screen-effect").classList.add("d-none");
-    handleRoute(window.location.pathname);
-  }
 
-  buildScene();
   loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {});
 }
 

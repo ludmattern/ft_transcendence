@@ -1,4 +1,4 @@
-import { navigateToLogin } from "/src/services/navigation.js";
+import { handleRoute } from "/src/services/router.js";
 
 export async function isClientAuthenticated() {
   try {
@@ -29,8 +29,7 @@ export async function ensureAuthenticated(
   }
 
   // Sinon, rediriger vers la page de connexion
-  navigateToLogin();
-  history.pushState(null, "", route);
+  handleRoute("/login");
   return false;
 }
 
