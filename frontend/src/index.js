@@ -11,4 +11,5 @@ async function initializeApp() {
   loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {});
 }
 
+
 initializeApp();
