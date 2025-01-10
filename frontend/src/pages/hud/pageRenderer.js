@@ -1,30 +1,8 @@
 import { testloadComponent, cleanupComponents } from "/src/utils/virtualDOM.js";
-// import { loginForm } from "/src/components/hud/centralWindow/loginForm.js";
-// import { profileForm } from "/src/components/hud/centralWindow/profileForm.js";
-// import { socialForm } from "/src/components/hud/centralWindow/socialForm.js";
-// import { otherProfileForm } from "/src/components/hud/centralWindow/otherProfileForm.js";
-// import { deleteAccountForm } from "/src/components/hud/centralWindow/deleteAccountForm.js";
-// import { subscribeForm } from "/src/components/hud/centralWindow/subscribeForm.js";
-// import { settingsForm } from "/src/components/hud/centralWindow/settingsForm.js";
-// import { header } from "/src/components/hud/general/header.js";
-// import { footer } from "/src/components/hud/general/footer.js";
-// import { logoutForm } from "/src/components/hud/centralWindow/logoutForm.js";
-// import { leftSideWindow } from "/src/components/hud/sideWindow/left/leftSideWindow.js";
-// import { rightSideWindow } from "/src/components/hud/sideWindow/right/rightSideWindow.js";
-import {
-  loginForm,
-  profileForm,
-  header,
-  footer,
-  leftSideWindow,
-  rightSideWindow,
-  logoutForm,
-  socialForm,
-  otherProfileForm,
-  deleteAccountForm,
-  subscribeForm,
-  settingsForm,
+import { loginForm, profileForm, header, footer, leftSideWindow, rightSideWindow, logoutForm,
+  socialForm, otherProfileForm, deleteAccountForm, subscribeForm, settingsForm,
 } from "/src/components/hud/index.js";
+import { midScreen } from "/src/components/midScreen.js";
 
 /**
  * Composants globaux par défaut
@@ -40,6 +18,7 @@ const globalComponents = {
     component: rightSideWindow,
   },
   footer: { selector: "#footer-container", component: footer },
+  midScreen: { selector: "#mid-screen-container", component: midScreen },
 };
 
 /**

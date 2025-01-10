@@ -25,10 +25,10 @@ export function navigateToDeleteAccount() {
 }
 
 export function navigateToHome() {
-  switchwindow(null);
   renderPage("home");
   document.getElementById("blur-screen-effect").classList.add("d-none");
   setActiveLink(null);
+  switchwindow(null);
 }
 
 export function navigateToProfile() {
@@ -38,17 +38,17 @@ export function navigateToProfile() {
 }
 
 export function navigateToPong() {
-  switchwindow("pong");
   renderPage("pong");
   document.getElementById("blur-screen-effect").classList.add("d-none");
   setActiveLink("pong-link");
+  switchwindow("pong");
 }
 
 export function navigateToRace() {
-  switchwindow("race");
   renderPage("race");
   document.getElementById("blur-screen-effect").classList.add("d-none");
   setActiveLink("race-link");
+  switchwindow("race");
 }
 
 export function navigateToOtherProfile(argument) {

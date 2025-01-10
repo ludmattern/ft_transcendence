@@ -17,21 +17,6 @@ export function initCSSRenderer() {
 
 // =============== CSS3DRENDER INIT ===============
 
-export function initM2() {
-    Store.menuElement = document.getElementById("gameScreen");
-    if (!Store.menuElement) {
-      console.error("The element with ID 'gameScreen' was not found.");
-      return;
-    }
-    Store.menuObject = new CSS3DObject(Store.menuElement);
-    Store.menuElement.style.pointerEvents = "auto";
-    Store.menuObject.position.set(-0.2, 6.6, -1.75);
-    Store.menuObject.rotation.set(-5.2, 0, 0);
-    Store.menuObject.scale.set(0.002, 0.002, 0.002);
-    Store.menuElement.style.display = "none";
-    Store.menuElement.classList.add("active");
-  }
-  
   export function initM1() {
     Store.menuElement2 = document.getElementById("menu2");
     if (!Store.menuElement2) {

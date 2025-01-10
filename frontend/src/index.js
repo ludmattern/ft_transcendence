@@ -1,6 +1,6 @@
 import { loadComponent } from "/src/utils/dom_utils.js";
+import { testloadComponent } from "/src/utils/virtualDOM.js";
 import { PongMenu } from "/src/components/pongMenu.js";
-import { game2 } from "/src/components/game2.js";
 import { midScreen } from "/src/components/midScreen.js";
 import { HelmetSVG, HUDSVG } from "/src/components/hud/index.js";
 import { buildScene } from "/src/3d/main.js";
@@ -12,18 +12,17 @@ async function initializeApp() {
   loadSVGComponents();
 
   const isAuthenticated = await isClientAuthenticated();
-
+  
   if (!isAuthenticated) {
-    handleRoute("/login");
-  } else {
-    document.getElementById("waiting-screen-effect").classList.add("d-none");
-    handleRoute(window.location.pathname);
-  }
-
-  loadComponent("race-placeholder", game2, "", () => {});
-  loadComponent("mid-placeholder", midScreen, "", () => {});
+	  handleRoute("/login");
+	} else {
+		document.getElementById("waiting-screen-effect").classList.add("d-none");
+		handleRoute(window.location.pathname);
+	}
+	
+	buildScene();
+  testloadComponent("#mid-screen-container", midScreen);
   loadComponent("pongmenu-placeholder", PongMenu, "pongmenu", () => {});
-  buildScene();
 }
 
 function loadSVGComponents() {
