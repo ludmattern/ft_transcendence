@@ -14,7 +14,7 @@ export const commMessage = createComponent({
         ${
           !isUser
             ? `<img class="profile-picture" 
-                   src="${item.profilePicture || "https://via.placeholder.com/40"}" 
+                   src="${item.profilePicture || "/src/assets/img/default-profile-40.png"}" 
                    alt="${item.author}'s profile picture" />`
             : ""
         }

@@ -70,3 +70,8 @@ export function navigateToLogout() {
   document.getElementById("blur-screen-effect").classList.remove("d-none");
   setActiveLink("logout-link");
 }
+
+export function navigateToLost() {
+  renderPage("lostForm");
+  document.getElementById("blur-screen-effect").classList.remove("d-none");
+}

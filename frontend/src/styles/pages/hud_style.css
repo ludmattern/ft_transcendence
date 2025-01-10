@@ -959,6 +959,11 @@ p {
   padding-right: 0.3rem;
 }
 
+.message-header .author {
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .user-message,
 .other-message {
   padding: 0.6em;
@@ -1000,11 +1005,11 @@ footer .compass {
   height: 100%;
   overflow: hidden;
   mask-image: linear-gradient(
-	90deg,
-	transparent,
-	#000 15%,
-	#000 85%,
-	transparent 100%
+    90deg,
+    transparent,
+    #000 15%,
+    #000 85%,
+    transparent 100%
   );
 }
 
@@ -1035,9 +1040,9 @@ footer .point {
   position: absolute;
   font-weight: 700;
   font-size: clamp(
-	0.8rem,
-	calc(0.8rem + ((100vw - 1920px) * 0.0083333)),
-	1.25rem
+    0.8rem,
+    calc(0.8rem + ((100vw - 1920px) * 0.0083333)),
+    1.25rem
   );
   width: 3rem;
   height: 3rem;

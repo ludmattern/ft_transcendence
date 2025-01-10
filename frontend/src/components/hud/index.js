@@ -11,6 +11,7 @@ export { deleteAccountForm } from "./centralWindow/deleteAccountForm.js";
 export { subscribeForm } from "./centralWindow/subscribeForm.js";
 export { settingsForm } from "./centralWindow/settingsForm.js";
 export { logoutForm } from "./centralWindow/logoutForm.js";
+export { lostForm } from "./centralWindow/lostForm.js";
 
 // General components
 export { header } from "./general/header.js";

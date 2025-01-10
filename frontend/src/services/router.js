@@ -11,6 +11,7 @@ import {
   navigateToLogout,
   navigateToOtherProfile,
   navigateToDeleteAccount,
+  navigateToLost,
 } from "/src/services/navigation.js";
 
 let previousRoute = null;
@@ -71,6 +72,7 @@ export async function handleRoute(route) {
         navigateToSubscribe();
         break;
       default:
+        navigateToLost();
         console.warn(`Unknown route: ${route}`);
         break;
     }

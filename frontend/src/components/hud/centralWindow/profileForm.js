@@ -13,7 +13,7 @@ export const profileForm = createComponent({
           <!-- Profile Picture -->
           <div class="profile-pic-container">
             <a href="#">
-              <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-pic rounded-circle" />
+              <img src="/src/assets/img/default-profile-150.png" alt="Profile Picture" class="profile-pic rounded-circle" />
             </a>
           </div>
           <!-- Profile Details -->

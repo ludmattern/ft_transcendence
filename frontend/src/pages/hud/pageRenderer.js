@@ -1,6 +1,6 @@
 import { testloadComponent, cleanupComponents } from "/src/utils/virtualDOM.js";
 import { loginForm, profileForm, header, footer, leftSideWindow, rightSideWindow, logoutForm,
-  socialForm, otherProfileForm, deleteAccountForm, subscribeForm, settingsForm,
+  socialForm, otherProfileForm, deleteAccountForm, subscribeForm, settingsForm, lostForm
 } from "/src/components/hud/index.js";
 import { midScreen } from "/src/components/midScreen.js";
 import { menu3 } from "/src/components/menu3.js";
@@ -35,6 +35,7 @@ const pages = {
   otherprofile: { useGlobals: true, mainComponent: otherProfileForm },
   settings: { useGlobals: true, mainComponent: settingsForm },
   logout: { useGlobals: true, mainComponent: logoutForm },
+  lostForm: { useGlobals: false, mainComponent: lostForm },
   home: { useGlobals: true },
   race: { useGlobals: true },
   pong: { useGlobals: true },
