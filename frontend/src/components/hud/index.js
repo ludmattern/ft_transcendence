@@ -1,27 +1,29 @@
 // Background components
-export { HelmetSVG } from "./background/HelmetSVG.js";
-export { HUDSVG } from "./background/HUDSVG.js";
+export { HelmetSVG } from "/src/components/hud/background/HelmetSVG.js";
+export { hudSVG } from "/src/components/hud/background/HUDSVG.js";
 
 // CentralWindow components
-export { loginForm } from "./centralWindow/loginForm.js";
-export { profileForm } from "./centralWindow/profileForm.js";
-export { socialForm } from "./centralWindow/socialForm.js";
-export { otherProfileForm } from "./centralWindow/otherProfileForm.js";
-export { deleteAccountForm } from "./centralWindow/deleteAccountForm.js";
-export { subscribeForm } from "./centralWindow/subscribeForm.js";
-export { settingsForm } from "./centralWindow/settingsForm.js";
-export { logoutForm } from "./centralWindow/logoutForm.js";
-export { lostForm } from "./centralWindow/lostForm.js";
+export { loginForm } from "/src/components/hud/centralWindow/loginForm.js";
+export { profileForm } from "/src/components/hud/centralWindow/profileForm.js";
+export { socialForm } from "/src/components/hud/centralWindow/socialForm.js";
+export { otherProfileForm } from "/src/components/hud/centralWindow/otherProfileForm.js";
+export { deleteAccountForm } from "/src/components/hud/centralWindow/deleteAccountForm.js";
+export { subscribeForm } from "/src/components/hud/centralWindow/subscribeForm.js";
+export { settingsForm } from "/src/components/hud/centralWindow/settingsForm.js";
+export { logoutForm } from "/src/components/hud/centralWindow/logoutForm.js";
+export { lostForm } from "/src/components/hud/centralWindow/lostForm.js";
 
 // General components
-export { header } from "./general/header.js";
-export { footer } from "./general/footer.js";
+export { header } from "/src/components/hud/general/header.js";
+export { footer } from "/src/components/hud/general/footer.js";
 
 // SideWindow components
 //   left
-export { leftSideWindow } from "./sideWindow/left/leftSideWindow.js";
-export { commMessage } from "./sideWindow/left/commMessage.js";
-export { infoPanelItem } from "./sideWindow/left/infoPanelItem.js";
-export { contextMenu } from "./sideWindow/left/contextMenu.js";
+export { leftSideWindow } from "/src/components/hud/sideWindow/left/leftSideWindow.js";
+export { commMessage } from "/src/components/hud/sideWindow/left/commMessage.js";
+export { infoPanelItem } from "/src/components/hud/sideWindow/left/infoPanelItem.js";
+export { contextMenu } from "/src/components/hud/sideWindow/left/contextMenu.js";
 //   right
-export { rightSideWindow } from "./sideWindow/right/rightSideWindow.js";
+export { rightSideWindow } from "/src/components/hud/sideWindow/right/rightSideWindow.js";
+
+//background components
