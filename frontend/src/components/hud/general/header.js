@@ -107,7 +107,7 @@ function updateActiveLink(el) {
   el.querySelectorAll("a").forEach((link) => link.classList.remove("active"));
 
   // Activer le lien correspondant
-  if (activeLinkId) {
+  if (activeLinkId && activeLinkId !== "home-link") {
     const activeLink = el.querySelector(`#${activeLinkId}`);
     if (activeLink) {
       activeLink.classList.add("active");
