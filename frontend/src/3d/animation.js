@@ -7,9 +7,7 @@ import { screenMaterial } from '/src/3d/pongScene.js';
 // =============== WINDOW SWITCHER ===============
 
 export function switchwindow(screen) {
-    if (screen === null) {
-      animateCameraBackToInitialPosition();
-    } else if (screen === "pong") {
+    if (screen === "pong") {
       animateCameraToTarget(
         new THREE.Vector3(-2.559453657498437, 3.253545045816075, -0.7922370317858861),
         { x: Math.PI / 3.2, y: Math.PI / 5.5, z: -Math.PI / -12 },
@@ -28,17 +26,18 @@ export function switchwindow(screen) {
         1
       );
     }
+    else if (screen === "home") {
+      animateCameraToTarget(
+        new THREE.Vector3(0, 0.06275803512326787, 1.9990151147571098),
+        { x: 1.2974796345057034, y: 0, z: -0 },
+        0
+      );
+    }
   }
   
   // =============== GSAP ANIMATION ===============
   export function animateCameraToTarget(endPosition, endRotation, nb) {
     document.removeEventListener("mousemove", onBaseMouseMove, false);
-  
-    if (Store.currentTween) {
-      Store.currentTween.kill();
-      Store.camera.position.copy(Store.camera.position);
-      Store.camera.quaternion.copy(Store.camera.quaternion);
-    }
   
     const startPosition = Store.camera.position.clone();
     const startQuaternion = Store.camera.quaternion.clone();
@@ -92,13 +91,7 @@ export function switchwindow(screen) {
   
   export function animateCameraBackToInitialPosition() {
     document.removeEventListener("mousemove", onBaseMouseMove, false);
-  
-    if (Store.currentTween) {
-      Store.currentTween.kill();
-      Store.camera.position.copy(Store.camera.position);
-      Store.camera.quaternion.copy(Store.camera.quaternion);
-    }
-  
+
     const startPosition = Store.camera.position.clone();
     const startQuaternion = Store.camera.quaternion.clone();
   
