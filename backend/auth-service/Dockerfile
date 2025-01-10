@@ -1,4 +1,4 @@
-# Utiliser l'image Python 3.13-slim
+# Utiliser l'image Python 3.11-slim
 FROM python:3.11-slim
 
 # Installer les dépendances système
@@ -13,8 +13,9 @@ COPY requirements.txt /app/
 # Installer les dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN pip install bcrypt
 # Copier le reste de l'application
 COPY . /app/
 
 # Configurer la commande par défaut
-CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:3001"]

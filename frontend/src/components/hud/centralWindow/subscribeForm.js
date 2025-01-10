@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { handleRoute } from "/src/services/router.js";
+import { registerUser } from "/src/services/auth.js";
 
 export const subscribeForm = createComponent({
   tag: "subscribeForm",
@@ -49,29 +50,38 @@ export const subscribeForm = createComponent({
     </div>
   `,
 
-  // Ajouter les événements après le chargement
-  attachEvents: (el) => {
-    // Gestion du clic sur "Log In"
+  attachEvents: async (el) => {
     el.querySelector("#login-link").addEventListener("click", (e) => {
       e.preventDefault();
       handleRoute("/login");
       console.debug("LoginForm loaded on click.");
     });
 
-    // Gestion de la soumission du formulaire
-    el.querySelector("form").addEventListener("submit", (e) => {
+    el.querySelector("form").addEventListener("submit", async (e) => {
       e.preventDefault();
       console.log("Subscription form submitted!");
 
-      // Exemple : validation simple
       const id = el.querySelector("#new-pilot-id").value;
       const password = el.querySelector("#new-password").value;
       const confirmPassword = el.querySelector("#confirm-password").value;
-
-      if (password !== confirmPassword) {
+      const mail = el.querySelector("#email").value;
+      const confirmMail = el.querySelector("#confirm-email").value;
+      
+      if (mail !== confirmMail) {
+        alert("E-mails do not match!");
+      }
+      else if (password !== confirmPassword) {
         alert("Passwords do not match!");
       } else {
-        console.log(`User ${id} registered successfully.`);
+        try {
+          await registerUser(id, password, mail);
+
+          handleRoute("/login");
+          console.log("register successful!");
+        } catch (err) {
+          console.error("register failed:", err.message);
+          alert("register failed! Please try again.");
+        }
       }
     });
   },

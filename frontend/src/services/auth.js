@@ -1,16 +1,20 @@
 import { handleRoute } from "/src/services/router.js";
 
 export async function isClientAuthenticated() {
-  try {
+  try 
+  {
     const response = await fetch("/src/context/authenticated.json");
-    if (!response.ok) {
+    if (!response.ok) 
+    {
       console.error("Failed to load authenticated.json");
       return false;
     }
     const data = await response.json();
-
+    console.log(data)
     return data.token === true;
-  } catch (error) {
+  } 
+  catch (error) 
+  {
     console.error("Error checking authentication:", error);
     return false;
   }
@@ -49,16 +53,67 @@ export async function logoutUser() {
 }
 
 export async function loginUser(username, password) {
-  // Simule une requête API pour connecter l'utilisateur
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const success = true; // Simule un succès (ou remplace par une logique réelle)
-      if (success) {
-        localStorage.setItem("authToken", "1234567890"); // Stockage du jeton local
-        resolve();
+
+    try {
+      const response = await fetch("/api/auth-service/logindb/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await response.json();
+      if (data.success) {
+        localStorage.setItem("authToken", "1234567890");
+        console.log("Login successful!");
       } else {
-        reject(new Error("Login failed!"));
+        console.log("Login failed:", data.message);
       }
-    }, 500); // Délai simulé
-  });
-}
+    } catch (err) {
+      console.error("Error:", err);
+    }  
+  };
+
+  export async function registerUser(id, password, email) {
+
+    try {
+      const response = await fetch("/api/auth-service/register/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: id,
+          email: email,
+          password: password,
+        }),
+      });
+  
+      const data = await response.json();
+      if (data.success) {
+        console.log("User registered successfully:", data);
+        alert("Registration successful!");
+      } else {
+        alert(`Registration failed: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      alert("An error occurred. Please try again later.");
+    }
+  }
+
+
+// export async function loginUser(username, password) {
+//   // Simule une requête API pour connecter l'utilisateur
+//   return new Promise((resolve, reject) => {
+//     setTimeout(() => {
+//       const success = true; // Simule un succès (ou remplace par une logique réelle)
+//       if (success) {
+//         localStorage.setItem("authToken", "1234567890"); // Stockage du jeton local
+//         resolve();
+//       } else {
+//         reject(new Error("Login failed!"));
+//       }
+//     }, 500); // Délai simulé
+//   });
+// }

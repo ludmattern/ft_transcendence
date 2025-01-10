@@ -87,14 +87,10 @@ STATIC_URL = '/static/'
 
 
 #POUR ADD MANUELEMENT DANS LA DB faire ca sur le shell de django
-
-#from myapp.models import ManualUser
-
-#user = ManualUser.objects.create(
-#    username='jane_doe',
- #   email='jane@example.com',
- #   password='super-hash',
- #   is_2fa_enabled=True
-#)
-#print(user)  # <ManualUser: ManualUser object (123)>
-
+# from users.models import ManualUser
+# user = ManualUser.objects.create(
+#     username='dsf',
+#     email='asdas@dasas.c',
+#     password='super-hash',
+#     is_2fa_enabled=True
+# )
