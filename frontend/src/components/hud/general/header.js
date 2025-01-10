@@ -65,7 +65,7 @@ export const header = createComponent({
           handleRoute(route); // Gérer la route
 		  updateActiveLink(el); // Mettre à jour le lien actif
         });
-      }
+      } 
     });
 
     // Activer le lien correspondant à l'URL actuelle
