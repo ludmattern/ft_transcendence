@@ -84,7 +84,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+JWT_SECRET_KEY_REFRESH = 'your_refresh_token_secret_key'
+JWT_REFRESH_EXPIRE = 86400
 
+JWT_SECRET_KEY = "une_clé_secrète_longue_et_aleatoire"   # À stocker en variable d'env en prod
+JWT_ALGORITHM = "HS256"
+JWT_EXP_DELTA_SECONDS = 180 
 
 #POUR ADD MANUELEMENT DANS LA DB faire ca sur le shell de django
 # from users.models import ManualUser
