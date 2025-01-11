@@ -1,23 +1,12 @@
 import { handleRoute } from "/src/services/router.js";
 
-export async function isClientAuthenticated() {
-  try 
-  {
-    const response = await fetch("/src/context/authenticated.json");
-    if (!response.ok) 
-    {
-      console.error("Failed to load authenticated.json");
-      return false;
-    }
-    const data = await response.json();
-    console.log(data)
-    return data.token === true;
-  } 
-  catch (error) 
-  {
-    console.error("Error checking authentication:", error);
+export async function isClientAuthenticated() 
+{
+  const token = localStorage.getItem("authToken");
+  if (token)
+    return true;
+  else
     return false;
-  }
 }
 
 export async function ensureAuthenticated(
@@ -26,13 +15,10 @@ export async function ensureAuthenticated(
 ) {
   const isAuthenticated = await isClientAuthenticated();
 
-  // Si l'accès non authentifié est autorisé, exécuter directement le callback
   if (allowUnauthenticated || isAuthenticated) {
     callback();
     return true;
   }
-
-  // Sinon, rediriger vers la page de connexion
   handleRoute("/login");
   return false;
 }
@@ -66,6 +52,8 @@ export async function loginUser(username, password) {
       if (data.success) {
         localStorage.setItem("authToken", "1234567890");
         console.log("Login successful!");
+        handleRoute("/");
+
       } else {
         console.log("Login failed:", data.message);
       }

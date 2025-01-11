@@ -67,7 +67,8 @@ export const subscribeForm = createComponent({
       const mail = el.querySelector("#email").value;
       const confirmMail = el.querySelector("#confirm-email").value;
       
-      if (mail !== confirmMail) {
+      if (mail !== confirmMail) 
+      {
         alert("E-mails do not match!");
       }
       else if (password !== confirmPassword) {
