@@ -3,15 +3,21 @@ import Store from './store.js';
 import {animateCameraBackToInitialPosition} from '/src/3d/animation.js';
 
 // =============== ROTATE LISTENER HANDLER ===============
-export let cameraRotationEvent = 0; 
+export let cameraRotationEvent = 0;
 export let listeners = [];
+let eventCounter = 0; // Compteur pour les appels
 
 export function setCameraRotation(value) {
-  Store.cameraRotationEvent = value;
-  Store.listeners.forEach((listener) => listener(Store.cameraRotationEvent));
+  cameraRotationEvent = value;
+  eventCounter += 1; // Incrémente le compteur
+
+  if (eventCounter % 10 === 0) { // Vérifie si c'est une occurrence multiple de 10
+    listeners.forEach((listener) => listener(cameraRotationEvent));
+  }
 }
+
 export function addCameraRotationListener(listener) {
-  Store.listeners.push(listener);
+  listeners.push(listener);
 }
 
 // =============== FREE VIEW HANDLER ===============

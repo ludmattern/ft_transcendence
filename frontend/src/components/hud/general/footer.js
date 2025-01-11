@@ -86,6 +86,7 @@ function initializeCompass(el) {
   addCameraRotationListener((cameraRotation) => {
     const percent = (cameraRotation + 1) / 2;
     const offset = percent * 360 * rotationRatio + 180;
+    console.log("offset", offset);
     positionPoints(points, compass, radius, baseHeight, offset);
   });
 }
