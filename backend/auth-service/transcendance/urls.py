@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django.urls import path
-from users.views import login_view
-from users.views import register_user
+from users.views import login_view, register_user, protected_view, refresh_token_view
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('logindb/', login_view, name='logindb'),
     path('register/', register_user, name='register_user'),
+    path('protected/', protected_view, name='protected_view'),
+    path('refresh/', refresh_token_view, name='refresh'),
 ]
