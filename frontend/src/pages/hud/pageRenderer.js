@@ -1,9 +1,11 @@
-import { testloadComponent, cleanupComponents } from "/src/utils/virtualDOM.js";
 import { loginForm, profileForm, header, footer, leftSideWindow, rightSideWindow, logoutForm,
   socialForm, otherProfileForm, deleteAccountForm, subscribeForm, settingsForm, lostForm, hudSVG, HelmetSVG
 } from "/src/components/hud/index.js";
 import { midScreen } from "/src/components/midScreen.js";
 import { menu3 } from "/src/components/menu3.js";
+import { pongMenu } from "/src/components/pong/pongMenu.js";
+import componentManagers from "/src/index.js"; // Assurez-vous que HUD est importé
+
 
 /**
  * Composants globaux par défaut
@@ -17,6 +19,7 @@ const globalComponents = {
   footer: { selector: "#footer-container", component: footer },
   midScreen: { selector: "#mid-screen-container", component: midScreen },
   menu3: { selector: "#menu3-container", component: menu3 },
+  pongMenu: { selector: "#pongmenu-container", component: pongMenu },
 };
 
 /**
@@ -75,10 +78,12 @@ export function renderPage(pageKey) {
     ({ component }) => component.tag
   );
 
-  cleanupComponents(componentKeys);
+  const hudManager = componentManagers.HUD;
+
+  hudManager.cleanupComponents(componentKeys);
 
   componentsToRender.forEach(({ selector, component }) => {
-    testloadComponent(selector, component);
+    hudManager.loadComponent(selector, component);
   });
 
   console.debug(`${pageKey} Page rendered.`);

@@ -74,7 +74,7 @@ export function switchwindow(screen) {
           Store.menuElement.classList.remove("active");
         }
         if (nb == 2) {
-          Store.menuElement2.classList.remove("active");
+        //   Store.menuElement2.classList.remove("active");
         }
         if (nb == 3) {
           Store.menuElement3.classList.remove("active");

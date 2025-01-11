@@ -18,18 +18,8 @@ const effectsQueue = new Set();
 export function createElement(type, props = {}, ...children) {
   // Determine if the element is an SVG element or not
   const isSVG = [
-    "svg",
-    "path",
-    "circle",
-    "rect",
-    "line",
-    "polygon",
-    "polyline",
-    "g",
-    "defs",
-    "linearGradient",
-    "radialGradient",
-    "stop",
+    "svg", "path", "circle", "rect", "line", "polygon", "polyline", "g", "defs",
+    "linearGradient", "radialGradient", "stop",
   ].includes(type);
   const element = isSVG
     ? document.createElementNS("http://www.w3.org/2000/svg", type)
