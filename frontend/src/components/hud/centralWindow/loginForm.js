@@ -48,8 +48,8 @@ export const loginForm = createComponent({
         await loginUser(pilotId, password);
 
         // Si la promesse est résolue, on redirige vers "/"
-        handleRoute("/");
         console.log("Login successful!");
+        handleRoute("/");
       } catch (err) {
         // Si la promesse est rejetée, on affiche une erreur
         console.error("Login failed:", err.message);

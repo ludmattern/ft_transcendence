@@ -1,19 +1,16 @@
 import { handleRoute } from "/src/services/router.js";
 
-function parseJwt(token)
-{
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+function parseJwt(token) {
+  const base64Url = token.split(".")[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
   const jsonPayload = decodeURIComponent(
     atob(base64)
-      .split('')
-      .map(c => `%${c.charCodeAt(0).toString(16).padStart(2, '0')}`)
-      .join('')
+      .split("")
+      .map((c) => `%${c.charCodeAt(0).toString(16).padStart(2, "0")}`)
+      .join("")
   );
   return JSON.parse(jsonPayload);
 }
-
-
 
 export async function refreshAccessToken() {
   const refreshToken = localStorage.getItem("refreshToken");
@@ -26,7 +23,7 @@ export async function refreshAccessToken() {
     const response = await fetch("/api/auth-service/refresh/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: refreshToken })
+      body: JSON.stringify({ refresh_token: refreshToken }),
     });
 
     if (response.ok) {
@@ -57,8 +54,7 @@ export async function isClientAuthenticated() {
   if (decoded.exp - currentTime < 0) {
     localStorage.removeItem("authToken");
     return false;
-  }
-  else if (decoded.exp - currentTime < 60) {
+  } else if (decoded.exp - currentTime < 60) {
     console.log("Token near expiration. Attempting to refresh...");
     const refreshed = await refreshAccessToken();
     return refreshed;
@@ -66,22 +62,32 @@ export async function isClientAuthenticated() {
   return true;
 }
 
-
 export async function ensureAuthenticated(callback, allowUnauthenticated = false) {
   const isAuthenticated = await isClientAuthenticated();
-  getProtectedData();
-  if (allowUnauthenticated || isAuthenticated) 
-  {
-    callback();
-    return true;
+  if (!isAuthenticated) {
+    if (allowUnauthenticated) {
+      console.warn("User not authenticated but allowed to access route.");
+      callback();
+      return true;
+    } else {
+      console.warn(
+        "User not authenticated or token expired. Redirecting to login."
+      );
+      handleRoute("/login");
+      return false;
+    }
+  } else {
+    if (allowUnauthenticated) {
+      console.warn("User authenticated but not allowed to access this route.");
+      handleRoute("/");
+      return false;
+    } else {
+		console.log("User authenticated. Proceeding...");
+		callback();
+		return true;
+	}
   }
-
-  console.warn("User not authenticated or token expired. Redirecting to login.");
-  handleRoute("/login");
-  return false;
 }
-
-
 
 export async function logoutUser() {
   return new Promise((resolve, reject) => {
@@ -97,17 +103,17 @@ export async function logoutUser() {
   });
 }
 
-async function getProtectedData() {
-  const token = localStorage.getItem("authToken");
-  const response = await fetch("/api/auth-service/protected/", {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${token}`
-    }
-  });
-  const data = await response.json();
-  console.log(data);
-}
+// async function getProtectedData() {
+//   const token = localStorage.getItem("authToken");
+//   const response = await fetch("/api/auth-service/protected/", {
+//     method: "GET",
+//     headers: {
+//       "Authorization": `Bearer ${token}`
+//     }
+//   });
+//   const data = await response.json();
+//   console.log(data);
+// }
 
 // function startTokenRefreshInterval() {
 //   setInterval(async () => {
@@ -119,13 +125,12 @@ async function getProtectedData() {
 //   }, 60000); // Vérifie toutes les 60 secondes
 // }
 
-
 export async function loginUser(username, password) {
   try {
     const response = await fetch("/api/auth-service/logindb/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password }),
     });
     const data = await response.json();
     if (data.success) {
@@ -134,40 +139,37 @@ export async function loginUser(username, password) {
       localStorage.setItem("refreshToken", data.refresh_token);
       console.log("Login successful!");
       //startTokenRefreshInterval(); // Lancer le rafraîchissement automatique
-      handleRoute("/");
     } else {
       console.log("Login failed:", data.message);
     }
   } catch (err) {
     console.error("Error:", err);
-  }  
-};
-
-
-  export async function registerUser(id, password, email) {
-
-    try {
-      const response = await fetch("/api/auth-service/register/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: id,
-          email: email,
-          password: password,
-        }),
-      });
-  
-      const data = await response.json();
-      if (data.success) {
-        console.log("User registered successfully:", data);
-        alert("Registration successful!");
-      } else {
-        alert(`Registration failed: ${data.message}`);
-      }
-    } catch (error) {
-      console.error("Error during registration:", error);
-      alert("An error occurred. Please try again later.");
-    }
   }
+}
+
+export async function registerUser(id, password, email) {
+  try {
+    const response = await fetch("/api/auth-service/register/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: id,
+        email: email,
+        password: password,
+      }),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      console.log("User registered successfully:", data);
+      alert("Registration successful!");
+    } else {
+      alert(`Registration failed: ${data.message}`);
+    }
+  } catch (error) {
+    console.error("Error during registration:", error);
+    alert("An error occurred. Please try again later.");
+  }
+}
