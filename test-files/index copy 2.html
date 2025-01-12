@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ft_transcendence - Test Page</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container-fluid" id="main-container">
+
+    <!-- Header Section -->
+    <header class="row align-items-center py-3 border-bottom">
+      <div class="col text-start">
+        <button class="btn btn-outline-secondary">Home</button>
+      </div>
+      <div class="col text-center">
+        <ul class="nav nav-pills justify-content-center" id="mainTabs" role="tablist">
+          <li class="nav-item">
+            <button class="nav-link active" id="play-tab" data-bs-toggle="pill" data-bs-target="#playContent" type="button" role="tab">Play</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" id="leaderboard-tab" data-bs-toggle="pill" data-bs-target="#leaderboardContent" type="button" role="tab">Leaderboard</button>
+          </li>
+        </ul>
+      </div>
+      <div class="col text-end">
+        <button class="btn btn-outline-primary">Back</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="row mt-4 tab-content" id="mainTabsContent">
+
+      <!-- Play Section -->
+      <section class="tab-pane fade show active" id="playContent" role="tabpanel">
+        <div class="row">
+
+          <!-- Vertical Navigation -->
+          <nav class="col-3">
+            <div class="nav flex-column nav-pills" id="playVerticalTabs" role="tablist">
+              <button class="nav-link active" id="page-test-tab" data-bs-toggle="pill" data-bs-target="#pageTest" type="button" role="tab">Page Test</button>
+              <button class="nav-link" id="multiplayer-tab" data-bs-toggle="pill" data-bs-target="#multiplayer" type="button" role="tab">Multiplayer</button>
+              <button class="nav-link" id="tournament-tab" data-bs-toggle="pill" data-bs-target="#tournament" type="button" role="tab">Tournament</button>
+            </div>
+          </nav>
+
+          <!-- Play Content -->
+          <div class="col tab-content">
+
+            <!-- Page Test Section -->
+            <div class="tab-pane fade show active" id="pageTest" role="tabpanel">
+              <h4 class="mb-3">Test Form Elements</h4>
+
+              <!-- Submenu Navigation -->
+              <ul class="nav nav-pills mb-3" id="submenuTabs" role="tablist">
+                <li class="nav-item">
+                  <button class="nav-link active" id="submenu1-tab" data-bs-toggle="pill" data-bs-target="#submenu1" type="button" role="tab">Submenu 1</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link" id="submenu2-tab" data-bs-toggle="pill" data-bs-target="#submenu2" type="button" role="tab">Submenu 2</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link" id="submenu3-tab" data-bs-toggle="pill" data-bs-target="#submenu3" type="button" role="tab">Submenu 3</button>
+                </li>
+              </ul>
+
+              <!-- Submenu Content -->
+              <div class="tab-content">
+                <div class="tab-pane fade show active" id="submenu1" role="tabpanel">
+                  <h5>Submenu 1 - Form</h5>
+                  <div class="mb-3">
+                    <label for="testDropdown1" class="form-label">Choice Test 1</label>
+                    <select class="form-select" id="testDropdown1">
+                      <option>Option 1</option>
+                      <option>Option 2</option>
+                      <option>Option 3</option>
+                      <option>Option 4</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="testDropdown2" class="form-label">Choice Test 2</label>
+                    <select class="form-select" id="testDropdown2">
+                      <option>Easy</option>
+                      <option>Medium</option>
+                      <option>Hard</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="textInput" class="form-label">Text Input</label>
+                    <input type="text" class="form-control" id="textInput" placeholder="Enter text">
+                  </div>
+                  <button class="btn btn-primary">Submit</button>
+                </div>
+                <div class="tab-pane fade" id="submenu2" role="tabpanel">
+                  <h5>Submenu 2 - Features</h5>
+                  <div class="mb-3">
+                    <label class="form-label">Select Features</label>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="feature1" value="feature1">
+                      <label class="form-check-label" for="feature1">Feature 1</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="feature2" value="feature2">
+                      <label class="form-check-label" for="feature2">Feature 2</label>
+                    </div>
+                  </div>
+                  <button class="btn btn-secondary">Save</button>
+                </div>
+                <div class="tab-pane fade" id="submenu3" role="tabpanel">
+                  <h5>Submenu 3 - File Upload</h5>
+                  <div class="mb-3">
+                    <label for="fileUpload" class="form-label">Upload a File</label>
+                    <input class="form-control" type="file" id="fileUpload">
+                  </div>
+                  <button class="btn btn-success">Upload</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Multiplayer Section -->
+            <div class="tab-pane fade" id="multiplayer" role="tabpanel">
+              <h4>Multiplayer Section</h4>
+              <p>Content for multiplayer will go here.</p>
+            </div>
+
+            <!-- Tournament Section -->
+            <div class="tab-pane fade" id="tournament" role="tabpanel">
+              <h4>Tournament Section</h4>
+              <p>Content for tournaments will go here.</p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Leaderboard Section -->
+      <section class="tab-pane fade" id="leaderboardContent" role="tabpanel">
+        <h4>Leaderboard Section</h4>
+        <p>Content for the leaderboard will go here.</p>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

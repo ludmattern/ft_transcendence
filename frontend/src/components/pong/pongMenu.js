@@ -8,13 +8,11 @@ export const pongMenu = createComponent({
 
   // Générer le HTML
   render: () => `
-    <div class="container-fluid menu1" id="menu2">
       ${HeaderNav()}
       <div class="row mt-4 tab-content" id="mainTabsContent">
         ${PlaySection()}
         ${LeaderboardSection()}
       </div>
-    </div>
   `,
 
   // Ajouter les événements après le chargement
@@ -379,7 +377,7 @@ function cancelMatchmaking() {
 }
 
 function initM1() {
-  Store.menuElement2 = document.getElementById("menu2");
+  Store.menuElement2 = document.getElementById("pongmenu-container");
   if (!Store.menuElement2) {
     console.error("The element with ID 'menu2' was not found.");
     return;
