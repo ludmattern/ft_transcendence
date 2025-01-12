@@ -6,38 +6,43 @@ import { menu3 } from "/src/components/menu3.js";
 import { pongMenu } from "/src/components/pong/pongMenu.js";
 import componentManagers from "/src/index.js"; // Assurez-vous que HUD est importé
 
+/**
+ * Composants persistants (toujours chargés)
+ */
+const persistentComponents = [
+  { selector: "#pongmenu-container", component: pongMenu },
+  { selector: "#hud-svg-container", component: hudSVG },
+  { selector: "#helmet-svg-container", component: HelmetSVG },
+  { selector: "#mid-screen-container", component: midScreen },
+  { selector: "#menu3-container", component: menu3 },
+];
 
 /**
  * Composants globaux par défaut
  */
 const globalComponents = {
-  hudSVG: { selector: "#hud-svg-container", component: hudSVG },
-  HelmetSVG: { selector: "#helmet-svg-container", component: HelmetSVG },
   header: { selector: "#header-container", component: header },
   leftSideWindow: { selector: "#left-window-container", component: leftSideWindow },
   rightSideWindow: { selector: "#right-window-container", component: rightSideWindow },
   footer: { selector: "#footer-container", component: footer },
-  midScreen: { selector: "#mid-screen-container", component: midScreen },
-  menu3: { selector: "#menu3-container", component: menu3 },
-  pongMenu: { selector: "#pongmenu-container", component: pongMenu },
 };
 
 /**
  * Définition des pages
  */
 const pages = {
-  login: 			{ useGlobals: false, mainComponent: loginForm },
-  subscribe: 		{ useGlobals: false, mainComponent: subscribeForm },
-  lostForm: 		{ useGlobals: false, mainComponent: lostForm },
-  profile: 			{ useGlobals: true, mainComponent: profileForm },
-  social: 			{ useGlobals: true, mainComponent: socialForm },
+  login: 			    { useGlobals: false, mainComponent: loginForm },
+  subscribe: 		  { useGlobals: false, mainComponent: subscribeForm },
+  lostForm: 		  { useGlobals: false, mainComponent: lostForm },
+  profile: 			  { useGlobals: true, mainComponent: profileForm },
+  social: 			  { useGlobals: true, mainComponent: socialForm },
   otherprofile: 	{ useGlobals: true, mainComponent: otherProfileForm },
-  settings: 		{ useGlobals: true, mainComponent: settingsForm },
+  settings: 	  	{ useGlobals: true, mainComponent: settingsForm },
   deleteAccount: 	{ useGlobals: true, mainComponent: deleteAccountForm },
-  logout: 			{ useGlobals: true, mainComponent: logoutForm },
-  home: 			{ useGlobals: true },
-  race: 			{ useGlobals: true },
-  pong: 			{ useGlobals: true },
+  logout: 		  	{ useGlobals: true, mainComponent: logoutForm },
+  home: 			    { useGlobals: true },
+  race: 		    	{ useGlobals: true },
+  pong: 		    	{ useGlobals: true },
 };
 
 /**
@@ -62,7 +67,7 @@ function getComponentsForPage(pageKey) {
     ? [{ selector: defaultSelector, component: page.mainComponent }]
     : [];
 
-  return [...global, ...specific];
+  return [...persistentComponents, ...global, ...specific];
 }
 
 /**
