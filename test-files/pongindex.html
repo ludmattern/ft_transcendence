@@ -7,9 +7,24 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body>
-  <div class="container-fluid" id="main-container">
-
+<body style="background-color: black;" >
+  <div class="reflection" style="
+  background-image: url(../frontend/src/assets/img/cockpit-reflection-left-screen.png);
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+  ">
+  </div>
+  <div class="container-fluid" style="
+  text-shadow: 0 0 3px #ffffffcc;
+  color: #fff;
+  "
+   id="main-container">
     <!-- Header Section -->
     <header class="row align-items-center py-3 border-bottom">
       <div class="col text-start">
