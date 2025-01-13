@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ft_transcendence - Test Page</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<!-- 1920 * 1440-->
+<body id="pong-screen-container" style="background-color: black;" >
+  <div class="left-screen-reflection">
+  </div>
+  <div class="container-fluid" id="main-container">
+    <!-- Header Section -->
+    <header class="row align-items-center px-4 pt-4">
+      <div class="col text-start">
+        <button class="btn btn-outline-secondary bi bi-house rounded-0 icon"> Home</button>
+      </div>
+      <div class="wrapper col-6 text-center">
+        <ul class="nav nav-pills justify-content-evenly" id="mainTabs" role="tablist">
+          <li class="nav-item">
+            <button class="nav-link d-flex active" id="play-tab" data-bs-toggle="pill" data-bs-target="#playContent" type="button" role="tab">
+				<span class="bi bi-joystick icon">
+					<span class="bi icon-border">
+						<span class="corner-top-right"></span>
+                        <span class="corner-bottom-left"></span>
+					</span>
+				</span>
+				<span class="content">Play</span>
+			</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link d-flex" id="leaderboard-tab" data-bs-toggle="pill" data-bs-target="#leaderboardContent" type="button" role="tab">
+				<span class="bi bi-trophy icon">
+					<span class="bi icon-border">
+						<span class="corner-top-right"></span>
+                        <span class="corner-bottom-left"></span>
+					</span>
+				</span>
+				<span class="content">Leaderboard</span>
+			</button>
+          </li>
+        </ul>
+      </div>
+      <div class="col text-end">
+        <button class="btn btn-outline-secondary bi bi-arrow-left rounded-0"> Back</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="row mt-4 tab-content" id="pong-menu-container">
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js">
+</script>
+	<script>
+  // Sélectionner tous les boutons de navigation
+  const navLinks = document.querySelectorAll('#mainTabs .nav-item');
+
+  // Ajouter un gestionnaire d'événements à chaque bouton
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      // Supprimer la classe "active" de tous les boutons
+      navLinks.forEach(nav => nav.classList.remove('active'));
+
+      // Ajouter la classe "active" au bouton cliqué
+      link.classList.add('active');
+    });
+  });
+</script>
+
+  <style>
+
+	#pong-screen-container header {
+	  border-bottom: 0px solid #b5cfc5;
+	  box-shadow: 0px 0px 0px 0px #b5cfc5;
+	}
+
+	#pong-screen-container header:has(.nav-item.active) {
+	  border-bottom: 1px solid #b5cfc5;
+	  box-shadow: 0px 0px 4px 0px #b5cfc5;
+	}
+
+	#pong-screen-container .left-screen-reflection {
+	  background-image: url(../frontend/src/assets/img/cockpit-reflection-left-screen.png);
+	  width: 100vw;
+	  height: 100vh;
+	  background-repeat: no-repeat;
+	  background-size: cover;
+	  position: absolute;
+	  pointer-events: none;
+	  z-index: 1;
+	  mix-blend-mode: screen;
+	}
+
+	#pong-screen-container .btn:hover {
+		background-color: #1a1d15;
+	}
+	
+	#pong-screen-container header .wrapper .nav-item {
+		border: 1px solid rgba(255, 255, 255, 0);
+		box-shadow: 0px 0px 4px 0px rgba(255, 255, 255, 0);
+		border-bottom: 0px;
+		padding-bottom: 0.5rem;
+		opacity: 0.5;
+		transition: all 0.15s;
+	}
+
+	#pong-screen-container header .wrapper .nav-item:hover {
+		border: 1px solid rgba(255, 255, 255, 0.446);
+		box-shadow: 0px 0px 4px 0px rgba(255, 255, 255, 0.424);
+		background-color: rgba(255, 255, 255, 0.1);
+		opacity: 1;
+	}
+	
+	#pong-screen-container header .wrapper .nav-item.active {
+		border: 1px solid #b5cfc5;
+		box-shadow: 0px 0px 4px 0px #b5cfc5;
+		background-color: rgba(255, 255, 255, 0);
+		opacity: 1;
+	}
+
+	#pong-screen-container header .wrapper .nav-item.active::after {
+		content: "";
+		position: relative;
+		border-top: 8px solid rgb(0, 0, 0) !important;
+		box-shadow: none;
+		display: block;
+		top: 16px;
+		width: 100%;
+	}
+
+	#pong-screen-container header .wrapper .nav-link {
+		padding: 1.5rem;
+		padding-top: 1rem;
+		padding-bottom: 0rem;
+	}
+
+	#pong-screen-container header .wrapper .nav-link.active {
+		background-color: transparent;
+	}
+
+	#pong-screen-container header .wrapper button {
+		color: #b5cfc5;
+		align-items: center;
+		text-shadow: 0px 0px 1px #b5cfc5;
+	}
+
+	#pong-screen-container header .wrapper button .icon {
+		color: #55827f;
+		text-shadow: 0px 0px 4px rgb(255 255 255 / 18%);
+		font-size: 2.5rem;
+		position: relative;
+		width: 5rem;
+		height: 5rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	#pong-screen-container header .wrapper button .icon-border::before,
+	#pong-screen-container header .wrapper button .icon-border::after,
+	#pong-screen-container header .wrapper button .icon-border .corner-top-right,
+	#pong-screen-container header .wrapper button .icon-border .corner-bottom-left {
+		content: "";
+		position: absolute;
+		width: 7px; /* Longueur des coins horizontaux */
+		height: 7px; /* Longueur des coins verticaux */
+		border: 2px solid #78b1ac;
+	}
+
+	/* Coin en haut à gauche */
+	#pong-screen-container header .wrapper button .icon-border::before {
+		top: 0;
+		left: 0;
+		border-right: none;
+		border-bottom: none;
+	}
+
+	/* Coin en bas à droite */
+	#pong-screen-container header .wrapper button .icon-border::after {
+		bottom: 0;
+		right: 0;
+		border-left: none;
+		border-top: none;
+	}
+
+	/* Coin en haut à droite */
+	#pong-screen-container header .wrapper button .icon-border .corner-top-right {
+		top: 0;
+		right: 0;
+		border-left: none;
+		border-bottom: none;
+	}
+
+	/* Coin en bas à gauche */
+	#pong-screen-container header .wrapper button .icon-border .corner-bottom-left {
+		bottom: 0;
+		left: 0;
+		border-right: none;
+		border-top: none;
+	}
+
+	#pong-screen-container header .wrapper button .content {
+		font-size: 1.2rem;
+		margin: 0rem 0rem 0rem 1rem;
+		width: 16rem;
+		height: 5rem;
+		display: flex;
+		align-items: center;
+		background-image: url(../frontend/src/assets/tab_background.svg);
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center;
+		padding-left: 2rem;
+	}
+  </style>
+</body>
+</html>

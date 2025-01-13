@@ -377,7 +377,7 @@ function cancelMatchmaking() {
 }
 
 function initM1() {
-  Store.menuElement2 = document.getElementById("pongmenu-container");
+  Store.menuElement2 = document.getElementById("pong-screen-container");
   if (!Store.menuElement2) {
     console.error("The element with ID 'menu2' was not found.");
     return;
