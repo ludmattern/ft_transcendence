@@ -10,7 +10,7 @@ import componentManagers from "/src/index.js"; // Assurez-vous que HUD est impor
  * Composants persistants (toujours chargés)
  */
 const persistentComponents = [
-  { selector: "#pongmenu-container", component: pongMenu },
+  { selector: "#pong-screen-container", component: pongMenu },
   { selector: "#hud-svg-container", component: hudSVG },
   { selector: "#helmet-svg-container", component: HelmetSVG },
   { selector: "#mid-screen-container", component: midScreen },
