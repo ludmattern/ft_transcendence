@@ -15,10 +15,15 @@ export const subscribeForm = createComponent({
             <label class="mb-3" for="new-pilot-id">ID</label>
             <input type="text" id="new-pilot-id" name="new-pilot-id" class="form-control" required />
             <div id="error-message-id" class="text-danger mt-2" style="display: none;">Id already taken</div>
+            <div id="bad-id" class="text-danger mt-2" style="display: none;">Id must contain between 6 and 20 char</div>
           </div>
           <div class="form-group">
             <label class="mb-3" for="new-password">Password</label>
             <input type="password" id="new-password" name="new-password" class="form-control" required />
+            <div id="bad-pass-size" class="text-danger mt-2" style="display: none;">Password must contain between 6 and 20 char</div>
+            <div id="bad-pass-upper" class="text-danger mt-2" style="display: none;">Password must have at least one uppercase char</div>
+            <div id="bad-pass-lower" class="text-danger mt-2" style="display: none;">Password must have at least one lowercase char</div>
+            <div id="bad-pass-special" class="text-danger mt-2" style="display: none;">Password must have at least one special char</div>
           </div>
           <div class="form-group">
             <label class="mb-3" for="confirm-password">Confirm Password</label>
@@ -71,6 +76,60 @@ export const subscribeForm = createComponent({
       const mail = el.querySelector("#email").value;
       const confirmMail = el.querySelector("#confirm-email").value;
       let tryRegister = true;
+
+      const badId = document.getElementById("bad-id");
+      const badPassSize = document.getElementById("bad-pass-size");
+      const badPassUpper = document.getElementById("bad-pass-upper");
+      const badPassLower = document.getElementById("bad-pass-lower");
+      const badPassSpecial = document.getElementById("bad-pass-special");
+
+      if (id.length < 6 || id.length > 20) 
+      {
+        badId.style.display = "block";       
+        return false;
+      }
+      else
+        badId.style.display = "none";       
+
+      if (password.length < 6 || password.length > 20) 
+      {
+          badPassSize.style.display = "block";       
+          return false;
+      }
+      else
+          badPassSize.style.display = "none";
+      
+      const passwordRegexLower = /[a-z]/;
+      const passwordRegexUpper = /[A-Z]/;
+      const passwordRegexSpecial = /[@$!%*?&#^]/;
+    
+      if (!passwordRegexLower.test(password)) {
+        badPassLower.style.display = "block";
+        return false;
+      }
+      else
+        badPassLower.style.display = "none";
+
+    
+      if (!passwordRegexUpper.test(password)) {
+        badPassUpper.style.display = "block";
+        return false;
+      }
+      else
+      {
+        badPassUpper.style.display = "none";
+
+      }
+    
+      if (!passwordRegexSpecial.test(password)) {
+        badPassSpecial.style.display = "block";
+        return false;
+      }
+      else
+      {
+        badPassSpecial.style.display = "none";
+      }
+      
 
 
       if (mail !== confirmMail) 
