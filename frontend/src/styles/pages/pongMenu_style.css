@@ -1,0 +1,184 @@
+#pong-screen-container {
+	transition: all 0.15s;
+	background-color: #070707;
+	transition: all 0.15s;
+}
+
+#pong-screen-container #main-container{
+	display: flex;
+	flex-direction: column;
+	transition: all 0.15s;
+	pointer-events: all;
+	height: 1050px !important;
+    width: 1350px !important;
+}
+
+#pong-screen-container header {
+	border-bottom: 1px solid #b5cfc500;
+	border-left: 1px solid #b5cfc642;;
+	border-right: 1px solid #b5cfc642;
+	border-top: 1px solid #b5cfc642;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header:has(.nav-item.active) {
+	border-bottom: 1px solid #b5cfc5;
+	transition: all 0.15s;
+}
+
+#pong-screen-container .btn:hover {
+	background-color: #1a1d15;
+}
+
+#pong-screen-container #pong-menu-container {
+	border: 1px solid #b5cfc642;
+	border-top : 0px;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header:has(.nav-item.active) + #pong-menu-container {
+	background-color: #111111;;
+	transition: all 0.15s;
+}
+#pong-screen-container header .wrapper .nav-item {
+	border: 1px solid rgba(255, 255, 255, 0);
+	border-bottom: 0px;
+	padding-bottom: 0.5rem;
+	opacity: 0.5;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header .wrapper .nav-item:hover {
+	border: 1px solid rgba(255, 255, 255, 0.446);
+	background-color: #111111;;
+	opacity: 1;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header .wrapper .nav-item.active {
+	border: 1px solid #b5cfc5;
+	background-color: #111111;;
+	opacity: 1;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header .wrapper .nav-item::after {
+	content: "";
+	position: relative;
+	border-top: 8px solid #ffffff00;
+	display: block;
+	top: 15px;
+	width: 100%;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header .wrapper .nav-item.active::after {
+	content: "";
+	position: relative;
+	border-top: 8px solid #111111 !important;
+	display: block;
+	top: 15px;
+	width: 100%;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header .wrapper .nav-link {
+	padding: 1.5rem;
+	padding-top: 1rem;
+	padding-bottom: 0rem;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header .wrapper .nav-link.active {
+	background-color: transparent;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header .wrapper button {
+	color: #b5cfc5;
+	align-items: center;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header .wrapper button .icon {
+	color: #55827f;
+	font-size: 2.5rem;
+	position: relative;
+	width: 5rem;
+	height: 5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header .wrapper button .icon-border::before,
+#pong-screen-container header .wrapper button .icon-border::after,
+#pong-screen-container header .wrapper button .icon-border .corner-top-right,
+#pong-screen-container header .wrapper button .icon-border .corner-bottom-left {
+	content: "";
+	position: absolute;
+	width: 7px; /* Longueur des coins horizontaux */
+	height: 7px; /* Longueur des coins verticaux */
+	border: 2px solid #78b1ac;
+	transition: all 0.15s;
+}
+
+/* Coin en haut à gauche */
+#pong-screen-container header .wrapper button .icon-border::before {
+	top: 0;
+	left: 0;
+	border-right: none;
+	border-bottom: none;
+	transition: all 0.15s;
+}
+
+/* Coin en bas à droite */
+#pong-screen-container header .wrapper button .icon-border::after {
+	bottom: 0;
+	right: 0;
+	border-left: none;
+	border-top: none;
+	transition: all 0.15s;
+}
+
+/* Coin en haut à droite */
+#pong-screen-container header .wrapper button .icon-border .corner-top-right {
+	top: 0;
+	right: 0;
+	border-left: none;
+	border-bottom: none;
+	transition: all 0.15s;
+}
+
+/* Coin en bas à gauche */
+#pong-screen-container header .wrapper button .icon-border .corner-bottom-left {
+	bottom: 0;
+	left: 0;
+	border-right: none;
+	border-top: none;
+	transition: all 0.15s;
+}
+
+#pong-screen-container header .wrapper button .content {
+	font-size: 1.2rem;
+	margin: 0rem 0rem 0rem 1rem;
+	width: 16rem;
+	height: 5rem;
+	display: flex;
+	align-items: center;
+	background-image: url(/src/assets/tab_background.svg);
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	padding-left: 2rem;
+	transition: all 0.15s;
+}
+
+#pong-screen-container footer {
+	background-color: #1c2321;
+	color: #b5cfc5;
+	transition: all 0.15s;
+	border: 1px solid #202e2f;
+	transition: all 0.15s;
+}
