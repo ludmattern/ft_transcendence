@@ -60,108 +60,52 @@ export const subscribeForm = createComponent({
   `,
 
   attachEvents: async (el) => {
+    // Gestion du clic sur "Log In"
     el.querySelector("#login-link").addEventListener("click", (e) => {
       e.preventDefault();
       handleRoute("/login");
       console.debug("LoginForm loaded on click.");
     });
-
+  
+    // Gestion de la soumission du formulaire
     el.querySelector("form").addEventListener("submit", async (e) => {
       e.preventDefault();
       console.log("Subscription form submitted!");
-
-      const id = el.querySelector("#new-pilot-id").value;
-      const password = el.querySelector("#new-password").value;
-      const confirmPassword = el.querySelector("#confirm-password").value;
-      const mail = el.querySelector("#email").value;
-      const confirmMail = el.querySelector("#confirm-email").value;
-      let tryRegister = true;
-
-      const badId = document.getElementById("bad-id");
-      const badPassSize = document.getElementById("bad-pass-size");
-      const badPassUpper = document.getElementById("bad-pass-upper");
-      const badPassLower = document.getElementById("bad-pass-lower");
-      const badPassSpecial = document.getElementById("bad-pass-special");
-
-      if (id.length < 6 || id.length > 20) 
-      {
-        badId.style.display = "block";       
-        return false;
+  
+      // 1. Récupérer les valeurs du formulaire
+      const { id, password, confirmPassword, mail, confirmMail } = getFormValues(el);
+  
+      // 2. Réinitialiser les messages d'erreur
+      resetErrorMessages();
+  
+      // 3. Effectuer les validations dans l'ordre
+      let canRegister = true;
+  
+      // Validation de l'ID
+      if (!validateId(id)) {
+        canRegister = false;
       }
-      else
-        badId.style.display = "none";       
-
-      if (password.length < 6 || password.length > 20) 
-      {
-          badPassSize.style.display = "block";       
-          return false;
+  
+      // Validation du password
+      if (canRegister && !validatePassword(password)) {
+        canRegister = false;
       }
-      else
-          badPassSize.style.display = "none";
-      
-      const passwordRegexLower = /[a-z]/;
-      const passwordRegexUpper = /[A-Z]/;
-      const passwordRegexSpecial = /[@$!%*?&#^]/;
-    
-      if (!passwordRegexLower.test(password)) {
-        badPassLower.style.display = "block";
-        return false;
+  
+      // Confirmation de password
+      if (canRegister && !checkPasswordConfirmation(password, confirmPassword)) {
+        canRegister = false;
       }
-      else
-        badPassLower.style.display = "none";
-
-    
-      if (!passwordRegexUpper.test(password)) {
-        badPassUpper.style.display = "block";
-        return false;
+  
+      // Confirmation d'email
+      if (canRegister && !checkEmailConfirmation(mail, confirmMail)) {
+        canRegister = false;
       }
-      else
-      {
-        badPassUpper.style.display = "none";
-
-      }
-    
-      if (!passwordRegexSpecial.test(password)) {
-        badPassSpecial.style.display = "block";
-        return false;
-      }
-      else
-      {
-        badPassSpecial.style.display = "none";
-      }
-      
-
-
-      if (mail !== confirmMail) 
-      {
-        const errMail = document.getElementById("error-message-mail2");
-        errMail.style.display = "block";
-        document.getElementById("error-message-mail").style.display = "none";
-        tryRegister = false;
-      }
-      else
-      {
-        const errMail = document.getElementById("error-message-mail2");
-        errMail.style.display = "none";
-        document.getElementById("error-message-mail").style.display = "none";
-
-      }
-      if ((password !== confirmPassword) && tryRegister) 
-      {
-        const errPass = document.getElementById("error-message-pass");
-        errPass.style.display = "block";
-        tryRegister = false;
-      }
-      else
-      {
-        const errPass = document.getElementById("error-message-pass");
-        errPass.style.display = "none";
-      }
-      if (tryRegister) {
+  
+      // 4. Si tout est valide, on tente l'inscription
+      if (canRegister) {
         try {
           const check_register = await registerUser(id, password, mail);
-          if (check_register)
-          {
+          if (check_register) {
             handleRoute("/login");
             console.log("register successful!");
           }
@@ -172,4 +116,112 @@ export const subscribeForm = createComponent({
       }
     });
   },
-});
+})
+  
+
+  /**
+ * Récupère les valeurs du formulaire
+ */
+function getFormValues(el) {
+  return {
+    id: el.querySelector("#new-pilot-id").value,
+    password: el.querySelector("#new-password").value,
+    confirmPassword: el.querySelector("#confirm-password").value,
+    mail: el.querySelector("#email").value,
+    confirmMail: el.querySelector("#confirm-email").value,
+  };
+}
+
+/**
+ * Cache tous les messages d'erreur liés au formulaire
+ */
+function resetErrorMessages() {
+  const errorIds = [
+    "bad-id",
+    "bad-pass-size",
+    "bad-pass-upper",
+    "bad-pass-lower",
+    "bad-pass-special",
+    "error-message-mail",
+    "error-message-mail2",
+    "error-message-pass",
+  ];
+
+  errorIds.forEach((errId) => {
+    const el = document.getElementById(errId);
+    if (el) el.style.display = "none";
+  });
+}
+
+/**
+ * Vérifie la validité de l'ID
+ * @returns {boolean} true si valide, false sinon
+ */
+function validateId(id) {
+  if (id.length < 6 || id.length > 20) {
+    document.getElementById("bad-id").style.display = "block";
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Vérifie la validité du mot de passe et affiche les erreurs correspondantes
+ * @returns {boolean} true si valide, false sinon
+ */
+function validatePassword(password) {
+  let isValid = true;
+
+  // Taille
+  if (password.length < 6 || password.length > 20) {
+    document.getElementById("bad-pass-size").style.display = "block";
+    isValid = false;
+  }
+
+  // Au moins une lettre minuscule
+  const regexLower = /[a-z]/;
+  if (!regexLower.test(password)) {
+    document.getElementById("bad-pass-lower").style.display = "block";
+    isValid = false;
+  }
+
+  // Au moins une lettre majuscule
+  const regexUpper = /[A-Z]/;
+  if (!regexUpper.test(password)) {
+    document.getElementById("bad-pass-upper").style.display = "block";
+    isValid = false;
+  }
+
+  // Au moins un caractère spécial
+  const regexSpecial = /[@$!%*?&#^]/;
+  if (!regexSpecial.test(password)) {
+    document.getElementById("bad-pass-special").style.display = "block";
+    isValid = false;
+  }
+
+  return isValid;
+}
+
+/**
+ * Vérifie la concordance entre password et confirmPassword
+ */
+function checkPasswordConfirmation(password, confirmPassword) {
+  if (password !== confirmPassword) {
+    document.getElementById("error-message-pass").style.display = "block";
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Vérifie la concordance entre mail et confirmMail
+ */
+function checkEmailConfirmation(mail, confirmMail) {
+  if (mail !== confirmMail) {
+    document.getElementById("error-message-mail2").style.display = "block";
+    // On masque éventuellement l'autre message, si besoin
+    document.getElementById("error-message-mail").style.display = "none";
+    return false;
+  }
+  return true;
+}
