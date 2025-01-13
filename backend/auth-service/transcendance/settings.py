@@ -1,4 +1,6 @@
 import os
+import secrets
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -88,10 +90,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-JWT_SECRET_KEY_REFRESH = 'your_refresh_token_secret_key'
+JWT_SECRET_KEY_REFRESH = secrets.token_urlsafe(64)
+
 JWT_REFRESH_EXPIRE = 86400
 
-JWT_SECRET_KEY = "une_clé_secrète_longue_et_aleatoire"   # À stocker en variable d'env en prod
+JWT_SECRET_KEY = secrets.token_urlsafe(64)
+
 JWT_ALGORITHM = "HS256"
 JWT_EXP_DELTA_SECONDS = 30
 
