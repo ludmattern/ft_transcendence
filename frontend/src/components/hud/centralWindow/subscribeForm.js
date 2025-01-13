@@ -14,6 +14,7 @@ export const subscribeForm = createComponent({
           <div class="form-group">
             <label class="mb-3" for="new-pilot-id">ID</label>
             <input type="text" id="new-pilot-id" name="new-pilot-id" class="form-control" required />
+            <div id="error-message-id" class="text-danger mt-2" style="display: none;">Id already taken</div>
           </div>
           <div class="form-group">
             <label class="mb-3" for="new-password">Password</label>
@@ -22,14 +23,17 @@ export const subscribeForm = createComponent({
           <div class="form-group">
             <label class="mb-3" for="confirm-password">Confirm Password</label>
             <input type="password" id="confirm-password" name="confirm-password" class="form-control" required />
+            <div id="error-message-pass" class="text-danger mt-2" style="display: none;">Password does not match</div>
           </div>
           <div class="form-group">
             <label class="mb-3" for="email">Email</label>
             <input type="email" id="email" name="email" class="form-control" required />
+            <div id="error-message-mail" class="text-danger mt-2" style="display: none;">E-mail already taken</div>
           </div>
           <div class="form-group">
             <label class="mb-3" for="confirm-email">Confirm Email</label>
             <input type="email" id="confirm-email" name="confirm-email" class="form-control" required />
+            <div id="error-message-mail2" class="text-danger mt-2" style="display: none;">E-mail does not match</div>
           </div>
           <div class="form-group">
             <label class="mb-3" for="language">Language</label>
@@ -66,19 +70,42 @@ export const subscribeForm = createComponent({
       const confirmPassword = el.querySelector("#confirm-password").value;
       const mail = el.querySelector("#email").value;
       const confirmMail = el.querySelector("#confirm-email").value;
-      
+      let tryRegister = true;
+
+
       if (mail !== confirmMail) 
       {
-        alert("E-mails do not match!");
+        const errMail = document.getElementById("error-message-mail2");
+        errMail.style.display = "block";
+        document.getElementById("error-message-mail").style.display = "none";
+        tryRegister = false;
       }
-      else if (password !== confirmPassword) {
-        alert("Passwords do not match!");
-      } else {
-        try {
-          await registerUser(id, password, mail);
+      else
+      {
+        const errMail = document.getElementById("error-message-mail2");
+        errMail.style.display = "none";
+        document.getElementById("error-message-mail").style.display = "none";
 
-          handleRoute("/login");
-          console.log("register successful!");
+      }
+      if ((password !== confirmPassword) && tryRegister) 
+      {
+        const errPass = document.getElementById("error-message-pass");
+        errPass.style.display = "block";
+        tryRegister = false;
+      }
+      else
+      {
+        const errPass = document.getElementById("error-message-pass");
+        errPass.style.display = "none";
+      }
+      if (tryRegister) {
+        try {
+          const check_register = await registerUser(id, password, mail);
+          if (check_register)
+          {
+            handleRoute("/login");
+            console.log("register successful!");
+          }
         } catch (err) {
           console.error("register failed:", err.message);
           alert("register failed! Please try again.");

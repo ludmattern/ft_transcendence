@@ -86,10 +86,13 @@ export async function loginUser(username, password) {
     credentials: "include"
   });
   const data = await response.json();
-  if (data.success) {
+  if (data.success) 
+  {
     console.log("Login successful (cookie set)!");
   } else {
     console.log("Login failed:", data.message);
+    const err = document.getElementById("error-message");
+    err.style.display = "block";
   }
 }
 
@@ -106,16 +109,37 @@ export async function registerUser(id, password, email) {
         password: password,
       }),
     });
-
     const data = await response.json();
-    if (data.success) {
+    if (data.success) 
+    {
       console.log("User registered successfully:", data);
-      alert("Registration successful!");
-    } else {
-      alert(`Registration failed: ${data.message}`);
+      return true;
+    } 
+    else
+    {
+      if (data.message.includes("Username already taken")) 
+      {
+        document.getElementById("error-message-id").style.display = "block";
+        return false;
+      }
+      else
+      {
+        document.getElementById("error-message-id").style.display = "none";
+      }
+      if (data.message.includes("Email already in use")) 
+      {
+        document.getElementById("error-message-mail").style.display = "block";
+        document.getElementById("error-message-mail2").style.display = "none";
+        return false;
+      }
+      else
+      {
+        document.getElementById("error-message-mail").style.display = "none";
+      }
     }
   } catch (error) {
     console.error("Error during registration:", error);
     alert("An error occurred. Please try again later.");
+    return false;
   }
 }

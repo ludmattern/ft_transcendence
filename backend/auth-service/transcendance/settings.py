@@ -91,11 +91,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 JWT_SECRET_KEY_REFRESH = secrets.token_urlsafe(64)
-
 JWT_REFRESH_EXPIRE = 86400
-
 JWT_SECRET_KEY = secrets.token_urlsafe(64)
-
 JWT_ALGORITHM = "HS256"
 JWT_EXP_DELTA_SECONDS = 30
 

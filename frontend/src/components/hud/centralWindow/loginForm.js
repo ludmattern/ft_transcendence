@@ -17,6 +17,7 @@ export const loginForm = createComponent({
           <div class="form-group">
             <label class="mb-3" for="password">Password</label>
             <input type="password" id="password" name="password" class="form-control" required />
+            <div id="error-message" class="text-danger mt-2" style="display: none;">Invalid credentials</div>
           </div>
           <button class="btn bi bi-check">accept</button>
         </form>
