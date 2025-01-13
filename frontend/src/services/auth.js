@@ -1,45 +1,5 @@
 import { handleRoute } from "/src/services/router.js";
 
-function parseJwt(token) {
-  const base64Url = token.split(".")[1];
-  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  const jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split("")
-      .map((c) => `%${c.charCodeAt(0).toString(16).padStart(2, "0")}`)
-      .join("")
-  );
-  return JSON.parse(jsonPayload);
-}
-
-export async function refreshAccessToken() {
-  const refreshToken = localStorage.getItem("refreshToken");
-  if (!refreshToken) {
-    console.error("No refresh token found");
-    return false;
-  }
-
-  try {
-    const response = await fetch("/api/auth-service/refresh/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: refreshToken }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem("authToken", data.access_token);
-      console.log("Access token refreshed");
-      return true;
-    } else {
-      console.error("Failed to refresh token");
-      return false;
-    }
-  } catch (error) {
-    console.error("Error during token refresh:", error);
-    return false;
-  }
-}
 
 export async function isClientAuthenticated() {
   const token = localStorage.getItem("authToken");
@@ -48,19 +8,42 @@ export async function isClientAuthenticated() {
     return false;
   }
 
-  const decoded = parseJwt(token);
-  const currentTime = Math.floor(Date.now() / 1000);
+  try {
+    const response = await fetch("/api/auth-service/check-auth/", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
 
-  if (decoded.exp - currentTime < 0) {
-    localStorage.removeItem("authToken");
+    if (response.status === 401) 
+    {
+      const errData = await response.json().catch(() => ({}));
+      console.warn(errData.message || "Unauthorized");
+      localStorage.removeItem("authToken");
+      return false;
+    }
+
+    const data = await response.json();
+    if (!data.success) {
+      console.warn(data.message);
+      localStorage.removeItem("authToken");
+      return false;
+    }
+
+ 
+    if (data.new_access_token) {
+      console.log("Got new token from backend");
+      localStorage.setItem("authToken", data.new_access_token);
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error checking auth on backend:", error);
     return false;
-  } else if (decoded.exp - currentTime < 60) {
-    console.log("Token near expiration. Attempting to refresh...");
-    const refreshed = await refreshAccessToken();
-    return refreshed;
   }
-  return true;
 }
+
 
 export async function ensureAuthenticated(callback, allowUnauthenticated = false) {
   const isAuthenticated = await isClientAuthenticated();
@@ -133,12 +116,11 @@ export async function loginUser(username, password) {
       body: JSON.stringify({ username, password }),
     });
     const data = await response.json();
-    if (data.success) {
-      // Récupérer le token
+    if (data.success) 
+    {
       localStorage.setItem("authToken", data.access_token);
       localStorage.setItem("refreshToken", data.refresh_token);
       console.log("Login successful!");
-      //startTokenRefreshInterval(); // Lancer le rafraîchissement automatique
     } else {
       console.log("Login failed:", data.message);
     }
@@ -173,3 +155,17 @@ export async function registerUser(id, password, email) {
     alert("An error occurred. Please try again later.");
   }
 }
+
+
+
+/*
+
+12s -> pas de refresh -> 30s
+
+22s -> refresh -> 52s
+
+35s -> pas de refresh -> 52s
+
+45s-> refresh ->1m15s
+
+*/

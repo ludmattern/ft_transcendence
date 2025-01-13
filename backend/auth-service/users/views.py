@@ -9,6 +9,67 @@ from django.views.decorators.csrf import csrf_exempt
 from users.models import ManualUser
 import jwt
 
+@csrf_exempt
+def check_auth_view(request):
+    """
+    Vérifie l'état du token (expiré, proche expiration, ou valide).
+    Possibilité de renvoyer un nouveau token si "near expiry".
+    """
+    if request.method != 'GET':
+        return JsonResponse({'success': False, 'message': 'Only GET allowed'}, status=405)
+
+    auth_header = request.META.get('HTTP_AUTHORIZATION', None)
+    if not auth_header:
+        return JsonResponse({'success': False, 'message': 'No authorization header'}, status=401)
+
+    parts = auth_header.split()
+    if len(parts) != 2 or parts[0] != 'Bearer':
+        return JsonResponse({'success': False, 'message': 'Invalid token format'}, status=401)
+
+    token = parts[1]
+    try:
+        payload = jwt.decode(
+            token,
+            settings.JWT_SECRET_KEY,   # ta clé
+            algorithms=[settings.JWT_ALGORITHM],
+            options={'verify_exp': True}  # On vérifie exp
+        )
+
+        now = datetime.datetime.utcnow().timestamp()
+        exp = payload["exp"]
+        remaining = exp - now
+
+
+        if remaining <= 0:
+            return JsonResponse({'success': False, 'message': 'Token expired'}, status=401)
+
+        if remaining < 10:
+            new_exp = now + settings.JWT_EXP_DELTA_SECONDS
+            new_payload = {
+                "sub": payload["sub"],
+                "iat": now,
+                "exp": new_exp
+            }
+            new_token = jwt.encode(
+                new_payload,
+                settings.JWT_SECRET_KEY,
+                algorithm=settings.JWT_ALGORITHM
+            )
+            new_token_str = new_token if isinstance(new_token, str) else new_token.decode('utf-8')
+            return JsonResponse({
+                'success': True,
+                'message': 'Token near expiry => renewed.',
+                'new_access_token': new_token_str
+            })
+
+        return JsonResponse({'success': True, 'message': 'Token valid, not near expiry'})
+
+    except jwt.ExpiredSignatureError:
+        return JsonResponse({'success': False, 'message': 'Token expired'}, status=401)
+    except jwt.InvalidTokenError:
+        return JsonResponse({'success': False, 'message': 'Invalid token'}, status=401)
+
+
 def jwt_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
@@ -74,8 +135,7 @@ def login_view(request):
             algorithm=settings.JWT_ALGORITHM
         )
 
-        # Générer un refresh token
-        # => Nécessite une autre clé ou la même, selon ta logique
+
         refresh_payload = {
             "sub": user.username,
             "iat": now,
@@ -83,7 +143,7 @@ def login_view(request):
         }
         refresh_token = jwt.encode(
             refresh_payload,
-            settings.JWT_SECRET_KEY_REFRESH,  # la clé de refresh
+            settings.JWT_SECRET_KEY_REFRESH,
             algorithm=settings.JWT_ALGORITHM
         )
 
@@ -123,49 +183,5 @@ def register_user(request):
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
     else:
         return JsonResponse({'success': False, 'message': 'Only POST method is allowed'}, status=405)
-    
-@csrf_exempt
-def refresh_token_view(request):
-    if request.method == 'POST':
-        try:
-            body = json.loads(request.body.decode('utf-8'))
-            refresh_token = body.get('refresh_token')
 
-            if not refresh_token:
-                return JsonResponse({'success': False, 'message': 'Refresh token missing'}, status=400)
-
-            # Décoder et vérifier le refresh token
-            payload = jwt.decode(
-                refresh_token,
-                settings.JWT_SECRET_KEY_REFRESH,
-                algorithms=[settings.JWT_ALGORITHM]
-            )
-
-            # Générer un nouveau access token
-            now = datetime.datetime.utcnow()
-            exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-
-            new_payload = {
-                "sub": payload['sub'],  # Même utilisateur
-                "iat": now,
-                "exp": exp
-            }
-
-            new_access_token = jwt.encode(
-                new_payload,
-                settings.JWT_SECRET_KEY,
-                algorithm=settings.JWT_ALGORITHM
-            )
-
-            return JsonResponse({
-                'success': True,
-                'access_token': new_access_token,
-            })
-
-        except jwt.ExpiredSignatureError:
-            return JsonResponse({'success': False, 'message': 'Refresh token expired'}, status=401)
-        except jwt.InvalidTokenError:
-            return JsonResponse({'success': False, 'message': 'Invalid refresh token'}, status=401)
-    else:
-        return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
     
