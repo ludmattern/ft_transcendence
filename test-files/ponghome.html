@@ -13,13 +13,13 @@
   </div>
   <div class="container-fluid min-vh-100" id="main-container">
     <!-- Header Section -->
-	<header class="row align-items-center px-4 pt-4">
+	<header class="row align-items-center px-4">
 	<div class="col text-start">
 		<button class="btn btn-outline-secondary bi bi-house rounded-0 icon"> Home</button>
 	</div>
 	<div class="wrapper col-6 text-center">
 		<ul class="nav nav-pills justify-content-evenly" id="mainTabs" role="tablist">
-		<li class="nav-item">
+		<li class="nav-item mt-4">
 			<button class="nav-link d-flex active" id="play-tab" data-bs-toggle="pill" data-bs-target="#playContent" type="button" role="tab">
 				<span class="bi bi-joystick icon">
 					<span class="bi icon-border">
@@ -30,7 +30,7 @@
 				<span class="content">Play</span>
 			</button>
 		</li>
-		<li class="nav-item">
+		<li class="nav-item mt-4">
 			<button class="nav-link d-flex" id="leaderboard-tab" data-bs-toggle="pill" data-bs-target="#leaderboardContent" type="button" role="tab">
 				<span class="bi bi-trophy icon">
 					<span class="bi icon-border">
@@ -54,7 +54,7 @@
 
 	<footer class="row align-items-center p-3 footer">
 		<div class="logo col text-start">
-		  <span class="bi bi-windows"></span>
+		  <span class="fs-2 bi bi-windows"></span>
 		</div>
 		<div class="hour col text-end">
 		  <span>12:00</br>01/13/2024</span>
@@ -82,42 +82,49 @@
 
   <style>
 
+	#pong-screen-container {
+		transition: all 0.15s;
+	}
+	
 	#pong-screen-container #main-container{
 		display: flex;
 		flex-direction: column;
+		transition: all 0.15s;
 	}
-
+	
 	#pong-screen-container footer {
 		background-color: #1c2321;
 		color: #b5cfc5;
+		transition: all 0.15s;
 	}
-
-
+	
+	
 	#pong-screen-container header {
-	  border-bottom: 1px solid #b5cfc500;
-	  border-left: 1px solid #b5cfc6;
-	  border-right: 1px solid #b5cfc6;
-	  border-top: 1px solid #b5cfc6;
-	  box-shadow: 0px 0px 0px 0px #b5cfc5;
+		border-bottom: 1px solid #b5cfc500;
+		border-left: 1px solid #b5cfc6;
+		border-right: 1px solid #b5cfc6;
+		border-top: 1px solid #b5cfc6;
+		transition: all 0.15s;
 	}
-
+	
 	#pong-screen-container header:has(.nav-item.active) {
-	  border-bottom: 1px solid #b5cfc5;
-	  box-shadow: 0px 0px 4px 0px #b5cfc5;
+		border-bottom: 1px solid #b5cfc5;
+		transition: all 0.15s;
 	}
-
+	
 	#pong-screen-container .left-screen-reflection {
-	  background-image: url(../frontend/src/assets/img/cockpit-reflection-left-screen.png);
-	  width: 100vw;
-	  height: 100vh;
-	  background-repeat: no-repeat;
-	  background-size: cover;
-	  position: absolute;
-	  pointer-events: none;
-	  z-index: 1;
-	  mix-blend-mode: screen;
+		background-image: url(../frontend/src/assets/img/cockpit-reflection-left-screen.png);
+		width: 100vw;
+		height: 100vh;
+		background-repeat: no-repeat;
+		background-size: cover;
+		position: absolute;
+		pointer-events: none;
+		z-index: 1;
+		mix-blend-mode: screen;
+		transition: all 0.15s;
 	}
-
+	
 	#pong-screen-container .btn:hover {
 		background-color: #1a1d15;
 	}
@@ -125,11 +132,14 @@
 	#pong-screen-container #pong-menu-container {
 		border: 1px solid #b5cfc6;
 		border-top : 0px;
+		transition: all 0.15s;
 	}
 
+	#pong-screen-container header:has(.nav-item.active) + #pong-menu-container {
+		background-color: #ffffff08;
+	}
 	#pong-screen-container header .wrapper .nav-item {
 		border: 1px solid rgba(255, 255, 255, 0);
-		box-shadow: 0px 0px 4px 0px rgba(255, 255, 255, 0);
 		border-bottom: 0px;
 		padding-bottom: 0.5rem;
 		opacity: 0.5;
@@ -138,15 +148,13 @@
 
 	#pong-screen-container header .wrapper .nav-item:hover {
 		border: 1px solid rgba(255, 255, 255, 0.446);
-		box-shadow: 0px 0px 4px 0px rgba(255, 255, 255, 0.424);
-		background-color: rgba(255, 255, 255, 0.1);
+		background-color: #ffffff08;
 		opacity: 1;
 	}
 	
 	#pong-screen-container header .wrapper .nav-item.active {
 		border: 1px solid #b5cfc5;
-		box-shadow: 0px 0px 4px 0px #b5cfc5;
-		background-color: rgba(255, 255, 255, 0);
+		background-color: #ffffff08;
 		opacity: 1;
 	}
 
@@ -154,19 +162,17 @@
 		content: "";
 		position: relative;
 		border-top: 8px solid rgba(0, 0, 0, 0) !important;
-		box-shadow: none;
 		display: block;
-		top: 16px;
+		top: 15px;
 		width: 100%;
 	}
 
 	#pong-screen-container header .wrapper .nav-item.active::after {
 		content: "";
 		position: relative;
-		border-top: 8px solid rgb(0, 0, 0) !important;
-		box-shadow: none;
+		border-top: 8px solid rgb(9 9 10) !important;
 		display: block;
-		top: 16px;
+		top: 15px;
 		width: 100%;
 	}
 
@@ -183,12 +189,10 @@
 	#pong-screen-container header .wrapper button {
 		color: #b5cfc5;
 		align-items: center;
-		text-shadow: 0px 0px 1px #b5cfc5;
 	}
 
 	#pong-screen-container header .wrapper button .icon {
 		color: #55827f;
-		text-shadow: 0px 0px 4px rgb(255 255 255 / 18%);
 		font-size: 2.5rem;
 		position: relative;
 		width: 5rem;
