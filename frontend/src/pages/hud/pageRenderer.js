@@ -1,4 +1,4 @@
-import { loginForm, profileForm, header, footer, leftSideWindow, rightSideWindow, logoutForm,
+import { loginForm, profileForm, header, footer, leftSideWindow, rightSideWindow, logoutForm, twoFAForm,
   socialForm, otherProfileForm, deleteAccountForm, subscribeForm, settingsForm, lostForm, hudSVG, HelmetSVG
 } from "/src/components/hud/index.js";
 import { midScreen } from "/src/components/midScreen.js";
@@ -32,6 +32,7 @@ const globalComponents = {
  */
 const pages = {
   login: 			    { useGlobals: false, mainComponent: loginForm },
+  twoFAForm: 		    { useGlobals: false, mainComponent: twoFAForm },
   subscribe: 		  { useGlobals: false, mainComponent: subscribeForm },
   lostForm: 		  { useGlobals: false, mainComponent: lostForm },
   profile: 			  { useGlobals: true, mainComponent: profileForm },

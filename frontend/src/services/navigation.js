@@ -65,3 +65,8 @@ export function navigateToLost() {
   renderPage("lostForm");
   document.getElementById("blur-screen-effect").classList.remove("d-none");
 }
+
+export function navigateTo2FA() {
+renderPage("twoFAForm");
+  document.getElementById("blur-screen-effect").classList.remove("d-none");
+}

@@ -12,6 +12,7 @@ export { subscribeForm } from "/src/components/hud/centralWindow/subscribeForm.j
 export { settingsForm } from "/src/components/hud/centralWindow/settingsForm.js";
 export { logoutForm } from "/src/components/hud/centralWindow/logoutForm.js";
 export { lostForm } from "/src/components/hud/centralWindow/lostForm.js";
+export { twoFAForm } from "/src/components/hud/centralWindow/2FAForm.js";
 
 // General components
 export { header } from "/src/components/hud/general/header.js";

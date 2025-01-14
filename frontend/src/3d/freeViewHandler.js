@@ -11,7 +11,7 @@ export function setCameraRotation(value) {
   cameraRotationEvent = value;
   eventCounter += 1; // Incrémente le compteur
 
-  if (eventCounter % 10 === 0) { // Vérifie si c'est une occurrence multiple de 10
+  if (eventCounter % 2 === 0) { // Vérifie si c'est une occurrence multiple de 10
     listeners.forEach((listener) => listener(cameraRotationEvent));
   }
 }

@@ -12,6 +12,7 @@ import {
   navigateToOtherProfile,
   navigateToDeleteAccount,
   navigateToLost,
+  navigateTo2FA
 } from "/src/services/navigation.js";
 
 let previousRoute = null;
@@ -30,6 +31,7 @@ const routeMappings = {
 	"/settings": navigateToSettings,
 	"/settings/delete-account": navigateToDeleteAccount,
 	"/logout": navigateToLogout,
+	"/login/2fa": navigateTo2FA,
 	"/login": navigateToLogin,
 	"/subscribe": navigateToSubscribe,
   };
