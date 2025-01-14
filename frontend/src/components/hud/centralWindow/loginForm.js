@@ -38,23 +38,29 @@ export const loginForm = createComponent({
     });
 
     el.querySelector("form").addEventListener("submit", async (e) => {
-      e.preventDefault(); // Empêche la soumission par défaut du formulaire
+      e.preventDefault(); 
 
-      // Récupère les valeurs des champs
       const pilotId = el.querySelector("#pilot-id").value;
       const password = el.querySelector("#password").value;
+      try 
+      {
+        const data = await loginUser(pilotId, password);
+        if (data.twofa_method) 
+        {
+          console.log("2FA is required. Switching to the 2FA mini-form...");
+          sessionStorage.setItem("pending2FA_user", pilotId);
+          sessionStorage.setItem("pending2FA_method", data.twofa_method);
 
-      try {
-        // Appelle la fonction asynchrone et attend sa réponse
-        await loginUser(pilotId, password);
-
-        // Si la promesse est résolue, on redirige vers "/"
-        console.log("Login successful!");
-        handleRoute("/");
+          handleRoute("/login/2fa");
+        } 
+        else 
+        {
+          console.log("Login successful!");
+          handleRoute("/");
+        }
       } catch (err) {
-        // Si la promesse est rejetée, on affiche une erreur
         console.error("Login failed:", err.message);
-        alert("Login failed! Please try again.");
+        document.getElementById("error-message").style.display = "block";
       }
 
       console.log("Login submitted!");

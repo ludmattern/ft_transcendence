@@ -54,7 +54,6 @@ export const subscribeForm = createComponent({
               Enable Two-Factor Authentication (2FA)
             </label>
           </div>
-
           <div id="2fa-options" style="display: none;">
             <div class="form-group">
               <label for="2fa-method">Choose 2FA Method</label>
