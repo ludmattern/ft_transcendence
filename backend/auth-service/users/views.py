@@ -91,7 +91,6 @@ def login_view(request):
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             return JsonResponse({'success': False, 'message': 'Invalid credentials'}, status=401)
 
-        # Vérifie si la 2FA est activée
         if user.is_2fa_enabled:
             return JsonResponse({
                 'success': True,
@@ -99,7 +98,6 @@ def login_view(request):
                 'twofa_method': user.twofa_method
             }, status=200)
 
-        # Si 2FA n'est pas activée, continue avec la génération du JWT
         now = datetime.datetime.utcnow()
         exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
         access_payload = {

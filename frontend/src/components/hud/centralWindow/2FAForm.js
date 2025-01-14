@@ -32,7 +32,7 @@ export const twoFAForm = createComponent({
         const data = await verifyTwoFACode(username, code);
 
         if (data.success) 
-          {
+        {
           console.log("2FA verified successfully!");
           handleRoute("/");
         } 
