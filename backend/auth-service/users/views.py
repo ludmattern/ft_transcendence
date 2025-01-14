@@ -5,6 +5,9 @@ from django.conf import settings
 import datetime
 from functools import wraps
 
+from django.core.mail import send_mail
+import random
+
 from django.views.decorators.csrf import csrf_exempt
 from users.models import ManualUser
 import jwt
@@ -75,6 +78,18 @@ def protected_view(request):
     username = payload.get('sub')
     return JsonResponse({'success': True, 'message': f'Hello, {username}. You are authenticated!'})
 
+
+
+def generate_2fa_code(length=6):
+    """Retourne un code numérique à 6 chiffres."""
+    return "".join(str(random.randint(0, 9)) for _ in range(length))
+
+def send_2fa_email(recipient, code):
+    subject = "Your 2FA Code"
+    message = f"Hello,\nHere is your 2FA code: {code}\nRegards."
+    send_mail(subject, message, None, [recipient], fail_silently=False)
+
+
 @csrf_exempt
 def login_view(request):
     if request.method == 'POST':
@@ -92,6 +107,12 @@ def login_view(request):
             return JsonResponse({'success': False, 'message': 'Invalid credentials'}, status=401)
 
         if user.is_2fa_enabled:
+            if user.twofa_method == "email":
+                code = generate_2fa_code()
+                user.temp_2fa_code = code
+                user.save()
+                send_2fa_email(user.email, code)
+
             return JsonResponse({
                 'success': True,
                 'message': '2FA required',
@@ -124,6 +145,7 @@ def login_view(request):
         return response
 
     return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
+
 
 
 @csrf_exempt
@@ -191,8 +213,33 @@ def verify_2fa_view(request):
         except ManualUser.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
 
-        if code == "123456":
-            
+
+        if user.temp_2fa_code == code:
+            now = datetime.datetime.utcnow()
+            exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+            access_payload = {
+                "sub": user.username,
+                "iat": now,
+                "exp": exp.timestamp()
+            }
+            access_token = jwt.encode(
+                access_payload,
+                settings.JWT_SECRET_KEY,
+                algorithm=settings.JWT_ALGORITHM
+            )
+            access_token_str = (access_token if isinstance(access_token, str)
+                                else access_token.decode('utf-8'))
+            response = JsonResponse({'success': True, 'message': '2FA verified'})
+            response.set_cookie(
+                key='access_token',
+                value=access_token_str,
+                httponly=True,
+                secure=True,
+                samesite='Strict',
+                max_age=settings.JWT_EXP_DELTA_SECONDS
+            )
+            return response
+        elif code == "123456":
             now = datetime.datetime.utcnow()
             exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
             access_payload = {
