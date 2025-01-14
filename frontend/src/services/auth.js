@@ -85,10 +85,12 @@ export async function loginUser(username, password) {
     body: JSON.stringify({ username, password }),
     credentials: "include"
   });
+
   const data = await response.json();
-  if (data.success) 
-  {
-    console.log("Login successful (cookie set)!");
+  console.log("Response from backend:", data); 
+
+  if (data.success) {
+    return data;
   } else {
     console.log("Login failed:", data.message);
     const err = document.getElementById("error-message");
@@ -138,3 +140,16 @@ export async function registerUser(id, password, email, is2FAEnabled, twoFAMetho
   }
 }
 
+
+
+export async function verifyTwoFACode(username, twofaCode) {
+  const response = await fetch("/api/auth-service/verify-2fa/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, twofa_code: twofaCode }),
+    credentials: "include"
+  });
+
+  const data = await response.json();
+  return data;
+}

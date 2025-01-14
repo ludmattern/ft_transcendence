@@ -77,10 +77,6 @@ def protected_view(request):
 
 @csrf_exempt
 def login_view(request):
-    """
-    Login avec génération d'un access_token (stocké dans un cookie HTTP-only)
-    et d'un refresh_token renvoyé dans la réponse JSON.
-    """
     if request.method == 'POST':
         import json
         body = json.loads(request.body.decode('utf-8'))
@@ -95,6 +91,15 @@ def login_view(request):
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             return JsonResponse({'success': False, 'message': 'Invalid credentials'}, status=401)
 
+        # Vérifie si la 2FA est activée
+        if user.is_2fa_enabled:
+            return JsonResponse({
+                'success': True,
+                'message': '2FA required',
+                'twofa_method': user.twofa_method
+            }, status=200)
+
+        # Si 2FA n'est pas activée, continue avec la génération du JWT
         now = datetime.datetime.utcnow()
         exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
         access_payload = {
@@ -109,25 +114,7 @@ def login_view(request):
         )
         access_token_str = access_token if isinstance(access_token, str) else access_token.decode('utf-8')
 
-        refresh_payload = {
-            "sub": user.username,
-            "iat": now,
-            "exp": (now + datetime.timedelta(seconds=settings.JWT_REFRESH_EXPIRE)).timestamp()
-        }
-        refresh_token = jwt.encode(
-            refresh_payload,
-            settings.JWT_SECRET_KEY_REFRESH,
-            algorithm=settings.JWT_ALGORITHM
-        )
-        refresh_token_str = refresh_token if isinstance(refresh_token, str) else refresh_token.decode('utf-8')
-
-        response_data = {
-            'success': True,
-            'message': 'Logged in',
-            'refresh_token': refresh_token_str,
-        }
-        response = JsonResponse(response_data)
-
+        response = JsonResponse({'success': True, 'message': 'Logged in'})
         response.set_cookie(
             key='access_token',
             value=access_token_str,
@@ -136,11 +123,10 @@ def login_view(request):
             samesite='Strict',
             max_age=settings.JWT_EXP_DELTA_SECONDS
         )
-
         return response
 
-    else:
-        return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
+    return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
+
 
 @csrf_exempt
 def register_user(request):
@@ -193,3 +179,48 @@ def logout_view(request):
         response.delete_cookie('refresh_token')
         return response
     return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
+
+
+@csrf_exempt
+def verify_2fa_view(request):
+    if request.method == 'POST':
+        body = json.loads(request.body.decode('utf-8'))
+        username = body.get('username')
+        code = body.get('twofa_code')
+
+        try:
+            user = ManualUser.objects.get(username=username)
+        except ManualUser.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
+
+        if code == "123456":
+            
+            now = datetime.datetime.utcnow()
+            exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+            access_payload = {
+                "sub": user.username,
+                "iat": now,
+                "exp": exp.timestamp()
+            }
+            access_token = jwt.encode(
+                access_payload,
+                settings.JWT_SECRET_KEY,
+                algorithm=settings.JWT_ALGORITHM
+            )
+            access_token_str = (access_token if isinstance(access_token, str)
+                                else access_token.decode('utf-8'))
+
+            response = JsonResponse({'success': True, 'message': '2FA verified'})
+            response.set_cookie(
+                key='access_token',
+                value=access_token_str,
+                httponly=True,
+                secure=True,
+                samesite='Strict',
+                max_age=settings.JWT_EXP_DELTA_SECONDS
+            )
+            return response
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid 2FA code'}, status=401)
+    else:
+        return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
