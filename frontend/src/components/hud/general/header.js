@@ -94,21 +94,23 @@ function createNavItem(text, id = "") {
  * @param {HTMLElement} el - L'élément racine du header
  */
 function updateActiveLink(el) {
-  const currentPath = window.location.pathname;
-
-  // Trouver l'ID du lien correspondant à l'URL actuelle
-  const activeLinkId = Object.keys(navigationLinks).find(
-    (key) => navigationLinks[key] === currentPath
-  );
-
-  // Réinitialiser l'état de tous les liens
-  el.querySelectorAll("a").forEach((link) => link.classList.remove("active"));
-
-  // Activer le lien correspondant
-  if (activeLinkId && activeLinkId !== "home-link") {
-    const activeLink = el.querySelector(`#${activeLinkId}`);
-    if (activeLink) {
-      activeLink.classList.add("active");
-    }
+	const currentPath = window.location.pathname;
+  
+	// Trouver l'ID du lien correspondant ou du parent
+	const activeLinkId = Object.keys(navigationLinks).find((key) => {
+	  const path = navigationLinks[key];
+	  // Vérifie si l'URL actuelle commence par le chemin défini
+	  return currentPath === path || currentPath.startsWith(`${path}/`);
+	});
+  
+	// Réinitialiser l'état de tous les liens
+	el.querySelectorAll("a").forEach((link) => link.classList.remove("active"));
+  
+	// Activer le lien correspondant
+	if (activeLinkId && activeLinkId !== "home-link") {
+	  const activeLink = el.querySelector(`#${activeLinkId}`);
+	  if (activeLink) {
+		activeLink.classList.add("active");
+	  }
+	}
   }
-}
