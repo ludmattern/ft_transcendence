@@ -19,6 +19,7 @@
 	border-right: 1px solid #b5cfc642;
 	border-top: 1px solid #b5cfc642;
 	transition: all 0.15s;
+	pointer-events: all;
 }
 
 #pong-screen-container header:has(.nav-item.active) {
@@ -102,14 +103,14 @@
 
 #pong-screen-container header .wrapper button .icon {
 	color: #55827f;
-	font-size: 2.5rem;
-	position: relative;
-	width: 5rem;
-	height: 5rem;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: all 0.15s;
+    font-size: 2rem;
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
 }
 
 #pong-screen-container header .wrapper button .icon-border::before,
@@ -162,17 +163,17 @@
 
 #pong-screen-container header .wrapper button .content {
 	font-size: 1.2rem;
-	margin: 0rem 0rem 0rem 1rem;
-	width: 16rem;
-	height: 5rem;
-	display: flex;
-	align-items: center;
-	background-image: url(/src/assets/tab_background.svg);
-	background-size: cover;
-	background-repeat: no-repeat;
-	background-position: center;
-	padding-left: 2rem;
-	transition: all 0.15s;
+    margin: 0rem 0rem 0rem 1rem;
+    width: 12rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    background-image: url(/src/assets/tab_background.svg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding-left: 2rem;
+    transition: all 0.15s;
 }
 
 #pong-screen-container footer {

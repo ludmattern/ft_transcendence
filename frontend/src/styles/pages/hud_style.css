@@ -190,12 +190,11 @@ body {
   }
 }
 
-/* SVG Element Styling */
 .svg-element {
   position: fixed;
-  pointer-events: none; /* Prevent user interaction */
+  pointer-events: none;
   z-index: 10;
-  overflow: visible; /* Permet au flou de dépasser les limites */
+  overflow: visible;
 }
 .svg-top-left {
   min-width: 100px;
