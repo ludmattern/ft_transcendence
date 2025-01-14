@@ -96,11 +96,12 @@ JWT_SECRET_KEY = secrets.token_urlsafe(64)
 JWT_ALGORITHM = "HS256"
 JWT_EXP_DELTA_SECONDS = 30000
 
-#POUR ADD MANUELEMENT DANS LA DB faire ca sur le shell de django
-# from users.models import ManualUser
-# user = ManualUser.objects.create(
-#     username='dsf',
-#     email='asdas@dasas.c',
-#     password='super-hash',
-#     is_2fa_enabled=True
-# )
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'sendertran115@gmail.com'
+EMAIL_HOST_PASSWORD = 'rgph iima ghns xhwy'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

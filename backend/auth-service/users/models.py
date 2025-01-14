@@ -8,7 +8,7 @@ class ManualUser(models.Model):
     is_2fa_enabled = models.BooleanField(default=False)
     twofa_method = models.CharField(max_length=50, null=True, blank=True)
     phone_number = models.CharField(max_length=20, null=True, blank=True)  # Nouveau champ
-
+    temp_2fa_code = models.CharField(max_length=10, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
