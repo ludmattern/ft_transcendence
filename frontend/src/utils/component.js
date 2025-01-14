@@ -22,6 +22,8 @@ export default class ComponentManager {
 	  const el = document.createElement("div");
 	  el.dataset.component = component.tag; // Identifiant unique
 	  el.innerHTML = component.render(); // Générer le contenu HTML
+	  console.log(el);
+	  console.log(target);
 	  document.querySelector(target).appendChild(el);
   
 	  if (component.attachEvents) {
