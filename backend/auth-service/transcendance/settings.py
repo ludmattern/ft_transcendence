@@ -94,7 +94,7 @@ JWT_SECRET_KEY_REFRESH = secrets.token_urlsafe(64)
 JWT_REFRESH_EXPIRE = 86400
 JWT_SECRET_KEY = secrets.token_urlsafe(64)
 JWT_ALGORITHM = "HS256"
-JWT_EXP_DELTA_SECONDS = 3600
+JWT_EXP_DELTA_SECONDS = 30000
 
 #POUR ADD MANUELEMENT DANS LA DB faire ca sur le shell de django
 # from users.models import ManualUser
