@@ -48,6 +48,28 @@ export const subscribeForm = createComponent({
               <option value="german">German</option>
             </select>
           </div>
+          <div class="form-group">
+            <label for="enable-2fa">
+              <input type="checkbox" id="enable-2fa" name="enable-2fa" />
+              Enable Two-Factor Authentication (2FA)
+            </label>
+          </div>
+
+          <div id="2fa-options" style="display: none;">
+            <div class="form-group">
+              <label for="2fa-method">Choose 2FA Method</label>
+              <select id="2fa-method" name="2fa-method" class="form-control">
+                <option value="authenticator-app">Authenticator App</option>
+                <option value="sms">SMS</option>
+                <option value="email">Email</option>
+              </select>
+            </div>
+            <div class="form-group" id="phone-group" style="display: none;">
+              <label for="phone-number">Phone Number</label>
+              <input type="text" id="phone-number" name="phone-number" class="form-control" />
+              <div id="error-message-phone" class="text-danger mt-2" style="display: none;">Phone number must contain exactly 10 digits.</div>
+            </div>
+          </div>
           <button type="submit" class="btn btn-block bi bi-check2-square">Register</button>
         </form>
         <div>
@@ -60,51 +82,50 @@ export const subscribeForm = createComponent({
   `,
 
   attachEvents: async (el) => {
-    // Gestion du clic sur "Log In"
     el.querySelector("#login-link").addEventListener("click", (e) => {
       e.preventDefault();
       handleRoute("/login");
       console.debug("LoginForm loaded on click.");
     });
   
-    // Gestion de la soumission du formulaire
+    const enable2FA = document.getElementById("enable-2fa");
+    const twoFAOptions = document.getElementById("2fa-options");
+    const twoFAMethodSelect = document.getElementById("2fa-method");
+    const phoneGroup = document.getElementById("phone-group");
+
+    enable2FA.addEventListener("change", () => {
+      twoFAOptions.style.display = enable2FA.checked ? "block" : "none";
+      phoneGroup.style.display = "none";
+    });
+
+    twoFAMethodSelect.addEventListener("change", () => {
+      phoneGroup.style.display = twoFAMethodSelect.value === "sms" ? "block" : "none";
+    });
+
     el.querySelector("form").addEventListener("submit", async (e) => {
       e.preventDefault();
       console.log("Subscription form submitted!");
   
-      // 1. Récupérer les valeurs du formulaire
-      const { id, password, confirmPassword, mail, confirmMail } = getFormValues(el);
-  
-      // 2. Réinitialiser les messages d'erreur
+      const { id, password, confirmPassword, mail, confirmMail, phoneNumber } = getFormValues(el);
+
+      const is2FAEnabled = enable2FA.checked;
+      const twoFAMethod = is2FAEnabled ? twoFAMethodSelect.value : null;  
       resetErrorMessages();
   
-      // 3. Effectuer les validations dans l'ordre
       let canRegister = true;
-  
-      // Validation de l'ID
-      if (!validateId(id)) {
-        canRegister = false;
+      if (!validateId(id)) canRegister = false;
+      if (canRegister && !validatePassword(password)) canRegister = false;
+      if (canRegister && !checkPasswordConfirmation(password, confirmPassword)) canRegister = false;
+      if (canRegister && !checkEmailConfirmation(mail, confirmMail)) canRegister = false;
+      
+      if (is2FAEnabled && twoFAMethod === "sms" && !phoneNumber) {
+        if (!validatePhoneNumber(phoneNumber)) {
+          canRegister = false;
+        }
       }
-  
-      // Validation du password
-      if (canRegister && !validatePassword(password)) {
-        canRegister = false;
-      }
-  
-      // Confirmation de password
-      if (canRegister && !checkPasswordConfirmation(password, confirmPassword)) {
-        canRegister = false;
-      }
-  
-      // Confirmation d'email
-      if (canRegister && !checkEmailConfirmation(mail, confirmMail)) {
-        canRegister = false;
-      }
-  
-      // 4. Si tout est valide, on tente l'inscription
       if (canRegister) {
         try {
-          const check_register = await registerUser(id, password, mail);
+          const check_register = await registerUser(id, password, mail, is2FAEnabled, twoFAMethod, phoneNumber);
           if (check_register) {
             handleRoute("/login");
             console.log("register successful!");
@@ -129,6 +150,8 @@ function getFormValues(el) {
     confirmPassword: el.querySelector("#confirm-password").value,
     mail: el.querySelector("#email").value,
     confirmMail: el.querySelector("#confirm-email").value,
+    phoneNumber: el.querySelector("#phone-number").value || null,
+
   };
 }
 
@@ -157,6 +180,7 @@ function resetErrorMessages() {
  * Vérifie la validité de l'ID
  * @returns {boolean} true si valide, false sinon
  */
+
 function validateId(id) {
   if (id.length < 6 || id.length > 20) {
     document.getElementById("bad-id").style.display = "block";
@@ -172,39 +196,32 @@ function validateId(id) {
 function validatePassword(password) {
   let isValid = true;
 
-  // Taille
   if (password.length < 6 || password.length > 20) {
     document.getElementById("bad-pass-size").style.display = "block";
     isValid = false;
   }
 
-  // Au moins une lettre minuscule
   const regexLower = /[a-z]/;
   if (!regexLower.test(password)) {
     document.getElementById("bad-pass-lower").style.display = "block";
     isValid = false;
   }
 
-  // Au moins une lettre majuscule
   const regexUpper = /[A-Z]/;
   if (!regexUpper.test(password)) {
     document.getElementById("bad-pass-upper").style.display = "block";
     isValid = false;
   }
 
-  // Au moins un caractère spécial
   const regexSpecial = /[@$!%*?&#^]/;
   if (!regexSpecial.test(password)) {
     document.getElementById("bad-pass-special").style.display = "block";
     isValid = false;
   }
-
   return isValid;
 }
 
-/**
- * Vérifie la concordance entre password et confirmPassword
- */
+
 function checkPasswordConfirmation(password, confirmPassword) {
   if (password !== confirmPassword) {
     document.getElementById("error-message-pass").style.display = "block";
@@ -213,15 +230,22 @@ function checkPasswordConfirmation(password, confirmPassword) {
   return true;
 }
 
-/**
- * Vérifie la concordance entre mail et confirmMail
- */
+
 function checkEmailConfirmation(mail, confirmMail) {
   if (mail !== confirmMail) {
     document.getElementById("error-message-mail2").style.display = "block";
-    // On masque éventuellement l'autre message, si besoin
     document.getElementById("error-message-mail").style.display = "none";
     return false;
   }
+  return true;
+}
+
+function validatePhoneNumber(phoneNumber) {
+  const phoneRegex = /^\d{10}$/;
+  if (!phoneRegex.test(phoneNumber)) {
+    document.getElementById("error-message-phone").style.display = "block";
+    return false;
+  }
+  document.getElementById("error-message-phone").style.display = "none";
   return true;
 }

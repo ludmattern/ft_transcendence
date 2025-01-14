@@ -96,46 +96,40 @@ export async function loginUser(username, password) {
   }
 }
 
-export async function registerUser(id, password, email) {
+export async function registerUser(id, password, email, is2FAEnabled, twoFAMethod, phoneNumber) {
   try {
     const response = await fetch("/api/auth-service/register/", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         username: id,
         email: email,
         password: password,
+        is_2fa_enabled: is2FAEnabled,
+        twofa_method: is2FAEnabled ? twoFAMethod : null,
+        phone_number: is2FAEnabled && twoFAMethod === "sms" ? phoneNumber : null
+
       }),
     });
+
     const data = await response.json();
-    if (data.success) 
-    {
+    if (data.success) {
       console.log("User registered successfully:", data);
       return true;
-    } 
-    else
-    {
-      if (data.message.includes("Username already taken")) 
-      {
+    } else {
+      if (data.message.includes("Username already taken")) {
         document.getElementById("error-message-id").style.display = "block";
-        return false;
-      }
-      else
-      {
+      } else {
         document.getElementById("error-message-id").style.display = "none";
       }
-      if (data.message.includes("Email already in use")) 
-      {
+
+      if (data.message.includes("Email already in use")) {
         document.getElementById("error-message-mail").style.display = "block";
         document.getElementById("error-message-mail2").style.display = "none";
-        return false;
-      }
-      else
-      {
+      } else {
         document.getElementById("error-message-mail").style.display = "none";
       }
+      return false;
     }
   } catch (error) {
     console.error("Error during registration:", error);
@@ -143,3 +137,4 @@ export async function registerUser(id, password, email) {
     return false;
   }
 }
+

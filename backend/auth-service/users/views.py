@@ -142,7 +142,6 @@ def login_view(request):
     else:
         return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
 
-
 @csrf_exempt
 def register_user(request):
     if request.method == 'POST':
@@ -151,6 +150,9 @@ def register_user(request):
             username = body.get('username')
             email = body.get('email')
             password = body.get('password')
+            is_2fa_enabled = body.get('is_2fa_enabled', False)
+            twofa_method = body.get('twofa_method', None)
+            phone_number = body.get('phone_number', None)
 
             if not username or not email or not password:
                 return JsonResponse({'success': False, 'message': 'Missing required fields'}, status=400)
@@ -161,9 +163,20 @@ def register_user(request):
             if ManualUser.objects.filter(email=email).exists():
                 return JsonResponse({'success': False, 'message': 'Email already in use'}, status=409)
 
+            if is_2fa_enabled and twofa_method == 'sms' and not phone_number:
+                return JsonResponse({'success': False, 'message': 'Phone number is required for SMS 2FA'}, status=400)
+
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-            user = ManualUser.objects.create(username=username, email=email, password=hashed_password)
+            user = ManualUser.objects.create(
+                username=username,
+                email=email,
+                password=hashed_password,
+                is_2fa_enabled=is_2fa_enabled,
+                twofa_method=twofa_method,
+                phone_number=phone_number
+            )
+
             return JsonResponse({'success': True, 'message': 'User registered successfully', 'user_id': user.id})
 
         except Exception as e:
