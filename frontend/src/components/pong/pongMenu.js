@@ -14,7 +14,7 @@ export const pongMenu = createComponent({
 			<div class="col text-start">
 				<button class="btn btn-outline-secondary bi bi-house rounded-0 icon"> Home</button>
 			</div>
-			<div class="wrapper col-8 text-center">
+			<div class="wrapper col-6 text-center">
 				<ul class="nav nav-pills justify-content-evenly" id="mainTabs" role="tablist">
 				<li class="nav-item mt-4">
 					<button class="nav-link d-flex active" id="play-tab" data-bs-toggle="pill" data-bs-target="#playContent" type="button" role="tab">

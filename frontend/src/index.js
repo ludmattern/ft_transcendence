@@ -21,18 +21,13 @@ if (menu2) {
   });
 }
 
-
-
-
 export default componentManagers;
-
 
 async function initializeApp() {
   console.log("App initialized");
-  handleRoute(window.location.pathname);
   buildScene();
+  handleRoute(window.location.pathname);
   document.getElementById("waiting-screen-effect").classList.add("d-none");
 }
-
 
 initializeApp();
