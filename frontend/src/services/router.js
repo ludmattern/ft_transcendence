@@ -46,7 +46,7 @@ const routeMappings = {
   
 	previousRoute = window.location.pathname;
   
-	const unauthenticatedRoutes = ["/login", "/subscribe"];
+	const unauthenticatedRoutes = ["/login", "login/2fa", "/subscribe"];
 	const isUnauthenticatedRoute = unauthenticatedRoutes.includes(route);
   
 	ensureAuthenticated(() => {
