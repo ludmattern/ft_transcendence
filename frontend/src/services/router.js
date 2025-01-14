@@ -25,7 +25,6 @@ window.addEventListener("popstate", () => {
 const routeMappings = {
 	"/": navigateToHome,
 	"/profile": navigateToProfile,
-	"/pong": navigateToPong,
 	"/race": navigateToRace,
 	"/social": navigateToSocial,
 	"/settings": navigateToSettings,
@@ -56,6 +55,14 @@ const routeMappings = {
 		const pilot = route.split("=")[1];
 		console.debug(`Pilot: ${pilot}`);
 		navigateToOtherProfile(pilot);
+	  } else if (route.startsWith("/pong")) { 
+		if (route === "/pong") {
+		  navigateToPong();
+		} else {
+			const subroute = route.split("/")[2];
+			console.debug(`Subroute: ${subroute}`);
+			navigateToPong(subroute);
+		}
 	  } else {
 		navigateToLost();
 		console.warn(`Unknown route: ${route}`);

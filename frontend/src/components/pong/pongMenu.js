@@ -12,7 +12,7 @@ export const pongMenu = createComponent({
       <!-- Header Section -->
       <header class="row align-items-center px-4">
         <div class="col text-start">
-          <button class="btn btn-outline-secondary bi bi-house rounded-0 icon">
+          <button id="homeButton" class="btn btn-outline-secondary bi bi-house rounded-0 icon">
             Home
           </button>
         </div>
@@ -67,42 +67,10 @@ export const pongMenu = createComponent({
         </div>
       </header>
 
-      <!-- ********************************************************************* debut main container pour routeur pong  ********************************************************************* -->
 		<main class="row d-flex flex-column flex-grow-1 p-4" id="pong-menu-container">
-		<!-- Bandeau en haut -->
-		<header class="text-white d-flex align-items-center p-3 justify-content-around border" style="background-color: #113630;">
-			<!-- Bloc gauche -->
-			<div class="col-2 text-center">
-			  <h1 class="bi bi-rocket fs-5 m-0">TRANSCENDENCE</h1>
-			</div>
-		    <span class="separator" style="height: 200%; width: 1px; background-color: rgb(255, 255, 255);"></span>
-			<!-- Bloc droit -->
-			<div class="col-8 d-flex justify-content-around border p-1" style="background-color: #084b4e; text-transform: uppercase;">
-			  <span class="m-0">shipctrl:///appData/useless/pong/play.shp</span>
-			  <span class="m-0">Powered by ubuntu <i class="bi bi-ubuntu"></i></span>
-			</div>
-		  </header>
-
-		<!-- Contenu principal -->
-		<div class="d-flex flex-grow-1 border" style="padding: 0; background-color: #111111;">
-			<!-- Sous-menu à gauche -->
-			<aside class="col-md-3 p-3">
-			<ul class="list-unstyled p-2">
-				<li class="p-3 my-3 d-block" style="background-color: #17332c;"><a href="#" class="text-decoration-none text-white bi bi-person-fill"> SOLO</a></li>
-				<li class="p-3 my-3 d-block" style="background-color: #17332c;"><a href="#" class="text-decoration-none text-white bi bi-people-fill"> MULTIPLAYER</a></li>
-				<li class="p-3 my-3 d-block" style="background-color: #17332c;"><a href="#" class="text-decoration-none text-white bi bi-trophy-fill"> TOURNAMENT</a></li>
-			</ul>
-			</aside>
-
-			<!-- Corps à droite -->
-			<section class="col-md-9 p-3" style="background-color: #111111;">
-			<h2>Bienvenue</h2>
-			<p>Ceci est le contenu principal de la page.</p>
-			</section>
-		</div>
+		
+		<div id="content-window-container"></div>
 		</main>
-
-      <!-- ********************************************************************* fin main container pour routeur pong ********************************************************************* -->
 
       <footer class="row align-items-center p-3 footer">
         <div class="logo col text-start">
@@ -128,13 +96,26 @@ export const pongMenu = createComponent({
       link.addEventListener("click", () => {
         // Supprimer la classe "active" de tous les boutons
         navLinks.forEach((nav) => nav.classList.remove("active"));
-
         // Ajouter la classe "active" au bouton cliqué
         link.classList.add("active");
-      });
+	  });
     });
+	const homeButton = document.getElementById("homeButton");
+    const playButton = document.getElementById("play-tab");
+    const leaderboardButton = document.getElementById("leaderboard-tab");
+
+    // Ajouter un gestionnaire d'événements pour chaque bouton
+    homeButton.addEventListener("click", () => homeClick());
+    playButton.addEventListener("click", () => handleRoute("/pong/play"));
+    leaderboardButton.addEventListener("click", () => handleRoute("/pong/leaderboard"));
   },
 });
+
+function homeClick() {
+  handleRoute("/pong");
+  const navLinks = document.querySelectorAll("#mainTabs .nav-item");
+  navLinks.forEach((nav) => nav.classList.remove("active"));
+}
 
 function initM1() {
   Store.menuElement2 = document.getElementById("pong-screen-container");

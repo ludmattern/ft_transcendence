@@ -1,5 +1,6 @@
 import { switchwindow } from "/src/3d/animation.js";
 import { renderPage } from "/src/pages/hud/pageRenderer.js";
+import { renderPongPage } from "/src/pages/pong/pongRenderer.js";
 
 export function navigateToSocial() {
   renderPage("social");
@@ -32,8 +33,11 @@ export function navigateToProfile() {
   document.getElementById("blur-screen-effect").classList.remove("d-none");
 }
 
-export function navigateToPong() {
+export function navigateToPong(subroute = null) {
   renderPage("pong");
+  if (!subroute)
+	subroute = "home";
+  renderPongPage(subroute);
   document.getElementById("blur-screen-effect").classList.add("d-none");
   switchwindow("pong");
 }
@@ -67,6 +71,6 @@ export function navigateToLost() {
 }
 
 export function navigateTo2FA() {
-renderPage("twoFAForm");
+  renderPage("twoFAForm");
   document.getElementById("blur-screen-effect").classList.remove("d-none");
 }
