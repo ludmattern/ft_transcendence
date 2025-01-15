@@ -33,7 +33,6 @@ import { pongPageSkeleton } from "/src/components/pong/pongPageSkeleton.js";
    * @returns {Array} - Liste des composants à rendre
    */
   function getComponentsForPage(pageKey) {
-	if (!pageKey) { pageKey = "home"; }
 	const page = pages[pageKey];
 
 	if (!page) {
@@ -57,7 +56,6 @@ import { pongPageSkeleton } from "/src/components/pong/pongPageSkeleton.js";
 	console.debug(`Rendering ${pageKey} Page...`);
   
 	const componentsToRender = getComponentsForPage(pageKey);
-	console.debug(componentsToRender);
   
 	const componentKeys = componentsToRender.map(
 	  ({ component }) => component.tag
@@ -68,7 +66,6 @@ import { pongPageSkeleton } from "/src/components/pong/pongPageSkeleton.js";
 	pongManager.cleanupComponents(componentKeys);
   
 	componentsToRender.forEach(({ selector, component }) => {
-		console.debug(selector, component);
 		pongManager.loadComponent(selector, component);
 	});
   

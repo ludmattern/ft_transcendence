@@ -10,6 +10,10 @@ export const twoFAForm = createComponent({
       <h5>Two-Factor Authentication</h5>
       <span class="background-central-span">
         <form action="#" method="post" class="w-100">
+          <div id="qr-code-container" class="mb-3" style="display: none;">
+            <p>Scan this QR code with your Google Authenticator app:</p>
+            <img id="qr-code" src="" alt="QR Code" />
+          </div>
           <div class="form-group">
             <label class="mb-3" for="twofa-code">Enter your 2FA code</label>
             <input type="text" id="twofa-code" name="twofa-code" class="form-control" required />
@@ -21,29 +25,48 @@ export const twoFAForm = createComponent({
     </div>
   `,
 
-  attachEvents: (el) => {
+  attachEvents: async (el) => 
+    {
+    const username = sessionStorage.getItem("pending2FA_user");
+    const twofaMethod = sessionStorage.getItem("pending2FA_method");
+
+    if (twofaMethod === "authenticator-app") {
+      const qrCodeContainer = el.querySelector("#qr-code-container");
+      const qrCodeImage = el.querySelector("#qr-code");
+
+      try {
+        const response = await fetch(`/api/auth-service/generate-qr/${username}/`);
+        if (response.ok) {
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          qrCodeImage.src = url;
+          qrCodeContainer.style.display = "block";
+        } else {
+          console.error("Failed to load QR code:", response.statusText);
+        }
+      } catch (err) {
+        console.error("Error fetching QR code:", err.message);
+      }
+    }
+
     el.querySelector("form").addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const code = el.querySelector("#twofa-code").value;
 
       try {
-        const username = sessionStorage.getItem("pending2FA_user");
         const data = await verifyTwoFACode(username, code);
 
-        if (data.success) 
-        {
+        if (data.success) {
           console.log("2FA verified successfully!");
+          sessionStorage.removeItem("pending2FA_user");
+          sessionStorage.removeItem("pending2FA_method");
           handleRoute("/");
-        } 
-        else 
-        {
+        } else {
           console.error("2FA verification failed:", data.message);
           document.getElementById("twofa-error").style.display = "block";
         }
-      } 
-      catch (err) 
-      {
+      } catch (err) {
         console.error("2FA request error:", err.message);
       }
     });

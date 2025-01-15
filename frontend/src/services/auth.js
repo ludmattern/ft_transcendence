@@ -110,7 +110,6 @@ export async function registerUser(id, password, email, is2FAEnabled, twoFAMetho
         is_2fa_enabled: is2FAEnabled,
         twofa_method: is2FAEnabled ? twoFAMethod : null,
         phone_number: is2FAEnabled && twoFAMethod === "sms" ? phoneNumber : null
-
       }),
     });
 

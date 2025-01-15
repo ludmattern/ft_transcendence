@@ -37,7 +37,7 @@ export const logoutForm = createComponent({
         console.info("User logged out successfully.");
         handleRoute("/login"); // Redirige vers la page de connexion
       } catch (error) {
-        console.error("Error during logout:", error);
+        console.log("Error during logout:", error);
         alert("An error occurred while logging out. Please try again.");
       }
     });

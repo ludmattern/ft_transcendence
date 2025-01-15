@@ -15,15 +15,12 @@ export default class ComponentManager {
   
 	loadComponent(target, component) {
 	  if (this.mountedComponents[component.tag]) {
-		console.debug(`[${this.name}] ${component.tag} est déjà monté.`);
 		return;
 	  }
   
 	  const el = document.createElement("div");
 	  el.dataset.component = component.tag; // Identifiant unique
 	  el.innerHTML = component.render(); // Générer le contenu HTML
-	  console.log(el);
-	  console.log(target);
 	  document.querySelector(target).appendChild(el);
   
 	  if (component.attachEvents) {
@@ -40,7 +37,6 @@ export default class ComponentManager {
 	  }
   
 	  this.mountedComponents[component.tag] = el;
-	  console.log(`[${this.name}] ${component.tag} chargé.`);
 	}
   
 	unloadComponent(tag) {
@@ -53,10 +49,7 @@ export default class ComponentManager {
   
 		el.remove();
 		delete this.mountedComponents[tag];
-		console.log(`[${this.name}] ${tag} déchargé.`);
-	  } else {
-		console.warn(`[${this.name}] ${tag} n'est pas monté.`);
-	  }
+	  } 
 	}
   
 	replaceComponent(target, component) {

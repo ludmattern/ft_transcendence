@@ -14,6 +14,8 @@ COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 RUN pip install bcrypt
+RUN pip install twilio
+
 # Copier le reste de l'application
 COPY . /app/
 

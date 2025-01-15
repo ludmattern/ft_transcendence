@@ -116,7 +116,6 @@ export const subscribeForm = createComponent({
       if (canRegister && !validatePassword(password)) canRegister = false;
       if (canRegister && !checkPasswordConfirmation(password, confirmPassword)) canRegister = false;
       if (canRegister && !checkEmailConfirmation(mail, confirmMail)) canRegister = false;
-      
       if (is2FAEnabled && twoFAMethod === "sms" && !phoneNumber) {
         if (!validatePhoneNumber(phoneNumber)) {
           canRegister = false;
@@ -137,7 +136,6 @@ export const subscribeForm = createComponent({
     });
   },
 })
-  
 
   /**
  * Récupère les valeurs du formulaire

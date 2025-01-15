@@ -57,7 +57,12 @@ export const header = createComponent({
 	  if (linkElement) {
 		linkElement.addEventListener("click", (e) => {
 		  e.preventDefault();
-		  handleRoute(route); // La gestion de pushState est dans le routeur
+		  if (route !== "/pong")
+			  handleRoute(route); // La gestion de pushState est dans le routeur
+		  else
+		  {
+			handleRoute("/topong");
+		  }
 		  updateActiveLink(el); // Mettre à jour le lien actif
 		});
 	  }

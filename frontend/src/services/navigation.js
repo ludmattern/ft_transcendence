@@ -28,18 +28,25 @@ export function navigateToHome() {
   switchwindow("home");
 }
 
+export function navigateBackToPong() {
+	switchwindow("pong");
+	document.getElementById("blur-screen-effect").classList.add("d-none");
+}
+
 export function navigateToProfile() {
   renderPage("profile");
   document.getElementById("blur-screen-effect").classList.remove("d-none");
 }
 
 export function navigateToPong(subroute = null) {
-  renderPage("pong");
-  if (!subroute)
-	subroute = "home";
-  renderPongPage(subroute);
-  document.getElementById("blur-screen-effect").classList.add("d-none");
+  if (!subroute) {
+    renderPage("pong");
+	renderPongPage("home");
+  } else {
+    renderPongPage(subroute);
+  }
   switchwindow("pong");
+  document.getElementById("blur-screen-effect").classList.add("d-none");
 }
 
 export function navigateToRace() {

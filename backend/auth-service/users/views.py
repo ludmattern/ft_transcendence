@@ -5,12 +5,20 @@ from django.conf import settings
 import datetime
 from functools import wraps
 
+from twilio.rest import Client
+
 from django.core.mail import send_mail
 import random
 
 from django.views.decorators.csrf import csrf_exempt
 from users.models import ManualUser
 import jwt
+
+import pyotp
+import qrcode
+from io import BytesIO
+from django.http import HttpResponse
+
 
 @csrf_exempt
 def check_auth_view(request):
@@ -89,6 +97,31 @@ def send_2fa_email(recipient, code):
     message = f"Hello,\nHere is your 2FA code: {code}\nRegards."
     send_mail(subject, message, None, [recipient], fail_silently=False)
 
+def generate_qr_code(request, username):
+    try:
+        user = ManualUser.objects.get(username=username)
+        totp = pyotp.TOTP(user.totp_secret)
+        uri = totp.provisioning_uri(name=username, issuer_name="ft_transcendence")
+        qr = qrcode.make(uri)
+        buffer = BytesIO()
+        qr.save(buffer, format="PNG")
+        buffer.seek(0)
+        return HttpResponse(buffer, content_type="image/png")
+    except ManualUser.DoesNotExist:
+        return HttpResponse("User not found", status=404)
+
+def send_2fa_sms(phone_number, code):
+    client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    try:
+        message = client.messages.create(
+            body=f"Your 2FA code is: {code}",
+            from_=settings.TWILIO_PHONE_NUMBER,
+            to=phone_number
+        )
+        print("SMS sent, SID:", message.sid)
+    except Exception as e:
+        print("Error sending SMS:", e)
+
 
 @csrf_exempt
 def login_view(request):
@@ -112,6 +145,11 @@ def login_view(request):
                 user.temp_2fa_code = code
                 user.save()
                 send_2fa_email(user.email, code)
+            elif user.twofa_method == "sms":
+                code = generate_2fa_code()
+                user.temp_2fa_code = code
+                user.save()
+                send_2fa_sms(user.phone_number, code)
 
             return JsonResponse({
                 'success': True,
@@ -213,8 +251,36 @@ def verify_2fa_view(request):
         except ManualUser.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
 
-
-        if user.temp_2fa_code == code:
+        if user.twofa_method == "authenticator-app":
+            totp = pyotp.TOTP(user.totp_secret)
+            if totp.verify(code):
+                now = datetime.datetime.utcnow()
+                exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+                access_payload = {
+                    "sub": user.username,
+                    "iat": now,
+                    "exp": exp.timestamp()
+                }
+                access_token = jwt.encode(
+                    access_payload,
+                    settings.JWT_SECRET_KEY,
+                    algorithm=settings.JWT_ALGORITHM
+                )
+                access_token_str = (access_token if isinstance(access_token, str)
+                                else access_token.decode('utf-8'))
+                response = JsonResponse({'success': True, 'message': '2FA verified'})
+                response.set_cookie(
+                    key='access_token',
+                    value=access_token_str,
+                    httponly=True,
+                    secure=True,
+                    samesite='Strict',
+                    max_age=settings.JWT_EXP_DELTA_SECONDS
+                )
+                return response
+            else:
+                return JsonResponse({'success': False, 'message': 'Invalid 2FA code'}, status=401)
+        elif user.temp_2fa_code == code:
             now = datetime.datetime.utcnow()
             exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
             access_payload = {
@@ -229,32 +295,6 @@ def verify_2fa_view(request):
             )
             access_token_str = (access_token if isinstance(access_token, str)
                                 else access_token.decode('utf-8'))
-            response = JsonResponse({'success': True, 'message': '2FA verified'})
-            response.set_cookie(
-                key='access_token',
-                value=access_token_str,
-                httponly=True,
-                secure=True,
-                samesite='Strict',
-                max_age=settings.JWT_EXP_DELTA_SECONDS
-            )
-            return response
-        elif code == "123456":
-            now = datetime.datetime.utcnow()
-            exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-            access_payload = {
-                "sub": user.username,
-                "iat": now,
-                "exp": exp.timestamp()
-            }
-            access_token = jwt.encode(
-                access_payload,
-                settings.JWT_SECRET_KEY,
-                algorithm=settings.JWT_ALGORITHM
-            )
-            access_token_str = (access_token if isinstance(access_token, str)
-                                else access_token.decode('utf-8'))
-
             response = JsonResponse({'success': True, 'message': '2FA verified'})
             response.set_cookie(
                 key='access_token',
