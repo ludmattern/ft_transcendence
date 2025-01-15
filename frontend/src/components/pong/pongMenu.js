@@ -84,38 +84,42 @@ export const pongMenu = createComponent({
       </footer>
   `,
 
-  // Ajouter les événements après le chargement
   attachEvents: (el) => {
-    // Initialisation de la scène 3D
-    initM1();
-
-    const navLinks = document.querySelectorAll("#mainTabs .nav-item");
-
-    // Ajouter un gestionnaire d'événements à chaque bouton
-    navLinks.forEach((link) => {
-      link.addEventListener("click", () => {
-        // Supprimer la classe "active" de tous les boutons
-        navLinks.forEach((nav) => nav.classList.remove("active"));
-        // Ajouter la classe "active" au bouton cliqué
-        link.classList.add("active");
-	  });
-    });
+	initM1();
+  
+	const navLinks = document.querySelectorAll("#mainTabs .nav-link");
 	const homeButton = document.getElementById("homeButton");
-    const playButton = document.getElementById("play-tab");
-    const leaderboardButton = document.getElementById("leaderboard-tab");
-
-    // Ajouter un gestionnaire d'événements pour chaque bouton
-    homeButton.addEventListener("click", () => homeClick());
-    playButton.addEventListener("click", () => handleRoute("/pong/play"));
-    leaderboardButton.addEventListener("click", () => handleRoute("/pong/leaderboard"));
+	const playButton = document.getElementById("play-tab");
+	const leaderboardButton = document.getElementById("leaderboard-tab");
+  
+	function updateActiveTab() {
+	  const currentPath = window.location.pathname;
+  
+	  navLinks.forEach((nav) => nav.parentElement.classList.remove("active"));
+  
+	  if (currentPath.startsWith("/pong/play")) {
+		playButton.parentElement.classList.add("active");
+	  } else if (currentPath.startsWith("/pong/leaderboard")) {
+		leaderboardButton.parentElement.classList.add("active");
+	  }
+	}
+  
+	homeButton.addEventListener("click", () => {
+	  handleRoute("/pong");
+	  updateActiveTab();
+	});
+	playButton.addEventListener("click", () => {
+		handleRoute("/pong/play");
+		updateActiveTab();
+	});
+	leaderboardButton.addEventListener("click", () => {
+	  handleRoute("/pong/leaderboard");
+	  updateActiveTab();
+	});
+	
+	updateActiveTab();
   },
 });
-
-function homeClick() {
-  handleRoute("/pong");
-  const navLinks = document.querySelectorAll("#mainTabs .nav-item");
-  navLinks.forEach((nav) => nav.classList.remove("active"));
-}
 
 function initM1() {
   Store.menuElement2 = document.getElementById("pong-screen-container");

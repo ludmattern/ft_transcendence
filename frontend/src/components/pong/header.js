@@ -10,7 +10,7 @@ export const header = createComponent({
 			<div class="col-2 text-center">
 			  <h1 class="bi bi-rocket fs-5 m-0">TRANSCENDENCE</h1>
 			</div>
-		    <span class="separator" style="height: 200%; width: 1px; background-color: rgb(255, 255, 255);"></span>
+		    <span class="separator"></span>
 			<!-- Bloc droit -->
 			<div class="col-8 d-flex justify-content-around border p-1" style="background-color: #084b4e; text-transform: uppercase;">
 			  <span class="m-0">shipctrl:///appData/useless/pong/play.shp</span>

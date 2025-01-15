@@ -1,12 +1,14 @@
 import componentManagers from "/src/index.js"; // Assurez-vous que HUD est importé
 import { header } from "/src/components/pong/header.js";
+import { navBar } from "/src/components/pong/navBar.js";
   
 
   const persistentComponents = [
   ];
 
   const globalComponents = {
-	header : { selector: "#pong-menu-container", component: header },
+	  header : { selector: "#pong-menu-container", component: header },
+	  navBar : { selector: "#pong-menu-container", component: navBar },
 	// leftNav: { selector: "#left-nav-container", component: header },
   };
   

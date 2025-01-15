@@ -49,11 +49,11 @@
 	transition: all 0.15s;
 }
 
-#pong-screen-container header .wrapper .nav-item:hover {
-	border: 1px solid rgba(255, 255, 255, 0.446);
-	background-color: #111111;;
-	opacity: 1;
-	transition: all 0.15s;
+#pong-screen-container header .wrapper .nav-item:has(.nav-link:hover) {
+    border: 1px solid #b5cfc5;
+    background-color: #111111;
+    opacity: 1;
+    transition: all 0.15s;
 }
 
 #pong-screen-container header .wrapper .nav-item.active {
@@ -182,4 +182,18 @@
 	transition: all 0.15s;
 	border: 1px solid #202e2f;
 	transition: all 0.15s;
+}
+
+.separator {
+    position: relative; /* Nécessaire pour que le pseudo-élément soit positionné par rapport à l'élément parent */
+}
+
+.separator::after {
+    content: "";
+    display: block;
+    position: fixed;
+    width: 1px;
+    height: 4rem;
+    margin-top: -2rem;
+    background-color: currentColor;
 }
