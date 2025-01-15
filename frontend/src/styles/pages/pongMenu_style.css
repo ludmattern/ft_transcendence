@@ -11,6 +11,7 @@
 	pointer-events: all;
 	height: 1050px !important;
     width: 1350px !important;
+	background-color: #090909;
 }
 
 #pong-screen-container header {
@@ -51,14 +52,12 @@
 
 #pong-screen-container header .wrapper .nav-item:has(.nav-link:hover) {
     border: 1px solid #b5cfc5;
-    background-color: #111111;
     opacity: 1;
     transition: all 0.15s;
 }
 
 #pong-screen-container header .wrapper .nav-item.active {
 	border: 1px solid #b5cfc5;
-	background-color: #111111;;
 	opacity: 1;
 	transition: all 0.15s;
 }
@@ -76,7 +75,7 @@
 #pong-screen-container header .wrapper .nav-item.active::after {
 	content: "";
 	position: relative;
-	border-top: 8px solid #111111 !important;
+	border-top: 8px solid #090909 !important;
 	display: block;
 	top: 15px;
 	width: 100%;

@@ -64,7 +64,7 @@ export const pongMenu = createComponent({
         </div>
       </header>
 
-	  <main id="pong-skeleton-container">
+	  <main id="pong-skeleton-container" class="d-flex flex-column flex-grow-1">
 	  </main>
 
       <footer class="row align-items-center p-3 footer">
@@ -100,7 +100,7 @@ export const pongMenu = createComponent({
 	}
   
 	homeButton.addEventListener("click", () => {
-	  handleRoute("/pong");
+	  handleRoute("/pong/home");
 	  updateActiveTab();
 	});
 	playButton.addEventListener("click", () => {
@@ -111,6 +111,8 @@ export const pongMenu = createComponent({
 	  handleRoute("/pong/leaderboard");
 	  updateActiveTab();
 	});
+
+	window.addEventListener("popstate", updateActiveTab);
 	
 	updateActiveTab();
   },
