@@ -7,6 +7,10 @@ body {
   overflow: hidden;
 }
 
+[data-component] {
+	display: contents;
+  }  
+
 #app .menu2 {
   display: flex;
   align-items: center;

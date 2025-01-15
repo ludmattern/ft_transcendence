@@ -20,8 +20,7 @@ export const pongMenu = createComponent({
           <ul
             class="nav nav-pills justify-content-evenly"
             id="mainTabs"
-            role="tablist"
-          >
+            role="tablist">
             <li class="nav-item mt-4">
               <button
                 class="nav-link d-flex active"
@@ -29,8 +28,7 @@ export const pongMenu = createComponent({
                 data-bs-toggle="pill"
                 data-bs-target="#playContent"
                 type="button"
-                role="tab"
-              >
+                role="tab">
                 <span class="bi bi-joystick icon">
                   <span class="bi icon-border">
                     <span class="corner-top-right"></span>
@@ -47,8 +45,7 @@ export const pongMenu = createComponent({
                 data-bs-toggle="pill"
                 data-bs-target="#leaderboardContent"
                 type="button"
-                role="tab"
-              >
+                role="tab">
                 <span class="bi bi-star icon">
                   <span class="bi icon-border">
                     <span class="corner-top-right"></span>
@@ -67,10 +64,8 @@ export const pongMenu = createComponent({
         </div>
       </header>
 
-		<main class="row d-flex flex-column flex-grow-1 p-4" id="pong-menu-container">
-		
-		<div id="content-window-container"></div>
-		</main>
+	  <main id="pong-skeleton-container">
+	  </main>
 
       <footer class="row align-items-center p-3 footer">
         <div class="logo col text-start">

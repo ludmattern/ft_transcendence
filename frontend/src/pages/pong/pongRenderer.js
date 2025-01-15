@@ -1,20 +1,23 @@
 import componentManagers from "/src/index.js"; // Assurez-vous que HUD est importé
 import { header } from "/src/components/pong/header.js";
 import { navBar } from "/src/components/pong/navBar.js";
+import { playContent } from "/src/components/pong/playContent.js";
+import { pongPageSkeleton } from "/src/components/pong/pongPageSkeleton.js";
   
 
   const persistentComponents = [
   ];
 
   const globalComponents = {
-	  header : { selector: "#pong-menu-container", component: header },
-	  navBar : { selector: "#pong-menu-container", component: navBar },
+	sketeton : { selector: "#pong-skeleton-container", component: pongPageSkeleton },
+	  header : { selector: "#pong-header-container", component: header },
+	  navBar : { selector: "#content-window-container", component: navBar },
 	// leftNav: { selector: "#left-nav-container", component: header },
   };
   
   const pages = {
 	home: { useGlobals: false, mainComponent: null },
-	play: { useGlobals: true, mainComponent: null },
+	play: { useGlobals: true, mainComponent: playContent },
 };
 // solopPlay : { useGlobals: true, mainComponent: soloPlay },
 // multiPlay : { useGlobals: true, mainComponent: multiPlay },
