@@ -34,7 +34,6 @@ export const loginForm = createComponent({
     el.querySelector("#enlist-link").addEventListener("click", (e) => {
       e.preventDefault();
       handleRoute("/subscribe");
-      console.info("SubscribeForm loaded on click.");
     });
 
     el.querySelector("form").addEventListener("submit", async (e) => {
@@ -59,7 +58,7 @@ export const loginForm = createComponent({
           handleRoute("/");
         }
       } catch (err) {
-        console.error("Login failed:", err.message);
+        console.log("Login failed:", err.message);
         document.getElementById("error-message").style.display = "block";
       }
 

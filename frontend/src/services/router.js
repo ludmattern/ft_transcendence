@@ -53,18 +53,15 @@ export async function handleRoute(route, shouldPushState = true) {
 
   ensureAuthenticated(() => {
     if (routeMappings[route]) {
-      console.error(`router file Route: ${route}`);
       routeMappings[route](); // Appelle la fonction de navigation correspondante
     } else if (route.startsWith("/social?pilot=")) {
       const pilot = route.split("=")[1];
-      console.debug(`Pilot: ${pilot}`);
       navigateToOtherProfile(pilot);
     } else if (route.startsWith("/pong")) {
       if (route === "/pong") {
         navigateToPong();
       } else {
         const subroute = route.split("/")[2];
-        console.debug(`Subroute: ${subroute}`);
 		if (subroute === "home") {
 			previousPongSubRoute = null;
 		}
@@ -76,7 +73,6 @@ export async function handleRoute(route, shouldPushState = true) {
       }
     } else {
       navigateToLost();
-      console.warn(`Unknown route: ${route}`);
     }
   }, isUnauthenticatedRoute);
 
@@ -97,8 +93,4 @@ export async function handleRoute(route, shouldPushState = true) {
 
 export function getPreviousRoute() {
   return previousRoute || "/"; // Retourne la précédente route ou "/" par défaut
-}
-
-export function getPreviousPongSubRoute() {
-  return previousPongSubRoute || null; // Retourne la précédente sous-route Pong ou null par défaut
 }

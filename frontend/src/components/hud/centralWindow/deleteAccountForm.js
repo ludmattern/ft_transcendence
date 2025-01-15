@@ -25,12 +25,10 @@ export const deleteAccountForm = createComponent({
       if (e.target.matches("#cancel-delete")) {
         e.preventDefault();
         handleRoute(getPreviousRoute()); // Retour à la route précédente
-        console.info(`Back to ${getPreviousRoute()} on click.`);
       }
 
       if (e.target.matches("#confirm-delete")) {
         e.preventDefault();
-        console.warn("Account deletion confirmed. Executing deletion process...");
         handleRoute("/login"); // Redirection vers login
       }
     });
