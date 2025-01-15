@@ -124,7 +124,13 @@ export const subscribeForm = createComponent({
       if (canRegister) {
         try {
           const check_register = await registerUser(id, password, mail, is2FAEnabled, twoFAMethod, phoneNumber);
-          if (check_register) {
+          if (check_register && twoFAMethod === "authenticator-app") 
+          {
+            sessionStorage.setItem("registered_user", id);
+            handleRoute("/register/qr");
+          }
+          else if (check_register)
+          {
             handleRoute("/login");
             console.log("register successful!");
           }

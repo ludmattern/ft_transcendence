@@ -81,3 +81,8 @@ export function navigateTo2FA() {
   renderPage("twoFAForm");
   document.getElementById("blur-screen-effect").classList.remove("d-none");
 }
+
+export function navigateToSettings2FA() {
+  renderPage("qrcode");
+  document.getElementById("blur-screen-effect").classList.remove("d-none");
+}

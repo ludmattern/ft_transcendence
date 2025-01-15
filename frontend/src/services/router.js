@@ -14,6 +14,7 @@ import {
   navigateToLost,
   navigateTo2FA,
   navigateBackToPong,
+  navigateToSettings2FA,
 } from "/src/services/navigation.js";
 
 let previousRoute = null;
@@ -33,6 +34,7 @@ const routeMappings = {
   "/settings/delete-account": navigateToDeleteAccount,
   "/logout": navigateToLogout,
   "/login/2fa": navigateTo2FA,
+  "/register/qr": navigateToSettings2FA,
   "/login": navigateToLogin,
   "/subscribe": navigateToSubscribe,
   "/topong": navigateBackToPong,
@@ -48,7 +50,7 @@ export async function handleRoute(route, shouldPushState = true) {
 
   previousRoute = window.location.pathname;
 
-  const unauthenticatedRoutes = ["/login", "/login/2fa", "/subscribe"];
+  const unauthenticatedRoutes = ["/login", "/login/2fa", "/subscribe", "/register/qr"];
   const isUnauthenticatedRoute = unauthenticatedRoutes.includes(route);
 
   ensureAuthenticated(() => {

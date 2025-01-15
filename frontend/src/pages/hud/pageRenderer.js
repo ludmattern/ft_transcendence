@@ -1,5 +1,5 @@
 import { loginForm, profileForm, header, footer, leftSideWindow, rightSideWindow, logoutForm, twoFAForm,
-  socialForm, otherProfileForm, deleteAccountForm, subscribeForm, settingsForm, lostForm, hudSVG, HelmetSVG
+  socialForm, qrcode ,otherProfileForm, deleteAccountForm, subscribeForm, settingsForm, lostForm, hudSVG, HelmetSVG
 } from "/src/components/hud/index.js";
 import { midScreen } from "/src/components/midScreen.js";
 import { menu3 } from "/src/components/menu3.js";
@@ -32,7 +32,8 @@ const globalComponents = {
  */
 const pages = {
   login: 			    { useGlobals: false, mainComponent: loginForm },
-  twoFAForm: 		    { useGlobals: false, mainComponent: twoFAForm },
+  twoFAForm: 		  { useGlobals: false, mainComponent: twoFAForm },
+  qrcode: 		    { useGlobals: false, mainComponent: qrcode },
   subscribe: 		  { useGlobals: false, mainComponent: subscribeForm },
   lostForm: 		  { useGlobals: false, mainComponent: lostForm },
   profile: 			  { useGlobals: true, mainComponent: profileForm },
