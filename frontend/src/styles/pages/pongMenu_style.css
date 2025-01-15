@@ -4,6 +4,10 @@
 	transition: all 0.15s;
 }
 
+/* #pong-screen-container .row {
+	--bs-gutter-x: 0rem;
+} */
+
 #pong-screen-container #main-container{
 	display: flex;
 	flex-direction: column;
