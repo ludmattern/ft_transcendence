@@ -142,12 +142,14 @@ def login_view(request):
         if user.is_2fa_enabled:
             if user.twofa_method == "email":
                 code = generate_2fa_code()
-                user.temp_2fa_code = code
+                hashed_code = bcrypt.hashpw(code.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                user.temp_2fa_code = hashed_code
                 user.save()
                 send_2fa_email(user.email, code)
             elif user.twofa_method == "sms":
                 code = generate_2fa_code()
-                user.temp_2fa_code = code
+                hashed_code = bcrypt.hashpw(code.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                user.temp_2fa_code = hashed_code
                 user.save()
                 send_2fa_sms(user.phone_number, code)
 
@@ -280,7 +282,7 @@ def verify_2fa_view(request):
                 return response
             else:
                 return JsonResponse({'success': False, 'message': 'Invalid 2FA code'}, status=401)
-        elif user.temp_2fa_code == code:
+        elif bcrypt.checkpw(code.encode('utf-8'), user.temp_2fa_code.encode('utf-8')):
             now = datetime.datetime.utcnow()
             exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
             access_payload = {
