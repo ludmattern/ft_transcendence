@@ -115,7 +115,6 @@ export const leaderboard = createComponent({
       // Gérer l'état des boutons de pagination
       prevPageButton.disabled = currentPage === 0;
       nextPageButton.disabled = endIndex >= leaderboardData.length;
-
 	  attachPlayerClickEvents(el);
     }
 
@@ -194,6 +193,7 @@ function findUserInLeaderboard(el) {
   el.querySelector("#find-me").classList.add("d-none");
   el.querySelector("#prev-page").classList.add("d-none");
   el.querySelector("#next-page").classList.add("d-none");
+  attachPlayerClickEvents(el);
 }
 
 function attachPlayerClickEvents(el) {
