@@ -223,3 +223,7 @@
     pointer-events: none;
     border-left: 1px solid;
 }
+
+.text-muted {
+	color: rgb(91 100 109) !important;
+}
