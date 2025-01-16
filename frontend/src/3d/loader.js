@@ -20,7 +20,7 @@ export function loadModels() {
   
     const satLoader = new GLTFLoader();
     satLoader.load(
-      "../src/assets/models/saturn.glb",
+      "/src/assets/models/saturn.glb",
       (gltf) => {
         Store.planet = gltf.scene;
         Store.planet.position.set(
@@ -58,7 +58,7 @@ export function loadModels() {
     );
   
     loader.load(
-      "../src/assets/models/sn13.glb",
+      "/src/assets/models/sn13.glb",
       (gltf) => {
         Store.model = gltf.scene;
         Store.model.position.set(3.5, -17, -1);

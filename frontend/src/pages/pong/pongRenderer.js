@@ -8,7 +8,7 @@ import { pongPageSkeleton } from "/src/components/pong/pongPageSkeleton.js";
 const pages = {
   home: [
   ],
-  play: [
+  "play/solo": [
     { selector: "#pong-skeleton-container", component: pongPageSkeleton },
     { selector: "#pong-header-container", component: header },
     { selector: "#content-window-container", component: navBar },

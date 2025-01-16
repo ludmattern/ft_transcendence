@@ -63,7 +63,7 @@ export async function handleRoute(route, shouldPushState = true) {
       if (route === "/pong") {
         navigateToPong();
       } else {
-        const subroute = route.split("/")[2];
+        const subroute = route.substring(6);
 		if (subroute === "home") {
 			previousPongSubRoute = null;
 		}
