@@ -93,7 +93,9 @@ export const pongMenu = createComponent({
 	function updateActiveTab() {
 	  const currentPath = window.location.pathname;
   
-	  navLinks.forEach((nav) => nav.parentElement.classList.remove("active"));
+	  if (currentPath.startsWith("/pong")) {
+	  	navLinks.forEach((nav) => nav.parentElement.classList.remove("active"));
+	  }
   
 	  if (currentPath.startsWith("/pong/play")) {
 		playButton.parentElement.classList.add("active");
