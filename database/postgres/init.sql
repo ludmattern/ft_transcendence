@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     is_2fa_enabled BOOLEAN DEFAULT FALSE,
     twofa_method VARCHAR(50) DEFAULT NULL,
-    phone_number VARCHAR(20) DEFAULT NULL,
+    phone_number VARCHAR(100) DEFAULT NULL,
     temp_2fa_code VARCHAR(255) DEFAULT NULL,
     totp_secret VARCHAR(200) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

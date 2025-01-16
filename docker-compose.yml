@@ -1,8 +1,27 @@
 services:
+  postgres:
+    build:
+      context: ./database
+    container_name: postgres_db
+    env_file:
+      - ./secret/.env
+    volumes:
+      - postgres_data_volume:/var/lib/postgresql/data
+    networks:
+      - backend_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   auth-service:
     build:
       context: ./backend/auth-service
     container_name: auth_service
+    depends_on:
+      postgres:
+        condition: service_healthy
     env_file:
       - ./secret/.env
     networks:
@@ -17,22 +36,8 @@ services:
       - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
-  #  volumes:
-  #   - auth_service_volume:/app
     ports:
       - "3001:3001"
-
-  postgres:
-    build:
-      context: ./database
-    container_name: postgres_db
-    env_file:
-      - ./secret/.env
-    volumes:
-      - postgres_data_volume:/var/lib/postgresql/data
-    networks:
-      - backend_network
-
 
   nginx:
     build:
@@ -45,7 +50,9 @@ services:
     ports:
       - "8080:80"
       - "8443:443"
-
+    depends_on:
+      auth-service:
+        condition: service_started
     networks:
       - frontend_network
       - backend_network
