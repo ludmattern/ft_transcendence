@@ -1,74 +1,48 @@
-import componentManagers from "/src/index.js"; // Assurez-vous que HUD est importé
+import componentManagers from "/src/index.js";
 import { header } from "/src/components/pong/header.js";
 import { navBar } from "/src/components/pong/navBar.js";
 import { playContent } from "/src/components/pong/playContent.js";
 import { pongPageSkeleton } from "/src/components/pong/pongPageSkeleton.js";
-  
 
-  const persistentComponents = [
-  ];
-
-  const globalComponents = {
-	sketeton : { selector: "#pong-skeleton-container", component: pongPageSkeleton },
-	  header : { selector: "#pong-header-container", component: header },
-	  navBar : { selector: "#content-window-container", component: navBar },
-	// leftNav: { selector: "#left-nav-container", component: header },
-  };
-  
-  const pages = {
-	home: { useGlobals: false, mainComponent: null },
-	play: { useGlobals: true, mainComponent: playContent },
+// Définition des pages avec la liste des composants à charger
+const pages = {
+  home: [
+  ],
+  play: [
+    { selector: "#pong-skeleton-container", component: pongPageSkeleton },
+    { selector: "#pong-header-container", component: header },
+    { selector: "#content-window-container", component: navBar },
+    { selector: "#content-window-container", component: playContent }, // Contenu spécifique à "play"
+  ],
+  leaderboard: [
+    { selector: "#pong-skeleton-container", component: pongPageSkeleton },
+    { selector: "#pong-header-container", component: header },
+    // { selector: "#content-window-container", component: leaderboardContent }, // Ajouter si besoin
+  ],
+  // Définissez d'autres pages avec les composants correspondants
 };
-// solopPlay : { useGlobals: true, mainComponent: soloPlay },
-// multiPlay : { useGlobals: true, mainComponent: multiPlay },
-// tournament : { useGlobals: true, mainComponent: tournament },
-// leaderboard : { useGlobals: true, mainComponent: leaderboard },
-// lost : { useGlobals: false, mainComponent: lost },
-  
-  const defaultSelector = "#content-window-container";
-  
-  /**
-   * Génère une liste complète de composants à rendre pour une page donnée.
-   * @param {string} pageKey - Clé de la page
-   * @returns {Array} - Liste des composants à rendre
-   */
-  function getComponentsForPage(pageKey) {
-	const page = pages[pageKey];
 
-	if (!page) {
-	  console.warn(`Page "${pageKey}" introuvable.`);
-	  return [];
-	}
-  
-	const global = page.useGlobals ? Object.values(globalComponents) : [];
-	const specific = page.mainComponent
-	  ? [{ selector: defaultSelector, component: page.mainComponent }]
-	  : [];
-  
-	return [...persistentComponents, ...global, ...specific];
+// Fonction de rendu de page
+export function renderPongPage(pageKey) {
+  console.debug(`Rendering ${pageKey} Page...`);
+
+  const componentsToRender = pages[pageKey];
+
+  if (!componentsToRender) {
+    console.warn(`Page "${pageKey}" introuvable.`);
+    return;
   }
-  
-  /**
-   * Rendu des pages
-   * @param {string} pageKey - Nom de la page à rendre
-   */
-  export function renderPongPage(pageKey) {
-	console.debug(`Rendering ${pageKey} Page...`);
-  
-	const componentsToRender = getComponentsForPage(pageKey);
-  
-	const componentKeys = componentsToRender.map(
-	  ({ component }) => component.tag
-	);
-  
-	const pongManager = componentManagers.Pong;
-  
-	pongManager.cleanupComponents(componentKeys);
-  
-	componentsToRender.forEach(({ selector, component }) => {
-		pongManager.loadComponent(selector, component);
-	});
-  
-	console.debug(`${pageKey} Page rendered.`);
-  }
-  
+
+  const componentKeys = componentsToRender.map(({ component }) => component.tag);
+  const pongManager = componentManagers.Pong;
+
+  // Nettoyer les composants qui ne sont plus nécessaires
+  pongManager.cleanupComponents(componentKeys);
+
+  // Charger les nouveaux composants
+  componentsToRender.forEach(({ selector, component }) => {
+    pongManager.loadComponent(selector, component);
+  });
+
+  console.debug(`${pageKey} Page rendered.`);
+}
