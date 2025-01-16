@@ -64,7 +64,10 @@ export const pongMenu = createComponent({
         </div>
       </header>
 
-	  <main id="pong-skeleton-container" class="d-flex flex-column flex-grow-1">
+	  <main id="pong-skeleton-container" class="d-flex flex-column flex-grow-1" style="border: 1px solid #2a312f;
+    border-top: 0;
+    border-bottom: 0;
+    margin: -0.78rem;">
 	  </main>
 
       <footer class="row align-items-center p-3 footer">

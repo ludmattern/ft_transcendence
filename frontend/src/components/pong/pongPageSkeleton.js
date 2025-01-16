@@ -5,7 +5,7 @@ export const pongPageSkeleton = createComponent({
 
   // Générer le HTML
   render: () => `
-	  <main class="row d-flex flex-column flex-grow-1 p-4" id="pong-menu-container">
+	  <main class="row d-flex flex-column flex-grow-1 p-5" id="pong-menu-container">
 		
 		<header id="pong-header-container" class="text-white d-flex align-items-center p-3 justify-content-around border" style="background-color: #113630;">
 		</header>

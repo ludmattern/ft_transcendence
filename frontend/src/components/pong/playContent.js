@@ -5,9 +5,78 @@ export const playContent = createComponent({
 
   // Générer le HTML
   render: () => `
-		<section class="p-3 flex-grow-1" style="background-color: #111111;">
-			<h2>Bienvenue</h2>
-			<p>Ceci est le contenu principal de la page.</p>
+	<section class="p-3 flex-grow-1" style="background-color: #111111; max-height: 700px; overflow: auto;">
+		<h2>Bienvenue</h2>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
+		<p>Ceci est le contenu principal de la page.</p>
 	</section>
   `,
 });
