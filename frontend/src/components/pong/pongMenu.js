@@ -17,18 +17,9 @@ export const pongMenu = createComponent({
           </button>
         </div>
         <div class="wrapper col-6 text-center">
-          <ul
-            class="nav nav-pills justify-content-evenly"
-            id="mainTabs"
-            role="tablist">
+          <ul class="nav nav-pills justify-content-evenly" id="mainTabs" role="tablist">
             <li class="nav-item mt-4">
-              <button
-                class="nav-link d-flex active"
-                id="play-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#playContent"
-                type="button"
-                role="tab">
+              <button class="nav-link d-flex active" id="play-tab" data-bs-toggle="pill" data-bs-target="#playContent" type="button" role="tab">
                 <span class="bi bi-joystick icon">
                   <span class="bi icon-border">
                     <span class="corner-top-right"></span>
@@ -39,13 +30,7 @@ export const pongMenu = createComponent({
               </button>
             </li>
             <li class="nav-item mt-4">
-              <button
-                class="nav-link d-flex"
-                id="leaderboard-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#leaderboardContent"
-                type="button"
-                role="tab">
+              <button class="nav-link d-flex" id="leaderboard-tab" data-bs-toggle="pill" data-bs-target="#leaderboardContent" type="button" role="tab">
                 <span class="bi bi-star icon">
                   <span class="bi icon-border">
                     <span class="corner-top-right"></span>
@@ -64,62 +49,79 @@ export const pongMenu = createComponent({
         </div>
       </header>
 
-	  <main id="pong-skeleton-container" class="d-flex flex-column flex-grow-1" style="border: 1px solid #2a312f;
-    border-top: 0;
-    border-bottom: 0;
-    margin: -0.78rem;">
-	  </main>
+      <main id="pong-skeleton-container" class="d-flex flex-column flex-grow-1" style="border: 1px solid #2a312f; border-top: 0; border-bottom: 0; margin: -0.78rem;">
+      </main>
 
       <footer class="row align-items-center p-3 footer">
         <div class="logo col text-start">
           <span class="fs-2 bi bi-windows"></span>
         </div>
         <div class="hour col text-end">
-          <span>12:00</span>
+          <span id="current-time">--:--</span>
           </br>
-          <span>01/13/2024</span>
+          <span id="current-date">--/--/----</span>
         </div>
       </footer>
   `,
 
   attachEvents: (el) => {
-	initM1();
-  
-	const navLinks = document.querySelectorAll("#mainTabs .nav-link");
-	const homeButton = document.getElementById("homeButton");
-	const playButton = document.getElementById("play-tab");
-	const leaderboardButton = document.getElementById("leaderboard-tab");
-  
-	function updateActiveTab() {
-	  const currentPath = window.location.pathname;
-  
-	  navLinks.forEach((nav) => nav.parentElement.classList.remove("active"));
-  
-	  if (currentPath.startsWith("/pong/play")) {
-		playButton.parentElement.classList.add("active");
-	  } else if (currentPath.startsWith("/pong/leaderboard")) {
-		leaderboardButton.parentElement.classList.add("active");
-	  }
-	}
-  
-	homeButton.addEventListener("click", () => {
-	  handleRoute("/pong/home");
-	  updateActiveTab();
-	});
-	playButton.addEventListener("click", () => {
-		handleRoute("/pong/play");
-		updateActiveTab();
-	});
-	leaderboardButton.addEventListener("click", () => {
-	  handleRoute("/pong/leaderboard");
-	  updateActiveTab();
-	});
+    initM1();
+    updateDateTime(); // Met à jour immédiatement l'heure et la date
+    setInterval(updateDateTime, 60000); // Mettre à jour toutes les minutes
 
-	window.addEventListener("popstate", updateActiveTab);
-	
-	updateActiveTab();
+    const navLinks = document.querySelectorAll("#mainTabs .nav-link");
+    const homeButton = document.getElementById("homeButton");
+    const playButton = document.getElementById("play-tab");
+    const leaderboardButton = document.getElementById("leaderboard-tab");
+
+    function updateActiveTab() {
+      const currentPath = window.location.pathname;
+
+      if (currentPath.startsWith("/pong")) {
+        navLinks.forEach((nav) => nav.parentElement.classList.remove("active"));
+      }
+
+      if (currentPath.startsWith("/pong/play")) {
+        playButton.parentElement.classList.add("active");
+      } else if (currentPath.startsWith("/pong/leaderboard")) {
+        leaderboardButton.parentElement.classList.add("active");
+      }
+    }
+
+    homeButton.addEventListener("click", () => {
+      handleRoute("/pong/home");
+      updateActiveTab();
+    });
+    playButton.addEventListener("click", () => {
+      handleRoute("/pong/play");
+      updateActiveTab();
+    });
+    leaderboardButton.addEventListener("click", () => {
+      handleRoute("/pong/leaderboard");
+      updateActiveTab();
+    });
+
+    window.addEventListener("popstate", updateActiveTab);
+    updateActiveTab();
   },
 });
+
+function updateDateTime() {
+  const timeElement = document.getElementById("current-time");
+  const dateElement = document.getElementById("current-date");
+
+  if (!timeElement || !dateElement) return;
+
+  const now = new Date();
+  const hours = now.getHours().toString().padStart(2, "0");
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const day = now.getDate().toString().padStart(2, "0");
+  const month = (now.getMonth() + 1).toString().padStart(2, "0");
+  const year = now.getFullYear();
+
+  timeElement.textContent = `${hours}:${minutes}`;
+  dateElement.textContent = `${day}/${month}/${year}`;
+}
 
 function initM1() {
   Store.menuElement2 = document.getElementById("pong-screen-container");

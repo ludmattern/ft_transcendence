@@ -6,12 +6,14 @@ import { pongPageSkeleton } from "/src/components/pong/pongPageSkeleton.js";
 import { soloContent } from "/src/components/pong/soloContent.js";
 import { multiplayerContent } from "/src/components/pong/multiplayerContent.js";
 import { tournamentContent } from "/src/components/pong/tournamentContent.js";
+import { lost } from "/src/components/pong/lost.js";
+import { leaderboard } from "/src/components/pong/leaderboard.js";
 
 // Définition des pages avec la liste des composants à charger
 const pages = {
   home: [
   ],
-  "play": [
+  play: [
     { selector: "#pong-skeleton-container", component: pongPageSkeleton },
     { selector: "#pong-header-container", component: header },
     { selector: "#content-window-container", component: navBar },
@@ -38,7 +40,12 @@ const pages = {
   leaderboard: [
     { selector: "#pong-skeleton-container", component: pongPageSkeleton },
     { selector: "#pong-header-container", component: header },
-    // { selector: "#content-window-container", component: leaderboardContent }, // Ajouter si besoin
+    { selector: "#content-window-container", component: leaderboard }, // Ajouter si besoin
+  ],
+  lost: [
+	{ selector: "#pong-skeleton-container", component: pongPageSkeleton },
+	{ selector: "#pong-header-container", component: header },
+	{ selector: "#content-window-container", component: lost }, // Page d'accueil par défaut
   ],
   // Définissez d'autres pages avec les composants correspondants
 };
@@ -51,7 +58,7 @@ export function renderPongPage(pageKey) {
 
   if (!componentsToRender) {
     console.warn(`Page "${pageKey}" introuvable.`);
-    return;
+	renderPongPage("lost");
   }
 
   const componentKeys = componentsToRender.map(({ component }) => component.tag);

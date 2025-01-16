@@ -58,7 +58,9 @@ function updateActiveLink(el) {
   });
 
   // Réinitialiser l'état de tous les éléments <li>
-  el.querySelectorAll("li").forEach((item) => item.classList.remove("active"));
+  if (currentPath.startsWith("/pong")) {
+  	el.querySelectorAll("li").forEach((item) => item.classList.remove("active"));
+  }
 
   // Activer l'élément correspondant
   if (activeLinkId) {

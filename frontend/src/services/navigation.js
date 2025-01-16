@@ -30,6 +30,7 @@ export function navigateToHome() {
 
 export function navigateBackToPong() {
 	switchwindow("pong");
+	renderPage("pong");
 	document.getElementById("blur-screen-effect").classList.add("d-none");
 }
 
