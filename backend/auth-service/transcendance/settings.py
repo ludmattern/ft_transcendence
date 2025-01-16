@@ -5,8 +5,6 @@ from cryptography.fernet import Fernet
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = 'change_me_with_a_secure_random_key'
-
 DEBUG = True
 
 ALLOWED_HOSTS = []
