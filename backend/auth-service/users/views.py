@@ -227,15 +227,16 @@ def register_user(request):
                 return JsonResponse({'success': False, 'message': 'Phone number is required for SMS 2FA'}, status=400)
 
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-        
+            encrypted_phone = encrypt_thing(phone_number) if phone_number else None
+            
             user = ManualUser.objects.create(
                 username=username,
                 email=encrypted_email,
                 password=hashed_password,
                 is_2fa_enabled=is_2fa_enabled,
                 twofa_method=twofa_method,
-                phone_number=encrypt_thing(phone_number)
-            )
+                phone_number=encrypted_phone
+            ) 
 
             return JsonResponse({'success': True, 'message': 'User registered successfully', 'user_id': user.id})
 

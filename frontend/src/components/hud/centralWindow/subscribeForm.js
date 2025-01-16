@@ -34,6 +34,7 @@ export const subscribeForm = createComponent({
             <label class="mb-3" for="email">Email</label>
             <input type="email" id="email" name="email" class="form-control" required />
             <div id="error-message-mail" class="text-danger mt-2" style="display: none;">E-mail already taken</div>
+            <div id="error-message-mail-size" class="text-danger mt-2" style="display: none;">E-mail too long</div>
           </div>
           <div class="form-group">
             <label class="mb-3" for="confirm-email">Confirm Email</label>
@@ -112,7 +113,9 @@ export const subscribeForm = createComponent({
       resetErrorMessages();
   
       let canRegister = true;
+
       if (!validateId(id)) canRegister = false;
+      if (canRegister && !validateMail(mail)) canRegister = false;
       if (canRegister && !validatePassword(password)) canRegister = false;
       if (canRegister && !checkPasswordConfirmation(password, confirmPassword)) canRegister = false;
       if (canRegister && !checkEmailConfirmation(mail, confirmMail)) canRegister = false;
@@ -168,6 +171,7 @@ function resetErrorMessages() {
     "bad-pass-upper",
     "bad-pass-lower",
     "bad-pass-special",
+    "error-message-mail-size",
     "error-message-mail",
     "error-message-mail2",
     "error-message-pass",
@@ -251,4 +255,12 @@ function validatePhoneNumber(phoneNumber) {
   }
   document.getElementById("error-message-phone").style.display = "none";
   return true;
+}
+
+function validateMail(mail) {
+  if (mail && mail.length <= 50) {
+      return true; 
+  }
+  document.getElementById("error-message-mail-size").style.display = "block";
+  return false;
 }
