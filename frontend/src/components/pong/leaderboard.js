@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { handleRoute } from "/src/services/router.js";
+import { updateActiveLink } from "/src/components/hud/general/header.js";
 
 // Simuler un classement de joueurs (en vrai, récupérer via API)
 const leaderboardData = [
@@ -97,6 +98,7 @@ export const leaderboard = createComponent({
   `,
 
   attachEvents: (el) => {
+	
     const leaderboardBody = el.querySelector("#leaderboard-body");
     const prevPageButton = el.querySelector("#prev-page");
     const nextPageButton = el.querySelector("#next-page");
@@ -113,6 +115,8 @@ export const leaderboard = createComponent({
       // Gérer l'état des boutons de pagination
       prevPageButton.disabled = currentPage === 0;
       nextPageButton.disabled = endIndex >= leaderboardData.length;
+
+	  attachPlayerClickEvents(el);
     }
 
     prevPageButton.addEventListener("click", () => {
@@ -145,22 +149,23 @@ export const leaderboard = createComponent({
  * Génère les lignes du tableau du leaderboard
  */
 function generateLeaderboardRows(players) {
-  return players
-    .map(
-      (player) => `
-    <tr class="${player.username === "YourUsername" ? "table-warning" : ""}">
-        <td>${player.rank}</td>
-        <td>
-          <a href="/social?pilot=${player.username}" class="text-light text-decoration-none">
-            ${player.username}
-          </a>
-        </td>
-        <td>${player.winRatio}%</td>
-    </tr>
-  `
-    )
-    .join("");
-}
+	return players
+	  .map(
+		(player) => `
+	  <tr class="${player.username === "YourUsername" ? "table-warning" : ""}">
+		  <td>${player.rank}</td>
+		  <td>
+			<span class="player-link text-light text-decoration-none" data-username="${player.username}" style="cursor: pointer;">
+			  ${player.username}
+			</span>
+		  </td>
+		  <td>${player.winRatio}%</td>
+	  </tr>
+	`
+	  )
+	  .join("");
+  }
+  
 
 /**
  * Recherche l'utilisateur dans le classement et charge sa portion
@@ -190,3 +195,15 @@ function findUserInLeaderboard(el) {
   el.querySelector("#prev-page").classList.add("d-none");
   el.querySelector("#next-page").classList.add("d-none");
 }
+
+function attachPlayerClickEvents(el) {
+	el.querySelectorAll(".player-link").forEach((element) => {
+	  element.addEventListener("click", () => {
+		const username = element.dataset.username;
+		handleRoute(`/social/pilot=${username}`);
+		const header = document.querySelector("header");
+		updateActiveLink(header);
+	  });
+	});
+  }
+  
