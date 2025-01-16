@@ -42,12 +42,6 @@ const routeMappings = {
 
 export async function handleRoute(route, shouldPushState = true) {
   console.debug(`Handling route: "${route}"`);
-
-  // if (window.location.pathname === route) {
-  //   console.debug("Route unchanged, navigation skipped.");
-  //   return;
-  // }
-
   previousRoute = window.location.pathname;
 
   const unauthenticatedRoutes = ["/login", "/login/2fa", "/subscribe", "/register/qr"];
@@ -56,7 +50,7 @@ export async function handleRoute(route, shouldPushState = true) {
   ensureAuthenticated(() => {
     if (routeMappings[route]) {
       routeMappings[route](); // Appelle la fonction de navigation correspondante
-    } else if (route.startsWith("/social?pilot=")) {
+    } else if (route.startsWith("/social/pilot=")) {
       const pilot = route.split("=")[1];
       navigateToOtherProfile(pilot);
     } else if (route.startsWith("/pong")) {

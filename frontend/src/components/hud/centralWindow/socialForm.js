@@ -45,7 +45,7 @@ export const socialForm = createComponent({
     el.addEventListener('click', (e) => {
       if (e.target.matches('#other-profile-link')) {
         e.preventDefault();
-        handleRoute("/social?pilot=pseudo");
+        handleRoute("/social/pilot=pseudo");
         console.info('OtherProfileForm loaded on click.');
       }
     });

@@ -98,24 +98,27 @@ function createNavItem(text, id = "") {
  *
  * @param {HTMLElement} el - L'élément racine du header
  */
-function updateActiveLink(el) {
-	const currentPath = window.location.pathname;
+export function updateActiveLink(el) {
+    let currentPath = window.location.pathname;
+
+    // Extraire uniquement la première section après le "/"
+    const firstSegment = currentPath.split("/")[1] || ""; // Évite les erreurs si vide
   
-	// Trouver l'ID du lien correspondant ou du parent
-	const activeLinkId = Object.keys(navigationLinks).find((key) => {
-	  const path = navigationLinks[key];
-	  // Vérifie si l'URL actuelle commence par le chemin défini
-	  return currentPath === path || currentPath.startsWith(`${path}/`);
-	});
-  
-	// Réinitialiser l'état de tous les liens
-	el.querySelectorAll("a").forEach((link) => link.classList.remove("active"));
-  
-	// Activer le lien correspondant
-	if (activeLinkId && activeLinkId !== "home-link") {
-	  const activeLink = el.querySelector(`#${activeLinkId}`);
-	  if (activeLink) {
-		activeLink.classList.add("active");
-	  }
-	}
-  }
+    // Trouver l'ID du lien correspondant
+    const activeLinkId = Object.keys(navigationLinks).find((key) => {
+        const path = navigationLinks[key].replace("/", ""); // Supprime le premier "/"
+        console.log("header path verification:", firstSegment, path);
+        return firstSegment === path;
+    });
+
+    // Réinitialiser l'état de tous les liens
+    el.querySelectorAll("a").forEach((link) => link.classList.remove("active"));
+
+    // Activer le lien correspondant
+    if (activeLinkId && activeLinkId !== "home-link") {
+        const activeLink = el.querySelector(`#${activeLinkId}`);
+        if (activeLink) {
+            activeLink.classList.add("active");
+        }
+    }
+}
