@@ -50,6 +50,5 @@ export const qrcode = createComponent({
       } catch (err) {
         console.error("Error fetching QR code:", err.message);
       }
-
   },
 });

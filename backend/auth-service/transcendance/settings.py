@@ -5,7 +5,7 @@ import secrets
 
 from cryptography.fernet import Fernet
 
-SECRET_KEY = 'change_me_with_a_secure_random_key'
+SECRET_KEY = secrets.token_urlsafe(64)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
