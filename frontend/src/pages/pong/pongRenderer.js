@@ -1,18 +1,36 @@
 import componentManagers from "/src/index.js";
 import { header } from "/src/components/pong/header.js";
 import { navBar } from "/src/components/pong/navBar.js";
-import { playContent } from "/src/components/pong/playContent.js";
+import { homeContent } from "/src/components/pong/homeContent.js";
 import { pongPageSkeleton } from "/src/components/pong/pongPageSkeleton.js";
 
 // Définition des pages avec la liste des composants à charger
 const pages = {
   home: [
   ],
+  "play": [
+    { selector: "#pong-skeleton-container", component: pongPageSkeleton },
+    { selector: "#pong-header-container", component: header },
+    { selector: "#content-window-container", component: navBar },
+    { selector: "#content-window-container", component: homeContent }, // Contenu spécifique à "play"
+  ],
   "play/solo": [
     { selector: "#pong-skeleton-container", component: pongPageSkeleton },
     { selector: "#pong-header-container", component: header },
     { selector: "#content-window-container", component: navBar },
-    { selector: "#content-window-container", component: playContent }, // Contenu spécifique à "play"
+    { selector: "#content-window-container", component: homeContent }, // Contenu spécifique à "play"
+  ],
+  "play/multiplayer": [
+    { selector: "#pong-skeleton-container", component: pongPageSkeleton },
+    { selector: "#pong-header-container", component: header },
+    { selector: "#content-window-container", component: navBar },
+    { selector: "#content-window-container", component: homeContent }, // Contenu spécifique à "play"
+  ],
+  "play/tournament": [
+    { selector: "#pong-skeleton-container", component: pongPageSkeleton },
+    { selector: "#pong-header-container", component: header },
+    { selector: "#content-window-container", component: navBar },
+    { selector: "#content-window-container", component: homeContent }, // Contenu spécifique à "play"
   ],
   leaderboard: [
     { selector: "#pong-skeleton-container", component: pongPageSkeleton },
