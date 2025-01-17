@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { handleRoute } from "/src/services/router.js";
+import { subscribe } from "/src/services/eventEmitter.js";
 
 const navigationLinks = {
 	"home-link": "/",
@@ -52,27 +53,24 @@ export const header = createComponent({
   `,
 
   attachEvents: (el) => {
-	Object.entries(navigationLinks).forEach(([linkId, route]) => {
-	  const linkElement = el.querySelector(`#${linkId}`);
-	  if (linkElement) {
-		linkElement.addEventListener("click", (e) => {
-		  e.preventDefault();
-		  if (route !== "/pong")
-			  handleRoute(route); // La gestion de pushState est dans le routeur
-		  else
-		  {
-			handleRoute("/topong");
-		  }
-		  updateActiveLink(el); // Mettre à jour le lien actif
-		});
-	  }
-	});
-  
-	// Activer le lien correspondant à l'URL actuelle
-	updateActiveLink(el);
-  
-	// Surveiller les changements d'URL (navigations arrière/avant)
-	window.addEventListener("popstate", () => updateActiveLink(el));
+    Object.entries(navigationLinks).forEach(([linkId, route]) => {
+      const linkElement = el.querySelector(`#${linkId}`);
+      if (linkElement) {
+        linkElement.addEventListener("click", (e) => {
+          e.preventDefault();
+          if (route !== "/pong") {
+            handleRoute(route);
+          } else {
+            handleRoute("/topong");
+          }
+        });
+      }
+    });
+
+    updateActiveLink(el, window.location.pathname);
+
+    subscribe("routeChanged", (route) => updateActiveLink(el, route));
+
   }
 });
 
@@ -94,16 +92,17 @@ function createNavItem(text, id = "") {
 }
 
 /**
- * Met à jour le lien actif en fonction de l'URL actuelle.
+ * Met à jour le lien actif en fonction de l'URL actuelle ou de la route reçue.
  *
  * @param {HTMLElement} el - L'élément racine du header
+ * @param {string} route - La route actuelle
  */
-export function updateActiveLink(el) {
-    let currentPath = window.location.pathname;
+export function updateActiveLink(el, route) {
+    let currentPath = route || window.location.pathname; // Fallback si pas de route
 
     // Extraire uniquement la première section après le "/"
     const firstSegment = currentPath.split("/")[1] || ""; // Évite les erreurs si vide
-  
+
     // Trouver l'ID du lien correspondant
     const activeLinkId = Object.keys(navigationLinks).find((key) => {
         const path = navigationLinks[key].replace("/", ""); // Supprime le premier "/"

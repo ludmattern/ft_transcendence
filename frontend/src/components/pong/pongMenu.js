@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
-import { handleRoute } from "/src/services/router.js";
+import { handleRoute, getPreviousPongPlaySubRoute } from "/src/services/router.js";
+import { subscribe } from "/src/services/eventEmitter.js";
 import { CSS3DObject } from "https://esm.sh/three/examples/jsm/renderers/CSS3DRenderer.js";
 import Store from "/src/3d/store.js";
 
@@ -43,7 +44,7 @@ export const pongMenu = createComponent({
           </ul>
         </div>
         <div class="col text-end">
-          <button class="btn btn-outline-secondary bi bi-arrow-left rounded-0">
+          <button id="backButton" class="btn btn-outline-secondary bi bi-arrow-left rounded-0">
             Back
           </button>
         </div>
@@ -66,46 +67,52 @@ export const pongMenu = createComponent({
 
   attachEvents: (el) => {
     initM1();
-    updateDateTime(); // Met à jour immédiatement l'heure et la date
-    setInterval(updateDateTime, 60000); // Mettre à jour toutes les minutes
+    updateDateTime();
+    setInterval(updateDateTime, 20000);
 
-    const navLinks = document.querySelectorAll("#mainTabs .nav-link");
-    const homeButton = document.getElementById("homeButton");
-    const playButton = document.getElementById("play-tab");
-    const leaderboardButton = document.getElementById("leaderboard-tab");
+    const homeButton = el.querySelector("#homeButton");
+    const playButton = el.querySelector("#play-tab");
+    const leaderboardButton = el.querySelector("#leaderboard-tab");
 
-    function updateActiveTab() {
-      const currentPath = window.location.pathname;
-
-      if (currentPath.startsWith("/pong")) {
-        navLinks.forEach((nav) => nav.parentElement.classList.remove("active"));
-      }
-
-      if (currentPath.startsWith("/pong/play")) {
-        playButton.parentElement.classList.add("active");
-      } else if (currentPath.startsWith("/pong/leaderboard")) {
-        leaderboardButton.parentElement.classList.add("active");
-      }
-    }
+	function updateActiveTab(el, route) {
+		if (!route.startsWith("/pong")) return;
+	
+		el.querySelectorAll("#mainTabs .nav-item").forEach((navItem) => {
+			navItem.classList.remove("active");
+		});
+	
+		if (route.startsWith("/pong/play")) {
+			playButton.parentElement.classList.add("active");
+		} else if (route.startsWith("/pong/leaderboard")) {
+			leaderboardButton.parentElement.classList.add("active");
+		}
+	}
+	
 
     homeButton.addEventListener("click", () => {
-      handleRoute("/pong/home");
-      updateActiveTab();
-    });
-    playButton.addEventListener("click", () => {
-      handleRoute("/pong/play");
-      updateActiveTab();
-    });
-    leaderboardButton.addEventListener("click", () => {
-      handleRoute("/pong/leaderboard");
-      updateActiveTab();
+        handleRoute("/pong/home");
     });
 
-    window.addEventListener("popstate", updateActiveTab);
-    updateActiveTab();
-  },
+    playButton.addEventListener("click", () => {
+        const lastPlayRoute = getPreviousPongPlaySubRoute();
+        handleRoute(lastPlayRoute);
+    });
+
+    leaderboardButton.addEventListener("click", () => {
+        handleRoute("/pong/leaderboard");
+    });
+
+    updateActiveTab(el, window.location.pathname);
+
+    subscribe("routeChanged", (route) => updateActiveTab(el, route));
+
+}
+
 });
 
+/**
+ * Met à jour l'heure et la date affichées dans le footer.
+ */
 function updateDateTime() {
   const timeElement = document.getElementById("current-time");
   const dateElement = document.getElementById("current-date");
@@ -123,10 +130,13 @@ function updateDateTime() {
   dateElement.textContent = `${day}/${month}/${year}`;
 }
 
+/**
+ * Initialise l'objet 3D du menu dans la scène Three.js.
+ */
 function initM1() {
   Store.menuElement2 = document.getElementById("pong-screen-container");
   if (!Store.menuElement2) {
-    console.error("The element with ID 'menu2' was not found.");
+    console.error("The element with ID 'pong-screen-container' was not found.");
     return;
   }
   Store.menuObject2 = new CSS3DObject(Store.menuElement2);

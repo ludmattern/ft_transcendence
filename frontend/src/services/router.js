@@ -8,10 +8,11 @@ import { emit } from "/src/services/eventEmitter.js";
 
 let previousRoute = null;
 let previousPongSubRoute = null;
+let previousPongPlaySubRoute = null;
 
 window.addEventListener("popstate", () => {
-  const route = window.location.pathname; // Récupère l'URL actuelle
-  handleRoute(route, false); // Appelle la gestion des routes avec la nouvelle URL
+  const route = window.location.pathname;
+  handleRoute(route, false); // Gère la route sans pushState
 });
 
 const routeMappings = {
@@ -33,52 +34,49 @@ export async function handleRoute(route, shouldPushState = true) {
   console.debug(`Handling route: "${route}"`);
   previousRoute = window.location.pathname;
 
-  emit("routeChanged", route);
-  console.log("route changed :", route);
-
   const unauthenticatedRoutes = ["/login", "/login/2fa", "/subscribe", "/register/qr"];
   const isUnauthenticatedRoute = unauthenticatedRoutes.includes(route);
 
-//   ensureAuthenticated(() => {
-    if (routeMappings[route]) {
-      routeMappings[route](); // Appelle la fonction de navigation correspondante
-    } else if (route.startsWith("/social/pilot=")) {
-      const pilot = route.split("=")[1];
-      navigateToOtherProfile(pilot);
-    } else if (route.startsWith("/pong")) {
-      if (route === "/pong") {
-        navigateToPong();
-      } else {
-        const subroute = route.substring(6);
-		if (subroute === "home") {
-			previousPongSubRoute = null;
-		}
-		else {
-			previousPongSubRoute = subroute;
-		}
-        navigateToPong(subroute);
-      }
-    } else {
-      navigateToLost();
-    }
-//   }, isUnauthenticatedRoute);
+  let finalRoute = route;
+
+  if (route.startsWith("/pong/play")) {
+    previousPongPlaySubRoute = route;
+  }
+
+  if (route === "/topong") {
+    finalRoute = previousPongSubRoute ? `/pong/${previousPongSubRoute}` : "/pong";
+  }
 
   if (shouldPushState) {
-    if (route === "/topong") {
-      if (previousPongSubRoute) {
-        history.pushState(null, "", `/pong/${previousPongSubRoute}`);
-      } else {
-        history.pushState(null, "", "/pong");
-      }
-    } else if (route === "/pong/home") {
-      history.pushState(null, "", "/pong");
+    history.pushState(null, "", finalRoute);
+  }
+
+  emit("routeChanged", finalRoute);
+  console.log("route changed :", finalRoute);
+
+  // Gestion de la route
+  if (routeMappings[finalRoute]) {
+    routeMappings[finalRoute]();
+  } else if (finalRoute.startsWith("/social/pilot=")) {
+    const pilot = finalRoute.split("=")[1];
+    navigateToOtherProfile(pilot);
+  } else if (finalRoute.startsWith("/pong")) {
+    if (finalRoute === "/pong") {
+      navigateToPong();
     } else {
-      history.pushState(null, "", route);
+      const subroute = finalRoute.substring(6);
+      previousPongSubRoute = subroute === "home" ? null : subroute;
+      navigateToPong(subroute);
     }
-	emit("routeChanged", route);
+  } else {
+    navigateToLost();
   }
 }
 
 export function getPreviousRoute() {
   return previousRoute || "/";
 }
+
+export function getPreviousPongPlaySubRoute() {
+	return previousPongPlaySubRoute || "/pong/play";
+  }

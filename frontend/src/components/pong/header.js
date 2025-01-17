@@ -28,15 +28,11 @@ export const header = createComponent({
 
       if (route.startsWith("/pong")) {
         pathElement.textContent = `shipctrl:///appData/useless${route}.shp`;
-      } else {
-        pathElement.textContent = `shipctrl:///appData${route}.shp`;
       }
     }
 
     updatePath(window.location.pathname);
 
     subscribe("routeChanged", updatePath);
-
-    // window.addEventListener("popstate", () => updatePath(window.location.pathname));
   }
 });

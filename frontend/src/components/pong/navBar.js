@@ -1,6 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { handleRoute } from "/src/services/router.js";
-import { getPreviousRoute } from "/src/services/router.js";
+import { subscribe } from "/src/services/eventEmitter.js";
 
 const navigationLinks = {
   "pong-solo-link": "/pong/play/solo",
@@ -36,39 +36,35 @@ export const navBar = createComponent({
         linkElement.addEventListener("click", (e) => {
           e.preventDefault();
           handleRoute(route);
-		  console.log("future set -> Route:", route);
-          updateActiveLink(el, route); // Mettre à jour l'élément actif
         });
       }
     });
 
-    // Activer le lien correspondant à l'URL actuelle
-	const currentPath = window.location.pathname;
-	console.log("initial set -> Current Path:", currentPath);
-    updateActiveLink(el, currentPath);
+    updateActiveLink(el, window.location.pathname);
 
-    // Surveiller les changements d'URL (navigations arrière/avant)
-    window.addEventListener("popstate", () => updateActiveLink(el, getPreviousRoute()));
+    subscribe("routeChanged", (route) => updateActiveLink(el, route));
+
   }
 });
 
+/**
+ * Met à jour le lien actif en fonction de l'URL actuelle ou de la route reçue.
+ *
+ * @param {HTMLElement} el - L'élément racine du menu
+ * @param {string} futurePath - La route actuelle (fourni par `routeChanged` ou `popstate`)
+ */
 function updateActiveLink(el, futurePath) {
-  console.log("inside update:", futurePath);
 
-  // Trouver l'ID du lien correspondant
   const activeLinkId = Object.keys(navigationLinks).find((key) => {
     const path = navigationLinks[key];
     return futurePath === path || futurePath.startsWith(`${path}/`);
   });
 
-  // Réinitialiser l'état de tous les éléments <li>
   if (futurePath.startsWith("/pong")) {
-  	el.querySelectorAll("li").forEach((item) => item.classList.remove("active"));
+    el.querySelectorAll("li").forEach((item) => item.classList.remove("active"));
   }
 
-  // Activer l'élément correspondant
   if (activeLinkId) {
-	console.log("Active Link ID:", activeLinkId);
     const activeItem = el.querySelector(`#${activeLinkId}`);
     if (activeItem) {
       activeItem.classList.add("active");
