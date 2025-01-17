@@ -10,6 +10,7 @@ import {  initLights, initSkybox, initRenderer, initCamera, initScene} from "/sr
 
 
 // =============== RESIZE ===============
+
 function onWindowResize() {
   const width = window.innerWidth;
   const height = window.innerHeight;
