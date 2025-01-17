@@ -22,7 +22,7 @@ let previousPongSubRoute = null;
 
 window.addEventListener("popstate", () => {
   const route = window.location.pathname; // Récupère l'URL actuelle
-  handleRoute(route); // Appelle la gestion des routes avec la nouvelle URL
+  handleRoute(route, false); // Appelle la gestion des routes avec la nouvelle URL
 });
 
 const routeMappings = {
@@ -47,7 +47,7 @@ export async function handleRoute(route, shouldPushState = true) {
   const unauthenticatedRoutes = ["/login", "/login/2fa", "/subscribe", "/register/qr"];
   const isUnauthenticatedRoute = unauthenticatedRoutes.includes(route);
 
-  ensureAuthenticated(() => {
+//   ensureAuthenticated(() => {
     if (routeMappings[route]) {
       routeMappings[route](); // Appelle la fonction de navigation correspondante
     } else if (route.startsWith("/social/pilot=")) {
@@ -70,7 +70,7 @@ export async function handleRoute(route, shouldPushState = true) {
     } else {
       navigateToLost();
     }
-  }, isUnauthenticatedRoute);
+//   }, isUnauthenticatedRoute);
 
   if (shouldPushState) {
     if (route === "/topong") {
