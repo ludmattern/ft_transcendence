@@ -1,21 +1,10 @@
 import { ensureAuthenticated } from "/src/services/auth.js";
 import {
-  navigateToSubscribe,
-  navigateToLogin,
-  navigateToHome,
-  navigateToProfile,
-  navigateToPong,
-  navigateToRace,
-  navigateToSocial,
-  navigateToSettings,
-  navigateToLogout,
-  navigateToOtherProfile,
-  navigateToDeleteAccount,
-  navigateToLost,
-  navigateTo2FA,
-  navigateBackToPong,
-  navigateToSettings2FA,
+  navigateToSubscribe, navigateToLogin, navigateToHome, navigateToProfile, navigateToPong, 
+  navigateToRace, navigateToSocial, navigateToSettings, navigateToLogout, navigateToOtherProfile, 
+  navigateToDeleteAccount, navigateToLost, navigateTo2FA, navigateBackToPong, navigateToSettings2FA,
 } from "/src/services/navigation.js";
+import { emit } from "/src/services/eventEmitter.js";
 
 let previousRoute = null;
 let previousPongSubRoute = null;
@@ -44,6 +33,9 @@ export async function handleRoute(route, shouldPushState = true) {
   console.debug(`Handling route: "${route}"`);
   previousRoute = window.location.pathname;
 
+  emit("routeChanged", route);
+  console.log("route changed :", route);
+
   const unauthenticatedRoutes = ["/login", "/login/2fa", "/subscribe", "/register/qr"];
   const isUnauthenticatedRoute = unauthenticatedRoutes.includes(route);
 
@@ -64,7 +56,6 @@ export async function handleRoute(route, shouldPushState = true) {
 		else {
 			previousPongSubRoute = subroute;
 		}
-        navigateToPong();
         navigateToPong(subroute);
       }
     } else {
@@ -84,6 +75,7 @@ export async function handleRoute(route, shouldPushState = true) {
     } else {
       history.pushState(null, "", route);
     }
+	emit("routeChanged", route);
   }
 }
 

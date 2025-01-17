@@ -1,9 +1,9 @@
 import { createComponent } from "/src/utils/component.js";
+import { subscribe } from "/src/services/eventEmitter.js";
 
 export const header = createComponent({
   tag: "header",
 
-  // Générer le HTML
   render: () => `
     <div class="col-2 text-center">
         <h1 class="bi bi-rocket fs-5 m-0">TRANSCENDENCE</h1>
@@ -18,19 +18,25 @@ export const header = createComponent({
   `,
 
   attachEvents: (el) => {
-    function updatePath() {
+    function updatePath(route) {
+      console.log("updatePath called with route:", route);
       const pathElement = el.querySelector("#shipctrl-path");
-      const currentPath = window.location.pathname;
 
-      if (currentPath.startsWith("/pong")) {
-        pathElement.textContent = `shipctrl:///appData/useless${currentPath}.shp`;
-      } 
+      if (!route) {
+        route = window.location.pathname;
+      }
+
+      if (route.startsWith("/pong")) {
+        pathElement.textContent = `shipctrl:///appData/useless${route}.shp`;
+      } else {
+        pathElement.textContent = `shipctrl:///appData${route}.shp`;
+      }
     }
 
-    // Mettre à jour le chemin au chargement
-    updatePath();
+    updatePath(window.location.pathname);
 
-    // Surveiller les changements d'URL (ex: navigation arrière/avant)
-    window.addEventListener("popstate", updatePath);
+    subscribe("routeChanged", updatePath);
+
+    // window.addEventListener("popstate", () => updatePath(window.location.pathname));
   }
 });

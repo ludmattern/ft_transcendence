@@ -3,10 +3,15 @@ import * as THREE from "https://esm.sh/three";
 import { onBaseMouseMove, setCameraRotation } from '/src/3d/freeViewHandler.js';
 import { screenMaterial } from '/src/3d/pongScene.js';
 
+let currentWindow = null;
 
 // =============== WINDOW SWITCHER ===============
 
 export function switchwindow(screen) {
+	if (screen === currentWindow) {
+		return;
+	}
+	currentWindow = screen;
     if (screen === "pong") {
       animateCameraToTarget(
         new THREE.Vector3(-2.559453657498437, 3.253545045816075, -0.7922370317858861),

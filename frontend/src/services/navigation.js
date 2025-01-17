@@ -44,6 +44,7 @@ export function navigateToPong(subroute = null) {
     renderPage("pong");
 	renderPongPage("home");
   } else {
+    renderPage("pong");
     renderPongPage(subroute);
   }
   switchwindow("pong");
