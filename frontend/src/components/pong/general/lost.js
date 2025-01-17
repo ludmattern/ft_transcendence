@@ -12,6 +12,8 @@ export const lost = createComponent({
       <h1 class="display-1 text-danger">404</h1>
       <h2 class="text-uppercase">You Seem Lost, Captain.</h2>
       <p class="text-secondary">This isn't the page you're looking for... or maybe it never existed.</p>
+
+	  <button id="return-home" class="btn btn-warning mt-5">Return to Home</button>
       
       <div class="mt-5 text-muted">
         <p><i class="bi bi-exclamation-triangle"></i> Error Code: PEBKAC</p>
@@ -25,7 +27,7 @@ export const lost = createComponent({
     const returnHomeButton = el.querySelector("#return-home");
 
     returnHomeButton.addEventListener("click", () => {
-      handleRoute("/pong/home");
+      handleRoute("/pong/play");
     });
   }
 });

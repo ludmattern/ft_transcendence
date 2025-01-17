@@ -1,4 +1,4 @@
-import { ensureAuthenticated } from "/src/services/auth.js";
+import { isClientAuthenticated } from "/src/services/auth.js";
 import {
   navigateToSubscribe, navigateToLogin, navigateToHome, navigateToProfile, navigateToPong, 
   navigateToRace, navigateToSocial, navigateToSettings, navigateToLogout, navigateToOtherProfile, 
@@ -9,11 +9,6 @@ import { emit } from "/src/services/eventEmitter.js";
 let previousRoute = null;
 let previousPongSubRoute = null;
 let previousPongPlaySubRoute = null;
-
-window.addEventListener("popstate", () => {
-  const route = window.location.pathname;
-  handleRoute(route, false); // Gère la route sans pushState
-});
 
 const routeMappings = {
   "/": navigateToHome,
@@ -30,21 +25,70 @@ const routeMappings = {
   "/topong": navigateBackToPong,
 };
 
-export async function handleRoute(route, shouldPushState = true) {
-  console.debug(`Handling route: "${route}"`);
+const publicRoutes = new Set(["/login", "/login/2fa", "/subscribe", "/register/qr"]);
+
+/**
+ * Vérifie si une route nécessite une authentification.
+ * @param {string} route - La route à vérifier.
+ * @returns {boolean} - `true` si une authentification est requise, sinon `false`.
+ */
+function isAuthenticatedRoute(route) {
+  return publicRoutes.has(route);
+}
+
+/**
+ * Met à jour la mémoire des routes précédentes.
+ * @param {string} route - Nouvelle route visitée.
+ */
+function updatePreviousRoute(route) {
   previousRoute = window.location.pathname;
-
-  const unauthenticatedRoutes = ["/login", "/login/2fa", "/subscribe", "/register/qr"];
-  const isUnauthenticatedRoute = unauthenticatedRoutes.includes(route);
-
-  let finalRoute = route;
 
   if (route.startsWith("/pong/play")) {
     previousPongPlaySubRoute = route;
+	console.error("previousPongPlaySubRoute", previousPongPlaySubRoute);
   }
+  if (route.startsWith("/pong")) {
+    const subroute = route.substring(6);
+    previousPongSubRoute = subroute === "home" ? null : subroute;
+	console.error("previousPongSubRoute", previousPongSubRoute);
+  }
+}
+
+/**
+ * Gère la navigation vers une route donnée.
+ * @param {string} route - La route à gérer.
+ * @param {boolean} shouldPushState - Si `true`, met à jour l'historique du navigateur.
+ */
+export async function handleRoute(route, shouldPushState = true) {
+  console.debug(`Handling route: "${route}"`);
+
+  const isAuthenticated = await isClientAuthenticated();
+  const isRoutePublic = isAuthenticatedRoute(route);
+  if (!isRoutePublic && isAuthenticated || isRoutePublic && !isAuthenticated) {
+    processRoute(route, shouldPushState);
+  } else if (isRoutePublic && isAuthenticated) {
+    console.log("Already authenticated, redirecting to /");
+	processRoute("/", shouldPushState);
+  } else {
+	console.log("Not authenticated, redirecting to /login");
+	processRoute("/login", shouldPushState);
+  }
+}
+
+/**
+ * Exécute la navigation après vérification d'authentification.
+ * @param {string} route - La route à naviguer.
+ * @param {boolean} shouldPushState - Si `true`, met à jour l'historique.
+ */
+function processRoute(route, shouldPushState) {
+  updatePreviousRoute(route);
+
+  let finalRoute = route;
 
   if (route === "/topong") {
+	console.error("route === /topong");
     finalRoute = previousPongSubRoute ? `/pong/${previousPongSubRoute}` : "/pong";
+	console.error("finalRoute", finalRoute);
   }
 
   if (shouldPushState) {
@@ -52,31 +96,34 @@ export async function handleRoute(route, shouldPushState = true) {
   }
 
   emit("routeChanged", finalRoute);
-  console.log("route changed :", finalRoute);
+  console.log("Route changed:", finalRoute);
 
-  // Gestion de la route
   if (routeMappings[finalRoute]) {
     routeMappings[finalRoute]();
   } else if (finalRoute.startsWith("/social/pilot=")) {
     const pilot = finalRoute.split("=")[1];
     navigateToOtherProfile(pilot);
   } else if (finalRoute.startsWith("/pong")) {
-    if (finalRoute === "/pong") {
-      navigateToPong();
-    } else {
-      const subroute = finalRoute.substring(6);
-      previousPongSubRoute = subroute === "home" ? null : subroute;
-      navigateToPong(subroute);
-    }
+    navigateToPong(finalRoute.substring(6));
   } else {
     navigateToLost();
   }
 }
 
+/**
+ * Retourne la dernière route visitée.
+ */
 export function getPreviousRoute() {
   return previousRoute || "/";
 }
 
+/**
+ * Retourne la dernière sous-route visitée dans /pong/play.
+ */
 export function getPreviousPongPlaySubRoute() {
-	return previousPongPlaySubRoute || "/pong/play";
-  }
+  return previousPongPlaySubRoute || "/pong/play";
+}
+
+window.addEventListener("popstate", () => {
+  handleRoute(window.location.pathname, false);
+});

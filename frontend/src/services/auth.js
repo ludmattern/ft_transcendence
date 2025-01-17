@@ -1,6 +1,3 @@
-import { handleRoute } from "/src/services/router.js";
-
-
 export async function isClientAuthenticated() {
 
   try {
@@ -29,34 +26,6 @@ export async function isClientAuthenticated() {
   } catch (error) {
     console.error("Error checking auth on backend:", error);
     return false;
-  }
-}
-
-
-export async function ensureAuthenticated(callback, allowUnauthenticated = false) {
-  const isAuthenticated = await isClientAuthenticated();
-  if (!isAuthenticated) {
-    if (allowUnauthenticated) {
-      console.warn("User not authenticated but allowed to access route.");
-      callback();
-      return true;
-    } else {
-      console.warn(
-        "User not authenticated or token expired. Redirecting to login."
-      );
-      handleRoute("/login");
-      return false;
-    }
-  } else {
-    if (allowUnauthenticated) {
-      console.warn("User authenticated but not allowed to access this route.");
-      handleRoute("/");
-      return false;
-    } else {
-		console.log("User authenticated. Proceeding...");
-		callback();
-		return true;
-	}
   }
 }
 
