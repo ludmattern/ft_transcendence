@@ -15,6 +15,7 @@ function onWindowResize() {
   const height = window.innerHeight;
   Store.renderer.setSize(width, height);
   Store.cssRenderer.setSize(width, height);
+  Store.composer.setSize(width, height);
   Store.camera.aspect = width / height;
   Store.camera.updateProjectionMatrix();
 }
