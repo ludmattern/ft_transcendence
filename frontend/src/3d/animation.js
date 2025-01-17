@@ -100,7 +100,7 @@ export function switchwindow(screen) {
     const startPosition = Store.camera.position.clone();
     const startQuaternion = Store.camera.quaternion.clone();
   
-    const endPosition = new THREE.Vector3(0, 0, 1.45);
+    const endPosition = new THREE.Vector3(0, 0.06275803512326787, 1.9990151147571098);
     const lookAtTarget = new THREE.Vector3(0, 50, -12);
   
     Store.camera.position.copy(endPosition);
