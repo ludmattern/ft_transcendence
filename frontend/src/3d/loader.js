@@ -58,7 +58,7 @@ export function loadModels() {
     );
   
     loader.load(
-      "/src/assets/models/sn13.glb",
+      "/src/assets/models/sn15/untitled.gltf",
       (gltf) => {
         Store.model = gltf.scene;
         Store.model.position.set(3.5, -17, -1);
@@ -67,7 +67,11 @@ export function loadModels() {
         Store.model.lookAt(0, 1000, -180);
   
         Store.model.traverse((child) => {
+          console.log(child.name, child);
+         
+          
           if (child.isMesh) {
+
             child.material.color.multiplyScalar(3);
             child.material.metalness = 0.2;
             child.castShadow = true;
