@@ -9,8 +9,7 @@ export const footer = createComponent({
 	<div class="row">
 	<div class="col-12">
 		<!-- Free View Button -->
-		<div class="d-flex justify-content-center">
-		<button class="btn bi mb-4 pb-4 pe-auto" id="free-view">free view</button>
+		<div id="freeView-container" class="d-flex justify-content-center">
 		</div>
 		<!-- Compass -->
 		<div class="body">
@@ -24,9 +23,6 @@ export const footer = createComponent({
 
   // Ajouter les événements après le chargement
   attachEvents: (el) => {
-    // Événement pour le bouton "free view"
-    el.querySelector("#free-view").addEventListener("click", toggleFreeView);
-
     // Gestion de la boussole
     initializeCompass(el);
   },

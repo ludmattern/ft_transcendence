@@ -18,6 +18,7 @@ export { qrcode } from "/src/components/hud/centralWindow/qr-code.js";
 // General components
 export { header } from "/src/components/hud/general/header.js";
 export { footer } from "/src/components/hud/general/footer.js";
+export { freeViewButton } from "/src/components/hud/general/freeView.js";
 
 // SideWindow components
 //   left

@@ -1,5 +1,6 @@
-import { loginForm, profileForm, header, footer, leftSideWindow, rightSideWindow, logoutForm, twoFAForm,
-  socialForm, qrcode ,otherProfileForm, deleteAccountForm, subscribeForm, settingsForm, lostForm, hudSVG, HelmetSVG
+import { loginForm, profileForm, header, footer, leftSideWindow, rightSideWindow, 
+	logoutForm, twoFAForm, freeViewButton, socialForm, qrcode ,otherProfileForm, 
+	deleteAccountForm, subscribeForm, settingsForm, lostForm, hudSVG, HelmetSVG
 } from "/src/components/hud/index.js";
 import { midScreen } from "/src/components/midScreen.js";
 import { menu3 } from "/src/components/menu3.js";
@@ -42,7 +43,14 @@ const pages = {
   settings: 	  	{ useGlobals: true, mainComponent: settingsForm },
   deleteAccount: 	{ useGlobals: true, mainComponent: deleteAccountForm },
   logout: 		  	{ useGlobals: true, mainComponent: logoutForm },
-  home: 			    { useGlobals: true },
+
+  home: {
+    useGlobals: true,
+    extraComponents: [
+      { selector: "#freeView-container", component: freeViewButton }
+    ],
+  },
+
   race: 		    	{ useGlobals: true },
   pong: 		    	{ useGlobals: true },
 };
@@ -58,20 +66,23 @@ const defaultSelector = "#central-window";
  * @returns {Array} - Liste des composants à rendre
  */
 function getComponentsForPage(pageKey) {
-  const page = pages[pageKey];
-  if (!page) {
-    console.warn(`Page "${pageKey}" introuvable.`);
-    return [];
+	const page = pages[pageKey];
+	if (!page) {
+	  console.warn(`Page "${pageKey}" introuvable.`);
+	  return [];
+	}
+  
+	const global = page.useGlobals ? Object.values(globalComponents) : [];
+	const specific = page.mainComponent
+	  ? [{ selector: defaultSelector, component: page.mainComponent }]
+	  : [];
+  
+	// 🔹 Ajouter les composants supplémentaires s'ils existent
+	const extra = page.extraComponents || [];
+  
+	return [...persistentComponents, ...global, ...specific, ...extra];
   }
-
-  const global = page.useGlobals ? Object.values(globalComponents) : [];
-  const specific = page.mainComponent
-    ? [{ selector: defaultSelector, component: page.mainComponent }]
-    : [];
-
-  return [...persistentComponents, ...global, ...specific];
-}
-
+  
 /**
  * Rendu des pages
  * @param {string} pageKey - Nom de la page à rendre
