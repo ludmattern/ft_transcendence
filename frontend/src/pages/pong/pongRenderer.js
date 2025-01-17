@@ -1,13 +1,5 @@
 import componentManagers from "/src/index.js";
-import { header } from "/src/components/pong/header.js";
-import { navBar } from "/src/components/pong/navBar.js";
-import { homeContent } from "/src/components/pong/homeContent.js";
-import { pongPageSkeleton } from "/src/components/pong/pongPageSkeleton.js";
-import { soloContent } from "/src/components/pong/soloContent.js";
-import { multiplayerContent } from "/src/components/pong/multiplayerContent.js";
-import { tournamentContent } from "/src/components/pong/tournamentContent.js";
-import { lost } from "/src/components/pong/lost.js";
-import { leaderboard } from "/src/components/pong/leaderboard.js";
+import { header, navBar, homeContent,  pongPageSkeleton, soloContent, multiplayerContent, tournamentContent, lost, leaderboard } from "/src/components/pong/index.js";
 
 // Définition des pages avec la liste des composants à charger
 const pages = {

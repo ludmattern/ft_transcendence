@@ -4,7 +4,7 @@ import { loginForm, profileForm, header, footer, leftSideWindow, rightSideWindow
 } from "/src/components/hud/index.js";
 import { midScreen } from "/src/components/midScreen.js";
 import { menu3 } from "/src/components/menu3.js";
-import { pongMenu } from "/src/components/pong/pongMenu.js";
+import { pongMenu } from "/src/components/pong/index.js";
 import componentManagers from "/src/index.js"; // Assurez-vous que HUD est importé
 
 /**
