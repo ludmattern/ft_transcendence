@@ -67,7 +67,7 @@ export function loadModels() {
         Store.model.lookAt(0, 1000, -180);
   
         Store.model.traverse((child) => {
-          console.log(child.name, child);
+          //console.log(child.name, child);
          
           
           if (child.isMesh) {
