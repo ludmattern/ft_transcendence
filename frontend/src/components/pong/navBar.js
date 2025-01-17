@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { handleRoute } from "/src/services/router.js";
+import { getPreviousRoute } from "/src/services/router.js";
 
 const navigationLinks = {
   "pong-solo-link": "/pong/play/solo",
@@ -35,35 +36,39 @@ export const navBar = createComponent({
         linkElement.addEventListener("click", (e) => {
           e.preventDefault();
           handleRoute(route);
-          updateActiveLink(el); // Mettre à jour l'élément actif
+		  console.log("future set -> Route:", route);
+          updateActiveLink(el, route); // Mettre à jour l'élément actif
         });
       }
     });
 
     // Activer le lien correspondant à l'URL actuelle
-    updateActiveLink(el);
+	const currentPath = window.location.pathname;
+	console.log("initial set -> Current Path:", currentPath);
+    updateActiveLink(el, currentPath);
 
     // Surveiller les changements d'URL (navigations arrière/avant)
-    window.addEventListener("popstate", () => updateActiveLink(el));
+    window.addEventListener("popstate", () => updateActiveLink(el, getPreviousRoute()));
   }
 });
 
-function updateActiveLink(el) {
-  const currentPath = window.location.pathname;
+function updateActiveLink(el, futurePath) {
+  console.log("inside update:", futurePath);
 
   // Trouver l'ID du lien correspondant
   const activeLinkId = Object.keys(navigationLinks).find((key) => {
     const path = navigationLinks[key];
-    return currentPath === path || currentPath.startsWith(`${path}/`);
+    return futurePath === path || futurePath.startsWith(`${path}/`);
   });
 
   // Réinitialiser l'état de tous les éléments <li>
-  if (currentPath.startsWith("/pong")) {
+  if (futurePath.startsWith("/pong")) {
   	el.querySelectorAll("li").forEach((item) => item.classList.remove("active"));
   }
 
   // Activer l'élément correspondant
   if (activeLinkId) {
+	console.log("Active Link ID:", activeLinkId);
     const activeItem = el.querySelector(`#${activeLinkId}`);
     if (activeItem) {
       activeItem.classList.add("active");
