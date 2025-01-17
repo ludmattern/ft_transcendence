@@ -23,6 +23,7 @@ const Store = {
 
   onScreen: false,
   freeViewEnabled: false,
+  isCameraMoving: false,
   cameraRotation: { x: 0, y: 0, z: 0 },
   initialCameraRotation: { x: 0, y: 0, z: 0 },
   currentTween: null,

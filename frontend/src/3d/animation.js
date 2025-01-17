@@ -12,6 +12,7 @@ export function switchwindow(screen) {
 		return;
 	}
 	currentWindow = screen;
+    Store.isCameraMoving = true;
     if (screen === "pong") {
       animateCameraToTarget(
         new THREE.Vector3(-2.559453657498437, 3.253545045816075, -0.7922370317858861),
@@ -42,8 +43,13 @@ export function switchwindow(screen) {
   
   // =============== GSAP ANIMATION ===============
   export function animateCameraToTarget(endPosition, endRotation, nb) {
-    document.removeEventListener("mousemove", onBaseMouseMove, false);
   
+
+    if (Store.currentTween) {
+      Store.currentTween.kill();
+      Store.currentTween = null;
+      Store.isCameraMoving = false;
+    }
     const startPosition = Store.camera.position.clone();
     const startQuaternion = Store.camera.quaternion.clone();
   
@@ -62,6 +68,8 @@ export function switchwindow(screen) {
     }
   
     const dummy = { t: 0 };
+    Store.isCameraMoving = true;
+    document.removeEventListener("mousemove", onBaseMouseMove, false);
     Store.currentTween = gsap.to(dummy, {
       duration: 2,
       t: 1,
@@ -90,13 +98,18 @@ export function switchwindow(screen) {
         Store.cameraRotation.y = Store.camera.rotation.y;
         Store.onScreen = true;
         document.addEventListener("mousemove", onBaseMouseMove, false);
+        Store.isCameraMoving = false;
       },
     });
   }
   
   export function animateCameraBackToInitialPosition() {
-    document.removeEventListener("mousemove", onBaseMouseMove, false);
+    if (Store.currentTween) {
+      Store.currentTween.kill();
+      Store.currentTween = null;
+      Store.isCameraMoving = false;
 
+    }
     const startPosition = Store.camera.position.clone();
     const startQuaternion = Store.camera.quaternion.clone();
   
@@ -112,7 +125,8 @@ export function switchwindow(screen) {
     Store.camera.position.copy(startPosition);
     Store.camera.quaternion.copy(startQuaternion);
   
-    if (Store.menuElement) {
+    if (Store.menuElement) 
+    {
       Store.menuElement.classList.add("active");
       Store.screenObject1.material = Store.material;
     }
@@ -120,6 +134,8 @@ export function switchwindow(screen) {
     if (Store.menuElement3) Store.menuElement3.classList.add("active");
   
     const dummy = { t: 0 };
+    Store.isCameraMoving = true;
+    document.removeEventListener("mousemove", onBaseMouseMove, false);
     gsap.to(dummy, {
       duration: 2,
       t: 1,
@@ -139,6 +155,8 @@ export function switchwindow(screen) {
         Store.cameraRotation.x = Store.camera.rotation.x;
         Store.cameraRotation.y = Store.camera.rotation.y;
         document.addEventListener("mousemove", onBaseMouseMove, false);
+        Store.isCameraMoving = false;
+
       },
     });
   }
