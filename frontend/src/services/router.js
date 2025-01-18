@@ -90,9 +90,7 @@ function processRoute(route, shouldPushState) {
   let finalRoute = route;
 
   if (route === "/topong") {
-	console.error("route === /topong");
     finalRoute = previousPongSubRoute ? `/pong/${previousPongSubRoute}` : "/pong";
-	console.error("finalRoute", finalRoute);
   }
 
   if (shouldPushState) {
