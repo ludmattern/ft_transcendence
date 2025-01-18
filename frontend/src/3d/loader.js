@@ -68,10 +68,7 @@ export function loadModels() {
   
         Store.model.traverse((child) => {
           //console.log(child.name, child);
-          if (child.name === "_gltfNode_19") {
-            child.material.color.multiplyScalar(1);
 
-          }
           if (child.isMesh ) 
             {
 
