@@ -631,7 +631,6 @@ body {
     margin: 0;
     padding-right: 0.5rem;
     opacity: 0.5;
-    transition: all 0.15s;
 }
 
 #hud-body .r-side-window .btn {
