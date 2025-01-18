@@ -14,7 +14,7 @@ export function initCamera() {
       0.1,
       10000
     );
-    Store.camera.position.set(0, 0.06275803512326787, 1.9990151147571098);
+    Store.camera.position.set(0, 0, 1.4);
     Store.camera.lookAt(0, 50, -12);
   
     const cameraLight = new THREE.PointLight(0xb0e7ec, 1, 6);
