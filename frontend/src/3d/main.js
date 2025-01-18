@@ -19,6 +19,8 @@ function onWindowResize() {
   Store.composer.setSize(width, height);
   Store.camera.aspect = width / height;
   Store.camera.updateProjectionMatrix();
+
+  
 }
 
 function addEventListeners() {
@@ -45,7 +47,7 @@ export function buildScene() {
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     1,
     1,
-    0.2
+    0
   );
   Store.composer = new EffectComposer(Store.renderer);
   const renderScene = new RenderPass(Store.scene, Store.camera);
@@ -62,6 +64,7 @@ function animate() {
 
   if (Store.composer) {
     Store.composer.render(Store.scene, Store.camera);
+
   } else {
     Store.renderer.render(Store.scene, Store.camera);
   }

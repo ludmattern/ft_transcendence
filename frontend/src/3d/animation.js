@@ -32,10 +32,11 @@ export function switchwindow(screen) {
         1
       );
     }
-    else if (screen === "home") {
+    else if (screen === "home") 
+    {
       animateCameraToTarget(
-        new THREE.Vector3(0, 0.06275803512326787, 1.9990151147571098),
-        { x: 1.2974796345057034, y: 0, z: -0 },
+        new THREE.Vector3(0, 0, 1.4),
+        { x: 1.3, y: -0, z: -0 },
         0
       );
     }
@@ -104,59 +105,9 @@ export function switchwindow(screen) {
   }
   
   export function animateCameraBackToInitialPosition() {
-    if (Store.currentTween) {
-      Store.currentTween.kill();
-      Store.currentTween = null;
-      Store.isCameraMoving = false;
-
-    }
-    const startPosition = Store.camera.position.clone();
-    const startQuaternion = Store.camera.quaternion.clone();
-  
-    const endPosition = new THREE.Vector3(0, 0.06275803512326787, 1.9990151147571098);
-    const lookAtTarget = new THREE.Vector3(0, 50, -12);
-  
-    Store.camera.position.copy(endPosition);
-    Store.camera.lookAt(lookAtTarget);
-    const endQuaternion = Store.camera.quaternion.clone();
-  
-    if (Store.freeViewEnabled) disableFreeView();
-  
-    Store.camera.position.copy(startPosition);
-    Store.camera.quaternion.copy(startQuaternion);
-  
-    if (Store.menuElement) 
-    {
-      Store.menuElement.classList.add("active");
-      Store.screenObject1.material = Store.material;
-    }
-    if (Store.menuElement2) Store.menuElement2.classList.add("active");
-    if (Store.menuElement3) Store.menuElement3.classList.add("active");
-  
-    const dummy = { t: 0 };
-    Store.isCameraMoving = true;
-    document.removeEventListener("mousemove", onBaseMouseMove, false);
-    gsap.to(dummy, {
-      duration: 2,
-      t: 1,
-      ease: "power2.inOut",
-      onUpdate: () => {
-        const t = dummy.t;
-        Store.camera.position.lerpVectors(startPosition, endPosition, t);
-        Store.camera.quaternion.slerpQuaternions(startQuaternion, endQuaternion, t);
-        setCameraRotation(Store.camera.rotation.y);
-      },
-      onComplete: () => {
-        Store.camera.position.copy(endPosition);
-        Store.camera.quaternion.copy(endQuaternion);
-        Store.onScreen = false;
-        Store.initialCameraRotation.x = Store.camera.rotation.x;
-        Store.initialCameraRotation.y = Store.camera.rotation.y;
-        Store.cameraRotation.x = Store.camera.rotation.x;
-        Store.cameraRotation.y = Store.camera.rotation.y;
-        document.addEventListener("mousemove", onBaseMouseMove, false);
-        Store.isCameraMoving = false;
-
-      },
-    });
+    animateCameraToTarget(
+      new THREE.Vector3(0, 0, 1.4),
+      { x: 1.3, y: -0, z: -0 },
+      0
+    );
   }

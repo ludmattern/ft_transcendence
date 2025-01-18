@@ -11,7 +11,7 @@ export function setCameraRotation(value) {
   cameraRotationEvent = value;
   eventCounter += 1; // Incrémente le compteur
 
-  if (eventCounter % 2 === 0) { // Vérifie si c'est une occurrence multiple de 10
+  if (eventCounter % 20 === 0) { // Vérifie si c'est une occurrence multiple de 10
     listeners.forEach((listener) => listener(cameraRotationEvent));
   }
 }
@@ -45,7 +45,7 @@ export function onBaseMouseMove(event) {
   
     const deltaX = event.movementX;
     const deltaY = event.movementY;
-  
+
     Store.cameraRotation.y -= deltaX * rotationSpeed;
     Store.cameraRotation.x -= deltaY * rotationSpeed;
   

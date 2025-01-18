@@ -68,9 +68,12 @@ export function loadModels() {
   
         Store.model.traverse((child) => {
           //console.log(child.name, child);
-         
-          
-          if (child.isMesh) {
+          if (child.name === "_gltfNode_19") {
+            child.material.color.multiplyScalar(1);
+
+          }
+          if (child.isMesh ) 
+            {
 
             child.material.color.multiplyScalar(3);
             child.material.metalness = 0.2;
