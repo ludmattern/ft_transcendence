@@ -45,12 +45,10 @@ function updatePreviousRoute(route) {
 
   if (route.startsWith("/pong/play")) {
     previousPongPlaySubRoute = route;
-	console.error("previousPongPlaySubRoute", previousPongPlaySubRoute);
   }
   if (route.startsWith("/pong")) {
     const subroute = route.substring(6);
     previousPongSubRoute = subroute === "home" ? null : subroute;
-	console.error("previousPongSubRoute", previousPongSubRoute);
   }
 }
 
@@ -62,8 +60,14 @@ function updatePreviousRoute(route) {
 export async function handleRoute(route, shouldPushState = true) {
   console.debug(`Handling route: "${route}"`);
 
-  const isAuthenticated = await isClientAuthenticated();
+//   const isAuthenticated = await isClientAuthenticated();
   const isRoutePublic = isAuthenticatedRoute(route);
+
+  /**
+   * DEBUG - Disabling authentication
+  */
+  const isAuthenticated = true;
+ 
   if (!isRoutePublic && isAuthenticated || isRoutePublic && !isAuthenticated) {
     processRoute(route, shouldPushState);
   } else if (isRoutePublic && isAuthenticated) {
@@ -86,9 +90,7 @@ function processRoute(route, shouldPushState) {
   let finalRoute = route;
 
   if (route === "/topong") {
-	console.error("route === /topong");
     finalRoute = previousPongSubRoute ? `/pong/${previousPongSubRoute}` : "/pong";
-	console.error("finalRoute", finalRoute);
   }
 
   if (shouldPushState) {
