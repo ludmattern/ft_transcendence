@@ -133,15 +133,25 @@ function updateDateTime() {
 /**
  * Initialise l'objet 3D du menu dans la scène Three.js.
  */
+import * as THREE from "https://esm.sh/three";
+
 function initM1() {
   Store.menuElement2 = document.getElementById("pong-screen-container");
   if (!Store.menuElement2) {
     console.error("The element with ID 'pong-screen-container' was not found.");
     return;
   }
+
+  const cameraQuaternion = new THREE.Quaternion().setFromEuler(
+    new THREE.Euler(Math.PI / 3.2, Math.PI / 5.5, -Math.PI / -12)
+  );
+  
+  const objectRotation = new THREE.Euler(0, 0, 0, "XYZ");
+  const objectQuaternion = new THREE.Quaternion().setFromEuler(objectRotation);
+  
   Store.menuObject2 = new CSS3DObject(Store.menuElement2);
+  Store.menuObject2.quaternion.copy(cameraQuaternion).multiply(objectQuaternion);
   Store.menuObject2.position.set(-3.6, 4.6, -1.8);
-  Store.menuObject2.rotation.set(-5.2, 0.63, 0.2);
   Store.menuObject2.scale.set(0.002, 0.002, 0.002);
   Store.menuElement2.style.pointerEvents = "auto";
   Store.menuElement2.classList.add("active");
