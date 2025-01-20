@@ -45,12 +45,12 @@ export const navigateTo2FA = () => navigateTo("HUD", "twoFAForm", false, true);
 export const navigateToSettings2FA = () => navigateTo("HUD", "qrcode");
 export const navigateToLoading = () => navigateTo("HUD", "loading", true, true);
 
-export const navigateToHome = () => navigateTo("HUD", "home", false, "home");
-export const navigateBackToPong = () => navigateTo("HUD", "pong", false, "pong");
+export const navigateToHome = () => navigateTo("HUD", "home", false, false, "home");
+export const navigateBackToPong = () => navigateTo("HUD", "pong", false, false, "pong");
 
 export function navigateToPong(subroute = null) {
-  navigateTo("HUD", "pong", false, "pong");
-  navigateTo("Pong", subroute || "home", false);
+  navigateTo("HUD", "pong", false, false, "pong");
+  navigateTo("Pong", subroute || "home", false, false);
 }
 
-export const navigateToRace = () => navigateTo("HUD", "race", false, "race");
+export const navigateToRace = () => navigateTo("HUD", "race", false, false, "race");
