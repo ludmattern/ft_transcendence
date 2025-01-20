@@ -4,9 +4,6 @@ import Store from './store.js';
 import { CacheDB } from "/src/utils/IndexedDBCache.js";
 
 export async function loadModels() {
-	const loadingScreen = document.getElementById("loading-screen");
-	const progressBar = document.getElementById("progress-bar");
-	loadingScreen.style.display = "block";
 
 	const loader = new GLTFLoader();
 
@@ -110,5 +107,4 @@ export async function loadModels() {
 		console.error("Erreur lors du chargement du modèle SN13 :", error);
 	}
 
-	loadingScreen.style.display = "none";
 }
