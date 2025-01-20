@@ -33,8 +33,6 @@ export function toggleFreeView() {
   }
 }
 
-
-
   // =============== OARALAX HANDLER ===============
 export function onBaseMouseMove(event) {
 
