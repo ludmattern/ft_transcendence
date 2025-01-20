@@ -41,8 +41,6 @@ async function initializeApp() {
 
   await buildScene();
   handleRoute(targetRoute);
-  document.getElementById("waiting-screen-effect").classList.add("d-none");
-
   console.log("Application prête !");
 }
 

@@ -9,7 +9,7 @@ import { hudPages, pongPages } from "/src/pages/pages.js";
  * @param {boolean} blurEffect - Ajoute ou enlève l'effet blur
  * @param {string|null} windowType - Type de fenêtre à changer (ex: "home", "pong", "race")
  */
-function navigateTo(type, pageKey, blurEffect = true, windowType = null) {
+function navigateTo(type, pageKey, blurEffect = true, waitingScreen = false, windowType = null) {
   console.debug(`Navigating to ${type} Page: ${pageKey}...`);
 
   const pages = type === "HUD" ? hudPages : pongPages;
@@ -21,23 +21,29 @@ function navigateTo(type, pageKey, blurEffect = true, windowType = null) {
     document.getElementById("blur-screen-effect").classList.add("d-none");
   }
 
+  if (waitingScreen) {
+	document.getElementById("waiting-screen-effect").classList.remove("d-none");
+  } else {
+	document.getElementById("waiting-screen-effect").classList.add("d-none");
+  }
+
   if (windowType) {
     switchwindow(windowType);
   }
 }
 
 export const navigateToSocial = () => navigateTo("HUD", "social");
-export const navigateToLogin = () => navigateTo("HUD", "login");
-export const navigateToSubscribe = () => navigateTo("HUD", "subscribe");
+export const navigateToLogin = () => navigateTo("HUD", "login", false, true);
+export const navigateToSubscribe = () => navigateTo("HUD", "subscribe", false, true);
 export const navigateToDeleteAccount = () => navigateTo("HUD", "deleteAccount");
 export const navigateToProfile = () => navigateTo("HUD", "profile");
 export const navigateToOtherProfile = () => navigateTo("HUD", "otherprofile");
 export const navigateToSettings = () => navigateTo("HUD", "settings");
 export const navigateToLogout = () => navigateTo("HUD", "logout");
 export const navigateToLost = () => navigateTo("HUD", "lostForm");
-export const navigateTo2FA = () => navigateTo("HUD", "twoFAForm");
+export const navigateTo2FA = () => navigateTo("HUD", "twoFAForm", false, true);
 export const navigateToSettings2FA = () => navigateTo("HUD", "qrcode");
-export const navigateToLoading = () => navigateTo("HUD", "loading");
+export const navigateToLoading = () => navigateTo("HUD", "loading", true, true);
 
 export const navigateToHome = () => navigateTo("HUD", "home", false, "home");
 export const navigateBackToPong = () => navigateTo("HUD", "pong", false, "pong");
