@@ -151,7 +151,7 @@ function initM1() {
   
   Store.menuObject2 = new CSS3DObject(Store.menuElement2);
   Store.menuObject2.quaternion.copy(cameraQuaternion).multiply(objectQuaternion);
-  Store.menuObject2.position.set(-3.6, 4.6, -1.8);
+  Store.menuObject2.position.set(-3.65, 4.6, -1.82);
   Store.menuObject2.scale.set(0.002, 0.002, 0.002);
   Store.menuElement2.style.pointerEvents = "auto";
   Store.menuElement2.classList.add("active");
