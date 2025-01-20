@@ -1,33 +1,46 @@
 import { buildScene } from "/src/3d/main.js";
 import { handleRoute } from "/src/services/router.js";
 import ComponentManager from "/src/utils/component.js";
+import { CacheDB } from "/src/utils/IndexedDBCache.js";
 
-// Initialisation des gestionnaires
 const componentManagers = {
   HUD: new ComponentManager("HUD"),
   Pong: new ComponentManager("Pong"),
 };
 
-const menu2 = document.getElementById('menu2');
-if (menu2) {
-  const parent = menu2.parentNode;
+async function setDatabaseID() {
+  const db = await CacheDB.dbPromise;
+  if (!db) return;
 
-  Object.defineProperty(parent, 'innerHTML', {
-    set(value) {
-      console.log('innerHTML modification detected on parent of menu2');
-      console.log('New value:', value);
-      console.log('Call stack:', new Error().stack);
-    },
-  });
+  let dbID = await db.get("json", "databaseID");
+  if (!dbID) {
+    dbID = crypto.randomUUID();
+    await db.put("json", dbID, "databaseID");
+    console.warn("Nouvelle base IndexedDB détectée. ID :", dbID);
+  } else {
+    console.log("La base IndexedDB est la même. ID :", dbID);
+  }
 }
-
-export default componentManagers;
 
 async function initializeApp() {
-  console.log("App initialized");
-  buildScene();
+  console.log("Initialisation de l'application...");
+
+  try {
+    const db = await CacheDB.dbPromise;
+    if (!db) throw new Error("IndexedDB inaccessible");
+
+    console.debug("IndexedDB est prête !");
+    await setDatabaseID();
+  } catch (error) {
+    console.error("Erreur d'initialisation : IndexedDB est indisponible.", error);
+  }
+
+  await buildScene();
   handleRoute(window.location.pathname);
   document.getElementById("waiting-screen-effect").classList.add("d-none");
+
+  console.log("Application prête !");
 }
 
-initializeApp();
+window.addEventListener("DOMContentLoaded", initializeApp);
+export default componentManagers;
