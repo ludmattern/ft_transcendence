@@ -5,13 +5,14 @@ import {animateCameraBackToInitialPosition} from '/src/3d/animation.js';
 // =============== ROTATE LISTENER HANDLER ===============
 export let cameraRotationEvent = 0;
 export let listeners = [];
-let eventCounter = 0; // Compteur pour les appels
+let lastRotation = 0;
+let count = 0;
 
 export function setCameraRotation(value) {
   cameraRotationEvent = value;
-  eventCounter += 1; // Incrémente le compteur
-
-  if (eventCounter % 20 === 0) { // Vérifie si c'est une occurrence multiple de 10
+  if (lastRotation - cameraRotationEvent > 0.001 || lastRotation - cameraRotationEvent < -0.001) {
+	lastRotation = cameraRotationEvent;
+	console.log("cameraRotationEvent", cameraRotationEvent, count++);
     listeners.forEach((listener) => listener(cameraRotationEvent));
   }
 }

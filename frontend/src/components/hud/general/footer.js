@@ -71,7 +71,7 @@ function initializeCompass(el) {
   const rotationRatio = 0.1;
 
   // Positionnement initial
-  positionPoints(points, compass, radius, baseHeight, 180);
+  positionPoints(points, compass, radius, baseHeight, 198);
 
   // Gestion de la taille de la fenêtre
   window.addEventListener("resize", () =>
