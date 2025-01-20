@@ -37,7 +37,7 @@ async function initializeApp() {
 
   let targetRoute = window.location.pathname;
   if (targetRoute === "/loading") { targetRoute = "/"; }
-  handleRoute("/loading");
+  handleRoute("/loading", false);
 
   await buildScene();
   handleRoute(targetRoute);

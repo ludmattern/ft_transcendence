@@ -165,7 +165,7 @@ body {
     rgba(0, 0, 0, 1) 100%
   );
   filter: blur(2px);
-  z-index: 1;
+  z-index: 99;
   translate: 0 -2px;
 }
 
