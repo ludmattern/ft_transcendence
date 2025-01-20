@@ -3,119 +3,115 @@ import { GLTFLoader } from "https://esm.sh/three/examples/jsm/loaders/GLTFLoader
 import Store from './store.js';
 import { CacheDB } from "/src/utils/IndexedDBCache.js";
 
-// =============== LOADS MODELS ===============
-
 export async function loadModels() {
-    const loadingScreen = document.getElementById("loading-screen");
-    const progressBar = document.getElementById("progress-bar");
-    loadingScreen.style.display = "block";
+	const loadingScreen = document.getElementById("loading-screen");
+	const progressBar = document.getElementById("progress-bar");
+	loadingScreen.style.display = "block";
 
-    const loader = new GLTFLoader();
+	const loader = new GLTFLoader();
 
-    function onProgress(xhr) {
-        if (xhr.lengthComputable) {
-            const percentComplete = (xhr.loaded / xhr.total) * 100;
-            progressBar.style.width = percentComplete + "%";
-        }
-    }
+	function onProgress(xhr) {
+		if (xhr.lengthComputable) {
+			const percentComplete = (xhr.loaded / xhr.total) * 100;
+			progressBar.style.width = percentComplete + "%";
+		}
+	}
 
-    async function loadModelFromIndexedDB(url) {
-        const cachedData = await CacheDB.getFile("models", url);
-        if (cachedData) {
-            console.debug(`Chargement du modèle depuis IndexedDB: ${url}`);
-            return new Promise((resolve, reject) => {
-                loader.parse(cachedData, "", resolve, reject);
-            });
-        }
-        return null;
-    }
+	async function loadModelFromIndexedDB(url) {
+		const cachedData = await CacheDB.getFile("models", url);
+		if (cachedData) {
+			console.debug(`Chargement du modèle depuis IndexedDB: ${url}`);
+			return new Promise((resolve, reject) => {
+				loader.parse(cachedData, "", resolve, reject);
+			});
+		}
+		return null;
+	}
 
-    async function loadAndCacheModel(url) {
-        const cachedModel = await loadModelFromIndexedDB(url);
-        if (cachedModel) return cachedModel;
+	async function loadAndCacheModel(url) {
+		const cachedModel = await loadModelFromIndexedDB(url);
+		if (cachedModel) return cachedModel;
 
-        return new Promise((resolve, reject) => {
-            loader.load(
-                url,
-                async (gltf) => {
-                    console.debug(`Modèle téléchargé: ${url}`);
+		return new Promise((resolve, reject) => {
+			loader.load(
+				url,
+				async (gltf) => {
+					console.debug(`Modèle téléchargé depuis le réseau: ${url}`);
 
-                    const response = await fetch(url);
-                    const arrayBuffer = await response.arrayBuffer();
-                    await CacheDB.saveFile("models", url, arrayBuffer);
+					const response = await fetch(url);
+					const arrayBuffer = await response.arrayBuffer();
+					await CacheDB.saveFile("models", url, arrayBuffer);
 
-                    resolve(gltf);
-                },
-                onProgress,
-                (error) => reject(`Erreur de chargement du modèle 3D: ${url}, ${error}`)
-            );
-        });
-    }
+					resolve(gltf);
+				},
+				onProgress,
+				(error) => reject(`Erreur lors du chargement du modèle 3D: ${url}, ${error}`)
+			);
+		});
+	}
 
-    loader.load(
-        "/src/assets/models/saturn.glb",
-        (gltf) => {
-            Store.planet = gltf.scene;
-            Store.planet.position.set(
-                Store.saturnConfig.positionX,
-                Store.saturnConfig.positionY,
-                Store.saturnConfig.positionZ
-            );
-            Store.planet.rotation.set(
-                THREE.MathUtils.degToRad(Store.saturnConfig.rotationX),
-                THREE.MathUtils.degToRad(Store.saturnConfig.rotationY),
-                THREE.MathUtils.degToRad(Store.saturnConfig.rotationZ)
-            );
-            Store.planet.scale.set(
-                Store.saturnConfig.scale,
-                Store.saturnConfig.scale,
-                Store.saturnConfig.scale
-            );
-            Store.scene.add(Store.planet);
-        },
-        onProgress,
-        (error) => console.error("Error on saturn loading :", error)
-    );
+	try {
+		const gltfSaturn = await loadAndCacheModel("/src/assets/models/saturn.glb");
+		Store.planet = gltfSaturn.scene;
+		Store.planet.position.set(
+			Store.saturnConfig.positionX,
+			Store.saturnConfig.positionY,
+			Store.saturnConfig.positionZ
+		);
+		Store.planet.rotation.set(
+			THREE.MathUtils.degToRad(Store.saturnConfig.rotationX),
+			THREE.MathUtils.degToRad(Store.saturnConfig.rotationY),
+			THREE.MathUtils.degToRad(Store.saturnConfig.rotationZ)
+		);
+		Store.planet.scale.set(
+			Store.saturnConfig.scale,
+			Store.saturnConfig.scale,
+			Store.saturnConfig.scale
+		);
 
-    try {
-        const gltf = await loadAndCacheModel("/src/assets/models/sn13.glb");
+		Store.scene.add(Store.planet);
+		console.log("Modèle Saturn chargé et ajouté à la scène !");
+	} catch (error) {
+		console.error("Erreur lors du chargement du modèle Saturn :", error);
+	}
 
-        Store.model = gltf.scene;
-        Store.model.position.set(3.5, -17, -1);
-        Store.model.rotation.set(0, 0, 0);
-        Store.model.scale.set(0.125, 0.125, 0.125);
-        Store.model.lookAt(0, 1000, -180);
+	try {
+		const gltfSN13 = await loadAndCacheModel("/src/assets/models/sn13.glb");
+		Store.model = gltfSN13.scene;
+		Store.model.position.set(3.5, -17, -1);
+		Store.model.rotation.set(0, 0, 0);
+		Store.model.scale.set(0.125, 0.125, 0.125);
+		Store.model.lookAt(0, 1000, -180);
 
-        Store.model.traverse((child) => {
-            if (child.isMesh) {
-                child.material.color.multiplyScalar(3);
-                child.material.metalness = 0.2;
-                child.castShadow = true;
-                child.receiveShadow = true;
-            }
-        });
+		Store.model.traverse((child) => {
+			if (child.isMesh) {
+				child.material.color.multiplyScalar(3);
+				child.material.metalness = 0.2;
+				child.castShadow = true;
+				child.receiveShadow = true;
+			}
+		});
 
-        Store.scene.add(Store.model);
+		Store.scene.add(Store.model);
 
-        if (Store.menuObject2) Store.scene.add(Store.menuObject2);
-        if (Store.menuObject3) Store.scene.add(Store.menuObject3);
-        if (Store.menuObject) Store.scene.add(Store.menuObject);
+		if (Store.menuObject2) Store.scene.add(Store.menuObject2);
+		if (Store.menuObject3) Store.scene.add(Store.menuObject3);
+		if (Store.menuObject) Store.scene.add(Store.menuObject);
 
-        Store.screenObject1 = Store.model.getObjectByName("_gltfNode_6");
-        Store.screenObject2 = Store.model.getObjectByName("_gltfNode_13");
-        Store.screenObject3 = Store.model.getObjectByName("_gltfNode_7");
-        const node0 = Store.model.getObjectByName("_gltfNode_0");
-        node0.material.metalness = 0.9;
-        node0.material.roughness = 0.9;
+		Store.screenObject1 = Store.model.getObjectByName("_gltfNode_6");
+		Store.screenObject2 = Store.model.getObjectByName("_gltfNode_13");
+		Store.screenObject3 = Store.model.getObjectByName("_gltfNode_7");
+		const node0 = Store.model.getObjectByName("_gltfNode_0");
+		node0.material.metalness = 0.9;
+		node0.material.roughness = 0.9;
 
-        Store.screenObject1.material = Store.material;
-        Store.screenObject2.material = Store.material;
-        Store.screenObject3.material = Store.material;
+		Store.screenObject1.material = Store.material;
+		Store.screenObject2.material = Store.material;
+		Store.screenObject3.material = Store.material;
+		console.log("Modèle SN13 chargé et ajouté à la scène !");
+	} catch (error) {
+		console.error("Erreur lors du chargement du modèle SN13 :", error);
+	}
 
-        console.log("Modèle SN13 chargé et ajouté à la scène !");
-    } catch (error) {
-        console.error("Erreur lors du chargement du modèle SN15 :", error);
-    }
-
-    loadingScreen.style.display = "none";
+	loadingScreen.style.display = "none";
 }
