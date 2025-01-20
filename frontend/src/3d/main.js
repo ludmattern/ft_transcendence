@@ -28,14 +28,14 @@ function addEventListeners() {
 }
 
 // =============== BUILD SCENE (entrypoint) ===============
-export function buildScene() {
+export async function buildScene() {
   initScene();
   initRenderer();
   initCamera();
   initCSSRenderer();
   initSkybox();
   initLights();
-  loadModels();
+  await loadModels();
   addEventListeners();
 
   Store.initialCameraRotation.x = Store.camera.rotation.x;

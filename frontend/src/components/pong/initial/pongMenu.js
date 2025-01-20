@@ -105,7 +105,6 @@ export const pongMenu = createComponent({
     updateActiveTab(el, window.location.pathname);
 
     subscribe("routeChanged", (route) => updateActiveTab(el, route));
-
 }
 
 });
@@ -148,11 +147,12 @@ function initM1() {
   
   const objectRotation = new THREE.Euler(0, 0, 0, "XYZ");
   const objectQuaternion = new THREE.Quaternion().setFromEuler(objectRotation);
-  
+  console.log("tst");
   Store.menuObject2 = new CSS3DObject(Store.menuElement2);
   Store.menuObject2.quaternion.copy(cameraQuaternion).multiply(objectQuaternion);
   Store.menuObject2.position.set(-3.65, 4.6, -1.82);
   Store.menuObject2.scale.set(0.002, 0.002, 0.002);
   Store.menuElement2.style.pointerEvents = "auto";
   Store.menuElement2.classList.add("active");
+  if (Store.menuObject2) Store.scene.add(Store.menuObject2);
 }

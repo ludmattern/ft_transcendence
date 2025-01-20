@@ -12,7 +12,6 @@ export function setCameraRotation(value) {
   cameraRotationEvent = value;
   if (lastRotation - cameraRotationEvent > 0.001 || lastRotation - cameraRotationEvent < -0.001) {
 	lastRotation = cameraRotationEvent;
-	console.log("cameraRotationEvent", cameraRotationEvent, count++);
     listeners.forEach((listener) => listener(cameraRotationEvent));
   }
 }

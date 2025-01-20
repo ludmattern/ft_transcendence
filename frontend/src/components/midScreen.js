@@ -33,4 +33,5 @@ function initM2() {
     Store.menuObject.scale.set(0.002, 0.002, 0.002);
     Store.menuElement.style.display = "none";
     Store.menuElement.classList.add("active");
+    if (Store.menuObject) Store.scene.add(Store.menuObject);
   }
