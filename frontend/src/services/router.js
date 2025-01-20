@@ -2,7 +2,7 @@ import { isClientAuthenticated } from "/src/services/auth.js";
 import {
   navigateToSubscribe, navigateToLogin, navigateToHome, navigateToProfile, navigateToPong, 
   navigateToRace, navigateToSocial, navigateToSettings, navigateToLogout, navigateToOtherProfile, 
-  navigateToDeleteAccount, navigateToLost, navigateTo2FA, navigateBackToPong, navigateToSettings2FA,
+  navigateToDeleteAccount, navigateToLost, navigateTo2FA, navigateBackToPong, navigateToSettings2FA, navigateToLoading,
 } from "/src/services/navigation.js";
 import { emit } from "/src/services/eventEmitter.js";
 
@@ -23,9 +23,10 @@ const routeMappings = {
   "/login": navigateToLogin,
   "/subscribe": navigateToSubscribe,
   "/topong": navigateBackToPong,
+  "/loading": navigateToLoading,
 };
 
-const publicRoutes = new Set(["/login", "/login/2fa", "/subscribe", "/register/qr"]);
+const publicRoutes = new Set(["/login", "/login/2fa", "/subscribe", "/register/qr", "/loading"]);
 
 /**
  * Vérifie si une route nécessite une authentification.
@@ -33,7 +34,10 @@ const publicRoutes = new Set(["/login", "/login/2fa", "/subscribe", "/register/q
  * @returns {boolean} - `true` si une authentification est requise, sinon `false`.
  */
 function isAuthenticatedRoute(route) {
-  return publicRoutes.has(route);
+	if (route === "/loading") {
+		return false;
+	}
+  return publicRoutes.has(route)
 }
 
 /**

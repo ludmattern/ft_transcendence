@@ -37,6 +37,7 @@ export const navigateToLogout = () => navigateTo("HUD", "logout");
 export const navigateToLost = () => navigateTo("HUD", "lostForm");
 export const navigateTo2FA = () => navigateTo("HUD", "twoFAForm");
 export const navigateToSettings2FA = () => navigateTo("HUD", "qrcode");
+export const navigateToLoading = () => navigateTo("HUD", "loading");
 
 export const navigateToHome = () => navigateTo("HUD", "home", false, "home");
 export const navigateBackToPong = () => navigateTo("HUD", "pong", false, "pong");

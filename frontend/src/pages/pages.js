@@ -43,6 +43,7 @@ import {
 	qrcode: { components: [...persistentComponents, { selector: "#central-window", component: qrcode }] },
 	subscribe: { components: [...persistentComponents, { selector: "#central-window", component: subscribeForm }] },
 	lostForm: { components: [...persistentComponents, { selector: "#central-window", component: lostForm }] },
+	loading: { components: [...persistentComponents] },
   
 	profile: { components: [...persistentComponents, ...globalComponents, { selector: "#central-window", component: profileForm }] },
 	social: { components: [...persistentComponents, ...globalComponents, { selector: "#central-window", component: socialForm }] },

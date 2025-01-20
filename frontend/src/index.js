@@ -35,8 +35,11 @@ async function initializeApp() {
     console.error("Erreur d'initialisation : IndexedDB est indisponible.", error);
   }
 
+  let targetRoute = window.location.pathname;
+  if (targetRoute === "/loading") { targetRoute = "/"; }
+  handleRoute("/loading");
   await buildScene();
-  handleRoute(window.location.pathname);
+  handleRoute(targetRoute);
   document.getElementById("waiting-screen-effect").classList.add("d-none");
 
   console.log("Application prête !");
