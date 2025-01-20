@@ -38,6 +38,7 @@ async function initializeApp() {
   let targetRoute = window.location.pathname;
   if (targetRoute === "/loading") { targetRoute = "/"; }
   handleRoute("/loading");
+
   await buildScene();
   handleRoute(targetRoute);
   document.getElementById("waiting-screen-effect").classList.add("d-none");

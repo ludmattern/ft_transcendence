@@ -26,7 +26,7 @@ const routeMappings = {
   "/loading": navigateToLoading,
 };
 
-const publicRoutes = new Set(["/login", "/login/2fa", "/subscribe", "/register/qr", "/loading"]);
+const publicRoutes = new Set(["/login", "/login/2fa", "/subscribe", "/register/qr"]);
 
 /**
  * Vérifie si une route nécessite une authentification.
@@ -34,9 +34,6 @@ const publicRoutes = new Set(["/login", "/login/2fa", "/subscribe", "/register/q
  * @returns {boolean} - `true` si une authentification est requise, sinon `false`.
  */
 function isAuthenticatedRoute(route) {
-	if (route === "/loading") {
-		return false;
-	}
   return publicRoutes.has(route)
 }
 
@@ -64,13 +61,18 @@ function updatePreviousRoute(route) {
 export async function handleRoute(route, shouldPushState = true) {
   console.debug(`Handling route: "${route}"`);
 
-//   const isAuthenticated = await isClientAuthenticated();
+  if (route === "/loading") {
+	processRoute(route, shouldPushState);
+	return;
+  }
+
+  const isAuthenticated = await isClientAuthenticated();
   const isRoutePublic = isAuthenticatedRoute(route);
 
   /**
    * DEBUG - Disabling authentication
   */
-  const isAuthenticated = true;
+//   const isAuthenticated = true;
  
   if (!isRoutePublic && isAuthenticated || isRoutePublic && !isAuthenticated) {
     processRoute(route, shouldPushState);
