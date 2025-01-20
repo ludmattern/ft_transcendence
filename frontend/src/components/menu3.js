@@ -28,4 +28,5 @@ function initM3() {
     Store.menuObject3.scale.set(0.002, 0.002, 0.002);
     Store.menuElement3.style.display = "none";
     Store.menuElement3.classList.add("active");
+    if (Store.menuObject3) Store.scene.add(Store.menuObject3);
   }

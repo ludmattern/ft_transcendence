@@ -94,9 +94,6 @@ export async function loadModels() {
 
 		Store.scene.add(Store.model);
 
-		if (Store.menuObject2) Store.scene.add(Store.menuObject2);
-		if (Store.menuObject3) Store.scene.add(Store.menuObject3);
-		if (Store.menuObject) Store.scene.add(Store.menuObject);
 
 		Store.screenObject1 = Store.model.getObjectByName("_gltfNode_6");
 		Store.screenObject2 = Store.model.getObjectByName("_gltfNode_13");
