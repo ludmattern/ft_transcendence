@@ -34,12 +34,14 @@ class IndexedDBCache {
   async saveFile(storeName, key, data) {
     if (!this.dbPromise) return;
     try {
-      const db = await this.dbPromise;
-      await db.put(storeName, data, key);
+        const db = await this.dbPromise;
+        await db.put(storeName, data, key);
+        console.debug(`Sauvegarde réussie dans IndexedDB: ${storeName} → ${key}`);
     } catch (error) {
-      console.error(`Erreur lors de la sauvegarde dans "${storeName}" :`, error);
+        console.error(`Erreur lors de la sauvegarde de "${key}" dans "${storeName}"`, error);
     }
-  }
+}
+
 
   async getFile(storeName, key) {
     if (!this.dbPromise) return null;
