@@ -20,3 +20,15 @@ class ManualUser(models.Model):
 
     def __str__(self):
         return self.username
+
+
+class Social(models.Model):
+    username = models.CharField(max_length=50, unique=True)
+    connected_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "social"
+        managed = True
+
+    def __str__(self):
+        return self.username

@@ -132,6 +132,7 @@ function updateDateTime() {
 /**
  * Initialise l'objet 3D du menu dans la scène Three.js.
  */
+
 import * as THREE from "https://esm.sh/three";
 
 function initM1() {
