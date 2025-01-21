@@ -10,7 +10,6 @@ export async function loadModels() {
 	function onProgress(xhr) {
 		if (xhr.lengthComputable) {
 			const percentComplete = (xhr.loaded / xhr.total) * 100;
-			progressBar.style.width = percentComplete + "%";
 		}
 	}
 
