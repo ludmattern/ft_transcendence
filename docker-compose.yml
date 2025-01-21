@@ -89,7 +89,5 @@ networks:
     name: frontend_network
 
 volumes:
-  #auth_service_volume:
-  #  name: auth_service_volume
   postgres_data_volume:
     name: postgres_data_volume
