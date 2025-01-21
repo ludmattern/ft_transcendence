@@ -63,23 +63,60 @@ export const tournamentContent = createComponent({
   `,
 
   attachEvents: (el) => {
-    // Activer le premier onglet par défaut
+    // Gestion des onglets
     const tabs = el.querySelectorAll(".nav-link");
+    const tabPanes = el.querySelectorAll(".tab-pane");
+  
+    // Restaurer l'onglet actif depuis sessionStorage
+    const savedTabId = sessionStorage.getItem("activeTournamentTab");
+    if (savedTabId) {
+      tabs.forEach(tab => tab.classList.remove("active"));
+      tabPanes.forEach(pane => pane.classList.remove("show", "active"));
+  
+      const activeTab = el.querySelector(`[href="#${savedTabId}"]`);
+      const activePane = el.querySelector(`#${savedTabId}`);
+      if (activeTab && activePane) {
+        activeTab.classList.add("active");
+        activePane.classList.add("show", "active");
+      }
+    }
+  
+    // Ajouter les événements pour sauvegarder l'onglet actif
     tabs.forEach(tab => {
       tab.addEventListener("click", (e) => {
         e.preventDefault();
         const target = tab.getAttribute("href").substring(1);
-
+  
         // Désactiver tous les onglets et les cacher
         tabs.forEach(t => t.classList.remove("active"));
-        el.querySelectorAll(".tab-pane").forEach(pane => pane.classList.remove("show", "active"));
-
+        tabPanes.forEach(pane => pane.classList.remove("show", "active"));
+  
         // Activer l'onglet sélectionné
         tab.classList.add("active");
         el.querySelector(`#${target}`).classList.add("show", "active");
+  
+        // Sauvegarder l'onglet actif dans sessionStorage
+        sessionStorage.setItem("activeTournamentTab", target);
       });
     });
-  }
+  
+    // Gestion des sélections pour les champs
+    const selectors = el.querySelectorAll("select");
+    selectors.forEach(select => {
+      const key = select.id;
+  
+      // Restaurer les valeurs sauvegardées
+      const savedValue = sessionStorage.getItem(key);
+      if (savedValue) {
+        select.value = savedValue;
+      }
+  
+      // Sauvegarder les nouvelles valeurs
+      select.addEventListener("change", () => {
+        sessionStorage.setItem(key, select.value);
+      });
+    });
+  }  
 });
 
 /**
