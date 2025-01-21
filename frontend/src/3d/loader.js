@@ -46,47 +46,49 @@ export async function loadModels() {
 		});
 	}
 
-	try {
-		const gltfSaturn = await loadAndCacheModel("/src/assets/models/saturn.glb");
-		Store.planet = gltfSaturn.scene;
-		Store.planet.position.set(
-			Store.saturnConfig.positionX,
-			Store.saturnConfig.positionY,
-			Store.saturnConfig.positionZ
-		);
-		Store.planet.rotation.set(
-			THREE.MathUtils.degToRad(Store.saturnConfig.rotationX),
-			THREE.MathUtils.degToRad(Store.saturnConfig.rotationY),
-			THREE.MathUtils.degToRad(Store.saturnConfig.rotationZ)
-		);
-		Store.planet.scale.set(
-			Store.saturnConfig.scale,
-			Store.saturnConfig.scale,
-			Store.saturnConfig.scale
-		);
+  try {
+    // Charger les modèles en parallèle
+    const [gltfSaturn, gltfSN13] = await Promise.all([
+      loadAndCacheModel("/src/assets/models/saturn.glb"),
+      loadAndCacheModel("/src/assets/models/sn13.glb")
+    ]);
 
-		Store.scene.add(Store.planet);
-		console.log("Modèle Saturn chargé et ajouté à la scène !");
-	} catch (error) {
-		console.error("Erreur lors du chargement du modèle Saturn :", error);
-	}
+    // Configurer Saturn
+    Store.planet = gltfSaturn.scene;
+    Store.planet.position.set(
+      Store.saturnConfig.positionX,
+      Store.saturnConfig.positionY,
+      Store.saturnConfig.positionZ
+    );
+    Store.planet.rotation.set(
+      THREE.MathUtils.degToRad(Store.saturnConfig.rotationX),
+      THREE.MathUtils.degToRad(Store.saturnConfig.rotationY),
+      THREE.MathUtils.degToRad(Store.saturnConfig.rotationZ)
+    );
+    Store.planet.scale.set(
+      Store.saturnConfig.scale,
+      Store.saturnConfig.scale,
+      Store.saturnConfig.scale
+    );
+    Store.scene.add(Store.planet);
+    console.log("Modèle Saturn chargé et ajouté à la scène !");
 
-	try {
-		const gltfSN13 = await loadAndCacheModel("/src/assets/models/sn13.glb");
-		Store.model = gltfSN13.scene;
-		Store.model.position.set(3.5, -17, -1);
-		Store.model.rotation.set(0, 0, 0);
-		Store.model.scale.set(0.125, 0.125, 0.125);
-		Store.model.lookAt(0, 1000, -180);
+    // Configurer SN13
+    Store.model = gltfSN13.scene;
+    Store.model.position.set(3.5, -17, -1);
+    Store.model.rotation.set(0, 0, 0);
+    Store.model.scale.set(0.125, 0.125, 0.125);
+    Store.model.lookAt(0, 1000, -180);
 
-		Store.model.traverse((child) => {
-			if (child.isMesh) {
-				child.material.color.multiplyScalar(3);
-				child.material.metalness = 0.2;
-				child.castShadow = true;
-				child.receiveShadow = true;
-			}
-		});
+    Store.model.traverse((child) => {
+      if (child.isMesh) {
+        child.material.color.multiplyScalar(3);
+        child.material.metalness = 0.2;
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+
 
 		Store.scene.add(Store.model);
 
