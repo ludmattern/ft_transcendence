@@ -147,7 +147,6 @@ function initM1() {
   
   const objectRotation = new THREE.Euler(0, 0, 0, "XYZ");
   const objectQuaternion = new THREE.Quaternion().setFromEuler(objectRotation);
-  console.log("tst");
   Store.menuObject2 = new CSS3DObject(Store.menuElement2);
   Store.menuObject2.quaternion.copy(cameraQuaternion).multiply(objectQuaternion);
   Store.menuObject2.position.set(-3.65, 4.6, -1.82);

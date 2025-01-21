@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from users.views import  login_view, protected_view, check_auth_view, logout_view, verify_2fa_view
+from service.views import  login_view, protected_view, check_auth_view, logout_view, verify_2fa_view
 
 
 urlpatterns = [

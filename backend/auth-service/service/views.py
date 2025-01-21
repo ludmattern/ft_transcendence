@@ -10,7 +10,7 @@ from django.core.mail import send_mail
 import random
 
 from django.views.decorators.csrf import csrf_exempt
-from users.models import ManualUser
+from service.models import ManualUser
 import jwt
 
 import pyotp
