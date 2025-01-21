@@ -93,25 +93,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-JWT_SECRET_KEY_REFRESH = secrets.token_urlsafe(64)
-JWT_REFRESH_EXPIRE = 86400
-JWT_SECRET_KEY = secrets.token_urlsafe(64)
-JWT_ALGORITHM = "HS256"
-JWT_EXP_DELTA_SECONDS = 30000
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'sendertran115@gmail.com'
-EMAIL_HOST_PASSWORD = 'rgph iima ghns xhwy'
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
 
 TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
 
-FERNET_KEY = Fernet.generate_key().decode('utf-8')
+FERNET_KEY = os.getenv('FERNET_KEY')

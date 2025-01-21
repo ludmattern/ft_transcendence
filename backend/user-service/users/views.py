@@ -1,18 +1,14 @@
 import json
 import bcrypt
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import ManualUser
 from cryptography.fernet import Fernet
-from django.core.mail import send_mail
-import random
-import qrcode
 import pyotp
+import qrcode
 from io import BytesIO
-from django.http import HttpResponse
-
-# Configurez la clé Fernet si nécessaire
 from django.conf import settings
+
 cipher = Fernet(settings.FERNET_KEY)
 
 

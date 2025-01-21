@@ -93,8 +93,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-JWT_SECRET_KEY_REFRESH = secrets.token_urlsafe(64)
-JWT_REFRESH_EXPIRE = 86400
+
 JWT_SECRET_KEY = secrets.token_urlsafe(64)
 JWT_ALGORITHM = "HS256"
 JWT_EXP_DELTA_SECONDS = 30000
@@ -114,4 +113,4 @@ TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
 
-FERNET_KEY = Fernet.generate_key().decode('utf-8')
+FERNET_KEY = os.getenv('FERNET_KEY')

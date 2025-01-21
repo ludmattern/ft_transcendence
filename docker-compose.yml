@@ -36,6 +36,7 @@ services:
       - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+      - FERNET_KEY=${FERNET_KEY}
     ports:
       - "3001:3001"
 
@@ -57,6 +58,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DB_HOST=postgres_db
       - DB_PORT=5432
+      - FERNET_KEY=${FERNET_KEY}
     ports:
       - "3002:3002"
 

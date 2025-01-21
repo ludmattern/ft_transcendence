@@ -6,7 +6,6 @@ import datetime
 from functools import wraps
 
 from twilio.rest import Client
-
 from django.core.mail import send_mail
 import random
 
@@ -15,10 +14,8 @@ from users.models import ManualUser
 import jwt
 
 import pyotp
-from io import BytesIO
-from django.http import HttpResponse
+from cryptography.fernet import Fernet
 
-from cryptography.fernet import Fernet 
 
 cipher = Fernet(settings.FERNET_KEY)
 
