@@ -2,7 +2,7 @@ import json
 import bcrypt
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import ManualUser
+from .models import ManualUser, Social
 from cryptography.fernet import Fernet
 import pyotp
 import qrcode
@@ -66,6 +66,8 @@ def register_user(request):
                 twofa_method=twofa_method,
                 phone_number=encrypted_phone
             ) 
+            
+            Social.objects.create(username=username)
 
             return JsonResponse({'success': True, 'message': 'User registered successfully', 'user_id': user.id})
 
