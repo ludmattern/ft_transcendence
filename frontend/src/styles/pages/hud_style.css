@@ -698,6 +698,7 @@ body {
   stroke: var(--primary-hud-elements-color);
   stroke-width: 4px;
   overflow: visible;
+  z-index: 10;
 
   mask-image: linear-gradient(
     to right,

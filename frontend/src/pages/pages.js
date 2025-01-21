@@ -47,7 +47,7 @@ import {
 	qrcode: { components: [...backgroundComponents, ...persistentComponents, { selector: "#central-window", component: qrcode }] },
 	subscribe: { components: [...backgroundComponents, ...persistentComponents, { selector: "#central-window", component: subscribeForm }] },
 	lostForm: { components: [...backgroundComponents, ...persistentComponents, { selector: "#central-window", component: lostForm }] },
-	loading: { components: [...backgroundComponents, { selector: "#central-window", component: loadingScreen }] },
+	loading: { components: [{ selector: "#helmet-svg-container", component: HelmetSVG }, { selector: "#central-window", component: loadingScreen }] },
   
 	profile: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: "#central-window", component: profileForm }] },
 	social: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: "#central-window", component: socialForm }] },

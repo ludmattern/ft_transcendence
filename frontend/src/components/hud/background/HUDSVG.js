@@ -4,13 +4,51 @@ export const hudSVG = createComponent({
   tag: "hudSVG",
 
   render: () => `
-    <span class="hud-svg">
-      ${renderSVGHeader()}
-      ${renderSVGHeaderBackground()}
-      ${renderSVGFooter()}
-      ${renderSVGFooterBackground()}
+    <span class="hud-svg-container">
+      <span class="hud-svg">
+        ${renderSVGHeader()}
+        ${renderSVGHeaderBackground()}
+        ${renderSVGFooter()}
+        ${renderSVGFooterBackground()}
+      </span>
     </span>
-  `
+    <style>
+        .flicker-animation {
+          animation: neonFlicker 2s ease-in-out 1 forwards;
+          position: relative;
+          z-index: 10;
+        }
+
+        @keyframes neonFlicker {
+          0%    { opacity: 0; }
+          20%   { opacity: 0.3; }
+          50%   { opacity: 0.6; }
+          60%   { opacity: 0.4; }
+          70%   { opacity: 0.5; }
+          75%   { opacity: 1; }
+          80%   { opacity: 0.3; }
+          85%   { opacity: 1; }
+          100%  { opacity: 1; } /* Fixe la lumière à pleine intensité */
+        }
+    </style>
+  `,
+
+  attachEvents: (el) => {
+    const svgElement = el.querySelector(".hud-svg"); // On cible l'élément contenant les SVG
+
+    function startAnimation() {
+      svgElement.classList.remove("flicker-animation"); // Supprime si déjà présente
+      svgElement.classList.add("flicker-animation");
+
+      setTimeout(() => {
+        svgElement.classList.remove("flicker-animation");
+      }, 3000);
+    }
+
+    startAnimation();
+
+    el.startAnimation = startAnimation;
+  }
 });
 
 function renderSVGHeader() {
