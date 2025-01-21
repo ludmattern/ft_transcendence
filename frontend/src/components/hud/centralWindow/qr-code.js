@@ -36,7 +36,7 @@ export const qrcode = createComponent({
 
       try 
       {
-        const response = await fetch(`/api/auth-service/generate-qr/${username}/`);
+        const response = await fetch(`/api/user-service/generate-qr/${username}/`);
         if (response.ok) {
           const blob = await response.blob();
           const url = URL.createObjectURL(blob);

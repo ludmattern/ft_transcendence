@@ -69,7 +69,7 @@ export async function loginUser(username, password) {
 
 export async function registerUser(id, password, email, is2FAEnabled, twoFAMethod, phoneNumber) {
   try {
-    const response = await fetch("/api/auth-service/register/", {
+    const response = await fetch("/api/user-service/register/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

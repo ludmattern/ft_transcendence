@@ -39,6 +39,27 @@ services:
     ports:
       - "3001:3001"
 
+  user-service:
+    build:
+      context: ./backend/user-service
+    container_name: user_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./secret/.env
+    networks:
+      - backend_network
+      - frontend_network
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_HOST=postgres_db
+      - DB_PORT=5432
+    ports:
+      - "3002:3002"
+
   nginx:
     build:
       context: ./nginx
@@ -52,6 +73,8 @@ services:
       - "8443:443"
     depends_on:
       auth-service:
+        condition: service_started
+      user-service:
         condition: service_started
     networks:
       - frontend_network

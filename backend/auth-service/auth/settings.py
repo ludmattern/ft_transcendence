@@ -37,7 +37,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-ROOT_URLCONF = 'transcendance.urls'
+ROOT_URLCONF = 'auth.urls'
 
 TEMPLATES = [
     {
@@ -55,7 +55,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'transcendance.wsgi.application'
+WSGI_APPLICATION = 'auth.wsgi.application'
 
 DATABASES = {
     'default': {
