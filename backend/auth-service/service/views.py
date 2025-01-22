@@ -37,6 +37,8 @@ def check_auth_view(request):
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         now = datetime.datetime.utcnow().timestamp()
         remaining = payload['exp'] - now
+        
+        user = ManualUser.objects.get(username=payload['sub'])
         if remaining < 1200:
             new_exp = now + settings.JWT_EXP_DELTA_SECONDS
             new_payload = {**payload, "exp": new_exp}
@@ -45,6 +47,9 @@ def check_auth_view(request):
                 settings.JWT_SECRET_KEY,
                 algorithm=settings.JWT_ALGORITHM
             )
+            expiry_datetime = datetime.utcfromtimestamp(new_exp)
+            user.token_expiry = expiry_datetime
+            user.save()
             response = JsonResponse({'success': True, 'message': 'Cookie renewed'})
             response.set_cookie(
                 key='access_token',
@@ -134,6 +139,14 @@ def login_view(request):
 
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             return JsonResponse({'success': False, 'message': 'Invalid credentials'}, status=401)
+        
+        now = datetime.datetime.utcnow()
+        
+        if user.token_expiry and user.token_expiry > now:
+            return JsonResponse({
+                'success': False,
+                'message': 'User is already connected.'
+            }, status=403)
 
         if user.is_2fa_enabled:
             if user.twofa_method == "email":
@@ -155,8 +168,9 @@ def login_view(request):
                 'twofa_method': user.twofa_method
             }, status=200)
 
-        now = datetime.datetime.utcnow()
         exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+        user.token_expiry = exp
+        user.save()
         access_payload = {
             "sub": user.username,
             "iat": now,
@@ -187,10 +201,28 @@ def login_view(request):
 @csrf_exempt
 def logout_view(request):
     if request.method == 'POST':
-        response = JsonResponse({'success': True, 'message': 'Logged out'})
-        response.delete_cookie('access_token')
-        response.delete_cookie('refresh_token')
-        return response
+        token = request.COOKIES.get('access_token')
+        if not token:
+            return JsonResponse({'success': False, 'message': 'No token provided'}, status=400)
+
+        try:
+            payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+            username = payload.get('sub')
+            user = ManualUser.objects.get(username=username)
+
+            user.token_expiry = None
+            user.save()
+
+            response = JsonResponse({'success': True, 'message': 'Logged out'})
+            response.delete_cookie('access_token')
+            response.delete_cookie('refresh_token')
+            return response
+
+        except jwt.ExpiredSignatureError:
+            return JsonResponse({'success': False, 'message': 'Token already expired'}, status=401)
+        except (jwt.InvalidTokenError, ManualUser.DoesNotExist) as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=401)
+
     return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
 
 
@@ -211,6 +243,7 @@ def verify_2fa_view(request):
             if totp.verify(code):
                 now = datetime.datetime.utcnow()
                 exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+                user.token_expiry = exp
                 access_payload = {
                     "sub": user.username,
                     "iat": now,
@@ -238,6 +271,7 @@ def verify_2fa_view(request):
         elif bcrypt.checkpw(code.encode('utf-8'), user.temp_2fa_code.encode('utf-8')):
             now = datetime.datetime.utcnow()
             exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+            user.token_expiry = exp
             access_payload = {
                 "sub": user.username,
                 "iat": now,

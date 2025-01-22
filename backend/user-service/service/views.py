@@ -76,3 +76,4 @@ def register_user(request):
     else:
         return JsonResponse({'success': False, 'message': 'Only POST method is allowed'}, status=405)
 
+
