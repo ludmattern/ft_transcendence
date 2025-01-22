@@ -17,6 +17,7 @@ export const loginForm = createComponent({
           <div class="form-group">
             <label class="mb-3" for="password">Password</label>
             <input type="password" id="password" name="password" class="form-control" required />
+            <div id="error-message-co" class="text-danger mt-2" style="display: none;">User already connected</div>
             <div id="error-message" class="text-danger mt-2" style="display: none;">Invalid credentials</div>
           </div>
           <button class="btn bi bi-check">accept</button>
@@ -59,7 +60,12 @@ export const loginForm = createComponent({
         }
       } catch (err) {
         console.log("Login failed:", err.message);
-        document.getElementById("error-message").style.display = "block";
+
+        if (err.message === "User is already connected.") 
+        {
+          document.getElementById("error-message-co").style.display = "block";
+        } else        
+          document.getElementById("error-message").style.display = "block";
       }
 
       console.log("Login submitted!");
