@@ -32,11 +32,6 @@ DATABASES = {
     }
 }
 
-MIGRATION_MODULES = {
-    'auth': None,
-    'contenttypes': None,
-    'sessions': None,
-}
 
 LANGUAGE_CODE = 'en-us'
 
