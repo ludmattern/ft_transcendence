@@ -66,13 +66,13 @@ export async function handleRoute(route, shouldPushState = true) {
 	return;
   }
 
-  // const isAuthenticated = await isClientAuthenticated();
+  const isAuthenticated = await isClientAuthenticated();
   const isRoutePublic = isAuthenticatedRoute(route);
 
   /**
    * DEBUG - Disabling authentication
   */
-  const isAuthenticated = true;
+  //const isAuthenticated = false;
  
   if (!isRoutePublic && isAuthenticated || isRoutePublic && !isAuthenticated) {
     processRoute(route, shouldPushState);

@@ -16,7 +16,6 @@ import jwt
 import pyotp
 from cryptography.fernet import Fernet
 
-
 cipher = Fernet(settings.FERNET_KEY)
 
 def encrypt_thing(args):
@@ -38,7 +37,7 @@ def check_auth_view(request):
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         now = datetime.datetime.utcnow().timestamp()
         remaining = payload['exp'] - now
-        if remaining < 10:
+        if remaining < 1200:
             new_exp = now + settings.JWT_EXP_DELTA_SECONDS
             new_payload = {**payload, "exp": new_exp}
             new_token = jwt.encode(
