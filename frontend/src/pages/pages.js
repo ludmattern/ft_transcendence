@@ -1,6 +1,6 @@
 import { 
 	loginForm, profileForm, header, footer, leftSideWindow, rightSideWindow, 
-	logoutForm, twoFAForm, freeViewButton, socialForm, qrcode, otherProfileForm, 
+	logoutForm, twoFAForm, freeViewButton, socialForm, qrcode, otherProfileForm, hudScreenEffect,
 	deleteAccountForm, subscribeForm, settingsForm, lostForm, hudSVG, HelmetSVG, loadingScreen
   } from "/src/components/hud/index.js";
   
@@ -20,6 +20,7 @@ import {
 	export const backgroundComponents = [
 		{ selector: "#hud-svg-container", component: hudSVG },
 		{ selector: "#helmet-svg-container", component: HelmetSVG },
+		{ selector: "#hud-screen-container", component: hudScreenEffect },
 	];
 
   export const persistentComponents = [
@@ -47,7 +48,7 @@ import {
 	qrcode: { components: [...backgroundComponents, ...persistentComponents, { selector: "#central-window", component: qrcode }] },
 	subscribe: { components: [...backgroundComponents, ...persistentComponents, { selector: "#central-window", component: subscribeForm }] },
 	lostForm: { components: [...backgroundComponents, ...persistentComponents, { selector: "#central-window", component: lostForm }] },
-	loading: { components: [{ selector: "#helmet-svg-container", component: HelmetSVG }, { selector: "#central-window", component: loadingScreen }] },
+	loading: { components: [{ selector: "#hud-screen-container", component: hudScreenEffect }, { selector: "#helmet-svg-container", component: HelmetSVG }, { selector: "#central-window", component: loadingScreen }] },
   
 	profile: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: "#central-window", component: profileForm }] },
 	social: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: "#central-window", component: socialForm }] },

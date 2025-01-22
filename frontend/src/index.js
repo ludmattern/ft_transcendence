@@ -46,3 +46,4 @@ async function initializeApp() {
 
 window.addEventListener("DOMContentLoaded", initializeApp);
 export default componentManagers;
+

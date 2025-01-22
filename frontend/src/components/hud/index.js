@@ -1,6 +1,7 @@
 // Background components
 export { HelmetSVG } from "/src/components/hud/background/HelmetSVG.js";
 export { hudSVG } from "/src/components/hud/background/HUDSVG.js";
+export { hudScreenEffect } from "/src/components/hud/background/hudScreen.js";
 
 // CentralWindow components
 export { loginForm } from "/src/components/hud/centralWindow/loginForm.js";

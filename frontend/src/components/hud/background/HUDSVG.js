@@ -28,7 +28,7 @@ export const hudSVG = createComponent({
           75%   { opacity: 1; }
           80%   { opacity: 0.3; }
           85%   { opacity: 1; }
-          100%  { opacity: 1; } /* Fixe la lumière à pleine intensité */
+          100%  { opacity: 1; }
         }
     </style>
   `,
