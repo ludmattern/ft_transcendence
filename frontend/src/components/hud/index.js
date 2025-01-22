@@ -31,4 +31,5 @@ export { contextMenu } from "/src/components/hud/sideWindow/left/contextMenu.js"
 //   right
 export { rightSideWindow } from "/src/components/hud/sideWindow/right/rightSideWindow.js";
 
-//background components
+//utils
+export { startAnimation } from "/src/components/hud/utils/utils.js";

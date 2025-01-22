@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { addCameraRotationListener, toggleFreeView} from "/src/3d/freeViewHandler.js";
+import { startAnimation } from "/src/components/hud/index.js";
 
 export const footer = createComponent({
   tag: "footer",
@@ -25,7 +26,12 @@ export const footer = createComponent({
   attachEvents: (el) => {
     // Gestion de la boussole
     initializeCompass(el);
+
+	const points = el.querySelectorAll(".points");
+
+	startAnimation(points, "light-animation", 1800);
   },
+  
 });
 
 /**

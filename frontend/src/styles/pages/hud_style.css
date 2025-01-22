@@ -420,6 +420,10 @@ body {
     top: -2rem;
   }
 
+  #hud-body #header-container .nav-item {
+		opacity: 0;
+	}
+
   #hud-body .hud-header .left-menu > .nav-item:first-child {
     position: relative;
     left: calc(2rem - calc(100vw - 1920px) * 0.16);
@@ -885,6 +889,7 @@ p {
 
 .blur-screen-effect {
   position: absolute;
+  pointer-events: none;
   width: 100%;
   height: 100%;
   backdrop-filter: blur(1rem);
@@ -962,6 +967,7 @@ p {
 
 .waiting-screen-effect {
   position: absolute;
+  pointer-events: none;
   width: 100%;
   height: 100%;
   backdrop-filter: blur(1rem);
@@ -1035,15 +1041,12 @@ p {
   justify-content: center;
   align-items: center;
   position: relative;
+  opacity: 0;
 }
 
-#hud-body footer .points {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+#hud-body #left-window-container,
+#hud-body #right-window-container {
+opacity: 0;
 }
 
 #hud-body footer .point.fw-bold {

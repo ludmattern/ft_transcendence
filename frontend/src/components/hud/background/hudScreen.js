@@ -1,24 +1,18 @@
 import { createComponent } from "/src/utils/component.js";
+import { startAnimation } from "/src/components/hud/index.js";
 
 export const hudScreenEffect = createComponent({
-  tag: "hudScreenEffect",
+tag: "hudScreenEffect",
 
-  render: () => `
+render: () => `
 	<div class="hud_screen-effect">
 		<div class="hud_screen-effect"></div>
 	</div>
-  `,
+`,
 
-  attachEvents: (el) => {
-    // Fonction pour démarrer l'animation
-    function startLightEffect() {
-      el.querySelector('.hud_screen-effect').classList.add('light-animation');
-    }
+attachEvents: (el) => {
+	const element = el.querySelectorAll('.hud_screen-effect');
 
-    // Lancer automatiquement l'effet au chargement
-    startLightEffect();
-
-    // Exposer la fonction pour pouvoir relancer l'effet dynamiquement
-    el.startLightEffect = startLightEffect;
-  }
+	startAnimation(element, "light-animation");
+}
 });

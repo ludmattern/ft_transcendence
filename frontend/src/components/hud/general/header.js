@@ -1,6 +1,7 @@
 import { createComponent } from "/src/utils/component.js";
 import { handleRoute } from "/src/services/router.js";
 import { subscribe } from "/src/services/eventEmitter.js";
+import { startAnimation } from "/src/components/hud/index.js";
 
 const navigationLinks = {
 	"home-link": "/",
@@ -52,26 +53,31 @@ export const header = createComponent({
       </div>
   `,
 
-  attachEvents: (el) => {
-    Object.entries(navigationLinks).forEach(([linkId, route]) => {
-      const linkElement = el.querySelector(`#${linkId}`);
-      if (linkElement) {
-        linkElement.addEventListener("click", (e) => {
-          e.preventDefault();
-          if (route !== "/pong") {
-            handleRoute(route);
-          } else {
-            handleRoute("/topong");
-          }
-        });
-      }
-    });
+	attachEvents: (el) => {
+		Object.entries(navigationLinks).forEach(([linkId, route]) => {
+		const linkElement = el.querySelector(`#${linkId}`);
+		if (linkElement) {
+			linkElement.addEventListener("click", (e) => {
+			e.preventDefault();
+			if (route !== "/pong") {
+				handleRoute(route);
+			} else {
+				handleRoute("/topong");
+			}
+			});
+		}
+		});
 
-    updateActiveLink(el, window.location.pathname);
+		updateActiveLink(el, window.location.pathname);
 
-    subscribe("routeChanged", (route) => updateActiveLink(el, route));
+		subscribe("routeChanged", (route) => updateActiveLink(el, route));
 
-  }
+		const navItems = el.querySelectorAll(".nav-item");
+		const homeLink = el.querySelectorAll("#home-link");
+
+		startAnimation(homeLink, "light-animation");
+		startAnimation(navItems, "light-animation", 1800);
+	}
 });
 
 /**

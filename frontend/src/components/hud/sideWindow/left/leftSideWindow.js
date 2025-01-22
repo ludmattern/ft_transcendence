@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
+import { startAnimation } from "/src/components/hud/index.js";
 
 export const leftSideWindow = createComponent({
   tag: "leftSideWindow",
@@ -65,6 +66,10 @@ export const leftSideWindow = createComponent({
     if (activeTab) {
       loadTabContent(activeTab.dataset.tab, tabContentContainer, el);
     }
+
+	const parentContainer = el.parentElement;
+    startAnimation(parentContainer, "light-animation", 1800);
+
   },
 });
 

@@ -1,4 +1,5 @@
 import { createComponent } from "/src/utils/component.js";
+import { startAnimation } from "/src/components/hud/index.js";
 
 export const hudSVG = createComponent({
   tag: "hudSVG",
@@ -14,23 +15,11 @@ export const hudSVG = createComponent({
     </span>
   `,
 
-  attachEvents: (el) => {
-    const svgElements = el.querySelectorAll(".svg-element");
+	attachEvents: (el) => {
+		const svgElements = el.querySelectorAll(".svg-element");
 
-    function startAnimation() {
-        svgElements.forEach(element => {
-            element.classList.add("flicker-animation");
-            element.addEventListener("animationend", () => {
-                element.classList.remove("flicker-animation");
-				element.style.opacity = "1";
-            }, { once: true });
-        });
-    }
-
-    startAnimation();
-
-    el.startAnimation = startAnimation;
-  }
+		startAnimation(svgElements, "flicker-animation");
+	}
 });
 
 function renderSVGHeader() {
