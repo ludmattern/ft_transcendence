@@ -68,7 +68,7 @@ export const leftSideWindow = createComponent({
     }
 
 	const parentContainer = el.parentElement;
-    startAnimation(parentContainer, "light-animation", 1800);
+    startAnimation(parentContainer, "light-animation", 1000);
 
   },
 });

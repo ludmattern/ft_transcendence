@@ -29,7 +29,7 @@ export const footer = createComponent({
 
 	const points = el.querySelectorAll(".points");
 
-	startAnimation(points, "light-animation", 1800);
+	startAnimation(points, "light-animation", 1000);
   },
   
 });

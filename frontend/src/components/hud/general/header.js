@@ -76,7 +76,7 @@ export const header = createComponent({
 		const homeLink = el.querySelectorAll("#home-link");
 
 		startAnimation(homeLink, "light-animation");
-		startAnimation(navItems, "light-animation", 1800);
+		startAnimation(navItems, "light-animation", 1000);
 	}
 });
 

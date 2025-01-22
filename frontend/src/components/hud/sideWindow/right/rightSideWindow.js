@@ -93,6 +93,6 @@ export const rightSideWindow = createComponent({
     });
 
 		const parentContainer = el.parentElement;
-    startAnimation(parentContainer, "light-animation", 1800);
+    startAnimation(parentContainer, "light-animation", 1000);
   },
 });

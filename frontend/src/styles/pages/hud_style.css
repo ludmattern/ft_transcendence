@@ -70,6 +70,10 @@ body {
   padding: 10px 0;
 }
 
+#hud-body #freeView-container {
+	opacity: 0;
+}
+
 #hud-body .hud-header,
 #hud-body .hud-body,
 #hud-body .hud-footer,
@@ -1080,7 +1084,7 @@ opacity: 0;
 }
 
 .light-animation {
-  animation: fadeIn 2s ease-in-out 1 forwards;
+  animation: fadeIn 1s ease-in-out 1 forwards;
 }
 
 @keyframes fadeIn {
@@ -1093,7 +1097,7 @@ opacity: 0;
 }
 
 .flicker-animation {
-	animation: neonFlicker 2s ease-in-out forwards;
+	animation: neonFlicker 1s ease-in-out forwards;
 	z-index: 10;
   }
   
