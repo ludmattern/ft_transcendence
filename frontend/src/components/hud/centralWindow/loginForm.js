@@ -42,8 +42,7 @@ export const loginForm = createComponent({
 
       const pilotId = el.querySelector("#pilot-id").value;
       const password = el.querySelector("#password").value;
-      try 
-      {
+
         const data = await loginUser(pilotId, password);
         if (data.twofa_method) 
         {
@@ -58,17 +57,13 @@ export const loginForm = createComponent({
           console.log("Login successful!");
           handleRoute("/");
         }
-      } catch (err) {
-        console.log("Login failed:", err.message);
-
-        if (err.message === "User is already connected.") 
-        {
+        console.log("Login failed:",data);
+    
+        if (data === "User is already connected.") {
           document.getElementById("error-message-co").style.display = "block";
-        } else        
+        } else if (data === "Invalid credentials" || data === "User not found") {
           document.getElementById("error-message").style.display = "block";
-      }
-
-      console.log("Login submitted!");
+        }
     });
   },
 });

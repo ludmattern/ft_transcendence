@@ -26,7 +26,6 @@ def decrypt_thing(encrypted_args):
     """Decrypts the args."""
     return cipher.decrypt(encrypted_args.encode('utf-8')).decode('utf-8')
 
-
 @csrf_exempt
 def check_auth_view(request):
     token = request.COOKIES.get('access_token')
@@ -36,10 +35,18 @@ def check_auth_view(request):
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         now = datetime.datetime.utcnow().timestamp()
-        remaining = payload['exp'] - now
         
-        user = ManualUser.objects.get(username=payload['sub'])
-        if remaining < 1200:
+        if 'exp' not in payload or 'sub' not in payload:
+            return JsonResponse({'success': False, 'message': 'Invalid token payload'}, status=401)
+        
+        remaining = payload['exp'] - now
+
+        try:
+            user = ManualUser.objects.get(username=payload['sub'])
+        except ManualUser.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
+
+        if remaining < 10:
             new_exp = now + settings.JWT_EXP_DELTA_SECONDS
             new_payload = {**payload, "exp": new_exp}
             new_token = jwt.encode(
@@ -47,9 +54,10 @@ def check_auth_view(request):
                 settings.JWT_SECRET_KEY,
                 algorithm=settings.JWT_ALGORITHM
             )
-            expiry_datetime = datetime.utcfromtimestamp(new_exp)
+            expiry_datetime = datetime.datetime.utcfromtimestamp(new_exp)
             user.token_expiry = expiry_datetime
             user.save()
+
             response = JsonResponse({'success': True, 'message': 'Cookie renewed'})
             response.set_cookie(
                 key='access_token',
@@ -67,6 +75,9 @@ def check_auth_view(request):
         return JsonResponse({'success': False, 'message': 'Token expired'}, status=401)
     except jwt.InvalidTokenError as e:
         return JsonResponse({'success': False, 'message': f'Invalid token: {e}'}, status=401)
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Unexpected error: {e}'}, status=500)
+
 
 
 def jwt_required(view_func):
@@ -167,32 +178,32 @@ def login_view(request):
                 'message': '2FA required',
                 'twofa_method': user.twofa_method
             }, status=200)
+        else:
+            exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+            user.token_expiry = exp
+            user.save()
+            access_payload = {
+                "sub": user.username,
+                "iat": now,
+                "exp": exp.timestamp()
+            }
+            access_token = jwt.encode(
+                access_payload,
+                settings.JWT_SECRET_KEY,
+                algorithm=settings.JWT_ALGORITHM
+            )
+            access_token_str = access_token if isinstance(access_token, str) else access_token.decode('utf-8')
 
-        exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-        user.token_expiry = exp
-        user.save()
-        access_payload = {
-            "sub": user.username,
-            "iat": now,
-            "exp": exp.timestamp()
-        }
-        access_token = jwt.encode(
-            access_payload,
-            settings.JWT_SECRET_KEY,
-            algorithm=settings.JWT_ALGORITHM
-        )
-        access_token_str = access_token if isinstance(access_token, str) else access_token.decode('utf-8')
-
-        response = JsonResponse({'success': True, 'message': 'Logged in'})
-        response.set_cookie(
-            key='access_token',
-            value=access_token_str,
-            httponly=True,
-            secure=True,
-            samesite='Strict',
-            max_age=settings.JWT_EXP_DELTA_SECONDS
-        )
-        return response
+            response = JsonResponse({'success': True, 'message': 'Logged in'})
+            response.set_cookie(
+                key='access_token',
+                value=access_token_str,
+                httponly=True,
+                secure=True,
+                samesite='Strict',
+                max_age=settings.JWT_EXP_DELTA_SECONDS
+            )
+            return response
 
     return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
 
@@ -237,6 +248,13 @@ def verify_2fa_view(request):
             user = ManualUser.objects.get(username=username)
         except ManualUser.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
+        
+        now = datetime.datetime.utcnow()
+        if user.token_expiry and user.token_expiry > now:
+            return JsonResponse({
+                'success': False,
+                'message': 'User is already connected.'
+            }, status=403)
 
         if user.twofa_method == "authenticator-app":
             totp = pyotp.TOTP(user.totp_secret)
@@ -244,6 +262,7 @@ def verify_2fa_view(request):
                 now = datetime.datetime.utcnow()
                 exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
                 user.token_expiry = exp
+                user.save()
                 access_payload = {
                     "sub": user.username,
                     "iat": now,
@@ -272,6 +291,7 @@ def verify_2fa_view(request):
             now = datetime.datetime.utcnow()
             exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
             user.token_expiry = exp
+            user.save()
             access_payload = {
                 "sub": user.username,
                 "iat": now,

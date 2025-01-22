@@ -61,9 +61,7 @@ export async function loginUser(username, password) {
   if (data.success) {
     return data;
   } else {
-    console.log("Login failed:", data.message);
-    const err = document.getElementById("error-message");
-    err.style.display = "block";
+    return (data.message);
   }
 }
 

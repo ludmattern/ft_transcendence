@@ -45,7 +45,7 @@ STATIC_URL = '/static/'
 
 JWT_SECRET_KEY = secrets.token_urlsafe(64)
 JWT_ALGORITHM = "HS256"
-JWT_EXP_DELTA_SECONDS = 5400
+JWT_EXP_DELTA_SECONDS = 30
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
