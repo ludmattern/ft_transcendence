@@ -17,8 +17,8 @@ export const loginForm = createComponent({
           <div class="form-group">
             <label class="mb-3" for="password">Password</label>
             <input type="password" id="password" name="password" class="form-control" required />
-            <div id="error-message-co" class="text-danger mt-2" style="display: none;">User already connected</div>
-            <div id="error-message" class="text-danger mt-2" style="display: none;">Invalid credentials</div>
+            <div id="error-message-co" class="text-danger mt-2 d-none">User already connected</div>
+            <div id="error-message" class="text-danger mt-2 d-none">Invalid credentials</div>
           </div>
           <button class="btn bi bi-check">accept</button>
         </form>
@@ -52,17 +52,19 @@ export const loginForm = createComponent({
 
           handleRoute("/login/2fa");
         } 
-        else 
+        else if (data.success)
         {
           console.log("Login successful!");
           handleRoute("/");
         }
-        console.log("Login failed:",data);
     
         if (data === "User is already connected.") {
-          document.getElementById("error-message-co").style.display = "block";
+          document.getElementById("error-message-co").classList.remove("d-none");   
+          document.getElementById("error-message").classList.add("d-none"); 
+ 
         } else if (data === "Invalid credentials" || data === "User not found") {
-          document.getElementById("error-message").style.display = "block";
+          document.getElementById("error-message-co").classList.add("d-none"); 
+          document.getElementById("error-message").classList.remove("d-none"); 
         }
     });
   },
