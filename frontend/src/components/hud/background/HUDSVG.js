@@ -12,37 +12,19 @@ export const hudSVG = createComponent({
         ${renderSVGFooterBackground()}
       </span>
     </span>
-    <style>
-        .flicker-animation {
-          animation: neonFlicker 2s ease-in-out 1 forwards;
-          position: relative;
-          z-index: 10;
-        }
-
-        @keyframes neonFlicker {
-          0%    { opacity: 0; }
-          20%   { opacity: 0.3; }
-          50%   { opacity: 0.6; }
-          60%   { opacity: 0.4; }
-          70%   { opacity: 0.5; }
-          75%   { opacity: 1; }
-          80%   { opacity: 0.3; }
-          85%   { opacity: 1; }
-          100%  { opacity: 1; }
-        }
-    </style>
   `,
 
   attachEvents: (el) => {
-    const svgElement = el.querySelector(".hud-svg"); // On cible l'élément contenant les SVG
+    const svgElements = el.querySelectorAll(".svg-element");
 
     function startAnimation() {
-      svgElement.classList.remove("flicker-animation"); // Supprime si déjà présente
-      svgElement.classList.add("flicker-animation");
-
-      setTimeout(() => {
-        svgElement.classList.remove("flicker-animation");
-      }, 3000);
+        svgElements.forEach(element => {
+            element.classList.add("flicker-animation");
+            element.addEventListener("animationend", () => {
+                element.classList.remove("flicker-animation");
+				element.style.opacity = "1";
+            }, { once: true });
+        });
     }
 
     startAnimation();

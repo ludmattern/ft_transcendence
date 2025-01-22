@@ -16,15 +16,15 @@ function navigateTo(type, pageKey, blurEffect = true, waitingScreen = false, win
   renderPage(pages, pageKey, type);
 
   if (blurEffect) {
-    document.getElementById("blur-screen-effect").classList.remove("d-none");
+    document.getElementById("blur-screen-effect").classList.remove("hidden");
   } else {
-    document.getElementById("blur-screen-effect").classList.add("d-none");
+    document.getElementById("blur-screen-effect").classList.add("hidden");
   }
 
   if (waitingScreen) {
-	document.getElementById("waiting-screen-effect").classList.remove("d-none");
+	document.getElementById("waiting-screen-effect").classList.remove("hidden");
   } else {
-	document.getElementById("waiting-screen-effect").classList.add("d-none");
+	document.getElementById("waiting-screen-effect").classList.add("hidden");
   }
 
   if (windowType) {
