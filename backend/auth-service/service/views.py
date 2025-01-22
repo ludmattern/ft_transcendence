@@ -16,7 +16,6 @@ import jwt
 import pyotp
 from cryptography.fernet import Fernet
 
-
 cipher = Fernet(settings.FERNET_KEY)
 
 def encrypt_thing(args):
