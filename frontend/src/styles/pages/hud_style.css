@@ -167,6 +167,7 @@ body {
   filter: blur(2px);
   z-index: 99;
   translate: 0 -2px;
+  opacity: 0;
 }
 
 @keyframes bg-move {
@@ -179,7 +180,7 @@ body {
 }
 
 @media (min-width: 768px) {
-	#hud-body .col-md-2-5 {
+  #hud-body .col-md-2-5 {
     flex: 0 0 20.833333%;
     max-width: 20.833333%;
   }
@@ -337,6 +338,11 @@ body {
 .helmet-svg .bc-3,
 .helmet-svg .bc-4 {
   filter: blur(5px);
+}
+
+.hud-svg .hud-svg-footer,
+.hud-svg .hud-svg-header {
+	opacity: 0;
 }
 
 .hud-svg .hud-svg-footer {
@@ -565,12 +571,12 @@ body {
 
 #hud-body .r-side-window,
 #hud-body .l-side-window {
-  	pointer-events: none;
+  pointer-events: none;
 }
 
-#hud-body .r-side-window:has( .right-side-window-expander.active),
-#hud-body .l-side-window:has( .left-side-window-expander.active) {
-	pointer-events: all;
+#hud-body .r-side-window:has(.right-side-window-expander.active),
+#hud-body .l-side-window:has(.left-side-window-expander.active) {
+  pointer-events: all;
 }
 
 #hud-body .r-side-window .nav-tabs a:hover {
@@ -622,15 +628,15 @@ body {
 }
 
 #hud-body .l-side-window .btn:hover {
-    opacity: 1;
-    transition: all 0.15s;
+  opacity: 1;
+  transition: all 0.15s;
 }
 
 #hud-body .l-side-window .btn {
-    padding: 0;
-    margin: 0;
-    padding-right: 0.5rem;
-    opacity: 0.5;
+  padding: 0;
+  margin: 0;
+  padding-right: 0.5rem;
+  opacity: 0.5;
 }
 
 #hud-body .r-side-window .btn {
@@ -882,7 +888,7 @@ p {
   width: 100%;
   height: 100%;
   backdrop-filter: blur(1rem);
-  transition: all 0.2s;
+  transition: all 0.15s;
   z-index: 9;
 }
 
@@ -959,7 +965,7 @@ p {
   width: 100%;
   height: 100%;
   backdrop-filter: blur(1rem);
-  transition: all 0.2s;
+  transition: all 0.15s;
   z-index: 1;
   background-color: black;
 }
@@ -1069,3 +1075,33 @@ p {
   height: 1rem;
   background: currentColor;
 }
+
+.light-animation {
+  animation: fadeIn 2s ease-in-out 1 forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.flicker-animation {
+	animation: neonFlicker 2s ease-in-out forwards;
+	z-index: 10;
+  }
+  
+  @keyframes neonFlicker {
+	0% { opacity: 0; }
+	20% { opacity: 0.3; }
+	50% { opacity: 0.6; }
+	60% { opacity: 0.4; }
+	70% { opacity: 0.5; }
+	75% { opacity: 1; }
+	80% { opacity: 0.3; }
+	85% { opacity: 1; }
+	100% { opacity: 1; }
+  }
