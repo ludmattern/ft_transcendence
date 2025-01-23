@@ -6,7 +6,8 @@ import { animatePong } from '/src/3d/pongScene.js';
 import Store from './store.js';
 import { loadModels } from "/src/3d/loader.js";
 import { initCSSRenderer } from "/src/3d/CSS3DRender.js";
-import {  initLights, initSkybox, initRenderer, initCamera, initScene} from "/src/3d/initScene.js"
+import {  initLights, initSkybox, initRenderer, initCamera, initScene, initControls} from "/src/3d/initScene.js"
+
 
 
 // =============== RESIZE ===============
@@ -35,40 +36,44 @@ export async function buildScene() {
   initCSSRenderer();
   initSkybox();
   initLights();
+  initControls();
   await loadModels();
   addEventListeners();
-
+  
   Store.initialCameraRotation.x = Store.camera.rotation.x;
   Store.initialCameraRotation.y = Store.camera.rotation.y;
   Store.cameraRotation.x = Store.camera.rotation.x;
   Store.cameraRotation.y = Store.camera.rotation.y;
   
   const bloomPass = new UnrealBloomPass(
-    new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1,
-    1,
-    0
-  );
-  Store.composer = new EffectComposer(Store.renderer);
-  const renderScene = new RenderPass(Store.scene, Store.camera);
-  Store.composer.addPass(renderScene);
-  Store.composer.addPass(bloomPass);
-
-  animate();
+	  new THREE.Vector2(window.innerWidth, window.innerHeight),
+	  1,
+	  1,
+	  0
+	);
+	Store.composer = new EffectComposer(Store.renderer);
+	const renderScene = new RenderPass(Store.scene, Store.camera);
+	Store.composer.addPass(renderScene);
+	Store.composer.addPass(bloomPass);
+	
+	animate();
 }
 
 function animate() {
-  requestAnimationFrame(animate);
-
-  animatePong(Store.renderer);
-
-  if (Store.composer) {
-    Store.composer.render(Store.scene, Store.camera);
-
-  } else {
-    Store.renderer.render(Store.scene, Store.camera);
-  }
-  if (Store.cssRenderer && Store.scene && Store.camera) {
-    Store.cssRenderer.render(Store.scene, Store.camera);
-  }
+	requestAnimationFrame(animate);
+	
+	animatePong(Store.renderer);
+	
+	if (Store.controls) 
+		Store.controls.update(0.01);
+	
+	if (Store.composer) {
+		Store.composer.render(Store.scene, Store.camera);
+		
+	} else {
+		Store.renderer.render(Store.scene, Store.camera);
+	}
+	if (Store.cssRenderer && Store.scene && Store.camera) {
+		Store.cssRenderer.render(Store.scene, Store.camera);
+	}
 }
