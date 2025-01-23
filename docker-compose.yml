@@ -15,6 +15,17 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    build:
+      context: ./redis
+    container_name: redis_channels
+    networks:
+      - backend_network
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6380:6379"
+
   auth-service:
     build:
       context: ./backend/auth-service
@@ -108,3 +119,5 @@ networks:
 volumes:
   postgres_data_volume:
     name: postgres_data_volume
+  redis_data:
+    name: redis_data_volume
