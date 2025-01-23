@@ -42,7 +42,7 @@ export async function buildScene() {
   Store.initialCameraRotation.y = Store.camera.rotation.y;
   Store.cameraRotation.x = Store.camera.rotation.x;
   Store.cameraRotation.y = Store.camera.rotation.y;
-
+  
   const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     1,

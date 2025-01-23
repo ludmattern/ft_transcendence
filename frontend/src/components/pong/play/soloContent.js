@@ -85,7 +85,7 @@ export const soloContent = createComponent({
     const launchButton = document.getElementById("launch");
 
     launchButton.addEventListener("click", () => {
-      loadSoloGame();
+      //loadSoloGame();
       switchwindow("game");
     })
   },

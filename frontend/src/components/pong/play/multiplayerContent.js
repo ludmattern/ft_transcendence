@@ -1,4 +1,5 @@
 import { createComponent } from "/src/utils/component.js";
+import { switchwindow } from "/src/3d/animation.js";
 
 export const multiplayerContent = createComponent({
   tag: "multiplayerContent",
@@ -32,7 +33,7 @@ export const multiplayerContent = createComponent({
                 ${generateMapSelector("local")}
                 ${generatePlayerCountSelector("local")}
 
-                <button class="btn btn-warning mt-3">Challenge Your Friend and Lose Together</button>
+                <button class="btn btn-warning mt-3" id="launchLocal">Challenge Your Friend and Lose Together</button>
             </div>
 
             <!-- Matchmaking -->
@@ -118,6 +119,12 @@ export const multiplayerContent = createComponent({
         sessionStorage.setItem(key, select.value);
       });
     });
+    const launchButton = document.getElementById("launchLocal");
+
+    launchButton.addEventListener("click", () => {
+      //loadSoloGame();
+      switchwindow("game");
+    })
   },
 });
 

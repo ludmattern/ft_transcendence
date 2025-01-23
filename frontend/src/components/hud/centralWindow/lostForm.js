@@ -17,12 +17,11 @@ export const lostForm = createComponent({
     </div>
   `,
 
-  // Ajouter les événements après le chargement
   attachEvents: (el) => {
     // Annuler la déconnexion
     el.querySelector("#go-back").addEventListener("click", (e) => {
       e.preventDefault();
-      handleRoute(getPreviousRoute()); // Retour à la route précédente
+      handleRoute(getPreviousRoute());
     });
   },
 });

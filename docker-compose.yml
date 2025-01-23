@@ -62,6 +62,21 @@ services:
     ports:
       - "3002:3002"
 
+  pong-service:
+    build:
+      context: ./backend/pong-service
+    container_name: pong_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./secret/.env
+    networks:
+      - backend_network
+      - frontend_network
+    ports:
+      - "3004:3004"
+
   nginx:
     build:
       context: ./nginx
@@ -77,6 +92,8 @@ services:
       auth-service:
         condition: service_started
       user-service:
+        condition: service_started
+      pong-service:
         condition: service_started
     networks:
       - frontend_network
