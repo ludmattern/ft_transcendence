@@ -1,4 +1,5 @@
 import { createComponent } from "/src/utils/component.js";
+import { switchwindow } from "/src/3d/animation.js";
 
 export const soloContent = createComponent({
   tag: "soloContent",
@@ -44,7 +45,7 @@ export const soloContent = createComponent({
               </div>
 
               <div class="text-center">
-                <button class="mt-3 btn btn-danger btn-lg">Proceed to Your Doom</button>
+                <button class="mt-3 btn btn-danger btn-lg" id="launch">Proceed to Your Doom</button>
               </div>
             </fieldset>
           </div>
@@ -80,5 +81,12 @@ export const soloContent = createComponent({
     liabilityCheckbox.addEventListener("change", () => {
       sessionStorage.setItem("liabilityCheckbox", liabilityCheckbox.checked);
     });
+
+    const launchButton = document.getElementById("launch");
+
+    launchButton.addEventListener("click", () => {
+      loadSoloGame();
+      switchwindow("game");
+    })
   },
 });

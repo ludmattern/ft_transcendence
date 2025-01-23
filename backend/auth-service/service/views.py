@@ -46,7 +46,7 @@ def check_auth_view(request):
         except ManualUser.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
 
-        if remaining < 10:
+        if remaining < 1000:
             new_exp = now + settings.JWT_EXP_DELTA_SECONDS
             new_payload = {**payload, "exp": new_exp}
             new_token = jwt.encode(
