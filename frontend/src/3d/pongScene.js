@@ -48,12 +48,6 @@ export function animatePong(renderer) {
   renderer.setRenderTarget(null);
 }
 
-
-
-
-
-
-
 const socket = new WebSocket("ws://localhost:3004/ws/pong/");
 
 let cubePosition = { x: 0, y: 0 };

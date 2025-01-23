@@ -1,7 +1,6 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-# Exemple très minimal : on stocke la position x, y du cube dans un dict en mémoire
 game_state = {
     "x": 0,
     "y": 0
@@ -16,7 +15,6 @@ class PongConsumer(AsyncWebsocketConsumer):
         )
         await self.accept()
 
-        # Envoie immédiatement la position initiale à celui qui se connecte
         await self.send(json.dumps({
             "type": "position",
             "x": game_state["x"],
@@ -32,10 +30,8 @@ class PongConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
 
-        # Supposons un message { "type": "move", "direction": "up" }
         if data.get("type") == "move":
             direction = data.get("direction")
-            # Logique de mouvement "server side"
             if direction == "up":
                 game_state["y"] += 0.1
             elif direction == "down":
@@ -45,7 +41,6 @@ class PongConsumer(AsyncWebsocketConsumer):
             elif direction == "right":
                 game_state["x"] += 0.1
 
-            # Broadcast la nouvelle position à tout le groupe
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -55,12 +50,10 @@ class PongConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-    # Méthode appelée depuis group_send(type="position_update", ...)
     async def position_update(self, event):
         x = event["x"]
         y = event["y"]
 
-        # Envoie la position à chaque client WebSocket
         await self.send(text_data=json.dumps({
             "type": "position",
             "x": x,
