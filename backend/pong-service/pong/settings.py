@@ -13,12 +13,25 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
     'service',
+    'channels',
 ]
 
 ROOT_URLCONF = 'pong.urls'
 
 WSGI_APPLICATION = 'pong.wsgi.application'
+ASGI_APPLICATION = 'pong.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis_channels", 6379)],
+        },
+    },
+}
 
 DATABASES = {
     'default': {

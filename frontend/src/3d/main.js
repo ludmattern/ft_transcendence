@@ -36,7 +36,7 @@ export async function buildScene() {
   initCSSRenderer();
   initSkybox();
   initLights();
-  initControls();
+  //initControls();
   await loadModels();
   addEventListeners();
   
