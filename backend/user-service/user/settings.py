@@ -1,5 +1,3 @@
-
-
 import os
 import secrets
 
@@ -31,7 +29,6 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
-
 
 LANGUAGE_CODE = 'en-us'
 
