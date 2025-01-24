@@ -1,3 +1,5 @@
+import { initializeWebSocket } from "/src/services/socketManager.js";
+
 export async function isClientAuthenticated() {
 
   try {
@@ -21,6 +23,8 @@ export async function isClientAuthenticated() {
     if (data.new_access_token) {
       console.log("Got new token from backend");
     }
+
+    initializeWebSocket("chat", "ws://localhost:3003/ws/chat/");
 
     return true;
   } catch (error) {

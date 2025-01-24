@@ -15,6 +15,17 @@ services:
       timeout: 5s
       retries: 5
 
+  redis-livechat:
+    build:
+      context: ./backend/redis/livechat
+    container_name: redis_livechat
+    networks:
+      - backend_network
+    volumes:
+      - redis_livechat_data:/data
+    ports:
+      - "6380:6379"
+      
   redis-pong:
     build:
       context: ./backend/redis/pong
@@ -26,16 +37,6 @@ services:
     ports:
       - "6381:6379"
   
-  redis-livechat:
-    build:
-      context: ./backend/redis/livechat
-    container_name: redis_livechat
-    networks:
-      - backend_network
-    volumes:
-      - redis_livechat_data:/data
-    ports:
-      - "6380:6379"
 
   auth-service:
     build:

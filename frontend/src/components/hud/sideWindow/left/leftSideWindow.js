@@ -1,6 +1,7 @@
 import { createComponent } from "/src/utils/component.js";
 import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
 import { startAnimation } from "/src/components/hud/index.js";
+import { setupLiveChatEvents } from "/src/components/hud/sideWindow/left/liveChat.js";
 
 export const leftSideWindow = createComponent({
   tag: "leftSideWindow",
@@ -119,6 +120,7 @@ function loadTabContent(tabName, container, window) {
 
         if (tabName === "comm") {
           setupChatInput();
+          setupLiveChatEvents();
         } else {
           removeChatInput();
         }
