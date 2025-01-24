@@ -25,6 +25,11 @@ export async function isClientAuthenticated() {
     }
 
     initializeWebSocket("chat", "ws://localhost:3003/ws/chat/");
+    // const socket = new WebSocket("ws://localhost:3003/ws/chat/")
+    // socket.onopen = () => {
+    //   console.log("WebSocket connected LIVECHAT");
+    // };
+    
 
     return true;
   } catch (error) {
@@ -109,8 +114,6 @@ export async function registerUser(id, password, email, is2FAEnabled, twoFAMetho
     return false;
   }
 }
-
-
 
 export async function verifyTwoFACode(username, twofaCode) {
   const response = await fetch("/api/auth-service/verify-2fa/", {
