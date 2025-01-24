@@ -21,10 +21,19 @@ services:
     container_name: redis_channels
     networks:
       - backend_network
-    volumes:
-      - redis_data:/data
+    # volumes:
+    #   - redis_data:/data
+    ports:
+      - "6381:6379"
+  
+  redis-livechat:
+    build:
+      context: ./backend/redis/livechat
+    container_name: redis_livechat_cache
     ports:
       - "6380:6379"
+    networks:
+      - backend_network
 
   auth-service:
     build:
@@ -73,16 +82,6 @@ services:
     ports:
       - "3002:3002"
 
-  redis-livechat:
-    build:
-      context: ./backend/redis/livechat
-    container_name: redis_livechat_cache
-    ports:
-      - "6380:6379"
-    networks:
-      - backend_network
-
-
   livechat-service:
     build:
       context: ./backend/livechat-service
@@ -92,6 +91,9 @@ services:
         condition: service_healthy
       redis-livechat:
         condition: service_started
+    networks:
+      - backend_network
+      - frontend_network        
     environment:
       - DJANGO_SETTINGS_MODULE=livechat.settings 
       - POSTGRES_DB=${POSTGRES_DB}
@@ -101,6 +103,7 @@ services:
       - DB_PORT=5432
       - REDIS_HOST=redis-livechat
       - REDIS_PORT=6379
+      
     ports:
       - "3003:3003"
       
@@ -111,6 +114,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_started
     env_file:
       - ./secret/.env
     networks:
@@ -137,7 +142,6 @@ services:
         condition: service_started
       livechat-service:
         condition: service_started
-
       pong-service:
         condition: service_started
     networks:
@@ -154,5 +158,5 @@ networks:
 volumes:
   postgres_data_volume:
     name: postgres_data_volume
-  redis_data:
-    name: redis_data_volume
+  # redis_data:
+  #   name: redis_data_volume
