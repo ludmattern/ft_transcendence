@@ -20,8 +20,6 @@ function onWindowResize() {
   Store.composer.setSize(width, height);
   Store.camera.aspect = width / height;
   Store.camera.updateProjectionMatrix();
-
-  
 }
 
 function addEventListeners() {
@@ -62,9 +60,8 @@ export async function buildScene() {
 function animate() {
 	requestAnimationFrame(animate);
 	
-	  animatePong(Store.renderer);
+	animatePong(Store.renderer);
 
-	
 	if (Store.controls) 
 		Store.controls.update(0.01);
 	

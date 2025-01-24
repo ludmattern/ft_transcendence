@@ -125,21 +125,16 @@ export const multiplayerContent = createComponent({
 
 
     localButton.addEventListener("click", () => {
-
       const gameConfig = {
         mode: "local", 
         map: document.getElementById("mapSelect-local").value, 
         playerCount: parseInt(document.getElementById("playerCount-local").value, 10),
       };
-
         switchwindow("game");
         buildGameScene(gameConfig);
-
-
     });
 
     const matchButton = document.getElementById("launchMatch");
-
     matchButton.addEventListener("click", () => {
       const gameConfig = {
         mode: "matchmaking", 
@@ -148,12 +143,9 @@ export const multiplayerContent = createComponent({
       };
       switchwindow("game");
       buildGameScene(gameConfig);
-
-
     });
 
     const privateButton = document.getElementById("launchPrivate");
-
     privateButton.addEventListener("click", () => {
       const gameConfig = {
         mode: "private", 
@@ -162,7 +154,6 @@ export const multiplayerContent = createComponent({
       };
       switchwindow("game");
       buildGameScene(gameConfig);
-
     });
   },
 });

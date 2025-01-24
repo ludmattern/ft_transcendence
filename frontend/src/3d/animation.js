@@ -89,6 +89,9 @@ export function switchwindow(screen) {
           Store.screenObject1.material = screenMaterial;
           Store.menuElement.classList.remove("active");
         }
+        if (nb == 0) {
+          Store.menuElement.classList.add("active");
+        }
         if (nb == 2) {
         //   Store.menuElement2.classList.remove("active");
         }
