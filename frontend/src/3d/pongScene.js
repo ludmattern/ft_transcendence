@@ -21,12 +21,12 @@ export const renderTargetCube = new THREE.WebGLRenderTarget(1024, 1024, {
 
 
 export const screenMaterial = new THREE.MeshStandardMaterial({
-  map: renderTargetCube.texture,   // <--- ICI, renderTargetCube est déjà défini
+  map: renderTargetCube.texture,
   emissive: 0x000000,
   emissiveIntensity: 0.1,
 });
 
-export function buildGameScene(selectedMap = 'default')
+export function buildGameScene(gameConfig)
 {
   if (Store.pongScene) {
     Store.pongScene.clear();
@@ -37,7 +37,7 @@ export function buildGameScene(selectedMap = 'default')
   cameraCube = new THREE.PerspectiveCamera(25, 636 / 512, 0.1, 1000);
   cameraCube.position.z = 7;
 
-  const config = mapConfigs[selectedMap] || { color: 0xffffff };
+  const config = mapConfigs[gameConfig.map] || { color: 0xffffff };
   const chosenColor = config.color;
 
   const geometry = new THREE.BoxGeometry(1, 1, 1);

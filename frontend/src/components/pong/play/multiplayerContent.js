@@ -119,13 +119,21 @@ export const multiplayerContent = createComponent({
         sessionStorage.setItem(key, select.value);
       });
     });
+
+
     const localButton = document.getElementById("launchLocal");
 
+
     localButton.addEventListener("click", () => {
-      const mapSelector = document.getElementById("mapSelect-local");
-      const selectedMap = mapSelector.value;
+
+      const gameConfig = {
+        mode: "local", 
+        map: document.getElementById("mapSelect-local").value, 
+        playerCount: parseInt(document.getElementById("playerCount-local").value, 10),
+      };
+
         switchwindow("game");
-        buildGameScene(selectedMap);
+        buildGameScene(gameConfig);
 
 
     });
@@ -133,10 +141,13 @@ export const multiplayerContent = createComponent({
     const matchButton = document.getElementById("launchMatch");
 
     matchButton.addEventListener("click", () => {
-      const mapSelector = document.getElementById("mapSelect-matchmaking");
-      const selectedMap = mapSelector.value;
+      const gameConfig = {
+        mode: "matchmaking", 
+        map: document.getElementById("mapSelect-matchmaking").value, 
+        playerCount: parseInt(document.getElementById("playerCount-matchmaking").value, 10),
+      };
       switchwindow("game");
-      buildGameScene(selectedMap);
+      buildGameScene(gameConfig);
 
 
     });
@@ -144,10 +155,13 @@ export const multiplayerContent = createComponent({
     const privateButton = document.getElementById("launchPrivate");
 
     privateButton.addEventListener("click", () => {
-      const mapSelector = document.getElementById("mapSelect-private");
-      const selectedMap = mapSelector.value;
+      const gameConfig = {
+        mode: "private", 
+        map: document.getElementById("mapSelect-private").value, 
+        playerCount: parseInt(document.getElementById("playerCount-private").value, 10),
+      };
       switchwindow("game");
-      buildGameScene(selectedMap);
+      buildGameScene(gameConfig);
 
     });
   },
