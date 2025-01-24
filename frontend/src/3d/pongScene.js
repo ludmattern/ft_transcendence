@@ -1,50 +1,75 @@
 import * as THREE from "https://esm.sh/three";
+import Store from './store.js';
 
-const sceneCube = new THREE.Scene();
-const cameraCube = new THREE.PerspectiveCamera(25, 636 / 512, 0.1, 1000);
-cameraCube.position.z = 7;
+export const mapConfigs = {
+  map1: { color: 0xff0000 },
+  map2: { color: 0x0000ff },
+  map3: { color: 0x00ff00 },
+  map4: { color: 0x00ffff },
+};
 
-const geometryCube = new THREE.BoxGeometry(1, 1, 1);
-const materialCube = new THREE.MeshPhongMaterial({
-  color: 0xff0000,
-  emissive: 0xff0000,
-  emissiveIntensity: 0.5,
-  shininess: 100
-});
-const meshCube = new THREE.Mesh(geometryCube, materialCube);
-sceneCube.add(meshCube);
+export let cameraCube;
+export let meshCube;
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-pointLight.position.set(5, 5, 5);
-sceneCube.add(ambientLight, pointLight);
 
-const renderTargetCube = new THREE.WebGLRenderTarget(1024, 1024, {
+export const renderTargetCube = new THREE.WebGLRenderTarget(1024, 1024, {
   minFilter: THREE.LinearFilter,
   magFilter: THREE.LinearFilter,
   format: THREE.RGBAFormat,
   type: THREE.UnsignedByteType
 });
 
+
 export const screenMaterial = new THREE.MeshStandardMaterial({
-  map: renderTargetCube.texture,
+  map: renderTargetCube.texture,   // <--- ICI, renderTargetCube est déjà défini
   emissive: 0x000000,
   emissiveIntensity: 0.1,
 });
 
+export function buildGameScene(selectedMap = 'default')
+{
+  if (Store.pongScene) {
+    Store.pongScene.clear();
+  } else {
+    Store.pongScene = new THREE.Scene();
+  }
+
+  cameraCube = new THREE.PerspectiveCamera(25, 636 / 512, 0.1, 1000);
+  cameraCube.position.z = 7;
+
+  const config = mapConfigs[selectedMap] || { color: 0xffffff };
+  const chosenColor = config.color;
+
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshPhongMaterial({
+    color: chosenColor,
+    emissive: chosenColor,
+    emissiveIntensity: 0.5,
+    shininess: 100
+  });
+  meshCube = new THREE.Mesh(geometry, material);
+  Store.pongScene.add(meshCube);
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+  pointLight.position.set(5, 5, 5);
+  Store.pongScene.add(ambientLight, pointLight);
+
+
+}
+
 export function animatePong(renderer) {
+  if (!Store.pongScene || !cameraCube) return;
+
   meshCube.rotation.x += 0.01 * Math.sin(Date.now() * 0.001);
   meshCube.rotation.y += 0.01 * Math.cos(Date.now() * 0.001);
 
-
   meshCube.position.x = cubePosition.x;
   meshCube.position.y = cubePosition.y;
-
-  materialCube.emissiveIntensity = 0.5 + 0.5 * Math.sin(Date.now() * 0.002);
-  materialCube.needsUpdate = true;
+  
 
   renderer.setRenderTarget(renderTargetCube);
-  renderer.render(sceneCube, cameraCube);
+  renderer.render(Store.pongScene, cameraCube);
   renderer.setRenderTarget(null);
 }
 

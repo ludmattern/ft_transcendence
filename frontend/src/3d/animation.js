@@ -34,6 +34,8 @@ export function switchwindow(screen) {
     }
     else if (screen === "home") 
     {
+      if (Store.pongScene)
+        Store.pongScene.clear();
       animateCameraToTarget(
         new THREE.Vector3(0, 0, 1.4),
         { x: 1.3, y: -0, z: -0 },

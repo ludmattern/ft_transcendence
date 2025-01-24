@@ -62,7 +62,8 @@ export async function buildScene() {
 function animate() {
 	requestAnimationFrame(animate);
 	
-	animatePong(Store.renderer);
+	  animatePong(Store.renderer);
+
 	
 	if (Store.controls) 
 		Store.controls.update(0.01);

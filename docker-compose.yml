@@ -15,10 +15,10 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
+  redis-pong:
     build:
-      context: ./redis
-    container_name: redis_channels
+      context: ./backend/redis-pong
+    container_name: redis_pong
     networks:
       - backend_network
     volumes:

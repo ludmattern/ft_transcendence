@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { switchwindow } from "/src/3d/animation.js";
+import {buildGameScene} from "/src/3d/pongScene.js";
 
 export const multiplayerContent = createComponent({
   tag: "multiplayerContent",
@@ -44,7 +45,7 @@ export const multiplayerContent = createComponent({
                 ${generateMapSelector("matchmaking")}
                 ${generatePlayerCountSelector("matchmaking")}
 
-                <button class="btn btn-danger mt-3">Queue Up for Instant Regret</button>
+                <button class="btn btn-danger mt-3" id="launchMatch">Queue Up for Instant Regret</button>
             </div>
 
             <!-- Private Match -->
@@ -59,7 +60,7 @@ export const multiplayerContent = createComponent({
                     <input type="text" class="form-control" placeholder="Enter Room Code" aria-label="Room Code">
                     <button class="btn btn-secondary">Join Room and Get Wrecked</button>
                 </div>
-                <button class="btn btn-primary">Create a Room (So You Can Lose in Private)</button>
+                <button class="btn btn-primary" id="launchPrivate">Create a Room (So You Can Lose in Private)</button>
             </div>
         </div>
     </section>
@@ -114,17 +115,41 @@ export const multiplayerContent = createComponent({
         select.value = savedValue;
       }
   
-      // Sauvegarder les nouvelles valeurs
       select.addEventListener("change", () => {
         sessionStorage.setItem(key, select.value);
       });
     });
-    const launchButton = document.getElementById("launchLocal");
+    const localButton = document.getElementById("launchLocal");
 
-    launchButton.addEventListener("click", () => {
-      //loadSoloGame();
+    localButton.addEventListener("click", () => {
+      const mapSelector = document.getElementById("mapSelect-local");
+      const selectedMap = mapSelector.value;
+        switchwindow("game");
+        buildGameScene(selectedMap);
+
+
+    });
+
+    const matchButton = document.getElementById("launchMatch");
+
+    matchButton.addEventListener("click", () => {
+      const mapSelector = document.getElementById("mapSelect-matchmaking");
+      const selectedMap = mapSelector.value;
       switchwindow("game");
-    })
+      buildGameScene(selectedMap);
+
+
+    });
+
+    const privateButton = document.getElementById("launchPrivate");
+
+    privateButton.addEventListener("click", () => {
+      const mapSelector = document.getElementById("mapSelect-private");
+      const selectedMap = mapSelector.value;
+      switchwindow("game");
+      buildGameScene(selectedMap);
+
+    });
   },
 });
 
