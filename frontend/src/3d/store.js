@@ -7,6 +7,8 @@ const Store = {
   cssRenderer: null,
   composer: null,
 
+  controls : null,
+
   menuObject: null,
   menuObject2: null,
   menuObject3: null,

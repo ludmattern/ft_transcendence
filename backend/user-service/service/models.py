@@ -11,6 +11,7 @@ class ManualUser(models.Model):
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     temp_2fa_code = models.CharField(max_length=10, null=True, blank=True)
     totp_secret = models.CharField(max_length=32, default=pyotp.random_base32)
+    token_expiry = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

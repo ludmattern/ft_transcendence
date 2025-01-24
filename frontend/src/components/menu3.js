@@ -17,7 +17,8 @@ export const menu3 = createComponent({
 
 function initM3() {
     Store.menuElement3 = document.getElementById("menu3");
-    if (!Store.menuElement3) {
+    if (!Store.menuElement3) 
+    {
       console.error("The element with ID 'menu3' was not found.");
       return;
     }

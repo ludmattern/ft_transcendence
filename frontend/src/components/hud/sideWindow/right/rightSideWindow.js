@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { initWireframeScene } from "/src/3d/wireframeScene.js";
+import { startAnimation } from "/src/components/hud/index.js";
 
 /**
  * Génère un élément de navigation (onglet) avec un lien.
@@ -90,5 +91,8 @@ export const rightSideWindow = createComponent({
         }
       });
     });
+
+		const parentContainer = el.parentElement;
+    startAnimation(parentContainer, "light-animation", 1000);
   },
 });

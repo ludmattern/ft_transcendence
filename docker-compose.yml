@@ -15,6 +15,17 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    build:
+      context: ./redis
+    container_name: redis_channels
+    networks:
+      - backend_network
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6380:6379"
+
   auth-service:
     build:
       context: ./backend/auth-service
@@ -81,11 +92,6 @@ services:
         condition: service_healthy
       redis-livechat:
         condition: service_started
-    env_file:
-      - ./secret/.env
-    networks:
-      - backend_network
-      - frontend_network
     environment:
       - DJANGO_SETTINGS_MODULE=livechat.settings 
       - POSTGRES_DB=${POSTGRES_DB}
@@ -97,6 +103,21 @@ services:
       - REDIS_PORT=6379
     ports:
       - "3003:3003"
+      
+  pong-service:
+    build:
+      context: ./backend/pong-service
+    container_name: pong_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./secret/.env
+    networks:
+      - backend_network
+      - frontend_network
+    ports:
+      - "3004:3004"
 
   nginx:
     build:
@@ -117,6 +138,8 @@ services:
       livechat-service:
         condition: service_started
 
+      pong-service:
+        condition: service_started
     networks:
       - frontend_network
       - backend_network
@@ -131,3 +154,5 @@ networks:
 volumes:
   postgres_data_volume:
     name: postgres_data_volume
+  redis_data:
+    name: redis_data_volume
