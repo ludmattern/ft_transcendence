@@ -17,7 +17,7 @@ services:
 
   redis-pong:
     build:
-      context: ./backend/redis-pong
+      context: ./backend/redis/pong
     container_name: redis_pong
     networks:
       - backend_network
@@ -114,7 +114,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
+      redis-pong:
         condition: service_started
     env_file:
       - ./secret/.env
