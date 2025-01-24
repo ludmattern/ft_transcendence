@@ -12,7 +12,7 @@ export let cameraCube;
 export let meshCube;
 
 
-export const renderTargetCube = new THREE.WebGLRenderTarget(1024, 1024, {
+export const renderTarget = new THREE.WebGLRenderTarget(1024, 1024, {
   minFilter: THREE.LinearFilter,
   magFilter: THREE.LinearFilter,
   format: THREE.RGBAFormat,
@@ -21,12 +21,12 @@ export const renderTargetCube = new THREE.WebGLRenderTarget(1024, 1024, {
 
 
 export const screenMaterial = new THREE.MeshStandardMaterial({
-  map: renderTargetCube.texture,   // <--- ICI, renderTargetCube est déjà défini
+  map: renderTarget.texture,
   emissive: 0x000000,
   emissiveIntensity: 0.1,
 });
 
-export function buildGameScene(selectedMap = 'default')
+export function buildGameScene(gameConfig)
 {
   if (Store.pongScene) {
     Store.pongScene.clear();
@@ -37,7 +37,7 @@ export function buildGameScene(selectedMap = 'default')
   cameraCube = new THREE.PerspectiveCamera(25, 636 / 512, 0.1, 1000);
   cameraCube.position.z = 7;
 
-  const config = mapConfigs[selectedMap] || { color: 0xffffff };
+  const config = mapConfigs[gameConfig.map] || { color: 0xffffff };
   const chosenColor = config.color;
 
   const geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -54,8 +54,6 @@ export function buildGameScene(selectedMap = 'default')
   const pointLight = new THREE.PointLight(0xffffff, 1, 100);
   pointLight.position.set(5, 5, 5);
   Store.pongScene.add(ambientLight, pointLight);
-
-
 }
 
 export function animatePong(renderer) {
@@ -68,7 +66,7 @@ export function animatePong(renderer) {
   meshCube.position.y = cubePosition.y;
   
 
-  renderer.setRenderTarget(renderTargetCube);
+  renderer.setRenderTarget(renderTarget);
   renderer.render(Store.pongScene, cameraCube);
   renderer.setRenderTarget(null);
 }
