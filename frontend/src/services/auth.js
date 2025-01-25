@@ -24,7 +24,14 @@ export async function isClientAuthenticated() {
       console.log("Got new token from backend");
     }
 
-    initializeWebSocket("chat", "ws://localhost:3003/ws/chat/");
+    // Construct the WebSocket channel with the username
+    const chatChannel = `chat/${data.user_id}`;
+    const webSocketUrl = "ws://localhost:3003/ws/" + chatChannel;
+
+    console.log(`Initializing WebSocket with channel: ${chatChannel} and URL: ${webSocketUrl}`);
+
+    // Initialize the WebSocket with the customized channel
+    initializeWebSocket(chatChannel, webSocketUrl);
 
     return true;
   } catch (error) {
@@ -109,6 +116,8 @@ export async function registerUser(id, password, email, is2FAEnabled, twoFAMetho
     return false;
   }
 }
+
+
 
 export async function verifyTwoFACode(username, twofaCode) {
   const response = await fetch("/api/auth-service/verify-2fa/", {
