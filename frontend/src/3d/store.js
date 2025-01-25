@@ -31,6 +31,10 @@ const Store = {
   currentTween: null,
 
   pongScene: null,
+  cubePosition: { x: 0, y: 0 },
+  meshBall: null,
+  player1Paddle: null,
+  player2Paddle: null,
 
   cameraRotationEvent: 0,
   listeners: [],

@@ -1,6 +1,5 @@
 import { createComponent } from "/src/utils/component.js";
-import { switchwindow } from "/src/3d/animation.js";
-import {buildGameScene} from "/src/3d/pongScene.js";
+import { gameManager } from "/src/pongGame/gameManager.js";
 
 export const multiplayerContent = createComponent({
   tag: "multiplayerContent",
@@ -130,8 +129,8 @@ export const multiplayerContent = createComponent({
         map: document.getElementById("mapSelect-local").value, 
         playerCount: parseInt(document.getElementById("playerCount-local").value, 10),
       };
-        switchwindow("game");
-        buildGameScene(gameConfig);
+      gameManager.startGame(gameConfig);
+
     });
 
     const matchButton = document.getElementById("launchMatch");
@@ -141,8 +140,8 @@ export const multiplayerContent = createComponent({
         map: document.getElementById("mapSelect-matchmaking").value, 
         playerCount: parseInt(document.getElementById("playerCount-matchmaking").value, 10),
       };
-      switchwindow("game");
-      buildGameScene(gameConfig);
+      launchMatchmaking(userId);
+
     });
 
     const privateButton = document.getElementById("launchPrivate");
@@ -152,11 +151,40 @@ export const multiplayerContent = createComponent({
         map: document.getElementById("mapSelect-private").value, 
         playerCount: parseInt(document.getElementById("playerCount-private").value, 10),
       };
-      switchwindow("game");
-      buildGameScene(gameConfig);
+      gameManager.startGame(gameConfig);
+      
     });
   },
 });
+
+async function launchMatchmaking(userId) {
+  // Faire une requête fetch vers /join_matchmaking
+  const response = await fetch(`/join_matchmaking?user_id=${userId}`);
+  const data = await response.json();
+
+  if (data.status === "matched") {
+    // On a un game_id
+    console.log("Matched! game_id=", data.game_id);
+    startMatchmakingGame(data.game_id);
+  } else {
+    console.log("En attente d’un 2e joueur...");
+    // Re-tenter dans 2 secondes
+    setTimeout(() => launchMatchmaking(userId), 2000);
+  }
+}
+
+function startMatchmakingGame(gameId) {
+  // Ici, on construit le gameConfig
+  const gameConfig = {
+    mode: "matchmaking",
+    map: document.getElementById("mapSelect-matchmaking").value,
+    playerCount: 2,
+    // On passe pas l’ID en param, ou on le stocke dedans
+    gameId: gameId
+  };
+  gameManager.startGame(gameConfig);
+}
+
 
 /**
  * Génère le sélecteur de map (avec un identifiant spécifique)

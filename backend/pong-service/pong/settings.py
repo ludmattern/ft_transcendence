@@ -18,7 +18,6 @@ INSTALLED_APPS = [
 
 # ROOT_URLCONF = 'pong.urls'
 
-WSGI_APPLICATION = 'pong.wsgi.application'
 ASGI_APPLICATION = 'pong.asgi.application'
 
 CHANNEL_LAYERS = {
