@@ -25,11 +25,6 @@ export async function isClientAuthenticated() {
     }
 
     initializeWebSocket("chat", "ws://localhost:3003/ws/chat/");
-    // const socket = new WebSocket("ws://localhost:3003/ws/chat/")
-    // socket.onopen = () => {
-    //   console.log("WebSocket connected LIVECHAT");
-    // };
-    
 
     return true;
   } catch (error) {

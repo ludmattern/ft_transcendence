@@ -1,5 +1,6 @@
 import * as THREE from "https://esm.sh/three";
 import Store from './store.js';
+import { initializeWebSocket } from "/src/services/socketManager.js"
 
 export const mapConfigs = {
   map1: { color: 0xff0000 },
@@ -71,13 +72,9 @@ export function animatePong(renderer) {
   renderer.setRenderTarget(null);
 }
 
-const socket = new WebSocket("ws://localhost:3004/ws/pong/");
+const socket = initializeWebSocket("pong", "ws://localhost:3004/ws/pong/");
 
 let cubePosition = { x: 0, y: 0 };
-
-socket.onopen = () => {
-  console.log("WebSocket connected");
-};
 
 socket.onmessage = (event) => {
   const data = JSON.parse(event.data);

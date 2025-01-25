@@ -8,8 +8,8 @@ const sockets = {};
  * If it's already created, return the existing one.
  */
 export function initializeWebSocket(key, url) {
-  console.log("Initializing Web Socket...")
   if (!sockets[key]) {
+    console.log(`Initializing [${key}] Web Socket...`)
     const newSocket = new WebSocket(url);
 
     // Optional: set up default event listeners
