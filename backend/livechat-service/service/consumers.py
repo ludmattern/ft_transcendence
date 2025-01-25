@@ -1,94 +1,107 @@
 # consumers.py
 
+import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 import logging
 
 logger = logging.getLogger(__name__)
 
-
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = "general"
-        self.room_group_name = f"chat_{self.room_name}"
+        try:
+            # Initialize group_name to None
+            self.group_name = None
 
-        # Join room group
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
+            # Extract the user_id from the URL route
+            self.user_id = self.scope['url_route']['kwargs']['user_id']
+            
+            # Get the authenticated user from the scope
+            self.user = self.scope["user"]
 
-        await self.accept()
+            # Verify if the user is authenticated
+            if self.user.is_anonymous:
+                logger.warning("Anonymous user attempted to connect.")
+                await self.close()
+                return
+
+            # Verify if the user_id matches the authenticated user's ID
+            if str(self.user.id) != self.user_id:
+                logger.warning(f"User ID mismatch: {self.user.id} != {self.user_id}")
+                await self.close()
+                return
+
+            # Define the group name based on user_id
+            self.group_name = f'chat_{self.user_id}'
+
+            # Add the channel to the group
+            await self.channel_layer.group_add(
+                self.group_name,
+                self.channel_name
+            )
+
+            # Accept the WebSocket connection
+            await self.accept()
+            logger.info(f"WebSocket connection accepted for user_id: {self.user_id}")
+
+        except Exception as e:
+            logger.error(f"Error during WebSocket connection: {e}")
+            await self.close()
 
     async def disconnect(self, close_code):
-        # Leave room group
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+        # Check if 'group_name' has been set
+        if self.group_name:
+            await self.channel_layer.group_discard(
+                self.group_name,
+                self.channel_name
+            )
+            logger.info(f"WebSocket connection closed for user_id: {self.user_id}")
+        else:
+            logger.info(f"WebSocket connection closed without group for user_id: {getattr(self, 'user_id', 'unknown')}")
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        message_type = data.get('type')
+        try:
+            data = json.loads(text_data)
+            message = data.get('message')
 
-        if message_type == 'chat_message':
-            await self.handle_chat_message(data)
-        elif message_type == 'friend_request':
-            await self.handle_friend_request(data)
-        elif message_type == 'tournament_invite':
-            await self.handle_tournament_invite(data)
+            if not message:
+                await self.send(text_data=json.dumps({
+                    'error': 'No message provided.'
+                }))
+                logger.warning(f"No message provided by user_id {self.user_id}.")
+                return
 
-    async def handle_chat_message(self, data):
-        message = data['message']
-        username = data['username']
-        channel = data.get('channel', 'General')
+            if len(message) > 1000:
+                await self.send(text_data=json.dumps({
+                    'error': 'Message too long.'
+                }))
+                logger.warning(f"User_id {self.user_id} sent a message that's too long.")
+                return
 
-        if message.startswith('@'):
-            recipient, private_message = message.split(' ', 1)
-            recipient_username = recipient[1:]
-            await self.send_private_message(username, recipient_username, private_message)
-        else:
+            # Broadcast the message to the group
             await self.channel_layer.group_send(
-                self.room_group_name,
+                self.group_name,
                 {
                     'type': 'chat_message',
                     'message': message,
-                    'username': username,
-                    'channel': channel
+                    'sender_id': self.user_id,
                 }
             )
+            logger.debug(f"Message received from user_id {self.user_id}: {message}")
 
-    async def chat_message(self, event):
-        await self.send(text_data=json.dumps(event))
-
-    async def send_private_message(self, sender, recipient, message):
-        recipient_user = await self.get_user(recipient)
-        if recipient_user:
-            await self.channel_layer.group_send(
-                f"user_{recipient}",
-                {
-                    'type': 'chat_message',
-                    'message': message,
-                    'username': sender,
-                    'channel': 'Private'
-                }
-            )
-        else:
+        except json.JSONDecodeError:
+            logger.error(f"Invalid JSON format received from user_id {self.user_id}.")
             await self.send(text_data=json.dumps({
-                'error': f"User {recipient} not found."
+                'error': 'Invalid JSON format.'
             }))
 
-    async def handle_friend_request(self, data):
-        # Implement friend request logic here
-        pass
+    async def chat_message(self, event):
+        message = event['message']
+        sender_id = event['sender_id']
 
-    async def handle_tournament_invite(self, data):
-        # Implement tournament invite logic here
-        pass
-
-    @sync_to_async
-    def get_user(self, username):
-        try:
-            return ManualUser.objects.get(username=username)
-        except ManualUser.DoesNotExist:
-            return None
+        # Send the message to WebSocket
+        await self.send(text_data=json.dumps({
+            'message': message,
+            'sender_id': sender_id,
+        }))
+        logger.debug(f"Message sent to user_id {self.user_id}: {message}")
