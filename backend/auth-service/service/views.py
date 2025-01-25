@@ -194,7 +194,7 @@ def login_view(request):
             )
             access_token_str = access_token if isinstance(access_token, str) else access_token.decode('utf-8')
 
-            response = JsonResponse({'success': True, 'message': 'Logged in'})
+            response = JsonResponse({'success': True, 'message': 'Logged in', 'id': user.id})
             response.set_cookie(
                 key='access_token',
                 value=access_token_str,
