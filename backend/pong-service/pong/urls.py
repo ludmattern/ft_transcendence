@@ -1,6 +1,6 @@
 from django.urls import path
-from service import views
+from service.views import  join_matchmaking
 
 urlpatterns = [
-    path('join_matchmaking/', views.join_matchmaking, name='join_matchmaking'),
+    path('join_matchmaking/<str:user_id>/', join_matchmaking, name='join_matchmaking'),
 ]

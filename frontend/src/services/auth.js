@@ -70,6 +70,7 @@ export async function loginUser(username, password) {
   console.log("Response from backend:", data); 
 
   if (data.success) {
+    sessionStorage.setItem("userId", data.id);
     return data;
   } else {
     return (data.message);

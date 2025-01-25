@@ -16,7 +16,7 @@ INSTALLED_APPS = [
     'channels',
 ]
 
-# ROOT_URLCONF = 'pong.urls'
+ROOT_URLCONF = 'pong.urls'
 
 ASGI_APPLICATION = 'pong.asgi.application'
 

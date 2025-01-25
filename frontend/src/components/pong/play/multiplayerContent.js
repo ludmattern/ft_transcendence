@@ -140,7 +140,7 @@ export const multiplayerContent = createComponent({
         map: document.getElementById("mapSelect-matchmaking").value, 
         playerCount: parseInt(document.getElementById("playerCount-matchmaking").value, 10),
       };
-      launchMatchmaking(userId);
+      launchMatchmaking();
 
     });
 
@@ -157,9 +157,15 @@ export const multiplayerContent = createComponent({
   },
 });
 
-async function launchMatchmaking(userId) {
-  // Faire une requête fetch vers /join_matchmaking
-  const response = await fetch(`/join_matchmaking?user_id=${userId}`);
+async function launchMatchmaking() 
+{
+  const userId = sessionStorage.getItem("userId"); 
+  if (!userId) {
+    console.error("No userId found in sessionStorage");
+    return;
+  }  
+  console.log(userId);
+  const response = await fetch(`/api/pong-service/join_matchmaking/${userId}/`);
   const data = await response.json();
 
   if (data.status === "matched") {
