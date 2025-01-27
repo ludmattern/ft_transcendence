@@ -58,9 +58,9 @@ class GameManager {
 
 
   initWebSocket(gameConfig) {
-
+    const hostPort = window.location.host;
     const gameId = gameConfig.gameId ? gameConfig.gameId : this.generateGameId(gameConfig);
-    const wsUrl = `wss://10.12.4.3:8443/ws/pong/${gameId}/`;
+    const wsUrl = `wss://${hostPort}/ws/pong/${gameId}/`;
 
     console.log("Connecting to WebSocket:", wsUrl);
     this.socket = new WebSocket(wsUrl);
@@ -93,6 +93,8 @@ class GameManager {
       console.error("WebSocket error:", error);
     };
   }
+
+
 
   updateGameState(gameState) {
     console.log("Updating game state:", gameState);
