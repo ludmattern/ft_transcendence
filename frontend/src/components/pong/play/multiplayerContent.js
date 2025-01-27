@@ -56,10 +56,10 @@ export const multiplayerContent = createComponent({
                 ${generatePlayerCountSelector("private")}
 
                 <div class="input-group mb-3 mt-3">
-                    <input type="text" class="form-control" placeholder="Enter Room Code" aria-label="Room Code">
-                    <button class="btn btn-secondary">Join Room and Get Wrecked</button>
+                    <input type="text" class="form-control" id="privateRoomCode" placeholder="Enter Room Code" aria-label="Room Code">
+                    <button id="joinPrivate" class="btn btn-secondary">Join Room and Get Wrecked</button>
                 </div>
-                <button class="btn btn-primary" id="launchPrivate">Create a Room (So You Can Lose in Private)</button>
+                <button class="btn btn-primary" id="createPrivate">Create a Room (So You Can Lose in Private)</button>
             </div>
         </div>
     </section>
@@ -135,23 +135,30 @@ export const multiplayerContent = createComponent({
 
     const matchButton = document.getElementById("launchMatch");
     matchButton.addEventListener("click", () => {
-      const gameConfig = {
-        mode: "matchmaking", 
-        map: document.getElementById("mapSelect-matchmaking").value, 
-        playerCount: parseInt(document.getElementById("playerCount-matchmaking").value, 10),
-      };
+
       launchMatchmaking();
 
     });
 
-    const privateButton = document.getElementById("launchPrivate");
-    privateButton.addEventListener("click", () => {
-      const gameConfig = {
-        mode: "private", 
-        map: document.getElementById("mapSelect-private").value, 
-        playerCount: parseInt(document.getElementById("playerCount-private").value, 10),
-      };
-      gameManager.startGame(gameConfig);
+    const createPrivateButton = document.getElementById("createPrivate");
+    createPrivateButton.addEventListener("click", () => {
+      const roomCode = document.getElementById("privateRoomCode").value;
+      if (!roomCode) {
+        alert("Please enter a room code");
+        return;
+      }
+     
+      
+    });
+
+    const joinPrivateButton = document.getElementById("joinPrivate");
+    joinPrivateButton.addEventListener("click", () => {
+      const roomCode = document.getElementById("privateRoomCode").value;
+      if (!roomCode) {
+        alert("Please enter a room code");
+        return;
+      }
+      
       
     });
   },
@@ -169,12 +176,10 @@ async function launchMatchmaking()
   const data = await response.json();
 
   if (data.status === "matched") {
-    // On a un game_id
     console.log("Matched! game_id=", data.game_id);
     startMatchmakingGame(data.game_id, data.side, userId);
   } else {
     console.log("Waiting for another player...");
-    // Re-tenter dans 2 secondes
     setTimeout(() => launchMatchmaking(userId), 2000);
   }
 }
@@ -190,13 +195,11 @@ async function startMatchmakingGame(gameId, side, userId) {
     mode: "matchmaking",
     map: document.getElementById("mapSelect-matchmaking").value,
     playerCount: 2,
-    // On passe pas l’ID en param, ou on le stocke dedans
     gameId: gameId,
     side: side
 
   };
   gameManager.startGame(gameConfig);
-
 }
 
 

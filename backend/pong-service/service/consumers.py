@@ -5,11 +5,9 @@ from .game_manager import game_manager  # Le GameManager côté backend
 
 class PongConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        # Récupérer le game_id depuis l'URL
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         self.room_group_name = f"pong_game_{self.game_id}"
 
-        # Créer ou récupérer la partie dans le GameManager
         self.game = game_manager.get_or_create_game(self.game_id)
 
         # Ajouter le joueur au groupe WebSocket

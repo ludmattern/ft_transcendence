@@ -4,8 +4,8 @@ import Store  from "/src/3d/store.js";
 
 class GameManager {
   constructor() {
-    this.activeGame = null; // Référence à l'instance de la partie en cours
-    this.socket = null; // Référence au WebSocket en cours
+    this.activeGame = null;
+    this.socket = null; 
 
 
   }
