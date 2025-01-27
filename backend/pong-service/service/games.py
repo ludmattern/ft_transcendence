@@ -5,7 +5,7 @@ class BasePongGame:
     def __init__(self, game_id):
         self.game_id = game_id
         self.state = {
-            "ball": {"x": 0, "y": 0, "vx": 0.15, "vy": 0.15},
+            "ball": {"x": 0, "y": 0, "vx": 0.30, "vy": 0.30},
             "players": {
                 1: {"x": -0.8, "y": 0},  # Joueur 1
                 2: {"x": 0.8,  "y": 0},  # Joueur 2
@@ -81,9 +81,9 @@ class BasePongGame:
         self.state["ball"]["y"] = 0
 
         if direction == "right":
-            self.state["ball"]["vx"] = 0.15
+            self.state["ball"]["vx"] = 0.30
         else:
-            self.state["ball"]["vx"] = -0.15
+            self.state["ball"]["vx"] = -0.30
 
         # On peut donner une petite vitesse en y aléatoire si on veut
         self.state["ball"]["vy"] = 0.01

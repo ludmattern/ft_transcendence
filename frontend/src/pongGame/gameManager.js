@@ -29,15 +29,16 @@ class GameManager {
         }
       });
     }
-    else
+    else if (gameConfig.mode == "matchmaking")
     {
       document.addEventListener("keydown", (e) => {
         if (!this.socket) return;
+        const playerId = (gameConfig.side === "left") ? 1 : 2;
 
         if (e.key === "w") {
-          this.socket.send(JSON.stringify({ type: "move", direction: "up", player_id: 1 }));
+          this.socket.send(JSON.stringify({ type: "move", direction: "up", player_id: playerId }));
         } else if (e.key === "s") {
-          this.socket.send(JSON.stringify({ type: "move", direction: "down", player_id: 1 }));
+          this.socket.send(JSON.stringify({ type: "move", direction: "down", player_id: playerId }));
         }
       });
     }
