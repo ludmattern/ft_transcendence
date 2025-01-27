@@ -171,24 +171,32 @@ async function launchMatchmaking()
   if (data.status === "matched") {
     // On a un game_id
     console.log("Matched! game_id=", data.game_id);
-    startMatchmakingGame(data.game_id);
+    startMatchmakingGame(data.game_id, data.side, userId);
   } else {
-    console.log("En attente d’un 2e joueur...");
+    console.log("Waiting for another player...");
     // Re-tenter dans 2 secondes
     setTimeout(() => launchMatchmaking(userId), 2000);
   }
 }
 
-function startMatchmakingGame(gameId) {
-  // Ici, on construit le gameConfig
+async function startMatchmakingGame(gameId, side, userId) {
+
+  const response = await fetch(`/api/pong-service/leave_matchmaking/${userId}/`);
+  const responseData = await response.json();
+
+  console.log(responseData);
+
   const gameConfig = {
     mode: "matchmaking",
     map: document.getElementById("mapSelect-matchmaking").value,
     playerCount: 2,
     // On passe pas l’ID en param, ou on le stocke dedans
-    gameId: gameId
+    gameId: gameId,
+    side: side
+
   };
   gameManager.startGame(gameConfig);
+
 }
 
 

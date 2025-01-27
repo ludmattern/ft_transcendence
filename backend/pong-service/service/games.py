@@ -4,8 +4,10 @@ import time
 class BasePongGame:
     def __init__(self, game_id):
         self.game_id = game_id
+        self.max_score = 3
+        self.game_over = False
         self.state = {
-            "ball": {"x": 0, "y": 0, "vx": 0.15, "vy": 0.15},
+            "ball": {"x": 0, "y": 0, "vx": 0.30, "vy": 0.30},
             "players": {
                 1: {"x": -0.8, "y": 0},  # Joueur 1
                 2: {"x": 0.8,  "y": 0},  # Joueur 2
@@ -23,6 +25,8 @@ class BasePongGame:
             self.state["players"][player_id]["y"] -= 0.1
 
     def update(self):
+        if self.game_over:
+            return
         now = time.time()
         dt = now - self.last_update
         self.last_update = now
@@ -75,15 +79,18 @@ class BasePongGame:
         if ball["x"] > 1.2:
             self.state["scores"][1] += 1
             self.reset_ball(direction="left")
+            
+        if self.state["scores"][1] >= self.max_score or self.state["scores"][2] >= self.max_score:
+            self.game_over = True  # Marquer la fin de la partie
 
     def reset_ball(self, direction="right"):
         self.state["ball"]["x"] = 0
         self.state["ball"]["y"] = 0
 
         if direction == "right":
-            self.state["ball"]["vx"] = 0.15
+            self.state["ball"]["vx"] = 0.30
         else:
-            self.state["ball"]["vx"] = -0.15
+            self.state["ball"]["vx"] = -0.30
 
         # On peut donner une petite vitesse en y aléatoire si on veut
         self.state["ball"]["vy"] = 0.01

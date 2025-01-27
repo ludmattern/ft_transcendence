@@ -31,17 +31,14 @@ class PongConsumer(AsyncWebsocketConsumer):
         }))
 
     async def disconnect(self, close_code):
-        # Annuler la tâche de mise à jour du jeu si elle est active
         if hasattr(self, 'update_task'):
             self.update_task.cancel()
 
-        # Retirer le joueur du groupe WebSocket
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
 
-        # Optionnel : Nettoyer la partie si tous les joueurs ont quitté
         game_manager.cleanup_game(self.game_id)
 
     async def receive(self, text_data):
@@ -66,15 +63,39 @@ class PongConsumer(AsyncWebsocketConsumer):
         }))
 
     async def game_loop(self):
-        """Boucle qui met à jour l'état du jeu et envoie les mises à jour aux clients."""
         try:
             while True:
-                self.game.update()  # Mise à jour régulière (balle, collisions)
+                self.game.update()  # Mise à jour régulière
+                # Diffuser l'état du jeu
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {"type": "update_game_state"}
                 )
+
+                # Si la partie est terminée
+                if self.game.game_over:
+                    # Envoyer un message de fin
+                    await self.channel_layer.group_send(
+                        self.room_group_name,
+                        {"type": "game_over"}
+                    )
+                    break  # On sort de la boucle => arrête la mise à jour
+
                 await asyncio.sleep(0.05)  # 20 ticks/s
         except asyncio.CancelledError:
-            # La tâche a été annulée (par exemple, à la déconnexion)
             pass
+
+    async def game_over(self, event):
+        """Notifier le client que la partie est terminée."""
+        # Tu peux calculer quel joueur a gagné en regardant les scores
+        scores = self.game.state["scores"]
+        winner = 1 if scores[1] >= self.game.max_score else 2
+
+        await self.send(json.dumps({
+            "type": "game_over",
+            "winner": winner,
+            "final_scores": scores
+        }))
+
+        # On peut ensuite fermer la WebSocket côté serveur
+        await self.close()

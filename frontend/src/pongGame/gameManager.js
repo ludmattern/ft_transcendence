@@ -29,15 +29,16 @@ class GameManager {
         }
       });
     }
-    else
+    else if (gameConfig.mode == "matchmaking")
     {
       document.addEventListener("keydown", (e) => {
         if (!this.socket) return;
+        const playerId = (gameConfig.side === "left") ? 1 : 2;
 
         if (e.key === "w") {
-          this.socket.send(JSON.stringify({ type: "move", direction: "up", player_id: 1 }));
+          this.socket.send(JSON.stringify({ type: "move", direction: "up", player_id: playerId }));
         } else if (e.key === "s") {
-          this.socket.send(JSON.stringify({ type: "move", direction: "down", player_id: 1 }));
+          this.socket.send(JSON.stringify({ type: "move", direction: "down", player_id: playerId }));
         }
       });
     }
@@ -57,9 +58,9 @@ class GameManager {
 
 
   initWebSocket(gameConfig) {
-
+    const hostPort = window.location.host;
     const gameId = gameConfig.gameId ? gameConfig.gameId : this.generateGameId(gameConfig);
-    const wsUrl = `ws://localhost:3004/ws/pong/${gameId}/`;
+    const wsUrl = `wss://${hostPort}/ws/pong/${gameId}/`;
 
     console.log("Connecting to WebSocket:", wsUrl);
     this.socket = new WebSocket(wsUrl);
@@ -70,8 +71,15 @@ class GameManager {
 
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+    
       if (data.type === "game_state") {
         this.updateGameState(data.payload);
+      } else if (data.type === "game_over") {
+        console.log("Game over! Winner is player:", data.winner);
+        console.log("Final scores:", data.final_scores);
+    
+        this.socket.close();
+        switchwindow("home");
       }
     };
     
@@ -85,6 +93,8 @@ class GameManager {
       console.error("WebSocket error:", error);
     };
   }
+
+
 
   updateGameState(gameState) {
     console.log("Updating game state:", gameState);
