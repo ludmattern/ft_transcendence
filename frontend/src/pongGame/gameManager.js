@@ -71,8 +71,15 @@ class GameManager {
 
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
+    
       if (data.type === "game_state") {
         this.updateGameState(data.payload);
+      } else if (data.type === "game_over") {
+        console.log("Game over! Winner is player:", data.winner);
+        console.log("Final scores:", data.final_scores);
+    
+        this.socket.close();
+        switchwindow("home");
       }
     };
     
