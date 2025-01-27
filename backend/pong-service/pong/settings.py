@@ -16,6 +16,12 @@ INSTALLED_APPS = [
     'channels',
 ]
 
+MIGRATION_MODULES = {
+    'auth': None,
+    'contenttypes': None,
+
+}
+
 ROOT_URLCONF = 'pong.urls'
 
 ASGI_APPLICATION = 'pong.asgi.application'

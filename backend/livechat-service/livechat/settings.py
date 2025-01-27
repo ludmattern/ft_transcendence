@@ -16,6 +16,7 @@ INSTALLED_APPS = [
     'channels',
 ]
 
+
 ROOT_URLCONF = 'livechat.urls'
 
 WSGI_APPLICATION = 'livechat.wsgi.application'
@@ -25,7 +26,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis-livechat", 6379)],  # Match your REDIS_HOST and REDIS_PORT
+            "hosts": [("redis-livechat", 6379)],
         },
     },
 }
