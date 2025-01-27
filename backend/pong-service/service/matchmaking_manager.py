@@ -4,7 +4,6 @@ from .game_manager import game_manager
 class MatchmakingManager:
     def __init__(self):
         self.waiting_players = []
-        # match_found : { user_id: { "game_id": str, "players": [p1, p2], "side": "left"/"right" } }
         self.match_found = {}
 
     def join_queue(self, user_id):
@@ -23,8 +22,8 @@ class MatchmakingManager:
 
         # Si on a 2 joueurs => créer un match
         if len(self.waiting_players) >= 2:
-            p1 = self.waiting_players.pop(0)  # 1er joueur
-            p2 = self.waiting_players.pop(0)  # 2e joueur
+            p1 = self.waiting_players.pop(0)
+            p2 = self.waiting_players.pop(0)
             game_id = f"matchmaking_{uuid.uuid4()}"
             game_manager.get_or_create_game(game_id)
 
@@ -32,12 +31,12 @@ class MatchmakingManager:
             match_info_p1 = {
                 "game_id": game_id,
                 "players": [p1, p2],
-                "side": "left"    # p1 = côté gauche
+                "side": "left" 
             }
             match_info_p2 = {
                 "game_id": game_id,
                 "players": [p1, p2],
-                "side": "right"   # p2 = côté droit
+                "side": "right"  
             }
 
             self.match_found[p1] = match_info_p1
@@ -56,9 +55,7 @@ class MatchmakingManager:
         """Retirer un joueur de la file d'attente et vérifier s'il appartient à une partie."""
         if user_id in self.waiting_players:
             self.waiting_players.remove(user_id)
-            print(f"User {user_id} removed from matchmaking queue.")
         if user_id in self.match_found:
-            print(f"User {user_id} was in a game. Cleaning up...")
             del self.match_found[user_id]
 
 matchmaking_manager = MatchmakingManager()

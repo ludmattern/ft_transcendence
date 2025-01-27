@@ -60,7 +60,7 @@ class GameManager {
   initWebSocket(gameConfig) {
 
     const gameId = gameConfig.gameId ? gameConfig.gameId : this.generateGameId(gameConfig);
-    const wsUrl = `ws://localhost:3004/ws/pong/${gameId}/`;
+    const wsUrl = `wss://10.12.4.3:8443/ws/pong/${gameId}/`;
 
     console.log("Connecting to WebSocket:", wsUrl);
     this.socket = new WebSocket(wsUrl);
