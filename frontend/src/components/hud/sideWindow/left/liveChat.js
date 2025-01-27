@@ -2,7 +2,8 @@ import { getSocket } from "/src/services/socketManager.js";
 
 export function setupLiveChatEvents() {
   
-  const chatSocket = getSocket("chat");
+  const userId = sessionStorage.getItem("userId");
+  const chatSocket = getSocket("chat/" + userId );
   if (!chatSocket) {
     console.warn("Chat socket not initialized or user not authenticated.");
     return;
@@ -14,16 +15,13 @@ export function setupLiveChatEvents() {
     handleIncomingMessage(data);
   };
   
-  function handleIncomingMessage(data) {
-    console.log("Incoming chat message:", data);
-    // ...update DOM...
+  function handleIncomingMessage(data)
+  {
+    console.log("Incoming data: ", data);
   }
-  
-  const currentUsername = sessionStorage.getItem("registered_user");
-  console.log(currentUsername);
 
   function sendMessage(message) {
-    if (!currentUsername) {
+    if (!userId) {
       console.error("Username is not set. Cannot send message.");
       return;
     }
@@ -31,7 +29,7 @@ export function setupLiveChatEvents() {
     chatSocket.send(JSON.stringify({
       type: "chat_message",
       message,
-      username: currentUsername, // Use the stored username
+      username: userId, // Use the stored username
     }));
   }
 
