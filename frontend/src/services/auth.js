@@ -1,5 +1,6 @@
 import { initializeWebSocket } from "/src/services/socketManager.js";
 
+
 export async function isClientAuthenticated() {
 
   try {
@@ -23,15 +24,6 @@ export async function isClientAuthenticated() {
     if (data.new_access_token) {
       console.log("Got new token from backend");
     }
-
-    // Construct the WebSocket channel with the username
-    const chatChannel = `chat/${data.user_id}`;
-    const webSocketUrl = "ws://localhost:3003/ws/" + chatChannel;
-
-    console.log(`Initializing WebSocket with channel: ${chatChannel} and URL: ${webSocketUrl}`);
-
-    // Initialize the WebSocket with the customized channel
-    initializeWebSocket(chatChannel, webSocketUrl);
 
     return true;
   } catch (error) {
@@ -71,7 +63,14 @@ export async function loginUser(username, password) {
 
   if (data.success) {
     sessionStorage.setItem("userId", data.id);
+
+    const userId = sessionStorage.getItem("userId");
+    const chatChannel = `chat/${userId}`; // No trailing slash here
+    const webSocketUrl = `wss://`+ window.location.host + `/ws/${chatChannel}/`; // Single trailing slash
+    initializeWebSocket(chatChannel, webSocketUrl);
+    
     return data;
+
   } else {
     return (data.message);
   }

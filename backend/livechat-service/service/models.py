@@ -1,7 +1,7 @@
 from django.db import models
 
 class ManualUser(models.Model):
-    username = models.CharField(max_length=50, unique=True)
+    id = models.CharField(max_length=50, unique=True, primary_key=True)
 
     class Meta:
         db_table = "users"

@@ -2,5 +2,5 @@ from django.urls import path
 from service import views
 
 urlpatterns = [
-    path('chat/', views.chat_room, name='chat_room'),
+    path('chat/<str:user_id>/', views.chat_room, name='chat_room'),
 ]
