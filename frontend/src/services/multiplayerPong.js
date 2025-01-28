@@ -1,3 +1,4 @@
+import { gameManager } from "/src/pongGame/gameManager.js";
 
 let matchmakingPollId = null;
 let isInMatchmaking = false;
@@ -29,7 +30,6 @@ export async function joinRoom(roomCode)
       clearTimeout(privatePollId);
       privatePollId = null;
     }
-    leavePrivateButton.style.display = "none";
     startPrivateGame(data.game_id, data.side, userId, roomCode);
   } else {
     console.log("Waiting in room", roomCode);
@@ -54,6 +54,8 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
       map: document.getElementById("mapSelect-private").value,
       playerCount: parseInt(document.getElementById("playerCount-private").value, 10),
     };
+    document.getElementById("leavePrivate").style.display = "none";
+    document.getElementById("createPrivate").style.display = "block"
     gameManager.startGame(gameConfig);
   }
 
@@ -75,7 +77,6 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
         clearTimeout(matchmakingPollId);
         matchmakingPollId = null;
       }
-      leaveMatchButton.style.display = "none";  
       startMatchmakingGame(data.game_id, data.side, userId);
     } else {
       console.log("Waiting for another player...");
@@ -101,6 +102,8 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
       side: side
   
     };
+    document.getElementById("leaveMatch").style.display = "none";
+    document.getElementById("launchMatch").style.display = "block"
     gameManager.startGame(gameConfig);
   }
 

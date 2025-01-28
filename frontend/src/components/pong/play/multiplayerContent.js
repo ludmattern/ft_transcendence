@@ -1,5 +1,4 @@
 import { createComponent } from "/src/utils/component.js";
-import { gameManager } from "/src/pongGame/gameManager.js";
 import { joinRoom  , launchMatchmaking, leaveMatchmaking ,leavePrivate} from "/src/services/multiplayerPong.js";
 export const multiplayerContent = createComponent({
   tag: "multiplayerContent",
@@ -145,7 +144,6 @@ export const multiplayerContent = createComponent({
       leaveMatchmaking();
       leaveMatchButton.style.display = "none";
       matchButton.style.display = "block";
-
     });
 
     const createPrivateButton = document.getElementById("createPrivate");
