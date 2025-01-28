@@ -133,7 +133,9 @@ export const multiplayerContent = createComponent({
 
     const matchButton = document.getElementById("launchMatch");
     matchButton.addEventListener("click", () => {
-      leaveMatchButton.style.display = "inline-block";
+      leaveMatchButton.style.display = "block";
+      matchButton.style.display = "none";
+
       launchMatchmaking();
 
     });
@@ -142,6 +144,8 @@ export const multiplayerContent = createComponent({
     leaveMatchButton.addEventListener("click", async () => {
       leaveMatchmaking();
       leaveMatchButton.style.display = "none";
+      matchButton.style.display = "block";
+
     });
 
     const createPrivateButton = document.getElementById("createPrivate");
@@ -151,13 +155,15 @@ export const multiplayerContent = createComponent({
         alert("Please enter a room code");
         return;
       }
-      leavePrivateButton.style.display = "inline-block"; 
+      createPrivateButton.style.display = "none"; 
+      leavePrivateButton.style.display = "block"; 
       joinRoom(roomCode);             
     });
 
 const leavePrivateButton = document.getElementById("leavePrivate");
 leavePrivateButton.addEventListener("click", async () => {
   leavePrivateButton.style.display = "none";
+  createPrivateButton.style.display = "block"; 
   leavePrivate();
 });
 
