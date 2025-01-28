@@ -69,7 +69,7 @@ def check_auth_view(request):
             )
             return response
 
-        return JsonResponse({'success': True, 'message': 'Cookie still valid', 'user_id': user.id})
+        return JsonResponse({'success': True, 'message': 'Cookie still valid'})
 
     except jwt.ExpiredSignatureError:
         return JsonResponse({'success': False, 'message': 'Token expired'}, status=401)
@@ -254,7 +254,7 @@ def verify_2fa_view(request):
             return JsonResponse({
                 'success': False,
                 'message': 'User is already connected.'
-            }, status=403)
+             }, status=403)
 
         if user.twofa_method == "authenticator-app":
             totp = pyotp.TOTP(user.totp_secret)
