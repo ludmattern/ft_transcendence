@@ -34,7 +34,7 @@ export async function joinRoom(roomCode)
   } else {
     console.log("Waiting in room", roomCode);
     if (isInPrivateRoom) {
-      privatePollId = setTimeout(() => joinRoom(roomCode), 2000);
+      privatePollId = setTimeout(() => joinRoom(roomCode), 200);
     }
   }
 }
@@ -82,7 +82,7 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
       console.log("Waiting for another player...");
       if (isInMatchmaking) 
       {
-        matchmakingPollId = setTimeout(() => launchMatchmaking(), 1000);
+        matchmakingPollId = setTimeout(() => launchMatchmaking(), 200);
       }
     }
   }

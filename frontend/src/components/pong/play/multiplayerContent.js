@@ -150,7 +150,7 @@ export const multiplayerContent = createComponent({
     createPrivateButton.addEventListener("click", () => {
       const roomCode = document.getElementById("privateRoomCode").value;
       if (!roomCode) {
-        alert("Please enter a room code");
+        console.log("Enter a room code");
         return;
       }
       createPrivateButton.style.display = "none"; 

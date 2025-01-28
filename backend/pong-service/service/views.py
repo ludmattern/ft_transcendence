@@ -26,7 +26,6 @@ def join_matchmaking(request, user_id):
             "side": result["side"],
         })
     else:
-        # Sinon, indiquer que le joueur est en attente
         return JsonResponse({"status": "waiting"})
 
 
