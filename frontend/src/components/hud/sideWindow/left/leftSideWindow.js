@@ -1,12 +1,11 @@
 import { createComponent } from "/src/utils/component.js";
-import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
 import { startAnimation } from "/src/components/hud/index.js";
 import { setupLiveChatEvents } from "/src/components/hud/sideWindow/left/liveChat.js";
 
 export const leftSideWindow = createComponent({
   tag: "leftSideWindow",
 
-  // Générer le HTML
+  // Generate the HTML
   render: () => `
     <div class="d-flex flex-column">
       <div class="l-side-window left-side-window" id="l-tab-content-container">
@@ -23,63 +22,84 @@ export const leftSideWindow = createComponent({
             </div>
           </li>
         </ul>
-        <div class="l-tab-content" id="l-tab-content"></div>
+        <!-- Separate divs for INFO and COMM -->
+        <div id="l-tab-content-info" class="l-tab-content-info" style="display: block; overflow-y: auto; height: 100%; max-height: 300px;">
+          <div class="info-message">
+            <p>Welcome to the INFO tab! Add your informational content here.</p>
+          </div>
+        </div>
+        <div id="l-tab-content-comm" class="l-tab-content-comm d-flex flex-column" style="display: none; overflow: hidden; height: 100%; max-height: 300px;">
+          <!-- Messages container -->
+          <div class="messages-container" id="messages-container" style="flex-grow: 1; overflow-y: auto; padding: 10px;">
+            <!-- Chat messages will be dynamically added here -->
+          </div>
+          <!-- Message input container -->
+          <div class="message-input-container" id="message-input-container" style="display: flex; padding: 10px; background: #ffffff07;">
+            <input type="text" id="message-input" placeholder="Enter your message..." 
+                   class="form-control w-75 me-2 p-2" style="flex: 1; color: var(--content-color);" />
+            <button id="send-button" class="btn btn-primary">Send</button>
+          </div>
+        </div>
       </div>
     </div>
   `,
 
-  // Ajouter les événements après le chargement
+  // Attach events after rendering
   attachEvents: (el) => {
-    const tabContentContainer = el.querySelector("#l-tab-content");
     const tabs = el.querySelectorAll(".nav-link");
-    const expanders = el.querySelectorAll(".left-side-window-expander");
-    const leftSideWindow = el.querySelector(".l-tab-content");
+    const infoTabContent = el.querySelector("#l-tab-content-info");
+    const commTabContent = el.querySelector("#l-tab-content-comm");
 
-    if (!expanders.length || !leftSideWindow) {
-      console.warn("Expanders or left-side window not found in component.");
+    if (!infoTabContent || !commTabContent) {
+      console.error("INFO or COMM content containers not found.");
       return;
     }
 
-    expanders.forEach((expander) => {
-      expander.addEventListener("click", () => {
-        expander.classList.toggle("active");
-        leftSideWindow.classList.toggle("well-hidden");
-      });
-    });
-
-    // Gérer le clic sur les onglets
+    // Handle tab switching
     tabs.forEach((tab) =>
       tab.addEventListener("click", (e) => {
         e.preventDefault();
         const tabName = tab.dataset.tab;
 
-        // Mettre à jour l'état actif des onglets
+        // Update active state
         tabs.forEach((t) => t.classList.remove("active"));
         tab.classList.add("active");
 
-        // Charger le contenu correspondant
-        loadTabContent(tabName, tabContentContainer, el);
+        // Toggle visibility of tab content
+        if (tabName === "info") {
+          infoTabContent.style.display = "block";
+          commTabContent.style.display = "none";
+        } else if (tabName === "comm") {
+          infoTabContent.style.display = "none";
+          commTabContent.style.display = "flex";
+
+          // Set up live chat for the COMM tab
+          setupLiveChatEvents();
+        }
       })
     );
 
-    // Par défaut, charger le premier onglet actif
+    // Load the default active tab
     const activeTab = el.querySelector(".nav-link.active");
     if (activeTab) {
-      loadTabContent(activeTab.dataset.tab, tabContentContainer, el);
+      const tabName = activeTab.dataset.tab;
+      if (tabName === "info") {
+        infoTabContent.style.display = "block";
+        commTabContent.style.display = "none";
+      } else if (tabName === "comm") {
+        infoTabContent.style.display = "none";
+        commTabContent.style.display = "flex";
+        setupLiveChatEvents();
+      }
     }
 
-	const parentContainer = el.parentElement;
+    const parentContainer = el.parentElement;
     startAnimation(parentContainer, "light-animation", 1000);
-
   },
 });
 
 /**
- * Génère un élément de navigation (onglet) avec un lien.
- *
- * @param {string} label - Le label de l'onglet
- * @param {boolean} active - Si l'onglet est actif
- * @returns {string} - HTML de l'onglet
+ * Generates a navigation tab item.
  */
 function createNavItem(label, active = false) {
   return `
@@ -87,114 +107,8 @@ function createNavItem(label, active = false) {
       <span class="nav-link ${
         active ? "active" : ""
       }" data-tab="${label.toLowerCase()}">
-	  	<a href="#" data-tab="${label.toLowerCase()}">${label}</a>
-	  </span>
+        <a href="#" data-tab="${label.toLowerCase()}">${label}</a>
+      </span>
     </li>
   `;
-}
-
-/**
- * Charge dynamiquement le contenu de l'onglet spécifié.
- *
- * @param {string} tabName - Le nom de l'onglet
- * @param {HTMLElement} container - Conteneur pour le contenu de l'onglet
- * @param {HTMLElement} window - Fenêtre englobante
- */
-function loadTabContent(tabName, container, window) {
-  fetch("/src/context/tabsContent.json")
-    .then((response) => response.json())
-    .then((data) => {
-      const tabItems = data[tabName];
-      if (tabItems) {
-        container.innerHTML = ""; // Nettoyer le contenu existant
-
-        tabItems.forEach((item) => {
-          if (tabName === "comm") {
-            handleCommTab(item, container);
-          } else if (tabName === "info") {
-            const panelItem = infoPanelItem.render(item);
-            container.insertAdjacentHTML("beforeend", panelItem);
-            infoPanelItem.attachEvents(container.lastElementChild, item);
-          }
-        });
-
-        if (tabName === "comm") {
-          setupChatInput();
-          setupLiveChatEvents();
-        } else {
-          removeChatInput();
-        }
-      }
-    })
-    .catch((error) => {
-      console.error(`Error loading tab content for ${tabName}:`, error);
-    });
-}
-
-/**
- * Gère le contenu spécifique à l'onglet "COMM".
- */
-function handleCommTab(item, container) {
-  const lastChild = container.lastElementChild;
-  const isSameAuthorAndChannel =
-    lastChild &&
-    lastChild.dataset &&
-    lastChild.dataset.author === item.author &&
-    lastChild.dataset.channel === (item.channel || "General");
-
-  if (isSameAuthorAndChannel) {
-    const messageText = `
-      <div class="message-text" style="margin-top: 0.5rem;">
-        ${item.message}
-      </div>
-    `;
-    lastChild
-      .querySelector(".message-content-wrapper")
-      .insertAdjacentHTML("beforeend", messageText);
-  } else {
-    const panelItem = commMessage.render(item);
-    container.insertAdjacentHTML("beforeend", panelItem);
-
-    const appendedItem = container.lastElementChild;
-    appendedItem.dataset.author = item.author;
-    appendedItem.dataset.channel = item.channel || "General";
-
-    commMessage.attachEvents(appendedItem, item);
-  }
-}
-
-/**
- * Configure la zone d'entrée pour l'onglet "COMM".
- */
-function setupChatInput() {
-  const container = document.querySelector("#l-tab-content-container"); // Sélectionne le conteneur approprié
-
-  if (!container) {
-    console.error("l-tab-content-container not found.");
-    return;
-  }
-
-  if (!container.querySelector("#message-input-container")) {
-    const inputContainer = `
-		<div class="d-flex" 
-			 style="flex-wrap: wrap; background: #ffffff07; position: absolute; width: 100%;" 
-			 id="message-input-container">
-		  <input type="text" id="message-input" placeholder="Enter your message..." 
-				 class="form-control w-50 me-2 p-3" 
-				 style="flex: auto; color: var(--content-color);" />
-		  <button id="send-button" class="btn btn-sm bi bi-send">Send</button>
-		</div>
-	  `;
-    container.insertAdjacentHTML("beforeend", inputContainer); // Ajoute dans le bon conteneur
-  }
-}
-
-/**
- * Supprime la zone d'entrée pour les onglets autres que "COMM".
- */
-function removeChatInput() {
-  const inputContainer = document.getElementById("message-input-container");
-  if (inputContainer) {
-    inputContainer.remove();
-  }
 }

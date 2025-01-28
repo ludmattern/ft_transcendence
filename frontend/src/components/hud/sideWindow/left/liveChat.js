@@ -29,7 +29,7 @@ export function setupLiveChatEvents() {
     };
 
     chatSocket.send(JSON.stringify(payload));
-    if (channel === 'general') {
+    if (channel === 'private') {
       appendMessageToChatBox(payload, true);
     }
   }
@@ -86,67 +86,34 @@ export function setupLiveChatEvents() {
    */
 
   function appendMessageToChatBox(payload, isOutgoing) {
-    const { message, sender_id, channel } = payload;
-
-    // Find the chat box in the DOM
-    const chatBox = document.getElementById("l-tab-content");
+    const { message, author, channel } = payload;
+  
+    const chatBox = document.getElementById("messages-container");
     if (!chatBox) {
-      console.error("Chat box element not found in the DOM.");
+      console.error("Messages container not found.");
       return;
     }
-
-    // Create a new message wrapper div
+  
     const messageWrapper = document.createElement("div");
     messageWrapper.classList.add("message-content-wrapper");
-
-    // Apply classes based on message type
-    if (isOutgoing) {
-      messageWrapper.classList.add("outgoing"); // Your own messages
-    } else {
-      messageWrapper.classList.add("incoming"); // Messages from others
-    }
-
-    // Optionally, add channel-specific classes or indicators
-    if (channel.toLowerCase() === "general") {
-      messageWrapper.classList.add("general");
-    } else if (channel.toLowerCase() === "private") {
-      messageWrapper.classList.add("private");
-    }
-
-    // Create the message header
-    const messageHeader = document.createElement("div");
-    messageHeader.classList.add("message-header");
-
-    // Sender information
-    const senderSpan = document.createElement("span");
-    senderSpan.classList.add("sender");
-    senderSpan.textContent = isOutgoing ? "You" : `User ${sanitizeHTML(sender_id)}`;
-
-    // Timestamp
-    const timestampSpan = document.createElement("span");
-    timestampSpan.classList.add("timestamp");
-    timestampSpan.textContent = getCurrentTimestamp();
-
-    // Append sender and timestamp to the header
-    messageHeader.appendChild(senderSpan);
-    messageHeader.appendChild(timestampSpan);
-
-    // Create the message text
-    const messageText = document.createElement("div");
-    messageText.classList.add("message-text");
-    messageText.innerHTML = sanitizeHTML(message); // Safely set the message content
-
-    // Append header and text to the wrapper
-    messageWrapper.appendChild(messageHeader);
-    messageWrapper.appendChild(messageText);
-
-    // Append the message to the chat box
+    messageWrapper.classList.add(isOutgoing ? "outgoing" : "incoming");
+  
+    const messageHeader = `
+      <div class="message-header">
+        <span class="sender">${isOutgoing ? "You" : `User ${author}`}</span>
+        <span class="timestamp">${getCurrentTimestamp()}</span>
+      </div>
+    `;
+  
+    const messageText = `
+      <div class="message-text">${sanitizeHTML(message)}</div>
+    `;
+  
+    messageWrapper.innerHTML = messageHeader + messageText;
+  
     chatBox.appendChild(messageWrapper);
-
-    // Auto-scroll to the latest message
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the latest message
   }
-
   /**
    * Handles incoming messages from the WebSocket.
    * @param {Object} data - The incoming message data.
