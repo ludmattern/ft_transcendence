@@ -16,8 +16,6 @@ export const leftSideWindow = createComponent({
             <div class="container">
               <div class="left-side-window-expander active" id="l-sw-expander">
                 <span class="l-line"></span>
-                <span class="l-line"></span>
-                <span class="l-line"></span>
               </div>
             </div>
           </li>
@@ -68,12 +66,13 @@ export const leftSideWindow = createComponent({
         // Toggle visibility of tab content
         if (tabName === "info") {
           infoTabContent.style.display = "block";
-          commTabContent.style.display = "none";
+          commTabContent.style.display = "none"; // Fully hide COMM content
+          clearCommMessages(); // Clear COMM messages when switching to INFO
+          removeChatInput(); // Remove input field when switching to INFO
         } else if (tabName === "comm") {
           infoTabContent.style.display = "none";
-          commTabContent.style.display = "flex";
-
-          // Set up live chat for the COMM tab
+          commTabContent.style.display = "flex"; // Show COMM content
+          setupChatInput(); // Add input field when switching to COMM
           setupLiveChatEvents();
         }
       })
@@ -86,9 +85,12 @@ export const leftSideWindow = createComponent({
       if (tabName === "info") {
         infoTabContent.style.display = "block";
         commTabContent.style.display = "none";
+        clearCommMessages();
+        removeChatInput();
       } else if (tabName === "comm") {
         infoTabContent.style.display = "none";
         commTabContent.style.display = "flex";
+        setupChatInput();
         setupLiveChatEvents();
       }
     }
@@ -111,4 +113,47 @@ function createNavItem(label, active = false) {
       </span>
     </li>
   `;
+}
+
+/**
+ * Dynamically adds the input field and send button for the COMM tab.
+ */
+function setupChatInput() {
+  const commTabContent = document.querySelector("#l-tab-content-comm");
+
+  if (!commTabContent) {
+    console.error("COMM content container not found.");
+    return;
+  }
+
+  if (!document.querySelector("#message-input-container")) {
+    const inputContainer = `
+      <div class="message-input-container" id="message-input-container" style="display: flex; padding: 10px; background: #ffffff07; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+        <input type="text" id="message-input" placeholder="Enter your message..." 
+               class="form-control w-75 me-2 p-2" style="flex: 1; color: var(--content-color);" />
+        <button id="send-button" class="btn btn-primary">Send</button>
+      </div>
+    `;
+    commTabContent.insertAdjacentHTML("beforeend", inputContainer);
+  }
+}
+
+/**
+ * Removes the input field and send button when switching away from the COMM tab.
+ */
+function removeChatInput() {
+  const inputContainer = document.querySelector("#message-input-container");
+  if (inputContainer) {
+    inputContainer.remove();
+  }
+}
+
+/**
+ * Clears all messages from the COMM tab when switching to another tab.
+ */
+function clearCommMessages() {
+  const messagesContainer = document.querySelector("#messages-container");
+  if (messagesContainer) {
+    messagesContainer.innerHTML = ""; // Clear all messages
+  }
 }
