@@ -147,22 +147,84 @@ export const multiplayerContent = createComponent({
         alert("Please enter a room code");
         return;
       }
-     
-      
+      createRoom(roomCode) 
     });
 
-    const joinPrivateButton = document.getElementById("joinPrivate");
-    joinPrivateButton.addEventListener("click", () => {
-      const roomCode = document.getElementById("privateRoomCode").value;
-      if (!roomCode) {
-        alert("Please enter a room code");
-        return;
-      }
-      
-      
-    });
-  },
+async function createRoom(roomCode) 
+{
+  const userId = sessionStorage.getItem("userId");
+  if (!userId) {
+    console.error("No userId");
+    return;
+  }
+  const response = await fetch("/api/pong-service/join_private_room/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ room_code: roomCode, user_id: userId })
+  });
+  const data = await response.json();
+  if (data.status === "matched") {
+    console.log("Matched room:", data.game_id);
+    startPrivateGame(data.game_id, data.side, userId, roomCode);
+  } else {
+    console.log("Waiting in room", roomCode);
+    setTimeout(() => joinRoom(roomCode), 2000);
+  }
+}
+
+const joinPrivateButton = document.getElementById("joinPrivate");
+joinPrivateButton.addEventListener("click", () => {
+  const roomCode = document.getElementById("privateRoomCode").value;
+  if (!roomCode) {
+    alert("Please enter a room code");
+    return;
+  }
+  joinRoom(roomCode);
 });
+},
+});
+
+async function joinRoom(roomCode) {
+const userId = sessionStorage.getItem("userId");
+if (!userId) {
+  console.error("No userId");
+  return;
+}
+const response = await fetch("/api/pong-service/join_private_room/", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ room_code: roomCode, user_id: userId })
+});
+const data = await response.json();
+if (data.status === "matched") {
+  console.log("Matched room:", data.game_id);
+  startPrivateGame(data.game_id, data.side, userId, roomCode);
+} else {
+  console.log("Waiting in room", roomCode);
+  setTimeout(() => joinRoom(roomCode), 2000);
+}
+}
+
+async function startPrivateGame(gameId,side,userId, roomCode) {
+  const response = await fetch(`/api/pong-service/leave_private_room/` , {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ room_code: roomCode, user_id: userId })
+  });
+  const responseData = await response.json();
+
+  console.log(responseData);
+  const gameConfig = {
+    mode: "private",
+    gameId: gameId,
+    side: side,
+    map: document.getElementById("mapSelect-private").value,
+    playerCount: parseInt(document.getElementById("playerCount-private").value, 10),
+  };
+  gameManager.startGame(gameConfig);
+}
+
+
 
 async function launchMatchmaking() 
 {
