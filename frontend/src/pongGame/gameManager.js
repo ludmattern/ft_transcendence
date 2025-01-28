@@ -29,7 +29,7 @@ class GameManager {
         }
       });
     }
-    else if (gameConfig.mode == "matchmaking")
+    else if (gameConfig.mode == "matchmaking" || gameConfig.mode == "private")
     {
       document.addEventListener("keydown", (e) => {
         if (!this.socket) return;

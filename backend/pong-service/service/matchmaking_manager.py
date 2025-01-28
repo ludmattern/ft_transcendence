@@ -42,10 +42,6 @@ class MatchmakingManager:
             self.match_found[p1] = match_info_p1
             self.match_found[p2] = match_info_p2
 
-            # On renvoie le match seulement pour le joueur qui vient de faire la requête
-            # => Il s'agit donc de p2 si c'est lui qui a déclenché la pop(0) pop(0).
-            #  Mais en fait, on ne sait pas lequel appelle la méthode en dernier.
-            #  On va donc renvoyer match_info_p2 si user_id == p2, sinon match_info_p1.
             if user_id == p1:
                 return match_info_p1
             else:

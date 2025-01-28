@@ -1,6 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { gameManager } from "/src/pongGame/gameManager.js";
-
+import { joinRoom  , launchMatchmaking, leaveMatchmaking ,leavePrivate} from "/src/services/multiplayerPong.js";
 export const multiplayerContent = createComponent({
   tag: "multiplayerContent",
 
@@ -45,6 +45,7 @@ export const multiplayerContent = createComponent({
                 ${generatePlayerCountSelector("matchmaking")}
 
                 <button class="btn btn-danger mt-3" id="launchMatch">Queue Up for Instant Regret</button>
+                <button class="btn btn-secondary mt-3" id="leaveMatch" style="display: none;">Leave Matchmaking</button>
             </div>
 
             <!-- Private Match -->
@@ -57,20 +58,20 @@ export const multiplayerContent = createComponent({
 
                 <div class="input-group mb-3 mt-3">
                     <input type="text" class="form-control" id="privateRoomCode" placeholder="Enter Room Code" aria-label="Room Code">
-                    <button id="joinPrivate" class="btn btn-secondary">Join Room and Get Wrecked</button>
                 </div>
-                <button class="btn btn-primary" id="createPrivate">Create a Room (So You Can Lose in Private)</button>
+                <button class="btn btn-primary" id="createPrivate">Create or Join Room (So You Can Lose in Private)</button>
+                <button class="btn btn-secondary mt-3" id="leavePrivate" style="display: none;">Leave Room</button>
             </div>
         </div>
     </section>
   `,
 
   attachEvents: (el) => {
-    // Gestion des onglets
+
+
     const tabs = el.querySelectorAll(".nav-link");
     const tabPanes = el.querySelectorAll(".tab-pane");
   
-    // Restaurer l'onglet actif depuis sessionStorage
     const savedTabId = sessionStorage.getItem("activeTab");
     if (savedTabId) {
       tabs.forEach(tab => tab.classList.remove("active"));
@@ -119,10 +120,7 @@ export const multiplayerContent = createComponent({
       });
     });
 
-
     const localButton = document.getElementById("launchLocal");
-
-
     localButton.addEventListener("click", () => {
       const gameConfig = {
         mode: "local", 
@@ -135,9 +133,15 @@ export const multiplayerContent = createComponent({
 
     const matchButton = document.getElementById("launchMatch");
     matchButton.addEventListener("click", () => {
-
+      leaveMatchButton.style.display = "inline-block";
       launchMatchmaking();
 
+    });
+
+    const leaveMatchButton = document.getElementById("leaveMatch");
+    leaveMatchButton.addEventListener("click", async () => {
+      leaveMatchmaking();
+      leaveMatchButton.style.display = "none";
     });
 
     const createPrivateButton = document.getElementById("createPrivate");
@@ -147,61 +151,18 @@ export const multiplayerContent = createComponent({
         alert("Please enter a room code");
         return;
       }
-     
-      
+      leavePrivateButton.style.display = "inline-block"; 
+      joinRoom(roomCode);             
     });
 
-    const joinPrivateButton = document.getElementById("joinPrivate");
-    joinPrivateButton.addEventListener("click", () => {
-      const roomCode = document.getElementById("privateRoomCode").value;
-      if (!roomCode) {
-        alert("Please enter a room code");
-        return;
-      }
-      
-      
-    });
-  },
+const leavePrivateButton = document.getElementById("leavePrivate");
+leavePrivateButton.addEventListener("click", async () => {
+  leavePrivateButton.style.display = "none";
+  leavePrivate();
 });
 
-async function launchMatchmaking() 
-{
-  const userId = sessionStorage.getItem("userId"); 
-  if (!userId) {
-    console.error("No userId found in sessionStorage");
-    return;
-  }  
-  console.log(userId);
-  const response = await fetch(`/api/pong-service/join_matchmaking/${userId}/`);
-  const data = await response.json();
-
-  if (data.status === "matched") {
-    console.log("Matched! game_id=", data.game_id);
-    startMatchmakingGame(data.game_id, data.side, userId);
-  } else {
-    console.log("Waiting for another player...");
-    setTimeout(() => launchMatchmaking(userId), 2000);
-  }
-}
-
-async function startMatchmakingGame(gameId, side, userId) {
-
-  const response = await fetch(`/api/pong-service/leave_matchmaking/${userId}/`);
-  const responseData = await response.json();
-
-  console.log(responseData);
-
-  const gameConfig = {
-    mode: "matchmaking",
-    map: document.getElementById("mapSelect-matchmaking").value,
-    playerCount: 2,
-    gameId: gameId,
-    side: side
-
-  };
-  gameManager.startGame(gameConfig);
-}
-
+},
+});
 
 /**
  * Génère le sélecteur de map (avec un identifiant spécifique)
