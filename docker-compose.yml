@@ -128,6 +128,21 @@ services:
     ports:
       - "3004:3004"
 
+  matchmaking-service:
+    build:
+      context: ./backend/matchmaking-service
+    container_name: matchmaking_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./secret/.env
+    networks:
+      - backend_network
+      - frontend_network
+    ports:
+      - "3005:3005"
+
   nginx:
     build:
       context: ./nginx
@@ -147,6 +162,8 @@ services:
       livechat-service:
         condition: service_started
       pong-service:
+        condition: service_started
+      matchmaking-service:
         condition: service_started
     networks:
       - frontend_network

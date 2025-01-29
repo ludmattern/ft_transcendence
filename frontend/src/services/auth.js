@@ -117,8 +117,6 @@ export async function registerUser(id, password, email, is2FAEnabled, twoFAMetho
   }
 }
 
-
-
 export async function verifyTwoFACode(username, twofaCode) {
   const response = await fetch("/api/auth-service/verify-2fa/", {
     method: "POST",

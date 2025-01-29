@@ -17,7 +17,7 @@ export async function joinRoom(roomCode)
     console.error("No userId");
     return;
   }
-  const response = await fetch("/api/pong-service/join_private_room/", {
+  const response = await fetch("/api/matchmaking-service/join_private_room/", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ room_code: roomCode, user_id: userId })
@@ -39,7 +39,7 @@ export async function joinRoom(roomCode)
   }
 }
 export async function startPrivateGame(gameId,side,userId, roomCode) {
-    const response = await fetch(`/api/pong-service/leave_private_room/` , {
+    const response = await fetch(`/api/matchmaking-service/leave_private_room/` , {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ room_code: roomCode, user_id: userId })
@@ -67,7 +67,7 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
       console.error("No userId found in sessionStorage");
       return;
     }  
-    const response = await fetch(`/api/pong-service/join_matchmaking/${userId}/`);
+    const response = await fetch(`/api/matchmaking-service/join_matchmaking/${userId}/`);
     const data = await response.json();
   
     if (data.status === "matched") {
@@ -89,7 +89,7 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
 
   export async function startMatchmakingGame(gameId, side, userId) {
   
-    const response = await fetch(`/api/pong-service/leave_matchmaking/${userId}/`);
+    const response = await fetch(`/api/matchmaking-service/leave_matchmaking/${userId}/`);
     const responseData = await response.json();
   
     console.log(responseData);
@@ -116,7 +116,7 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
     const userId = sessionStorage.getItem("userId"); 
     if (!userId) 
       return;
-    const resp = await fetch(`/api/pong-service/leave_matchmaking/${userId}/`);
+    const resp = await fetch(`/api/matchmaking-service/leave_matchmaking/${userId}/`);
     console.log("Left matchmaking:", await resp.json());
   }
 
@@ -128,7 +128,7 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
       }
       const userId = sessionStorage.getItem("userId");
       const roomCode = document.getElementById("privateRoomCode").value;
-      await fetch("/api/pong-service/leave_private_room/", {
+      await fetch("/api/matchmaking-service/leave_private_room/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ room_code: roomCode, user_id: userId })
