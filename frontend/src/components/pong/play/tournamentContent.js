@@ -35,7 +35,7 @@ export const tournamentContent = createComponent({
                 ${generateTournamentSizeSelector()}
 
                 <div class="text-center">
-                    <button class="btn btn-danger btn-lg mt-3">Create This Mess</button>
+                    <button class="btn btn-danger btn-lg mt-3" id="createTourn">Create This Mess</button>
                 </div>
             </div>
 
@@ -47,15 +47,13 @@ export const tournamentContent = createComponent({
                 <div class="mb-3">
                     <label for="tournamentList" class="form-label text-white">Select a Tournament to Crash</label>
                     <select class="form-select" id="tournamentList">
-                        <option value="tournament1">The Arena of Despair (8 Players)</option>
-                        <option value="tournament2">The Noob Gauntlet (16 Players)</option>
-                        <option value="tournament3">The Brutal Slaughterhouse (4 Players)</option>
+                        
                     </select>
                     <small class="text-muted">Not that it matters, you'll be out in round one.</small>
                 </div>
 
                 <div class="text-center">
-                    <button class="btn btn-primary mt-3">Join and Get Wrecked</button>
+                    <button class="btn btn-primary mt-3" id="joinTourn">Join and Get Wrecked</button>
                 </div>
             </div>
         </div>
@@ -116,8 +114,77 @@ export const tournamentContent = createComponent({
         sessionStorage.setItem(key, select.value);
       });
     });
+
+    loadTournaments();
+    const createTourn = document.getElementById("createTourn");
+    createTourn.addEventListener("click", () => {
+      createTournament();
+    });
+    const joinTourn = document.getElementById("joinTourn");
+    joinTourn.addEventListener("click", () => {
+      registerPlayer();
+    });
   }  
 });
+
+async function createTournament() {
+  const userId = sessionStorage.getItem("userId");
+  const name = "MyTournament"; 
+  const size = parseInt(document.getElementById("tournamentSize").value, 10);
+  const mapChoice = document.getElementById("mapSelect").value;
+
+  const response = await fetch("/api/matchmaking-service/create_tournament/", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      user_id: userId,
+      name,
+      size,
+      map: mapChoice
+    })
+  });
+  const data = await response.json();
+  console.log("Created tournament:", data.tournament_id);
+  loadTournaments();
+
+}
+
+
+async function registerPlayer(tournamentId, alias) {
+  const userId = sessionStorage.getItem("userId");
+  const response = await fetch("/api/matchmaking-service/register_player/", {
+    method: "POST",
+    headers: { "Content-Type":"application/json" },
+    body: JSON.stringify({
+      tournament_id: tournamentId,
+      user_id: userId,
+      alias: alias
+    })
+  });
+  const data = await response.json();
+  console.log("Register result:", data);
+}
+
+async function loadTournaments() {
+  try {
+    const response = await fetch("/api/matchmaking-service/list_tournaments/");
+    const data = await response.json();
+
+    const tournamentSelect = document.getElementById("tournamentList");
+    
+    tournamentSelect.innerHTML = "";
+
+    data.forEach(t => {
+      const option = document.createElement("option");
+      option.value = t.tournament_id; 
+      option.textContent = `${t.name} (${t.size} players) - ${t.status}`;
+      tournamentSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Failed to load tournaments:", error);
+  }
+}
+
 
 /**
  * Sélecteur du type de tournoi (Local ou Online)

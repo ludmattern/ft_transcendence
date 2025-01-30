@@ -180,7 +180,7 @@ def login_view(request):
         user.session_token = new_session_token_str
         user.save()
 
-        response = JsonResponse({'success': True, 'message': 'Logged in', 'id': user.id})
+        response = JsonResponse({'success': True, 'message': 'Logged in', 'id': user.id,  'username': user.username})
         response.set_cookie(
             key='access_token',
             value=new_session_token_str,

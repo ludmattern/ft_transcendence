@@ -125,9 +125,10 @@ function loadTabContent(tabName, container) {
 
     // Convertir ici en string pour être sûr d'avoir le même type
     const userId = sessionStorage.getItem("userId").toString();
+    const username = sessionStorage.getItem("username").toString();
 
     tabItems.forEach((item) => {
-      renderCommMessage(item, container, userId);
+      renderCommMessage(item, container, userId, username);
     });
 
     setupChatInput(container);

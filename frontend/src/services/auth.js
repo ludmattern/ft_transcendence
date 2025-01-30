@@ -68,6 +68,7 @@ export async function loginUser(username, password) {
 
   if (data.success) {
     sessionStorage.setItem("userId", data.id);
+    sessionStorage.setItem("username", data.username);
 
     const userId = sessionStorage.getItem("userId");
     const chatChannel = `chat/${userId}`; // No trailing slash here

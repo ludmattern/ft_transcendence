@@ -35,7 +35,7 @@ export const commMessage = createComponent({
   render: (item) => {
     const isUser = !!item.isUser;
     const isPrivate = item.channel === "Private";
-    const displayAuthor = isUser ? "You" : item.author;
+    const displayAuthor = isUser ? "You" : item.username;
 
     console.log("item", item);
     const rawTimestamp = safeToISOString(item.timestamp);
