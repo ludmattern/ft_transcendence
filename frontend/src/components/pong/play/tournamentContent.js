@@ -73,13 +73,14 @@ export const tournamentContent = createComponent({
                         <!-- List of joined tournaments will be inserted dynamically -->
                     </select>
                 </div>
-                <div class="mt-4" id="nextMatchContainer" style="display: none;">
+              
+                <div class="text-center">
+                    <button class="btn btn-success mt-3" id="viewTournament">View Tournament</button>
+                </div>
+                 <div class="mt-4" id="nextMatchContainer" style="display: none;">
                   <h4 class="text-white">Upcoming Match</h4>
                   <p class="text-secondary" id="nextMatchInfo"></p>
                   <button class="btn btn-warning mt-2" id="joinNextMatch" style="display: none;">Join Match</button>
-                </div>
-                <div class="text-center">
-                    <button class="btn btn-success mt-3" id="viewTournament">View Tournament</button>
                 </div>
             </div>   
         </div>
@@ -146,26 +147,87 @@ export const tournamentContent = createComponent({
       loadMyTournaments();
     });
 
-    document.getElementById("joinNextMatch").addEventListener("click", () => {
-      const tournamentId = document.getElementById("joinNextMatch").dataset.tournamentId;
-      if (!tournamentId) return;
-    
-      fetch(`/api/matchmaking-service/get_current_match/`, {
+    const viewTournamentBtn = document.getElementById("viewTournament");
+    viewTournamentBtn.addEventListener("click", () => {
+        const tournamentSelect = document.getElementById("myTournamentList");
+        const selectedTournamentId = tournamentSelect.value;
+        
+        if (!selectedTournamentId) {
+            alert("Please select a tournament first!");
+            return;
+        }
+        
+        displayTournamentDetails(selectedTournamentId);
+    });
+
+    async function displayTournamentDetails(tournamentId) {
+      const userId = sessionStorage.getItem("userId");
+      if (!userId) {
+          console.error("No userId found");
+          return;
+      }
+  
+      try {
+          const response = await fetch(`/api/matchmaking-service/get_current_match/`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ tournament_id: tournamentId })
+          });
+  
+          const data = await response.json();
+  
+          let nextMatchContainer = document.getElementById("nextMatchContainer");
+          let nextMatchInfo = document.getElementById("nextMatchInfo");
+          let joinNextMatchBtn = document.getElementById("joinNextMatch");
+  
+          if (data.match) {
+              const player1 = data.match[0];
+              const player2 = data.match[1];
+  
+              nextMatchInfo.textContent = `Next match: ${player1.alias} vs ${player2.alias}`;
+  
+              const isUserInMatch = player1.user_id == userId || player2.user_id == userId;
+              
+              if (isUserInMatch) {
+                  joinNextMatchBtn.dataset.tournamentId = tournamentId;
+                  joinNextMatchBtn.style.display = "block";
+              } else {
+                  joinNextMatchBtn.style.display = "none";
+              }
+  
+              nextMatchContainer.style.display = "block";
+          } else {
+              nextMatchContainer.style.display = "none";
+              joinNextMatchBtn.style.display = "none";
+          }
+  
+      } catch (error) {
+          console.error("Failed to load tournament details:", error);
+      }
+  }
+  
+
+  document.getElementById("joinNextMatch").addEventListener("click", () => {
+    const tournamentId = document.getElementById("joinNextMatch").dataset.tournamentId;
+    if (!tournamentId) return;
+
+    fetch(`/api/matchmaking-service/get_current_match/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tournament_id: tournamentId })
-      })
-      .then(response => response.json())
-      .then(data => {
+    })
+    .then(response => response.json())
+    .then(data => {
         if (data.match) {
-          const gameId = `tournament_${tournamentId}_${data.match[0].user_id}_vs_${data.match[1].user_id}`;
-          //ici lancer le matchmaking d ela game en question
+            const gameId = `tournament_${tournamentId}_${data.match[0].user_id}_vs_${data.match[1].user_id}`;
+            //ici lancer la game 
         } else {
-          alert("No match available yet!");
+            alert("No match available yet!");
         }
-      })
-      .catch(error => console.error("Error joining match:", error));
-    });
+    })
+    .catch(error => console.error("Error joining match:", error));
+});
+
 
     loadTournaments();
     const createTourn = document.getElementById("createTourn");
