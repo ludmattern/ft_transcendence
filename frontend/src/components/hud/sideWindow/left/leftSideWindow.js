@@ -229,7 +229,7 @@ function setupChatInput() {
         <input type="text" id="message-input" placeholder="Enter your message..." 
                class="form-control w-50 me-2 p-3" 
                style="flex: auto; color: var(--content-color);" />
-        <button class="btn btn-sm bi bi-send">Send</button>
+        <button id="chat-send-button" class="btn btn-sm">Send</button>
       </div>
     `;
     container.insertAdjacentHTML("beforeend", inputContainer);
