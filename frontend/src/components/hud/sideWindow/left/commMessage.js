@@ -1,33 +1,69 @@
 import { createComponent } from "/src/utils/component.js";
 import { showContextMenu } from "/src/components/hud/sideWindow/left/contextMenu.js";
 
+function safeToISOString(timestamp) {
+	if (!timestamp) return "";
+  
+	let dt = new Date(timestamp);
+	if (isNaN(dt)) {
+	  const fallbackString = new Date().toDateString() + " " + timestamp;
+	  dt = new Date(fallbackString);
+	  if (isNaN(dt)) {
+		return "";
+	  }
+	}
+	return dt.toISOString();
+  }
+
+function formatTimestamp(timestamp) {
+	console.log("timestamp", timestamp);
+   let dateObj = new Date(timestamp);
+
+   if (isNaN(dateObj)) {
+     const fallbackString = new Date().toDateString() + " " + timestamp;
+     dateObj = new Date(fallbackString);
+   }
+  
+  const diffMs = Date.now() - dateObj.getTime();
+  // Moins de 60 secondes ?
+  return dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
 export const commMessage = createComponent({
   tag: "commMessage",
 
   render: (item) => {
     const isUser = !!item.isUser;
     const isPrivate = item.channel === "Private";
-	const displayAuthor = isUser ? "You" : item.author;
+    const displayAuthor = isUser ? "You" : item.author;
+
+    console.log("item", item);
+    const rawTimestamp = safeToISOString(item.timestamp);
 
     return `
       <div class="message ${isUser ? "user-message" : "other-message"}" 
-           style="display: flex; padding: 1rem; ${isPrivate ? "color: #ffff59;" : "color: var(--content-color);"}">
+           style="display: flex; padding: 1rem; ${
+             isPrivate ? "color: #ffff59;" : "color: var(--content-color);"
+           }"
+		   data-rawtimestamp="${rawTimestamp}"
+		>
         ${
           !isUser
             ? `<img class="profile-picture" 
-                   src="${item.profilePicture || "/src/assets/img/default-profile-40.png"}" 
+                   src="${
+                     item.profilePicture ||
+                     "/src/assets/img/default-profile-40.png"
+                   }" 
                    alt="${displayAuthor}'s profile picture" />`
             : ""
         }
         <div class="message-content-wrapper">
           <div class="message-header">
-            <span class="channel">${isPrivate ? "[Private]" : "[General]"}</span>
-            ${
-              !isUser
-                ? `<span class="author">${displayAuthor}</span>`
-                : ""
-            }
-            <span class="timestamp">${item.timestamp || "Just now"}</span>
+            <span class="channel">${
+              isPrivate ? "[Private]" : "[General]"
+            }</span>
+            ${!isUser ? `<span class="author">${displayAuthor}</span>` : ""}
+           <span class="timestamp">${formatTimestamp(item.timestamp)}</span>
           </div>
           <div class="message-text" style="margin-top: 0.5rem;">
             ${item.message}
