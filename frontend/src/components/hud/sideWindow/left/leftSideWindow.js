@@ -6,7 +6,6 @@ import { getSocket } from "/src/services/socketManager.js";
 export const leftSideWindow = createComponent({
   tag: "leftSideWindow",
 
-  // Générer le HTML
   render: () => `
     <div class="d-flex flex-column">
       <div class="l-side-window left-side-window" id="l-tab-content-container">
@@ -174,25 +173,16 @@ function renderCommMessage(item, container, currentUserId) {
 
   if (isSameAuthorAndChannel) {
 	const lastTimeStr = lastChild.dataset.rawtimestamp;
-	console.log("============================================");
-	console.log("lastChild", lastChild);
-	console.log("lastChild.dataset", lastChild.dataset);
-	console.log("lastTimeStr", lastTimeStr);
 	if (lastTimeStr) {
 		const lastDate = new Date(lastTimeStr);
-		console.log("lastDate", lastDate);
-		console.log("extendedItem", extendedItem);
 		const newDate = new Date(extendedItem.timestamp);
-		console.log("newDate", newDate);
 		if (!isNaN(lastDate) && !isNaN(newDate)) {
 			const diffMs = newDate - lastDate;
-			console.log("diffMs", diffMs);
 			if (diffMs > 60_000) {
 				isSameAuthorAndChannel = false;
 			}
 		}
 	}
-	console.log("============================================");
 }
 if (isSameAuthorAndChannel) {
     const msgText = `
