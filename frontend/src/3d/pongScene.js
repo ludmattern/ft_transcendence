@@ -35,7 +35,6 @@ export function buildGameScene(gameConfig) {
   cameraCube = new THREE.PerspectiveCamera(25, 636 / 512, 0.1, 1000);
   cameraCube.position.z = 7;
 
-
   const ballGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
   const ballMaterial = new THREE.MeshPhongMaterial({
     color: 0xffffff,
