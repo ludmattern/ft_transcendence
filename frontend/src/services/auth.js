@@ -25,6 +25,11 @@ export async function isClientAuthenticated() {
       console.log("Got new token from backend");
     }
 
+    const userId = sessionStorage.getItem("userId");
+    const chatChannel = `chat/${userId}`; // No trailing slash here
+    const webSocketUrl = `wss://`+ window.location.host + `/ws/${chatChannel}/`; // Single trailing slash
+    initializeWebSocket(chatChannel, webSocketUrl);
+
     return true;
   } catch (error) {
     console.error("Error checking auth on backend:", error);

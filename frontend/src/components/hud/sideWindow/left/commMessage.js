@@ -5,8 +5,9 @@ export const commMessage = createComponent({
   tag: "commMessage",
 
   render: (item) => {
-    const isUser = item.author === "USER";
+    const isUser = !!item.isUser;
     const isPrivate = item.channel === "Private";
+	const displayAuthor = isUser ? "You" : item.author;
 
     return `
       <div class="message ${isUser ? "user-message" : "other-message"}" 
@@ -15,7 +16,7 @@ export const commMessage = createComponent({
           !isUser
             ? `<img class="profile-picture" 
                    src="${item.profilePicture || "/src/assets/img/default-profile-40.png"}" 
-                   alt="${item.author}'s profile picture" />`
+                   alt="${displayAuthor}'s profile picture" />`
             : ""
         }
         <div class="message-content-wrapper">
@@ -23,7 +24,7 @@ export const commMessage = createComponent({
             <span class="channel">${isPrivate ? "[Private]" : "[General]"}</span>
             ${
               !isUser
-                ? `<span class="author">${item.author}</span>`
+                ? `<span class="author">${displayAuthor}</span>`
                 : ""
             }
             <span class="timestamp">${item.timestamp || "Just now"}</span>

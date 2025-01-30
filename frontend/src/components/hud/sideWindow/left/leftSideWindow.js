@@ -1,11 +1,15 @@
 import { createComponent } from "/src/utils/component.js";
+import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
 import { startAnimation } from "/src/components/hud/index.js";
-import { setupLiveChatEvents } from "/src/components/hud/sideWindow/left/liveChat.js";
+import { getSocket } from "/src/services/socketManager.js";
 
+// -------------------------------------
+// MAIN COMPONENT
+// -------------------------------------
 export const leftSideWindow = createComponent({
   tag: "leftSideWindow",
 
-  // Generate the HTML
+  // Générer le HTML
   render: () => `
     <div class="d-flex flex-column">
       <div class="l-side-window left-side-window" id="l-tab-content-container">
@@ -16,83 +20,55 @@ export const leftSideWindow = createComponent({
             <div class="container">
               <div class="left-side-window-expander active" id="l-sw-expander">
                 <span class="l-line"></span>
+                <span class="l-line"></span>
+                <span class="l-line"></span>
               </div>
             </div>
           </li>
         </ul>
-        <!-- Separate divs for INFO and COMM -->
-        <div id="l-tab-content-info" class="l-tab-content-info" style="display: block; overflow-y: auto; height: 100%; max-height: 300px;">
-          <div class="info-message">
-            <p>Welcome to the INFO tab! Add your informational content here.</p>
-          </div>
-        </div>
-        <div id="l-tab-content-comm" class="l-tab-content-comm d-flex flex-column" style="display: none; overflow: hidden; height: 100%; max-height: 300px;">
-          <!-- Messages container -->
-          <div class="messages-container" id="messages-container" style="flex-grow: 1; overflow-y: auto; padding: 10px;">
-            <!-- Chat messages will be dynamically added here -->
-          </div>
-          <!-- Message input container -->
-          <div class="message-input-container" id="message-input-container" style="display: flex; padding: 10px; background: #ffffff07;">
-            <input type="text" id="message-input" placeholder="Enter your message..." 
-                   class="form-control w-75 me-2 p-2" style="flex: 1; color: var(--content-color);" />
-            <button id="send-button" class="btn btn-primary">Send</button>
-          </div>
-        </div>
+        <div class="l-tab-content" id="l-tab-content"></div>
       </div>
     </div>
   `,
 
-  // Attach events after rendering
+  // Ajouter les événements après le chargement
   attachEvents: (el) => {
+    const tabContentContainer = el.querySelector("#l-tab-content");
     const tabs = el.querySelectorAll(".nav-link");
-    const infoTabContent = el.querySelector("#l-tab-content-info");
-    const commTabContent = el.querySelector("#l-tab-content-comm");
+    const expanders = el.querySelectorAll(".left-side-window-expander");
+    const leftSideWindow = el.querySelector(".l-tab-content");
 
-    if (!infoTabContent || !commTabContent) {
-      console.error("INFO or COMM content containers not found.");
+    if (!expanders.length || !leftSideWindow) {
+      console.warn("Expanders or left-side window not found in component.");
       return;
     }
 
-    // Handle tab switching
+    expanders.forEach((expander) => {
+      expander.addEventListener("click", () => {
+        expander.classList.toggle("active");
+        leftSideWindow.classList.toggle("well-hidden");
+      });
+    });
+
+    // Gérer le clic sur les onglets
     tabs.forEach((tab) =>
       tab.addEventListener("click", (e) => {
         e.preventDefault();
         const tabName = tab.dataset.tab;
 
-        // Update active state
+        // Mettre à jour l'état actif des onglets
         tabs.forEach((t) => t.classList.remove("active"));
         tab.classList.add("active");
 
-        // Toggle visibility of tab content
-        if (tabName === "info") {
-          infoTabContent.style.display = "block";
-          commTabContent.style.display = "none"; // Fully hide COMM content
-          clearCommMessages(); // Clear COMM messages when switching to INFO
-          removeChatInput(); // Remove input field when switching to INFO
-        } else if (tabName === "comm") {
-          infoTabContent.style.display = "none";
-          commTabContent.style.display = "flex"; // Show COMM content
-          setupChatInput(); // Add input field when switching to COMM
-          setupLiveChatEvents();
-        }
+        // Charger le contenu correspondant
+        loadTabContent(tabName, tabContentContainer);
       })
     );
 
-    // Load the default active tab
+    // Par défaut, charger le premier onglet actif
     const activeTab = el.querySelector(".nav-link.active");
     if (activeTab) {
-      const tabName = activeTab.dataset.tab;
-      if (tabName === "info") {
-        infoTabContent.style.display = "block";
-        commTabContent.style.display = "none";
-        clearCommMessages();
-        removeChatInput();
-      } else if (tabName === "comm") {
-        infoTabContent.style.display = "none";
-        commTabContent.style.display = "flex";
-        setupChatInput();
-        setupLiveChatEvents();
-      }
+      loadTabContent(activeTab.dataset.tab, tabContentContainer);
     }
 
     const parentContainer = el.parentElement;
@@ -101,7 +77,11 @@ export const leftSideWindow = createComponent({
 });
 
 /**
- * Generates a navigation tab item.
+ * Génère un élément de navigation (onglet) avec un lien.
+ *
+ * @param {string} label - Le label de l'onglet
+ * @param {boolean} active - Si l'onglet est actif
+ * @returns {string} - HTML de l'onglet
  */
 function createNavItem(label, active = false) {
   return `
@@ -116,44 +96,265 @@ function createNavItem(label, active = false) {
 }
 
 /**
- * Dynamically adds the input field and send button for the COMM tab.
+ * Charge dynamiquement le contenu de l'onglet spécifié.
+ *
+ * @param {string} tabName - Le nom de l'onglet
+ * @param {HTMLElement} container - Conteneur pour le contenu de l'onglet
  */
-function setupChatInput() {
-  const commTabContent = document.querySelector("#l-tab-content-comm");
+function loadTabContent(tabName, container) {
+  // Vider le container existant
+  container.innerHTML = "";
 
-  if (!commTabContent) {
-    console.error("COMM content container not found.");
-    return;
-  }
+  if (tabName === "info") {
+    // Pour l'onglet "INFO"
+    fetch("/src/context/tabsContent.json")
+      .then((response) => response.json())
+      .then((data) => {
+        const tabItems = data[tabName] || [];
+        tabItems.forEach((item) => {
+          const panelItem = infoPanelItem.render(item);
+          container.insertAdjacentHTML("beforeend", panelItem);
+          infoPanelItem.attachEvents(container.lastElementChild, item);
+        });
+        removeChatInput();
+      })
+      .catch((error) => {
+        console.error(`Error loading tab content for ${tabName}:`, error);
+      });
+  } else if (tabName === "comm") {
+    // 1) On charge l'historique depuis localStorage
+    let tabItems = [];
+    const storedHistory = localStorage.getItem("chatHistory");
+    if (storedHistory) {
+      try {
+        tabItems = JSON.parse(storedHistory);
+      } catch (err) {
+        console.warn("Failed to parse chatHistory from localStorage:", err);
+      }
+    }
 
-  if (!document.querySelector("#message-input-container")) {
-    const inputContainer = `
-      <div class="message-input-container" id="message-input-container" style="display: flex; padding: 10px; background: #ffffff07; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-        <input type="text" id="message-input" placeholder="Enter your message..." 
-               class="form-control w-75 me-2 p-2" style="flex: 1; color: var(--content-color);" />
-        <button id="send-button" class="btn btn-primary">Send</button>
-      </div>
-    `;
-    commTabContent.insertAdjacentHTML("beforeend", inputContainer);
+    // 2) Afficher l'historique
+    // Convertir ici en string pour être sûr d'avoir le même type
+    const userId = sessionStorage.getItem("userId").toString();
+
+    tabItems.forEach((item) => {
+      renderCommMessage(item, container, userId);
+    });
+
+    // 3) On installe l'input de chat
+    setupChatInput(container);
+
+    // 4) On initialise la WebSocket
+    initializeWebSocketComm(container);
   }
 }
 
 /**
- * Removes the input field and send button when switching away from the COMM tab.
+ * Affiche un message dans le conteneur "COMM" en utilisant `commMessage.render(...)`,
+ * tout en gérant le regroupement si c'est le même auteur + même channel.
+ */
+function renderCommMessage(item, container, currentUserId) {
+  // Forcer l'auteur au format string pour éviter tout souci de comparaison
+  const authorAsString = item.author ? item.author.toString() : "";
+
+  // On détermine si c'est nous (sortant) ou pas
+  let isUser = (authorAsString === currentUserId);
+  console.log("item.author", authorAsString);
+  console.log("currentUserId", currentUserId);
+  console.log("isUser ?", isUser);
+
+  // Pour que commMessage sache si c'est un message user ou autre,
+  // on force item.author = "USER" si isUser est vrai, sinon on laisse l'ID/pseudo initial.
+  const displayAuthor = isUser ? "USER" : authorAsString;
+
+  // Contrôler le channel pour que commMessage sache si c'est "Private" ou "General"
+  let displayChannel = "General";
+  if (item.channel && item.channel.toLowerCase() === "private") {
+    displayChannel = "Private";
+  }
+
+  // On crée un "extendedItem" adapté à `commMessage` :
+  const extendedItem = {
+    ...item,
+    isUser,                       // true si c'est notre message
+    author: displayAuthor,        // "USER" ou "User 123..."
+    channel: displayChannel,      // "General" ou "Private"
+    timestamp: item.timestamp || "Just now"
+  };
+
+  // Vérifier si on peut "regrouper" (même author + channel) avec le dernier message
+  const lastChild = container.lastElementChild;
+  const isSameAuthorAndChannel =
+    lastChild &&
+    lastChild.dataset &&
+    lastChild.dataset.author === displayAuthor &&
+    lastChild.dataset.channel === displayChannel;
+
+  if (isSameAuthorAndChannel) {
+    // On ajoute juste un bloc de texte en dessous du précédent
+    const msgText = `
+      <div class="message-text" style="margin-top: 0.5rem;">
+        ${extendedItem.message}
+      </div>
+    `;
+    lastChild
+      .querySelector(".message-content-wrapper")
+      .insertAdjacentHTML("beforeend", msgText);
+  } else {
+    // On insère un nouveau bloc de message
+    const panelItem = commMessage.render(extendedItem);
+    container.insertAdjacentHTML("beforeend", panelItem);
+
+    // Marquer l'élément pour le regroupement futur
+    const appendedItem = container.lastElementChild;
+    appendedItem.dataset.author = displayAuthor;
+    appendedItem.dataset.channel = displayChannel;
+
+    commMessage.attachEvents(appendedItem, extendedItem);
+  }
+
+  // Scroll en bas
+  container.scrollTop = container.scrollHeight;
+}
+
+function setupChatInput() {
+  const container = document.querySelector("#l-tab-content-container");
+
+  if (!container) {
+    console.error("l-tab-content-container not found.");
+    return;
+  }
+
+  if (!container.querySelector("#message-input-container")) {
+    const inputContainer = `
+      <div class="d-flex" 
+           style="flex-wrap: wrap; background: #ffffff07; position: absolute; width: 100%;" 
+           id="message-input-container">
+        <input type="text" id="message-input" placeholder="Enter your message..." 
+               class="form-control w-50 me-2 p-3" 
+               style="flex: auto; color: var(--content-color);" />
+        <button class="btn btn-sm bi bi-send">Send</button>
+      </div>
+    `;
+    container.insertAdjacentHTML("beforeend", inputContainer);
+  }
+}
+
+/**
+ * Supprime la zone de saisie pour les onglets autres que "COMM".
  */
 function removeChatInput() {
-  const inputContainer = document.querySelector("#message-input-container");
+  const inputContainer = document.getElementById("message-input-container");
   if (inputContainer) {
     inputContainer.remove();
   }
 }
 
 /**
- * Clears all messages from the COMM tab when switching to another tab.
+ * Initialise la logique WebSocket (écoute et envoi de messages),
+ * et gère l'historique dans le localStorage si on souhaite.
  */
-function clearCommMessages() {
-  const messagesContainer = document.querySelector("#messages-container");
-  if (messagesContainer) {
-    messagesContainer.innerHTML = ""; // Clear all messages
+function initializeWebSocketComm(container) {
+  const userId = sessionStorage.getItem("userId");
+  if (!userId) {
+    console.warn("No userId in sessionStorage. Cannot open chat socket.");
+    return;
+  }
+
+  // Récupère ou crée la socket
+  const chatSocket = getSocket("chat/" + userId);
+  if (!chatSocket) {
+    console.warn("Chat socket not initialized or user not authenticated.");
+    return;
+  }
+
+  // Méthode pour envoyer un message
+  function sendMessage(message, channel = "general") {
+    if (!userId) {
+      console.error("No userId. Cannot send message.");
+      return;
+    }
+    const payload = {
+      message,
+      author: userId,
+      channel,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    chatSocket.send(JSON.stringify(payload));
+    console.log("Sending message:", payload);
+  }
+
+  // -- Gère l'envoi via "Enter" --
+  const mainContainer = document.querySelector("#l-tab-content-container");
+  const inputField = mainContainer.querySelector("#message-input");
+  const sendButton = mainContainer.querySelector("#send-button");
+
+  if (inputField) {
+    inputField.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (inputField.value.trim() !== "") {
+          sendMessage(inputField.value.trim());
+          inputField.value = "";
+        }
+      }
+    });
+  }
+
+  if (sendButton) {
+    sendButton.addEventListener("click", () => {
+      if (inputField && inputField.value.trim() !== "") {
+        sendMessage(inputField.value.trim());
+        inputField.value = "";
+      }
+    });
+  }
+
+  // -- Réception des messages du serveur --
+  chatSocket.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      handleIncomingMessage(data);
+    } catch (error) {
+      console.error("Error parsing incoming message:", error);
+    }
+  };
+
+  function handleIncomingMessage(data) {
+    // Exemple : { message, sender_id, channel, timestamp... }
+    const { message, sender_id, channel, timestamp } = data;
+    if (!message || !sender_id || !channel) {
+      console.error("Invalid message format:", data);
+      return;
+    }
+
+    const newItem = {
+      message,
+      author: sender_id,
+      channel,
+      timestamp: timestamp || "Just now"
+    };
+
+    // userId est toujours dans la portée, on l'utilise pour comparer
+    renderCommMessage(newItem, container, userId.toString());
+    storeMessageInLocalStorage(newItem);
+  }
+
+  /**
+   * Enregistre un message dans le localStorage pour l'historique.
+   */
+  function storeMessageInLocalStorage(msg) {
+    try {
+      const historyString = localStorage.getItem("chatHistory");
+      let history = [];
+      if (historyString) {
+        history = JSON.parse(historyString);
+      }
+      history.push(msg);
+      localStorage.setItem("chatHistory", JSON.stringify(history));
+    } catch (err) {
+      console.error("Failed to store message in localStorage:", err);
+    }
   }
 }

@@ -16,7 +16,6 @@ down:
 	docker network prune -f
 	docker image prune -f
 	docker container prune -f
-	# rm -f $(CERT_KEY) $(CERT_CRT)
 
 down-v:
 	docker-compose --env-file ./secret/.env -f docker-compose.yml down -v

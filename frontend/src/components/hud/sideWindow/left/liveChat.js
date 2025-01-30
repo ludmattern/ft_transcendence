@@ -24,7 +24,7 @@ export function setupLiveChatEvents() {
 
     const payload = {
       message: message,
-      author: userId,
+      author: stringify(userId),
       channel: channel,
     };
 
