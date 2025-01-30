@@ -1009,6 +1009,7 @@ p {
   align-items: flex-start;
   background-color: #99ffff24;
   margin: 1rem;
+  text-align: right;
 }
 
 .container,
