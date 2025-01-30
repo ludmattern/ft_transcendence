@@ -11,8 +11,8 @@ import re
 logger = logging.getLogger(__name__)
 
 def get_current_timestamp():
-    now = datetime.utcnow()
-    return now.strftime('%H:%M')
+    now = datetime.now()  # ou utcnow() selon votre besoin
+    return now.isoformat()  # ex: '2025-01-30T14:45:32.123456'
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):

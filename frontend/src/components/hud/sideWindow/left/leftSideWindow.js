@@ -173,17 +173,26 @@ function renderCommMessage(item, container, currentUserId) {
     lastChild.dataset.channel === displayChannel;
 
   if (isSameAuthorAndChannel) {
-	const lastTimeStr = lastChild.dataset.timestamp;
+	const lastTimeStr = lastChild.dataset.rawtimestamp;
+	console.log("============================================");
+	console.log("lastChild", lastChild);
+	console.log("lastChild.dataset", lastChild.dataset);
+	console.log("lastTimeStr", lastTimeStr);
 	if (lastTimeStr) {
 		const lastDate = new Date(lastTimeStr);
+		console.log("lastDate", lastDate);
+		console.log("extendedItem", extendedItem);
 		const newDate = new Date(extendedItem.timestamp);
+		console.log("newDate", newDate);
 		if (!isNaN(lastDate) && !isNaN(newDate)) {
 			const diffMs = newDate - lastDate;
+			console.log("diffMs", diffMs);
 			if (diffMs > 60_000) {
 				isSameAuthorAndChannel = false;
 			}
 		}
 	}
+	console.log("============================================");
 }
 if (isSameAuthorAndChannel) {
     const msgText = `
