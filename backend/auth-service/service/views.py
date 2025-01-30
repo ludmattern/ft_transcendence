@@ -26,7 +26,6 @@ def decrypt_thing(encrypted_args):
     """Decrypts the args."""
     return cipher.decrypt(encrypted_args.encode('utf-8')).decode('utf-8')
 
-@csrf_exempt
 def check_auth_view(request):
     token = request.COOKIES.get('access_token')
     if not token:
@@ -35,17 +34,22 @@ def check_auth_view(request):
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         now = datetime.datetime.utcnow().timestamp()
-        
+
         if 'exp' not in payload or 'sub' not in payload:
             return JsonResponse({'success': False, 'message': 'Invalid token payload'}, status=401)
-        
-        remaining = payload['exp'] - now
 
         try:
             user = ManualUser.objects.get(username=payload['sub'])
         except ManualUser.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
 
+        if user.session_token != token:
+            return JsonResponse({'success': False, 'message': 'Token does not match active session'}, status=401)
+
+        if not user.token_expiry or user.token_expiry.timestamp() < now:
+            return JsonResponse({'success': False, 'message': 'Token expired (DB)'}, status=401)
+
+        remaining = payload['exp'] - now
         if remaining < 1000:
             new_exp = now + settings.JWT_EXP_DELTA_SECONDS
             new_payload = {**payload, "exp": new_exp}
@@ -54,14 +58,16 @@ def check_auth_view(request):
                 settings.JWT_SECRET_KEY,
                 algorithm=settings.JWT_ALGORITHM
             )
-            expiry_datetime = datetime.datetime.utcfromtimestamp(new_exp)
-            user.token_expiry = expiry_datetime
+            new_token_str = new_token if isinstance(new_token, str) else new_token.decode('utf-8')
+
+            user.token_expiry = datetime.datetime.utcfromtimestamp(new_exp)
+            user.session_token = new_token_str
             user.save()
 
             response = JsonResponse({'success': True, 'message': 'Cookie renewed'})
             response.set_cookie(
                 key='access_token',
-                value=new_token if isinstance(new_token, str) else new_token.decode('utf-8'),
+                value=new_token_str,
                 httponly=True,
                 secure=True,
                 samesite='Strict',
@@ -77,6 +83,7 @@ def check_auth_view(request):
         return JsonResponse({'success': False, 'message': f'Invalid token: {e}'}, status=401)
     except Exception as e:
         return JsonResponse({'success': False, 'message': f'Unexpected error: {e}'}, status=500)
+
 
 
 
@@ -150,62 +157,42 @@ def login_view(request):
 
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             return JsonResponse({'success': False, 'message': 'Invalid credentials'}, status=401)
-        
+
         now = datetime.datetime.utcnow()
-        
+        cookie_token = request.COOKIES.get('access_token')
+
         if user.token_expiry and user.token_expiry > now:
-            return JsonResponse({
-                'success': False,
-                'message': 'User is already connected.'
-            }, status=403)
-
-        if user.is_2fa_enabled:
-            if user.twofa_method == "email":
-                code = generate_2fa_code()
-                hashed_code = bcrypt.hashpw(code.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-                user.temp_2fa_code = hashed_code
+            if not cookie_token or cookie_token != user.session_token:
+                user.token_expiry = None
+                user.session_token = None
                 user.save()
-                send_2fa_email(user.email, code)
-            elif user.twofa_method == "sms":
-                code = generate_2fa_code()
-                hashed_code = bcrypt.hashpw(code.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-                user.temp_2fa_code = hashed_code
-                user.save()
-                send_2fa_sms(user.phone_number, code)
+            else:
+                return JsonResponse({'success': False, 'message': 'User is already connected'}, status=403)
 
-            return JsonResponse({
-                'success': True,
-                'message': '2FA required',
-                'twofa_method': user.twofa_method
-            }, status=200)
-        else:
-            exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-            user.token_expiry = exp
-            user.save()
-            access_payload = {
-                "sub": user.username,
-                "iat": now,
-                "exp": exp.timestamp()
-            }
-            access_token = jwt.encode(
-                access_payload,
-                settings.JWT_SECRET_KEY,
-                algorithm=settings.JWT_ALGORITHM
-            )
-            access_token_str = access_token if isinstance(access_token, str) else access_token.decode('utf-8')
+        new_session_token = jwt.encode(
+            {"sub": user.username, "iat": now, "exp": (now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)).timestamp()},
+            settings.JWT_SECRET_KEY,
+            algorithm=settings.JWT_ALGORITHM
+        )
+        new_session_token_str = new_session_token if isinstance(new_session_token, str) else new_session_token.decode('utf-8')
 
-            response = JsonResponse({'success': True, 'message': 'Logged in', 'id': user.id})
-            response.set_cookie(
-                key='access_token',
-                value=access_token_str,
-                httponly=True,
-                secure=True,
-                samesite='Strict',
-                max_age=settings.JWT_EXP_DELTA_SECONDS
-            )
-            return response
+        user.token_expiry = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+        user.session_token = new_session_token_str
+        user.save()
+
+        response = JsonResponse({'success': True, 'message': 'Logged in', 'id': user.id})
+        response.set_cookie(
+            key='access_token',
+            value=new_session_token_str,
+            httponly=True,
+            secure=True,
+            samesite='Strict',
+            max_age=settings.JWT_EXP_DELTA_SECONDS
+        )
+        return response
 
     return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
+
 
 
 

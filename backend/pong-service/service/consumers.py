@@ -79,7 +79,7 @@ class PongConsumer(AsyncWebsocketConsumer):
                     )
                     break  # On sort de la boucle => arrête la mise à jour
 
-                await asyncio.sleep(0.05)  # 20 ticks/s
+                await asyncio.sleep(0.02)  # 20 ticks/s
         except asyncio.CancelledError:
             pass
 
