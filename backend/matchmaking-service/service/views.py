@@ -77,16 +77,50 @@ def record_match_result(request):
 def list_tournaments(request):
     """
     GET /api/tournament/list_tournaments/
-    Renvoie la liste des tournois existants
+    Renvoie uniquement les tournois ouverts à l'inscription.
     """
-    # Suppose que tu stockes les tournois dans tournament_manager.tournaments
-    # sous la forme { "tournament_id": { "name": "...", ... }, ... }
-    data = []
-    for t_id, info in tournament_manager.tournaments.items():
-        data.append({
+    data = [
+        {
             "tournament_id": t_id,
-            "name": info["name"],       # ou un champ "alias"
-            "size": info["size"],       # etc.
-            "status": info["status"],   # registration / in_progress / finished
-        })
+            "name": info["name"],
+            "size": info["size"],
+            "status": info["status"],
+        }
+        for t_id, info in tournament_manager.tournaments.items()
+        if info["status"] == "registration"
+    ]
     return JsonResponse(data, safe=False)
+
+
+
+def list_my_tournaments(request, user_id):
+    """
+    GET /api/tournament/list_my_tournaments/<user_id>/
+    Renvoie la liste des tournois auxquels user_id participe avec leur statut.
+    """
+    user_tournaments = []
+
+    for t_id, t_info in tournament_manager.tournaments.items():
+        for p in t_info["players"]:
+            if p["user_id"] == user_id:
+                user_tournaments.append({
+                    "tournament_id": t_id,
+                    "name": t_info["name"],
+                    "size": t_info["size"],
+                    "status": t_info["status"],
+                    "current_match": t_info["matches"][t_info["currentMatchIndex"]] if t_info["status"] == "in_progress" else None
+                })
+                break
+
+    return JsonResponse(user_tournaments, safe=False)
+
+
+    return JsonResponse(user_tournaments, safe=False)
+
+
+def get_current_match(request):
+    data = json.loads(request.body)
+    t_id = data["tournament_id"]
+    
+    match = tournament_manager.get_current_match(t_id)
+    return JsonResponse(match)

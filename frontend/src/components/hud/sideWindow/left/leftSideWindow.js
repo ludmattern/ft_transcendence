@@ -126,7 +126,7 @@ function loadTabContent(tabName, container) {
     // Convertir ici en string pour être sûr d'avoir le même type
     const userId = sessionStorage.getItem("userId").toString();
     const username = sessionStorage.getItem("username").toString();
-
+    console.log("sadsadsadsadsasa", username);
     tabItems.forEach((item) => {
       renderCommMessage(item, container, userId, username);
     });
@@ -141,7 +141,7 @@ function loadTabContent(tabName, container) {
  * Affiche un message dans le conteneur "COMM" en utilisant `commMessage.render(...)`,
  * tout en gérant le regroupement si c'est le même auteur + même channel.
  */
-function renderCommMessage(item, container, currentUserId) {
+function renderCommMessage(item, container, currentUserId,  username) {
   // Forcer l'auteur au format string pour éviter tout souci de comparaison
   const authorAsString = item.author ? item.author.toString() : "";
 
@@ -162,7 +162,8 @@ function renderCommMessage(item, container, currentUserId) {
     isUser,                       // true si c'est notre message
     author: displayAuthor,        // "USER" ou "User 123..."
     channel: displayChannel,      // "General" ou "Private"
-    timestamp: item.timestamp
+    timestamp: item.timestamp,
+    username: username
   };
 
   const lastChild = container.lastElementChild;
@@ -273,7 +274,7 @@ function initializeWebSocketComm(container) {
       message,
       author: userId,
       channel,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     chatSocket.send(JSON.stringify(payload));
@@ -315,7 +316,7 @@ function initializeWebSocketComm(container) {
   };
 
   function handleIncomingMessage(data) {
-    const { message, sender_id, channel, timestamp } = data;
+    const { message, sender_id, channel, timestamp, username } = data;
     if (!message || !sender_id || !channel) {
       console.error("Invalid message format:", data);
       return;
@@ -325,7 +326,8 @@ function initializeWebSocketComm(container) {
       message,
       author: sender_id,
       channel,
-      timestamp: timestamp
+      timestamp: timestamp,
+      username: username
     };
 
     renderCommMessage(newItem, container, userId.toString());

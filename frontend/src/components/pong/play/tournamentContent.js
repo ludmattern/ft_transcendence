@@ -21,6 +21,11 @@ export const tournamentContent = createComponent({
                     Join an Ongoing Bloodbath
                 </a>
             </li>
+            <li class="nav-item">
+                    <a class="nav-link" id="tab-myTournaments" data-bs-toggle="tab" href="#myTournaments">
+                        My Tournaments
+                    </a>
+                </li>
         </ul>
 
         <!-- Tabs Content -->
@@ -56,6 +61,27 @@ export const tournamentContent = createComponent({
                     <button class="btn btn-primary mt-3" id="joinTourn">Join and Get Wrecked</button>
                 </div>
             </div>
+
+            <!-- My Tournaments -->
+            <div class="tab-pane fade" id="myTournaments">
+                <h3 class="text-white">Your Ongoing Tournaments</h3>
+                <p class="text-secondary">Let's see if you are still in or already eliminated.</p>
+
+                <div class="mb-3">
+                    <label for="myTournamentList" class="form-label text-white">Your Active Tournaments</label>
+                    <select class="form-select" id="myTournamentList">
+                        <!-- List of joined tournaments will be inserted dynamically -->
+                    </select>
+                </div>
+                <div class="mt-4" id="nextMatchContainer" style="display: none;">
+                  <h4 class="text-white">Upcoming Match</h4>
+                  <p class="text-secondary" id="nextMatchInfo"></p>
+                  <button class="btn btn-warning mt-2" id="joinNextMatch" style="display: none;">Join Match</button>
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-success mt-3" id="viewTournament">View Tournament</button>
+                </div>
+            </div>   
         </div>
     </section>
   `,
@@ -115,6 +141,32 @@ export const tournamentContent = createComponent({
       });
     });
 
+    const tabMyTournaments = el.querySelector("#tab-myTournaments");
+    tabMyTournaments.addEventListener("click", () => {
+      loadMyTournaments();
+    });
+
+    document.getElementById("joinNextMatch").addEventListener("click", () => {
+      const tournamentId = document.getElementById("joinNextMatch").dataset.tournamentId;
+      if (!tournamentId) return;
+    
+      fetch(`/api/matchmaking-service/get_current_match/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tournament_id: tournamentId })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.match) {
+          const gameId = `tournament_${tournamentId}_${data.match[0].user_id}_vs_${data.match[1].user_id}`;
+          //ici lancer le matchmaking d ela game en question
+        } else {
+          alert("No match available yet!");
+        }
+      })
+      .catch(error => console.error("Error joining match:", error));
+    });
+
     loadTournaments();
     const createTourn = document.getElementById("createTourn");
     createTourn.addEventListener("click", () => {
@@ -122,8 +174,22 @@ export const tournamentContent = createComponent({
     });
     const joinTourn = document.getElementById("joinTourn");
     joinTourn.addEventListener("click", () => {
-      registerPlayer();
-    });
+      const tournamentSelect = document.getElementById("tournamentList");
+      const selectedId = tournamentSelect.value;
+    
+      if (!selectedId) {
+        alert("Please select a tournament first!");
+        return;
+      }
+    
+      const alias = prompt("Enter your alias name:");
+    
+      if (!alias) {
+        alert("You must enter an alias to join!");
+        return;
+      }
+    
+      registerPlayer(selectedId, alias);    });
   }  
 });
 
@@ -169,21 +235,77 @@ async function loadTournaments() {
   try {
     const response = await fetch("/api/matchmaking-service/list_tournaments/");
     const data = await response.json();
-
     const tournamentSelect = document.getElementById("tournamentList");
     
     tournamentSelect.innerHTML = "";
 
     data.forEach(t => {
-      const option = document.createElement("option");
-      option.value = t.tournament_id; 
-      option.textContent = `${t.name} (${t.size} players) - ${t.status}`;
-      tournamentSelect.appendChild(option);
+      if (t.status === "registration") {  // Filtrer ceux en cours
+        const option = document.createElement("option");
+        option.value = t.tournament_id; 
+        option.textContent = `${t.name} (${t.size} players) - ${t.status}`;
+        tournamentSelect.appendChild(option);
+      }
     });
   } catch (error) {
     console.error("Failed to load tournaments:", error);
   }
 }
+
+
+async function loadMyTournaments() {
+  const userId = sessionStorage.getItem("userId");
+  if (!userId) {
+    console.error("No userId found");
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/matchmaking-service/list_my_tournaments/${userId}/`);
+    const data = await response.json();
+    const myTournSelect = document.getElementById("myTournamentList");
+    myTournSelect.innerHTML = "";
+
+    let nextMatchContainer = document.getElementById("nextMatchContainer");
+    let nextMatchInfo = document.getElementById("nextMatchInfo");
+    let joinNextMatchBtn = document.getElementById("joinNextMatch");
+
+    let hasNextMatch = false;
+
+    data.forEach(t => {
+      const option = document.createElement("option");
+      option.value = t.tournament_id;
+      option.textContent = `${t.name} (${t.size} players) - ${t.status}`;
+
+      if (t.current_match) {
+        option.textContent += ` - Next: ${t.current_match[0].alias} vs ${t.current_match[1].alias}`;
+
+        const isUserInMatch = t.current_match.some(player => player.user_id == userId);
+        if (isUserInMatch) {
+          hasNextMatch = true;
+          nextMatchInfo.textContent = `Your next match: ${t.current_match[0].alias} vs ${t.current_match[1].alias}`;
+          joinNextMatchBtn.dataset.tournamentId = t.tournament_id;
+          joinNextMatchBtn.style.display = "block";
+        }
+      }
+
+      myTournSelect.appendChild(option);
+    });
+
+    if (hasNextMatch) {
+      nextMatchContainer.style.display = "block";
+    } else {
+      nextMatchContainer.style.display = "none";
+      joinNextMatchBtn.style.display = "none";
+    }
+
+  } catch (error) {
+    console.error("Failed to load user's tournaments:", error);
+  }
+}
+
+
+
 
 
 /**
@@ -228,6 +350,7 @@ function generateTournamentSizeSelector() {
     <div class="mb-3">
         <label for="tournamentSize" class="form-label text-white">Select the Size of Your Demise</label>
         <select class="form-select" id="tournamentSize">
+            <option value="2">2 Players - Humiliation</option>
             <option value="4">4 Players - A Small-Scale Humiliation</option>
             <option value="8">8 Players - Double the Disappointment</option>
             <option value="16">16 Players - A Public Execution</option>

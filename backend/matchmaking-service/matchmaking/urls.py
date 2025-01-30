@@ -1,6 +1,6 @@
 from django.urls import path
 from service.views import (
-    list_tournaments, join_matchmaking,leave_matchmaking,join_room,leave_room,record_match_result, get_current_match, start_tournament, register_player, create_tournament
+    get_current_match, list_my_tournaments,list_tournaments, join_matchmaking,leave_matchmaking,join_room,leave_room,record_match_result, get_current_match, start_tournament, register_player, create_tournament
 )
 
 urlpatterns = [
@@ -16,5 +16,7 @@ urlpatterns = [
     path('get_current_match/', get_current_match, name='get_current_match'),
     path('record_match_result/', record_match_result, name='record_match_result'),
     path('list_tournaments/', list_tournaments, name='list_tournaments'),
+    path('list_my_tournaments/<str:user_id>/', list_my_tournaments, name='list_my_tournaments'),
+    path('get_current_match/', get_current_match, name='get_current_match'),
 
 ]
