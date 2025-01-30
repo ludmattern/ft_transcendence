@@ -47,8 +47,7 @@ export const commMessage = createComponent({
            }"
 		   data-rawtimestamp="${rawTimestamp}"
 		>
-        ${
-          !isUser
+        ${!isUser
             ? `<img class="profile-picture" 
                    src="${
                      item.profilePicture ||
@@ -59,10 +58,8 @@ export const commMessage = createComponent({
         }
         <div class="message-content-wrapper">
           <div class="message-header">
-            <span class="channel">${
-              isPrivate ? "[Private]" : "[General]"
-            }</span>
-            ${!isUser ? `<span class="author">${displayAuthor}</span>` : ""}
+            <span class="channel">${isPrivate ? "[Private]" : "[General]"}</span>
+            <span class="author">${displayAuthor}</span>
            <span class="timestamp">${formatTimestamp(item.timestamp)}</span>
           </div>
           <div class="message-text" style="margin-top: 0.5rem;">
