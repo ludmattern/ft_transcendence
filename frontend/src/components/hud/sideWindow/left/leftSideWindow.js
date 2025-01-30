@@ -179,7 +179,7 @@ function renderCommMessage(item, container, currentUserId) {
     isUser,                       // true si c'est notre message
     author: displayAuthor,        // "USER" ou "User 123..."
     channel: displayChannel,      // "General" ou "Private"
-    timestamp: item.timestamp || "Just now"
+    timestamp: item.timestamp
   };
 
   // Vérifier si on peut "regrouper" (même author + channel) avec le dernier message
@@ -333,7 +333,7 @@ function initializeWebSocketComm(container) {
       message,
       author: sender_id,
       channel,
-      timestamp: timestamp || "Just now"
+      timestamp: timestamp
     };
 
     // userId est toujours dans la portée, on l'utilise pour comparer
