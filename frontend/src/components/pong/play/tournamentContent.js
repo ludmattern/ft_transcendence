@@ -38,6 +38,7 @@ export const tournamentContent = createComponent({
                 ${generateModeSelector()}
                 ${generateMapSelector()}
                 ${generateTournamentSizeSelector()}
+				${onlineOrLocalTournamentSelector()}
 
                 <div class="text-center">
                     <button class="btn btn-danger btn-lg mt-3" id="createTourn">Create This Mess</button>
@@ -88,16 +89,14 @@ export const tournamentContent = createComponent({
   `,
 
   attachEvents: (el) => {
-    // Gestion des onglets
     const tabs = el.querySelectorAll(".nav-link");
     const tabPanes = el.querySelectorAll(".tab-pane");
-  
-    // Restaurer l'onglet actif depuis sessionStorage
+
     const savedTabId = sessionStorage.getItem("activeTournamentTab");
     if (savedTabId) {
-      tabs.forEach(tab => tab.classList.remove("active"));
-      tabPanes.forEach(pane => pane.classList.remove("show", "active"));
-  
+      tabs.forEach((tab) => tab.classList.remove("active"));
+      tabPanes.forEach((pane) => pane.classList.remove("show", "active"));
+
       const activeTab = el.querySelector(`[href="#${savedTabId}"]`);
       const activePane = el.querySelector(`#${savedTabId}`);
       if (activeTab && activePane) {
@@ -105,38 +104,31 @@ export const tournamentContent = createComponent({
         activePane.classList.add("show", "active");
       }
     }
-  
-    // Ajouter les événements pour sauvegarder l'onglet actif
-    tabs.forEach(tab => {
+
+    tabs.forEach((tab) => {
       tab.addEventListener("click", (e) => {
         e.preventDefault();
         const target = tab.getAttribute("href").substring(1);
-  
-        // Désactiver tous les onglets et les cacher
-        tabs.forEach(t => t.classList.remove("active"));
-        tabPanes.forEach(pane => pane.classList.remove("show", "active"));
-  
-        // Activer l'onglet sélectionné
+
+        tabs.forEach((t) => t.classList.remove("active"));
+        tabPanes.forEach((pane) => pane.classList.remove("show", "active"));
+
         tab.classList.add("active");
         el.querySelector(`#${target}`).classList.add("show", "active");
-  
-        // Sauvegarder l'onglet actif dans sessionStorage
+
         sessionStorage.setItem("activeTournamentTab", target);
       });
     });
-  
-    // Gestion des sélections pour les champs
+
     const selectors = el.querySelectorAll("select");
-    selectors.forEach(select => {
+    selectors.forEach((select) => {
       const key = select.id;
-  
-      // Restaurer les valeurs sauvegardées
+
       const savedValue = sessionStorage.getItem(key);
       if (savedValue) {
         select.value = savedValue;
       }
-  
-      // Sauvegarder les nouvelles valeurs
+
       select.addEventListener("change", () => {
         sessionStorage.setItem(key, select.value);
       });
@@ -144,90 +136,92 @@ export const tournamentContent = createComponent({
 
     const tabMyTournaments = el.querySelector("#tab-myTournaments");
     tabMyTournaments.addEventListener("click", () => {
-      loadMyTournaments();
+      loadMyTournament();
     });
 
     const viewTournamentBtn = document.getElementById("viewTournament");
     viewTournamentBtn.addEventListener("click", () => {
-        const tournamentSelect = document.getElementById("myTournamentList");
-        const selectedTournamentId = tournamentSelect.value;
-        
-        if (!selectedTournamentId) {
-            alert("Please select a tournament first!");
-            return;
-        }
-        
-        displayTournamentDetails(selectedTournamentId);
+      const tournamentSelect = document.getElementById("myTournamentList");
+      const selectedTournamentId = tournamentSelect.value;
+
+      if (!selectedTournamentId) {
+        alert("Please select a tournament first!");
+        return;
+      }
+
+      displayTournamentDetails(selectedTournamentId);
     });
 
     async function displayTournamentDetails(tournamentId) {
       const userId = sessionStorage.getItem("userId");
       if (!userId) {
-          console.error("No userId found");
-          return;
+        console.error("No userId found");
+        return;
       }
-  
+
       try {
-          const response = await fetch(`/api/matchmaking-service/get_current_match/`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ tournament_id: tournamentId })
-          });
-  
-          const data = await response.json();
-  
-          let nextMatchContainer = document.getElementById("nextMatchContainer");
-          let nextMatchInfo = document.getElementById("nextMatchInfo");
-          let joinNextMatchBtn = document.getElementById("joinNextMatch");
-  
-          if (data.match) {
-              const player1 = data.match[0];
-              const player2 = data.match[1];
-  
-              nextMatchInfo.textContent = `Next match: ${player1.alias} vs ${player2.alias}`;
-  
-              const isUserInMatch = player1.user_id == userId || player2.user_id == userId;
-              
-              if (isUserInMatch) {
-                  joinNextMatchBtn.dataset.tournamentId = tournamentId;
-                  joinNextMatchBtn.style.display = "block";
-              } else {
-                  joinNextMatchBtn.style.display = "none";
-              }
-  
-              nextMatchContainer.style.display = "block";
-          } else {
-              nextMatchContainer.style.display = "none";
-              joinNextMatchBtn.style.display = "none";
+        const response = await fetch(
+          `/api/matchmaking-service/get_current_match/`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tournament_id: tournamentId }),
           }
-  
+        );
+
+        const data = await response.json();
+
+        let nextMatchContainer = document.getElementById("nextMatchContainer");
+        let nextMatchInfo = document.getElementById("nextMatchInfo");
+        let joinNextMatchBtn = document.getElementById("joinNextMatch");
+
+        if (data.match) {
+          const player1 = data.match[0];
+          const player2 = data.match[1];
+
+          nextMatchInfo.textContent = `Next match: ${player1.alias} vs ${player2.alias}`;
+
+          const isUserInMatch =
+            player1.user_id == userId || player2.user_id == userId;
+
+          if (isUserInMatch) {
+            joinNextMatchBtn.dataset.tournamentId = tournamentId;
+            joinNextMatchBtn.style.display = "block";
+          } else {
+            joinNextMatchBtn.style.display = "none";
+          }
+
+          nextMatchContainer.style.display = "block";
+        } else {
+          nextMatchContainer.style.display = "none";
+          joinNextMatchBtn.style.display = "none";
+        }
       } catch (error) {
-          console.error("Failed to load tournament details:", error);
+        console.error("Failed to load tournament details:", error);
       }
-  }
-  
+    }
 
-  document.getElementById("joinNextMatch").addEventListener("click", () => {
-    const tournamentId = document.getElementById("joinNextMatch").dataset.tournamentId;
-    if (!tournamentId) return;
+    document.getElementById("joinNextMatch").addEventListener("click", () => {
+      const tournamentId =
+        document.getElementById("joinNextMatch").dataset.tournamentId;
+      if (!tournamentId) return;
 
-    fetch(`/api/matchmaking-service/get_current_match/`, {
+      fetch(`/api/matchmaking-service/get_current_match/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tournament_id: tournamentId })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.match) {
+        body: JSON.stringify({ tournament_id: tournamentId }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.match) {
             const gameId = `tournament_${tournamentId}_${data.match[0].user_id}_vs_${data.match[1].user_id}`;
-            //ici lancer la game 
-        } else {
+            //ici lancer la game
+          } else {
             alert("No match available yet!");
-        }
-    })
-    .catch(error => console.error("Error joining match:", error));
-});
-
+          }
+        })
+        .catch((error) => console.error("Error joining match:", error));
+    });
 
     loadTournaments();
     const createTourn = document.getElementById("createTourn");
@@ -238,56 +232,55 @@ export const tournamentContent = createComponent({
     joinTourn.addEventListener("click", () => {
       const tournamentSelect = document.getElementById("tournamentList");
       const selectedId = tournamentSelect.value;
-    
+
       if (!selectedId) {
         alert("Please select a tournament first!");
         return;
       }
-    
+
       const alias = prompt("Enter your alias name:");
-    
+
       if (!alias) {
         alert("You must enter an alias to join!");
         return;
       }
-    
-      registerPlayer(selectedId, alias);    });
-  }  
+
+      registerPlayer(selectedId, alias);
+    });
+  },
 });
 
 async function createTournament() {
   const userId = sessionStorage.getItem("userId");
-  const name = "MyTournament"; 
+  const name = "MyTournament";
   const size = parseInt(document.getElementById("tournamentSize").value, 10);
   const mapChoice = document.getElementById("mapSelect").value;
 
   const response = await fetch("/api/matchmaking-service/create_tournament/", {
     method: "POST",
-    headers: {"Content-Type":"application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       user_id: userId,
       name,
       size,
-      map: mapChoice
-    })
+      map: mapChoice,
+    }),
   });
   const data = await response.json();
   console.log("Created tournament:", data.tournament_id);
   loadTournaments();
-
 }
-
 
 async function registerPlayer(tournamentId, alias) {
   const userId = sessionStorage.getItem("userId");
   const response = await fetch("/api/matchmaking-service/register_player/", {
     method: "POST",
-    headers: { "Content-Type":"application/json" },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       tournament_id: tournamentId,
       user_id: userId,
-      alias: alias
-    })
+      alias: alias,
+    }),
   });
   const data = await response.json();
   console.log("Register result:", data);
@@ -298,13 +291,14 @@ async function loadTournaments() {
     const response = await fetch("/api/matchmaking-service/list_tournaments/");
     const data = await response.json();
     const tournamentSelect = document.getElementById("tournamentList");
-    
+
     tournamentSelect.innerHTML = "";
 
-    data.forEach(t => {
-      if (t.status === "registration") {  // Filtrer ceux en cours
+    data.forEach((t) => {
+      if (t.status === "registration") {
+        // Filtrer ceux en cours
         const option = document.createElement("option");
-        option.value = t.tournament_id; 
+        option.value = t.tournament_id;
         option.textContent = `${t.name} (${t.size} players) - ${t.status}`;
         tournamentSelect.appendChild(option);
       }
@@ -314,8 +308,7 @@ async function loadTournaments() {
   }
 }
 
-
-async function loadMyTournaments() {
+async function loadMyTournament() {
   const userId = sessionStorage.getItem("userId");
   if (!userId) {
     console.error("No userId found");
@@ -323,7 +316,9 @@ async function loadMyTournaments() {
   }
 
   try {
-    const response = await fetch(`/api/matchmaking-service/list_my_tournaments/${userId}/`);
+    const response = await fetch(
+      `/api/matchmaking-service/list_my_tournaments/${userId}/`
+    );
     const data = await response.json();
     const myTournSelect = document.getElementById("myTournamentList");
     myTournSelect.innerHTML = "";
@@ -334,7 +329,7 @@ async function loadMyTournaments() {
 
     let hasNextMatch = false;
 
-    data.forEach(t => {
+    data.forEach((t) => {
       const option = document.createElement("option");
       option.value = t.tournament_id;
       option.textContent = `${t.name} (${t.size} players) - ${t.status}`;
@@ -342,7 +337,9 @@ async function loadMyTournaments() {
       if (t.current_match) {
         option.textContent += ` - Next: ${t.current_match[0].alias} vs ${t.current_match[1].alias}`;
 
-        const isUserInMatch = t.current_match.some(player => player.user_id == userId);
+        const isUserInMatch = t.current_match.some(
+          (player) => player.user_id == userId
+        );
         if (isUserInMatch) {
           hasNextMatch = true;
           nextMatchInfo.textContent = `Your next match: ${t.current_match[0].alias} vs ${t.current_match[1].alias}`;
@@ -360,15 +357,10 @@ async function loadMyTournaments() {
       nextMatchContainer.style.display = "none";
       joinNextMatchBtn.style.display = "none";
     }
-
   } catch (error) {
     console.error("Failed to load user's tournaments:", error);
   }
 }
-
-
-
-
 
 /**
  * Sélecteur du type de tournoi (Local ou Online)
@@ -419,5 +411,16 @@ function generateTournamentSizeSelector() {
         </select>
         <small class="text-muted">The more players, the more people watching you fail.</small>
     </div>
+  `;
+}
+
+function onlineOrLocalTournamentSelector() {
+  return `
+	<div class="mb-3 form-check">
+	  <input class="form-check-input" type="checkbox" id="onlineOrLocalCheckbox">
+	  <label class="form-check-label" for="onlineOrLocalCheckbox">
+	    The lads are coming over for a local tournament
+	  </label>
+ 	</div>
   `;
 }
