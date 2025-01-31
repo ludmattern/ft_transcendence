@@ -277,7 +277,7 @@ function initializeWebSocketComm(container) {
 
   const mainContainer = document.querySelector("#l-tab-content-container");
   const inputField = mainContainer.querySelector("#message-input");
-  const sendButton = mainContainer.querySelector("#send-button");
+  const sendButton = mainContainer.querySelector("#chat-send-button");
 
   if (inputField) {
     inputField.addEventListener("keydown", (event) => {
