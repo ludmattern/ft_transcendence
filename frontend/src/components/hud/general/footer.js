@@ -2,6 +2,8 @@ import { createComponent } from "/src/utils/component.js";
 import { addCameraRotationListener, toggleFreeView} from "/src/3d/freeViewHandler.js";
 import { startAnimation } from "/src/components/hud/index.js";
 
+let lastOffset = 198;
+
 export const footer = createComponent({
   tag: "footer",
 
@@ -81,13 +83,14 @@ function initializeCompass(el) {
 
   // Gestion de la taille de la fenêtre
   window.addEventListener("resize", () =>
-    positionPoints(points, compass, radius, baseHeight)
+    positionPoints(points, compass, radius, baseHeight, lastOffset)
   );
 
   // Mise à jour avec la rotation de la caméra
   addCameraRotationListener((cameraRotation) => {
     const percent = (cameraRotation + 1) / 2;
     const offset = percent * 360 * rotationRatio + 180;
+	lastOffset = offset;
     positionPoints(points, compass, radius, baseHeight, offset);
   });
 }
