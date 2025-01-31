@@ -3,13 +3,11 @@ import { createComponent } from "/src/utils/component.js";
 export const tournamentContent = createComponent({
   tag: "tournamentContent",
 
-  // Générer le HTML
   render: () => `
     <section class="p-5 flex-grow-1" style="background-color: #111111; max-height: 700px; overflow: auto;">
         <h2 class="text-white text-center">Oh, You Want to Join a Tournament?</h2>
         <p class="text-secondary text-center">That’s adorable. Let’s see how long you last.</p>
 
-        <!-- Tabs Navigation -->
         <ul class="nav nav-tabs justify-content-center">
             <li class="nav-item">
                 <a class="nav-link active" id="tab-create" data-bs-toggle="tab" href="#createTournament">
@@ -23,9 +21,7 @@ export const tournamentContent = createComponent({
             </li>
         </ul>
 
-        <!-- Tabs Content -->
         <div class="tab-content mt-4">
-            <!-- Create Tournament -->
             <div class="tab-pane fade show active" id="createTournament">
                 <h3 class="text-white">Create Your Own Tournament</h3>
                 <p class="text-secondary">How cute, you actually think you’ll make it to the finals?</p>
@@ -39,23 +35,23 @@ export const tournamentContent = createComponent({
                 </div>
             </div>
 
-            <!-- Join Tournament -->
             <div class="tab-pane fade" id="joinTournament">
                 <h3 class="text-white">Join an Existing Tournament</h3>
                 <p class="text-secondary">You want to join? Great, another victim enters the arena.</p>
 
                 <div class="mb-3">
-                    <label for="tournamentList" class="form-label text-white">Select a Tournament to Crash</label>
-                    <select class="form-select" id="tournamentList">
-                        <option value="tournament1">The Arena of Despair (8 Players)</option>
-                        <option value="tournament2">The Noob Gauntlet (16 Players)</option>
-                        <option value="tournament3">The Brutal Slaughterhouse (4 Players)</option>
-                    </select>
-                    <small class="text-muted">Not that it matters, you'll be out in round one.</small>
+                    <input type="text" class="form-control" id="tournamentRoomCode" placeholder="Enter Room Code">
                 </div>
-
                 <div class="text-center">
-                    <button class="btn btn-primary mt-3">Join and Get Wrecked</button>
+                    <button class="btn btn-primary mt-3" id="joinWithCode">Join via Room Code</button>
+                </div>
+                
+                <hr class="text-secondary my-4">
+                
+                <h4 class="text-white text-center">Or Join a Random Tournament</h4>
+                ${generateTournamentSizeSelector("random")}
+                <div class="text-center">
+                    <button class="btn btn-warning mt-3" id="joinRandom">Find a Random Tournament</button>
                 </div>
             </div>
         </div>
@@ -63,16 +59,14 @@ export const tournamentContent = createComponent({
   `,
 
   attachEvents: (el) => {
-    // Gestion des onglets
     const tabs = el.querySelectorAll(".nav-link");
     const tabPanes = el.querySelectorAll(".tab-pane");
-  
-    // Restaurer l'onglet actif depuis sessionStorage
+    
     const savedTabId = sessionStorage.getItem("activeTournamentTab");
     if (savedTabId) {
       tabs.forEach(tab => tab.classList.remove("active"));
       tabPanes.forEach(pane => pane.classList.remove("show", "active"));
-  
+
       const activeTab = el.querySelector(`[href="#${savedTabId}"]`);
       const activePane = el.querySelector(`#${savedTabId}`);
       if (activeTab && activePane) {
@@ -80,42 +74,38 @@ export const tournamentContent = createComponent({
         activePane.classList.add("show", "active");
       }
     }
-  
-    // Ajouter les événements pour sauvegarder l'onglet actif
+
     tabs.forEach(tab => {
       tab.addEventListener("click", (e) => {
         e.preventDefault();
         const target = tab.getAttribute("href").substring(1);
-  
-        // Désactiver tous les onglets et les cacher
+
         tabs.forEach(t => t.classList.remove("active"));
         tabPanes.forEach(pane => pane.classList.remove("show", "active"));
-  
-        // Activer l'onglet sélectionné
+
         tab.classList.add("active");
         el.querySelector(`#${target}`).classList.add("show", "active");
-  
-        // Sauvegarder l'onglet actif dans sessionStorage
+
         sessionStorage.setItem("activeTournamentTab", target);
       });
     });
-  
-    // Gestion des sélections pour les champs
-    const selectors = el.querySelectorAll("select");
-    selectors.forEach(select => {
-      const key = select.id;
-  
-      // Restaurer les valeurs sauvegardées
-      const savedValue = sessionStorage.getItem(key);
-      if (savedValue) {
-        select.value = savedValue;
+
+    const joinWithCodeButton = el.querySelector("#joinWithCode");
+    joinWithCodeButton.addEventListener("click", () => {
+      const roomCode = document.getElementById("tournamentRoomCode").value;
+      if (!roomCode) {
+        console.log("Enter a valid room code");
+        return;
       }
-  
-      select.addEventListener("change", () => {
-        sessionStorage.setItem(key, select.value);
-      });
+      console.log(`Joining tournament with code: ${roomCode}`);
     });
-  }  
+
+    const joinRandomButton = el.querySelector("#joinRandom");
+    joinRandomButton.addEventListener("click", () => {
+      const tournamentSize = document.getElementById("tournamentSize-random").value;
+      console.log(`Joining a random tournament with size: ${tournamentSize}`);
+    });
+  }
 });
 
 /**

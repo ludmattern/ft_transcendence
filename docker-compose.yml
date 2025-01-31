@@ -25,19 +25,19 @@ services:
       - redis_livechat_data:/data
     ports:
       - "6380:6379"
-      
-  redis-pong:
+
+  gateway-service:
     build:
-      context: ./backend/redis/pong
-    container_name: redis_pong
+      context: ./backend/gateway-service
+    container_name: gateway_service
+    env_file:
+      - ./secret/.env
     networks:
       - backend_network
-    volumes:
-      - redis_pong_data:/data
+      - frontend_network
     ports:
-      - "6381:6379"
-  
-
+      - "3006:3006"
+      
   auth-service:
     build:
       context: ./backend/auth-service
@@ -94,6 +94,8 @@ services:
         condition: service_healthy
       redis-livechat:
         condition: service_started
+      gateway-service:
+        condition: service_started
     env_file:
       - ./secret/.env
     networks:
@@ -120,6 +122,8 @@ services:
         condition: service_healthy
       redis-pong:
         condition: service_started
+      gateway-service:
+        condition: service_started
     env_file:
       - ./secret/.env
     networks:
@@ -127,6 +131,17 @@ services:
       - frontend_network
     ports:
       - "3004:3004"
+
+  redis-pong:
+    build:
+      context: ./backend/redis/pong
+    container_name: redis_pong
+    networks:
+      - backend_network
+    volumes:
+      - redis_pong_data:/data
+    ports:
+      - "6381:6379"
 
   matchmaking-service:
     build:
@@ -164,6 +179,8 @@ services:
       pong-service:
         condition: service_started
       matchmaking-service:
+        condition: service_started
+      gateway-service:
         condition: service_started
     networks:
       - frontend_network

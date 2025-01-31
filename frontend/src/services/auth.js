@@ -20,10 +20,26 @@ export async function isClientAuthenticated() {
       return false;
     }
 
-    const userId = sessionStorage.getItem("userId");
-    const chatChannel = `chat/${userId}`; // No trailing slash here
-    const webSocketUrl = `wss://`+ window.location.host + `/ws/${chatChannel}/`; // Single trailing slash
-    initializeWebSocket(chatChannel, webSocketUrl);
+    const ws = new WebSocket(`wss://` + window.location.host + `/ws/gateway/`);
+	console.log("🔌 Tentative de connexion au WebSocket Gateway...")
+	ws.onerror = (error) => {
+		console.error("❌ Erreur de connexion au WebSocket Gateway :", error);
+	};
+
+	ws.onopen = () => {
+		console.log("✅ Connecté au WebSocket Gateway !");
+		ws.send(JSON.stringify({
+			type: "chat_message",
+			sender_id: "userA",
+			message: "Salut tout le monde !",
+			timestamp: new Date().toISOString()
+		}));
+	};
+
+	ws.onmessage = (event) => {
+		const data = JSON.parse(event.data);
+		console.log("📩 Message reçu :", data);
+	};
 
     return true;
   } catch (error) {
