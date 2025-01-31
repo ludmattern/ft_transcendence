@@ -12,17 +12,12 @@ export async function isClientAuthenticated() {
     if (response.status === 401) 
     {
       const errData = await response.json().catch(() => ({}));
-      console.warn(errData.message || "Unauthorized");
       return false;
     }
 
     const data = await response.json();
     if (!data.success) {
-      console.warn(data.message);
       return false;
-    }
-    if (data.new_access_token) {
-      console.log("Got new token from backend");
     }
 
     const userId = sessionStorage.getItem("userId");
@@ -32,7 +27,6 @@ export async function isClientAuthenticated() {
 
     return true;
   } catch (error) {
-    console.error("Error checking auth on backend:", error);
     return false;
   }
 }
@@ -45,13 +39,12 @@ export async function logoutUser() {
     });
 
     if (response.ok) {
-
       console.log("Logout successful!");
     } else {
-      console.error("Logout failed:", await response.text());
+      console.log("Logout failed:", await response.text());
     }
   } catch (err) {
-    console.error("Error during logout:", err);
+    console.log("Error during logout:", err);
   }
 }
 
@@ -64,7 +57,6 @@ export async function loginUser(username, password) {
   });
 
   const data = await response.json();
-  console.log("Response from backend:", data); 
 
   if (data.success) {
     sessionStorage.setItem("userId", data.id);
@@ -99,7 +91,6 @@ export async function registerUser(id, password, email, is2FAEnabled, twoFAMetho
 
     const data = await response.json();
     if (data.success) {
-      console.log("User registered successfully:", data);
       return true;
     } else {
       if (data.message.includes("Username already taken")) {
@@ -117,7 +108,7 @@ export async function registerUser(id, password, email, is2FAEnabled, twoFAMetho
       return false;
     }
   } catch (error) {
-    console.error("Error during registration:", error);
+    console.log("Error during registration:", error);
     alert("An error occurred. Please try again later.");
     return false;
   }

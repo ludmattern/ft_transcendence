@@ -10,14 +10,12 @@ class ModelCache {
   async loadModel(url) {
     // Vérifie si le modèle est en mémoire vive
     if (this.models.has(url)) {
-      console.debug(`Modèle en cache mémoire: ${url}`);
       return this.models.get(url).clone();
     }
 
     // Vérifie si le modèle est en IndexedDB
     const cachedData = await CacheDB.getFile("models", url);
     if (cachedData) {
-      console.debug(`Chargement du modèle depuis IndexedDB: ${url}`);
       return this.loadModelFromBuffer(cachedData, url);
     }
 
@@ -32,7 +30,6 @@ class ModelCache {
         "",
         (gltf) => {
           this.models.set(url, gltf.scene);
-          console.debug(`📂 Modèle restauré depuis IndexedDB: ${url}`);
           resolve(gltf.scene.clone());
         },
         reject
@@ -46,9 +43,6 @@ class ModelCache {
         url,
         async (gltf) => {
           this.models.set(url, gltf.scene);
-          console.debug(`Modèle téléchargé: ${url}`);
-
-          // Télécharge les données brutes pour IndexedDB
           const response = await fetch(url);
           const arrayBuffer = await response.arrayBuffer();
           await CacheDB.saveFile("models", url, arrayBuffer); // Utilise saveFile

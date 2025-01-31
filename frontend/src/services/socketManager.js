@@ -45,7 +45,6 @@ function connect(key, url, reconnectAttempts = 0) {
     delete sockets[key];
 
     if (reconnectAttempts < maxReconnectAttempts) {
-      console.log(`Attempting to reconnect [${key}] in ${reconnectDelay / 1000} seconds...`);
       setTimeout(() => {
         connect(key, url, reconnectAttempts + 1);
       }, reconnectDelay);

@@ -16,7 +16,6 @@ export const midScreen = createComponent({
 
   attachEvents: (el) => {
 	initM2();
-    console.debug("gameScreen component loaded.");
   },
 });
 

@@ -8,9 +8,6 @@ function getComponentsForPage(pages, pageKey) {
 }
 
 export function renderPage(pages, pageKey, managerType) {
-	console.debug(`Rendering ${pageKey} Page...`);
-  
-	// Vérifier si la page existe
 	if (!pages.hasOwnProperty(pageKey)) {
 	  console.warn(`Page "${pageKey}" introuvable.`);
 	  if (managerType === "Pong") {
@@ -21,11 +18,6 @@ export function renderPage(pages, pageKey, managerType) {
 	}
   
 	const componentsToRender = getComponentsForPage(pages, pageKey);
-  
-	if (componentsToRender.length === 0) {
-	  console.warn(`Page "${pageKey}" est vide. Aucun composant à charger.`);
-	}
-  
 	const componentKeys = componentsToRender.map(({ component }) => component.tag);
 	const manager = componentManagers[managerType];
   
@@ -33,7 +25,5 @@ export function renderPage(pages, pageKey, managerType) {
 	componentsToRender.forEach(({ selector, component }) => {
 	  manager.loadComponent(selector, component);
 	});
-  
-	console.debug(`${pageKey} Page rendered.`);
   }
   

@@ -64,19 +64,19 @@ export const otherProfileForm = createComponent({
     // Gestion des boutons en bas
     el.addEventListener('click', (e) => {
       if (e.target.matches('#invite-link')) {
-        console.log('Invite sent.');
+        console.debug('Invite sent.');
       }
       if (e.target.matches('#remove-link')) {
-        console.log('Friend removed.');
+        console.debug('Friend removed.');
       }
       if (e.target.matches('#add-link')) {
-        console.log('Friend added.');
+        console.debug('Friend added.');
       }
       if (e.target.matches('#block-link')) {
-        console.log('User blocked.');
+        console.debug('User blocked.');
       }
       if (e.target.matches('#unblock-link')) {
-        console.log('User unblocked.');
+        console.debug('User unblocked.');
       }
     });
   },

@@ -28,7 +28,6 @@ export async function initWireframeScene() {
     async function loadModelFromIndexedDB() {
         const cachedData = await CacheDB.getFile("models", modelUrl);
         if (cachedData) {
-            console.debug(`📂 Chargement du modèle depuis IndexedDB: ${modelUrl}`);
             return new Promise((resolve, reject) => {
                 loader.parse(cachedData, "", resolve, reject);
             });
@@ -44,7 +43,6 @@ export async function initWireframeScene() {
             loader.load(
                 modelUrl,
                 async (gltf) => {
-                    console.debug(`Modèle téléchargé depuis le réseau: ${modelUrl}`);
 
                     const response = await fetch(modelUrl);
                     const arrayBuffer = await response.arrayBuffer();
@@ -112,7 +110,6 @@ export async function initWireframeScene() {
         }
         animateWireframe();
 
-        console.log("Wireframe modèle chargé et ajouté à la scène !");
     } catch (error) {
         console.error("Erreur lors du chargement du modèle Wireframe :", error);
     }

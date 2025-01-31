@@ -11,7 +11,6 @@ export const menu3 = createComponent({
 
   attachEvents: (el) => {
 	initM3();
-    console.debug("gameScreen component loaded.");
   },
 });
 

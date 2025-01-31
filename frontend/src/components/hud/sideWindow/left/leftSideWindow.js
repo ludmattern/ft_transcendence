@@ -126,7 +126,6 @@ function loadTabContent(tabName, container) {
     // Convertir ici en string pour être sûr d'avoir le même type
     const userId = sessionStorage.getItem("userId").toString();
     const username = sessionStorage.getItem("username").toString();
-    console.log("sadsadsadsadsasa", username);
     tabItems.forEach((item) => {
       renderCommMessage(item, container, userId, username);
     });
@@ -146,10 +145,6 @@ function renderCommMessage(item, container, currentUserId,  username) {
   const authorAsString = item.author ? item.author.toString() : "";
 
   let isUser = (authorAsString === currentUserId);
-  console.log("item.author", authorAsString);
-  console.log("currentUserId", currentUserId);
-  console.log("isUser ?", isUser);
-
   const displayAuthor = isUser ? "USER" : authorAsString;
 
   let displayChannel = "General";
@@ -278,7 +273,6 @@ function initializeWebSocketComm(container) {
     };
 
     chatSocket.send(JSON.stringify(payload));
-    console.log("Sending message:", payload);
   }
 
   const mainContainer = document.querySelector("#l-tab-content-container");

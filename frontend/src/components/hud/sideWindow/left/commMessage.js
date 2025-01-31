@@ -16,7 +16,6 @@ function safeToISOString(timestamp) {
   }
 
 function formatTimestamp(timestamp) {
-	console.log("timestamp", timestamp);
    let dateObj = new Date(timestamp);
 
    if (isNaN(dateObj)) {
@@ -37,7 +36,6 @@ export const commMessage = createComponent({
     const isPrivate = item.channel === "Private";
     const displayAuthor = isUser ? "You" : item.username;
 
-    console.log("item", item);
     const rawTimestamp = safeToISOString(item.timestamp);
 
     return `

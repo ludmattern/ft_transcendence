@@ -59,8 +59,6 @@ function updatePreviousRoute(route) {
  * @param {boolean} shouldPushState - Si `true`, met à jour l'historique du navigateur.
  */
 export async function handleRoute(route, shouldPushState = true) {
-  console.debug(`Handling route: "${route}"`);
-
   if (route === "/loading") {
 	processRoute(route, shouldPushState);
 	return;
@@ -77,10 +75,8 @@ export async function handleRoute(route, shouldPushState = true) {
   if (!isRoutePublic && isAuthenticated || isRoutePublic && !isAuthenticated) {
     processRoute(route, shouldPushState);
   } else if (isRoutePublic && isAuthenticated) {
-    console.log("Already authenticated, redirecting to /");
 	processRoute("/", shouldPushState);
   } else {
-	console.log("Not authenticated, redirecting to /login");
 	processRoute("/login", shouldPushState);
   }
 }
@@ -104,7 +100,6 @@ function processRoute(route, shouldPushState) {
   }
 
   emit("routeChanged", finalRoute);
-  console.log("Route changed:", finalRoute);
 
   if (routeMappings[finalRoute]) {
     routeMappings[finalRoute]();

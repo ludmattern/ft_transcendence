@@ -19,7 +19,6 @@ export const header = createComponent({
 
   attachEvents: (el) => {
     function updatePath(route) {
-      console.log("updatePath called with route:", route);
       const pathElement = el.querySelector("#shipctrl-path");
 
       if (!route) {

@@ -16,7 +16,6 @@ export async function loadModels() {
 	async function loadModelFromIndexedDB(url) {
 		const cachedData = await CacheDB.getFile("models", url);
 		if (cachedData) {
-			console.debug(`Chargement du modèle depuis IndexedDB: ${url}`);
 			return new Promise((resolve, reject) => {
 				loader.parse(cachedData, "", resolve, reject);
 			});
@@ -32,7 +31,6 @@ export async function loadModels() {
 			loader.load(
 				url,
 				async (gltf) => {
-					console.debug(`Modèle téléchargé depuis le réseau: ${url}`);
 
 					const response = await fetch(url);
 					const arrayBuffer = await response.arrayBuffer();
@@ -71,7 +69,6 @@ export async function loadModels() {
       Store.saturnConfig.scale
     );
     Store.scene.add(Store.planet);
-    console.log("Modèle Saturn chargé et ajouté à la scène !");
 
     // Configurer SN13
     Store.model = gltfSN13.scene;
@@ -103,7 +100,6 @@ export async function loadModels() {
 		Store.screenObject1.material = Store.material;
 		Store.screenObject2.material = Store.material;
 		Store.screenObject3.material = Store.material;
-		console.log("Modèle SN13 chargé et ajouté à la scène !");
 	} catch (error) {
 		console.error("Erreur lors du chargement du modèle SN13 :", error);
 	}

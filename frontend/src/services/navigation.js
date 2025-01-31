@@ -10,8 +10,6 @@ import { hudPages, pongPages } from "/src/pages/pages.js";
  * @param {string|null} windowType - Type de fenêtre à changer (ex: "home", "pong", "race")
  */
 function navigateTo(type, pageKey, blurEffect = true, waitingScreen = false, windowType = null) {
-  console.debug(`Navigating to ${type} Page: ${pageKey}...`);
-
   const pages = type === "HUD" ? hudPages : pongPages;
   renderPage(pages, pageKey, type);
 

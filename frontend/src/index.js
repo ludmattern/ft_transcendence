@@ -18,18 +18,14 @@ async function setDatabaseID() {
     await db.put("json", dbID, "databaseID");
     console.warn("Nouvelle base IndexedDB détectée. ID :", dbID);
   } else {
-    console.log("La base IndexedDB est la même. ID :", dbID);
   }
 }
 
 async function initializeApp() {
-  console.log("Initialisation de l'application...");
-
   try {
     const db = await CacheDB.dbPromise;
     if (!db) throw new Error("IndexedDB inaccessible");
 
-    console.debug("IndexedDB est prête !");
     await setDatabaseID();
   } catch (error) {
     console.error("Erreur d'initialisation : IndexedDB est indisponible.", error);
@@ -41,7 +37,6 @@ async function initializeApp() {
 
   await buildScene();
   handleRoute(targetRoute);
-  console.log("Application prête !");
 }
 
 window.addEventListener("DOMContentLoaded", initializeApp);

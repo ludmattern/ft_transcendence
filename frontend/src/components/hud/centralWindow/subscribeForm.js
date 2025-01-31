@@ -85,7 +85,6 @@ export const subscribeForm = createComponent({
     el.querySelector("#login-link").addEventListener("click", (e) => {
       e.preventDefault();
       handleRoute("/login");
-      console.debug("LoginForm loaded on click.");
     });
   
     const enable2FA = document.getElementById("enable-2fa");
@@ -104,7 +103,6 @@ export const subscribeForm = createComponent({
 
     el.querySelector("form").addEventListener("submit", async (e) => {
       e.preventDefault();
-      console.log("Subscription form submitted!");
   
       const { id, password, confirmPassword, mail, confirmMail, phoneNumber } = getFormValues(el);
 
@@ -135,7 +133,6 @@ export const subscribeForm = createComponent({
           else if (check_register)
           {
             handleRoute("/login");
-            console.log("register successful!");
           }
         } catch (err) {
           console.error("register failed:", err.message);

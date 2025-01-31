@@ -87,7 +87,6 @@ export const rightSideWindow = createComponent({
         // Logique pour gérer le changement d'onglet
         if (tabName === "overview") {
           // Charger ou mettre à jour le contenu de l'onglet
-          console.log(`Switched to tab: ${tabName}`);
         }
       });
     });

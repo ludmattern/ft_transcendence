@@ -46,7 +46,6 @@ export const loginForm = createComponent({
         const data = await loginUser(pilotId, password);
         if (data.twofa_method) 
         {
-          console.log("2FA is required. Switching to the 2FA mini-form...");
           sessionStorage.setItem("pending2FA_user", pilotId);
           sessionStorage.setItem("pending2FA_method", data.twofa_method);
 
@@ -54,7 +53,6 @@ export const loginForm = createComponent({
         } 
         else if (data.success)
         {
-          console.log("Login successful!");
           handleRoute("/");
         }
     

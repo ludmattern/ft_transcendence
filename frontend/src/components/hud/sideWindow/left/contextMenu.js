@@ -81,7 +81,6 @@ export function showContextMenu(item, messageElement) {
 	// Vérifie si le message appartient à l'utilisateur
 	const isUserMessage = item.author === "USER"; // Ajuster cette logique selon vos données
 	if (isUserMessage) {
-	  console.debug("Context menu not shown for user's own message.");
 	  return;
 	}
   
