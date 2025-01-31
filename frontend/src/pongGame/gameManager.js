@@ -60,10 +60,6 @@ class GameManager {
     console.log("Connecting to WebSocket:", wsUrl);
     this.socket = new WebSocket(wsUrl);
 
-    this.socket.onopen = () => {
-      console.log("WebSocket connected for game:", gameId);
-    };
-
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
     

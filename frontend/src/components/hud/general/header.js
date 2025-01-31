@@ -112,7 +112,6 @@ export function updateActiveLink(el, route) {
     // Trouver l'ID du lien correspondant
     const activeLinkId = Object.keys(navigationLinks).find((key) => {
         const path = navigationLinks[key].replace("/", ""); // Supprime le premier "/"
-        console.log("header path verification:", firstSegment, path);
         return firstSegment === path;
     });
 

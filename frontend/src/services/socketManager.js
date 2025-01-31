@@ -20,7 +20,6 @@ function on(event, callback) {
 
 export function initializeWebSocket(key, url) {
   if (!sockets[key]) {
-    console.log(`Initializing [${key}] Web Socket...`);
     connect(key, url);
   }
 
@@ -34,13 +33,11 @@ function connect(key, url, reconnectAttempts = 0) {
   const newSocket = new WebSocket(url);
 
   newSocket.onopen = () => {
-    console.log(`WebSocket [${key}] connected.`);
     emit('open', { key, socket: newSocket });
     sockets[key] = newSocket;
   };
 
   newSocket.onclose = () => {
-    console.log(`WebSocket [${key}] closed.`);
     emit('close', { key });
     delete sockets[key];
 
@@ -56,7 +53,7 @@ function connect(key, url, reconnectAttempts = 0) {
   newSocket.onerror = (err) => {
     console.error(`WebSocket [${key}] error:`, err);
     emit('error', { key, error: err });
-    newSocket.close(); // Trigger onclose for reconnection
+    newSocket.close();
   };
 
   newSocket.onmessage = (event) => {
