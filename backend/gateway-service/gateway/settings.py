@@ -13,6 +13,7 @@ INSTALLED_APPS = [
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
 	'service',  # L'app WebSocket
+	'gateway_service',  # Ajoutez cette ligne
 	'channels',  # Channels pour WebSockets
 ]
 
