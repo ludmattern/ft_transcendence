@@ -10,7 +10,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         await self.accept()
         self.userID = self.scope['user'].userID if self.scope['user'].is_authenticated else "guest"
 
-        # Ajouter l'utilisateur au groupe `gateway` pour recevoir des messages du chat-service
         await self.channel_layer.group_add("gateway", self.channel_name)
 
         logger.info(f"🔗 Client {self.userID} connecté au WebSocket Gateway")
@@ -31,7 +30,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 await self.send(json.dumps({"error": "Type de message non spécifié"}))
                 return
 
-            # Rediriger le message vers `chat-service`
             await self.channel_layer.group_send(
                 "chat_service",
                 data

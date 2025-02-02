@@ -10,28 +10,36 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
-    'service',
-    'channels',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'service',  # L'app WebSocket
+	'channels',  # Channels pour WebSockets
 ]
+
+MIGRATION_MODULES = {
+	'auth': None,
+	'contenttypes': None,
+
+}
 
 # ROOT_URLCONF = 'pong.urls'
 
 ASGI_APPLICATION = 'gateway.asgi.application'
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("redis-livechat", 6379)],
-        },
-    },
+	"default": {
+		"BACKEND": "channels_redis.core.RedisChannelLayer",
+		"CONFIG": {
+			"hosts": [("redis-livechat", 6379)],
+		},
+	},
 }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',
-    }
+	'default': {
+		'ENGINE': 'django.db.backends.sqlite3',
+		'NAME': ':memory:',
+	}
 }
 
 
