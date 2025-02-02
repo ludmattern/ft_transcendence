@@ -11,11 +11,7 @@ up:
 
 down:
 	docker-compose -f docker-compose.yml down
-	docker system prune -f
-	docker volume prune -f
-	docker network prune -f
-	docker image prune -f
-	docker container prune -f
+	docker system prune -a --volumes
 
 down-v:
 	docker-compose --env-file ./secret/.env -f docker-compose.yml down -v

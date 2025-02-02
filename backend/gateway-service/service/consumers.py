@@ -19,7 +19,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         """Déconnexion du client WebSocket"""
         await self.channel_layer.group_discard("gateway", self.channel_name)
 
-        logger.info(f"❌ Client {self.userID} déconnecté")
+        logger.info(f"Client {self.userID} déconnecté")
 
     async def receive(self, text_data):
         """Envoie tous les messages reçus au `chat-service`"""
@@ -36,7 +36,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 "chat_service",
                 data
             )
-            logger.info(f"📨 Message relayé à `chat-service` depuis {self.userID}")
+            logger.info(f"Message relayé à `chat-service` depuis {self.userID}")
 
         except json.JSONDecodeError:
             await self.send(json.dumps({"error": "Format JSON invalide"}))
@@ -44,4 +44,4 @@ class GatewayConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         """Recevoir un message du `chat-service` et l'envoyer au client WebSocket."""
         await self.send(json.dumps(event))
-        logger.info(f"📤 Message transmis au client WebSocket : {event}")
+        logger.info(f"Message transmis au client WebSocket : {event}")
