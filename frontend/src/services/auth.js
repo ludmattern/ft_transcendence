@@ -61,6 +61,8 @@ export async function loginUser(username, password) {
   if (data.success) {
     sessionStorage.setItem("userId", data.id);
     sessionStorage.setItem("username", data.username);
+    closeWebSocket();
+
     initializeWebSocket(); 
 
     return data;

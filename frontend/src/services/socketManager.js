@@ -1,28 +1,31 @@
+
 let ws = null;
 let isWsConnected = false;
 
 export function initializeWebSocket() {
-    if (ws && isWsConnected) {
-        console.log(" WebSocket déjà connecté.");
-        return;
+    if (ws) {
+        if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING || isWsConnected == true)  {
+            return;
+        } else {
+            closeWebSocket();
+        }
     }
 
     ws = new WebSocket(`wss://${window.location.host}/ws/gateway/`);
-    console.log(" Tentative de connexion au WebSocket Gateway...");
 
     ws.onopen = () => {
-      console.log(" Connecté au WebSocket Gateway !");
-      ws.send(JSON.stringify({
+        console.log(" WebSocket connecté !");
+        ws.send(JSON.stringify({
           type: "chat_message",
-          sender_id: "test_user",
-          message: "Ceci est un test",
+          sender_id: "userA",
+          message: "Salut tout le monde !",
           timestamp: new Date().toISOString()
       }));
-      isWsConnected = true;
+        isWsConnected = true;
     };
 
     ws.onmessage = (event) => {
-        console.log(" Message reçu :", JSON.parse(event.data));
+        console.log("📩 Message reçu :", JSON.parse(event.data));
     };
 
     ws.onerror = (error) => {
@@ -31,17 +34,17 @@ export function initializeWebSocket() {
     };
 
     ws.onclose = () => {
-        console.log("WebSocket fermé, tentative de reconnexion...");
+        console.log("WebSocket fermé.");
         isWsConnected = false;
-        setTimeout(initializeWebSocket, 5000);
+        ws = null; 
     };
 }
 
 export function closeWebSocket() {
     if (ws) {
+        console.log(" Fermeture manuelle du WebSocket...");
         ws.close();
         ws = null;
         isWsConnected = false;
-        console.log("WebSocket fermé manuellement.");
     }
 }
