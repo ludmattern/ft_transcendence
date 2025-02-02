@@ -12,6 +12,7 @@ up:
 down:
 	docker-compose -f docker-compose.yml down
 	docker volume prune --force
+	docker rm -vf $(docker ps -aq)
 	docker system prune -a --volumes
 
 down-v:
