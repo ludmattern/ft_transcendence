@@ -1,84 +1,47 @@
-// socketManager.js
+let ws = null;
+let isWsConnected = false;
 
-const sockets = {};
-
-// Simple Event Emitter Implementation
-const eventListeners = {};
-
-function emit(event, data) {
-  if (eventListeners[event]) {
-    eventListeners[event].forEach((callback) => callback(data));
-  }
-}
-
-function on(event, callback) {
-  if (!eventListeners[event]) {
-    eventListeners[event] = [];
-  }
-  eventListeners[event].push(callback);
-}
-
-export function initializeWebSocket(key, url) {
-  if (!sockets[key]) {
-    connect(key, url);
-  }
-
-  return sockets[key];
-}
-
-function connect(key, url, reconnectAttempts = 0) {
-  const maxReconnectAttempts = 5;
-  const reconnectDelay = Math.pow(2, reconnectAttempts) * 1000; // Exponential backoff
-
-  const newSocket = new WebSocket(url);
-
-  newSocket.onopen = () => {
-    emit('open', { key, socket: newSocket });
-    sockets[key] = newSocket;
-  };
-
-  newSocket.onclose = () => {
-    emit('close', { key });
-    delete sockets[key];
-
-    if (reconnectAttempts < maxReconnectAttempts) {
-      setTimeout(() => {
-        connect(key, url, reconnectAttempts + 1);
-      }, reconnectDelay);
-    } else {
-      console.error(`Max reconnection attempts reached for WebSocket [${key}].`);
+export function initializeWebSocket() {
+    if (ws && isWsConnected) {
+        console.log("⚠️ WebSocket déjà connecté.");
+        return;
     }
-  };
 
-  newSocket.onerror = (err) => {
-    console.error(`WebSocket [${key}] error:`, err);
-    emit('error', { key, error: err });
-    newSocket.close();
-  };
+    ws = new WebSocket(`wss://${window.location.host}/ws/gateway/`);
+    console.log("🔌 Tentative de connexion au WebSocket Gateway...");
 
-  newSocket.onmessage = (event) => {
-    let data;
-    try {
-      data = JSON.parse(event.data);
-    } catch (e) {
-      console.error(`Invalid JSON received on [${key}]:`, event.data);
-      return;
+    ws.onopen = () => {
+      console.log("✅ Connecté au WebSocket Gateway !");
+      ws.send(JSON.stringify({
+          type: "chat_message",
+          sender_id: "test_user",
+          message: "Ceci est un test",
+          timestamp: new Date().toISOString()
+      }));
+      isWsConnected = true;
+    };
+
+    ws.onmessage = (event) => {
+        console.log("📩 Message reçu :", JSON.parse(event.data));
+    };
+
+    ws.onerror = (error) => {
+        console.error("❌ Erreur WebSocket :", error);
+        isWsConnected = false;
+    };
+
+    ws.onclose = () => {
+        console.log("🔴 WebSocket fermé, tentative de reconnexion...");
+        isWsConnected = false;
+        setTimeout(initializeWebSocket, 5000); // 🔥 Tente une reconnexion après 5s
+    };
+}
+
+export function closeWebSocket() {
+    if (ws) {
+        ws.close();
+        ws = null;
+        isWsConnected = false;
+        console.log("🔴 WebSocket fermé manuellement.");
     }
-    emit('message', { key, data });
-  };
-}
-
-export function getSocket(key) {
-  return sockets[key] || null;
-}
-
-// Event Emitter Functions
-export function onSocketEvent(event, callback) {
-  on(event, callback);
-}
-
-export function offSocketEvent(event, callback) {
-  if (eventListeners[event]) {
-    eventListeners[event] = eventListeners[event].filter((cb) => cb !== callback);
-  }
 }

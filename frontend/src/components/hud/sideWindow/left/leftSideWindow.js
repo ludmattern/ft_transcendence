@@ -1,7 +1,7 @@
 import { createComponent } from "/src/utils/component.js";
 import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
 import { startAnimation } from "/src/components/hud/index.js";
-import { getSocket } from "/src/services/socketManager.js";
+//import { getSocket } from "/src/services/socketManager.js";
 
 export const leftSideWindow = createComponent({
   tag: "leftSideWindow",
@@ -254,11 +254,11 @@ function initializeWebSocketComm(container) {
     return;
   }
 
-  const chatSocket = getSocket("chat/" + userId);
-  if (!chatSocket) {
-    console.warn("Chat socket not initialized or user not authenticated.");
-    return;
-  }
+  //const chatSocket = getSocket("chat/" + userId);
+  //if (!chatSocket) {
+  //  console.warn("Chat socket not initialized or user not authenticated.");
+  //  return;
+  //}
 
   function sendMessage(message, channel = "general") {
     if (!userId) {

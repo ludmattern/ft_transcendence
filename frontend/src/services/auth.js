@@ -1,4 +1,4 @@
-import { initializeWebSocket } from "/src/services/socketManager.js";
+import { initializeWebSocket, closeWebSocket } from "/src/services/socketManager.js";
 
 
 export async function isClientAuthenticated() {
@@ -20,27 +20,8 @@ export async function isClientAuthenticated() {
       return false;
     }
 
-    const ws = new WebSocket(`wss://` + window.location.host + `/ws/gateway/`);
-	console.log("🔌 Tentative de connexion au WebSocket Gateway...")
-	ws.onerror = (error) => {
-		console.error("❌ Erreur de connexion au WebSocket Gateway :", error);
-	};
+    initializeWebSocket(); 
 
-	ws.onopen = () => {
-		console.log("✅ Connecté au WebSocket Gateway !");
-		ws.send(JSON.stringify({
-			type: "chat_message",
-			sender_id: "userA",
-			message: "Salut tout le monde !",
-			timestamp: new Date().toISOString()
-		}));
-		console.log("📤 Message envoyé !");
-	};
-
-	ws.onmessage = (event) => {
-		const data = JSON.parse(event.data);
-		console.log("📩 Message reçu :", data);
-	};
 
     return true;
   } catch (error) {
@@ -56,6 +37,8 @@ export async function logoutUser() {
     });
 
     if (response.ok) {
+      closeWebSocket();
+
       console.log("Logout successful!");
     } else {
       console.log("Logout failed:", await response.text());
@@ -78,6 +61,8 @@ export async function loginUser(username, password) {
   if (data.success) {
     sessionStorage.setItem("userId", data.id);
     sessionStorage.setItem("username", data.username);
+    initializeWebSocket(); 
+
     return data;
 
   } else {
