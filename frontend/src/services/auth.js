@@ -38,8 +38,8 @@ export async function isClientAuthenticated() {
 	};
 
 	ws.onmessage = (event) => {
-		console.log("📩 Message reçu :", data);
 		const data = JSON.parse(event.data);
+		console.log("📩 Message reçu :", data);
 	};
 
     return true;
@@ -78,12 +78,6 @@ export async function loginUser(username, password) {
   if (data.success) {
     sessionStorage.setItem("userId", data.id);
     sessionStorage.setItem("username", data.username);
-
-    const userId = sessionStorage.getItem("userId");
-    const chatChannel = `chat/${userId}`; // No trailing slash here
-    const webSocketUrl = `wss://`+ window.location.host + `/ws/${chatChannel}/`; // Single trailing slash
-    initializeWebSocket(chatChannel, webSocketUrl);
-    
     return data;
 
   } else {

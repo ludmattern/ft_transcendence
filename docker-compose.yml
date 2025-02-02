@@ -124,6 +124,8 @@ services:
         condition: service_started
       gateway-service:
         condition: service_started
+      livechat-service:
+        condition: service_started
     env_file:
       - ./secret/.env
     networks:
