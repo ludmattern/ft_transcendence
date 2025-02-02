@@ -34,11 +34,12 @@ export async function isClientAuthenticated() {
 			message: "Salut tout le monde !",
 			timestamp: new Date().toISOString()
 		}));
+		console.log("📤 Message envoyé !");
 	};
 
 	ws.onmessage = (event) => {
-		const data = JSON.parse(event.data);
 		console.log("📩 Message reçu :", data);
+		const data = JSON.parse(event.data);
 	};
 
     return true;

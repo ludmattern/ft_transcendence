@@ -7,10 +7,10 @@ from service.routing import websocket_urlpatterns
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'gateway.settings')
 
 application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
-    "websocket": AuthMiddlewareStack(
-        URLRouter(
-            websocket_urlpatterns
-        )
-    ),
+	"http": get_asgi_application(),
+	"websocket": AuthMiddlewareStack(
+		URLRouter(
+			websocket_urlpatterns
+		)
+	),
 })
