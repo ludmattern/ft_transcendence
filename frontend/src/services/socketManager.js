@@ -1,4 +1,4 @@
-let ws = null;
+export let ws = null;
 let isWsConnected = false;
 
 export function initializeWebSocket() {

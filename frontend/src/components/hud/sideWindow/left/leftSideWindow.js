@@ -2,6 +2,7 @@ import { createComponent } from "/src/utils/component.js";
 import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
 import { startAnimation } from "/src/components/hud/index.js";
 //import { getSocket } from "/src/services/socketManager.js";
+import { ws } from "/src/services/socketManager.js";
 
 export const leftSideWindow = createComponent({
   tag: "leftSideWindow",
@@ -78,9 +79,8 @@ export const leftSideWindow = createComponent({
 function createNavItem(label, active = false) {
   return `
     <li class="nav-item">
-      <span class="nav-link ${
-        active ? "active" : ""
-      }" data-tab="${label.toLowerCase()}">
+      <span class="nav-link ${active ? "active" : ""
+    }" data-tab="${label.toLowerCase()}">
         <a href="#" data-tab="${label.toLowerCase()}">${label}</a>
       </span>
     </li>
@@ -126,6 +126,7 @@ function loadTabContent(tabName, container) {
     // Convertir ici en string pour être sûr d'avoir le même type
     const userId = sessionStorage.getItem("userId").toString();
     const username = sessionStorage.getItem("username").toString();
+    console.log(username);
     tabItems.forEach((item) => {
       renderCommMessage(item, container, userId, username);
     });
@@ -140,7 +141,7 @@ function loadTabContent(tabName, container) {
  * Affiche un message dans le conteneur "COMM" en utilisant `commMessage.render(...)`,
  * tout en gérant le regroupement si c'est le même auteur + même channel.
  */
-function renderCommMessage(item, container, currentUserId,  username) {
+function renderCommMessage(item, container, currentUserId, username) {
   // Forcer l'auteur au format string pour éviter tout souci de comparaison
   const authorAsString = item.author ? item.author.toString() : "";
 
@@ -169,19 +170,19 @@ function renderCommMessage(item, container, currentUserId,  username) {
     lastChild.dataset.channel === displayChannel;
 
   if (isSameAuthorAndChannel) {
-	const lastTimeStr = lastChild.dataset.rawtimestamp;
-	if (lastTimeStr) {
-		const lastDate = new Date(lastTimeStr);
-		const newDate = new Date(extendedItem.timestamp);
-		if (!isNaN(lastDate) && !isNaN(newDate)) {
-			const diffMs = newDate - lastDate;
-			if (diffMs > 60_000) {
-				isSameAuthorAndChannel = false;
-			}
-		}
-	}
-}
-if (isSameAuthorAndChannel) {
+    const lastTimeStr = lastChild.dataset.rawtimestamp;
+    if (lastTimeStr) {
+      const lastDate = new Date(lastTimeStr);
+      const newDate = new Date(extendedItem.timestamp);
+      if (!isNaN(lastDate) && !isNaN(newDate)) {
+        const diffMs = newDate - lastDate;
+        if (diffMs > 60_000) {
+          isSameAuthorAndChannel = false;
+        }
+      }
+    }
+  }
+  if (isSameAuthorAndChannel) {
     const msgText = `
       <div class="message-text" style="margin-top: 0.5rem;">
         ${extendedItem.message}
@@ -199,10 +200,10 @@ if (isSameAuthorAndChannel) {
     appendedItem.dataset.author = displayAuthor;
     appendedItem.dataset.channel = displayChannel;
 
-	const newDate = new Date(extendedItem.timestamp);
-	if (!isNaN(newDate)) {
-		appendedItem.dataset.timestamp = newDate.toISOString();
-	}
+    const newDate = new Date(extendedItem.timestamp);
+    if (!isNaN(newDate)) {
+      appendedItem.dataset.timestamp = newDate.toISOString();
+    }
 
     commMessage.attachEvents(appendedItem, extendedItem);
   }
@@ -254,25 +255,26 @@ function initializeWebSocketComm(container) {
     return;
   }
 
-  //const chatSocket = getSocket("chat/" + userId);
-  //if (!chatSocket) {
-  //  console.warn("Chat socket not initialized or user not authenticated.");
-  //  return;
-  //}
+  if (!ws) {
+    console.warn("Chat socket not initialized or user not authenticated.");
+    return;
+  }
 
   function sendMessage(message, channel = "general") {
+    console.log(userId);
     if (!userId) {
       console.error("No userId. Cannot send message.");
       return;
     }
     const payload = {
+      type: 'chat_message',
       message,
       author: userId,
       channel,
       timestamp: new Date().toISOString(),
     };
 
-    chatSocket.send(JSON.stringify(payload));
+    ws.send(JSON.stringify(payload));
   }
 
   const mainContainer = document.querySelector("#l-tab-content-container");
@@ -300,7 +302,7 @@ function initializeWebSocketComm(container) {
     });
   }
 
-  chatSocket.onmessage = (event) => {
+  ws.onmessage = (event) => {
     try {
       const data = JSON.parse(event.data);
       handleIncomingMessage(data);
@@ -310,19 +312,18 @@ function initializeWebSocketComm(container) {
   };
 
   function handleIncomingMessage(data) {
-    const { message, sender_id, channel, timestamp, username } = data;
-    if (!message || !sender_id || !channel) {
-      console.error("Invalid message format:", data);
-      return;
-    }
+    const { message, author, channel, timestamp, username } = data;
 
     const newItem = {
       message,
-      author: sender_id,
+      author: author,
       channel,
       timestamp: timestamp,
       username: username
     };
+
+    console.log(userId);
+    console.log(newItem);
 
     renderCommMessage(newItem, container, userId.toString());
     storeMessageInSessionStorage(newItem);
