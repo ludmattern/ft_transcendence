@@ -30,21 +30,20 @@ function navigateTo(type, pageKey, blurEffect = true, waitingScreen = false, win
   }
 }
 
-export const navigateToSocial = () => navigateTo("HUD", "social");
-export const navigateToLogin = () => navigateTo("HUD", "login", false, true);
-export const navigateToSubscribe = () => navigateTo("HUD", "subscribe", false, true);
 export const navigateToDeleteAccount = () => navigateTo("HUD", "deleteAccount");
-export const navigateToProfile = () => navigateTo("HUD", "profile");
 export const navigateToOtherProfile = () => navigateTo("HUD", "otherprofile");
+export const navigateToSettings2FA = () => navigateTo("HUD", "qrcode");
+export const navigateToSubscribe = () => navigateTo("HUD", "subscribe", false, true);
+export const navigateBackToPong = () => navigateTo("HUD", "pong", false, false, "pong");
 export const navigateToSettings = () => navigateTo("HUD", "settings");
+export const navigateToProfile = () => navigateTo("HUD", "profile");
+export const navigateToLoading = () => navigateTo("HUD", "loading", true, true);
+export const navigateToSocial = () => navigateTo("HUD", "social");
 export const navigateToLogout = () => navigateTo("HUD", "logout");
+export const navigateToLogin = () => navigateTo("HUD", "login", false, true);
+export const navigateToHome = () => navigateTo("HUD", "home", false, false, "home");
 export const navigateToLost = () => navigateTo("HUD", "lostForm");
 export const navigateTo2FA = () => navigateTo("HUD", "twoFAForm", false, true);
-export const navigateToSettings2FA = () => navigateTo("HUD", "qrcode");
-export const navigateToLoading = () => navigateTo("HUD", "loading", true, true);
-
-export const navigateToHome = () => navigateTo("HUD", "home", false, false, "home");
-export const navigateBackToPong = () => navigateTo("HUD", "pong", false, false, "pong");
 
 export function navigateToPong(subroute = null) {
   navigateTo("HUD", "pong", false, false, "pong");
