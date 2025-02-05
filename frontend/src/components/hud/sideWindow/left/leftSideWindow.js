@@ -72,7 +72,6 @@ export const leftSideWindow = createComponent({
     const parentContainer = el.parentElement;
     startAnimation(parentContainer, "light-animation", 1000);
 
-    initializeWebSocketComm(tabContentContainer);
 	createNotificationMessage('New private message from <b>theOther</b>');
 	createNotificationMessage('New private message from <b>theOther</b>');
 	createNotificationMessage('New private message from <b>theOther</b>');
@@ -321,67 +320,39 @@ function removeChatInput() {
   }
 }
 
-/**
- * Initialise la logique WebSocket (écoute et envoi de messages),
- * et gère l'historique dans le sessionStorage si on souhaite.
- */
-function initializeWebSocketComm(container) {
-  const userId = sessionStorage.getItem("userId");
-  if (!userId) {
-    console.warn("No userId in sessionStorage. Cannot open chat socket.");
-    return;
-  }
-
-  if (!ws) {
-    console.warn("Chat socket not initialized or user not authenticated.");
-    return;
-  }
-
-  ws.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      handleIncomingMessage(data);
-    } catch (error) {
-      console.error("Error parsing incoming message:", error);
+function storeMessageInSessionStorage(msg) {
+  try {
+    const historyString = sessionStorage.getItem("chatHistory");
+    let history = [];
+    if (historyString) {
+      history = JSON.parse(historyString);
     }
+    history.push(msg);
+    sessionStorage.setItem("chatHistory", JSON.stringify(history));
+  } catch (err) {
+    console.error("Failed to store message in sessionStorage:", err);
+  }
+}
+
+
+export function handleIncomingMessage(data) {
+  const { message, author, channel, timestamp, username } = data;
+
+  const newItem = {
+    message,
+    author: author,
+    channel,
+    timestamp: timestamp,
+    username: username,
   };
 
-  function handleIncomingMessage(data) {
-    const { message, author, channel, timestamp, username } = data;
+  const userId = sessionStorage.getItem("userId");
+  const container = document.getElementById("l-tab-content");
 
-    const newItem = {
-      message,
-      author: author,
-      channel,
-      timestamp: timestamp,
-      username: username,
-    };
-
-    console.log(userId);
-    console.log(newItem);
-
-    const activeTab = document.querySelector(".nav-link.active");
-    if (activeTab && activeTab.dataset.tab === "comm") {
-      renderCommMessage(newItem, container, userId.toString(), username);
-    }
-
-    storeMessageInSessionStorage(newItem);
+  const activeTab = document.querySelector(".nav-link.active");
+  if (activeTab && activeTab.dataset.tab === "comm") {
+    renderCommMessage(newItem, container, userId.toString(), username);
   }
 
-  /**
-   * Enregistre un message dans le sessionStorage pour l'historique.
-   */
-  function storeMessageInSessionStorage(msg) {
-    try {
-      const historyString = sessionStorage.getItem("chatHistory");
-      let history = [];
-      if (historyString) {
-        history = JSON.parse(historyString);
-      }
-      history.push(msg);
-      sessionStorage.setItem("chatHistory", JSON.stringify(history));
-    } catch (err) {
-      console.error("Failed to store message in sessionStorage:", err);
-    }
-  }
+  storeMessageInSessionStorage(newItem);
 }

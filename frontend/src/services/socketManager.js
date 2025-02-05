@@ -1,6 +1,7 @@
 export let ws = null;
 let isWsConnected = false;
 import { gameManager } from "/src/pongGame/gameManager.js";
+import { handleIncomingMessage } from "/src/components/hud/sideWindow/left/leftSideWindow.js";
 
 
 
@@ -26,9 +27,17 @@ export function initializeWebSocket() {
             gameManager.handleGameUpdate(data);
             console.log(data);
             return;
-          }
+        }
+        else if (data.type === "chat_message")
+        {
+            handleIncomingMessage(data);
+        }
+        
         console.log("📩 Message reçu :", JSON.parse(event.data));
     };
+
+
+
 
     ws.onerror = (error) => {
         console.error(" Erreur WebSocket :", error);
