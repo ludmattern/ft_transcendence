@@ -63,6 +63,8 @@ export const leftSideWindow = createComponent({
       loadTabContent(activeTab.dataset.tab, tabContentContainer);
     }
 
+	initializeWebSocketComm(tabContentContainer);
+
     const parentContainer = el.parentElement;
     startAnimation(parentContainer, "light-animation", 1000);
 
@@ -132,7 +134,6 @@ function loadTabContent(tabName, container) {
     });
 
     setupChatInput(container);
-    initializeWebSocketComm(container);
   }
 }
 
@@ -211,28 +212,69 @@ function renderCommMessage(item, container, currentUserId, username) {
 }
 
 function setupChatInput() {
-  const container = document.querySelector("#l-tab-content-container");
-
-  if (!container) {
-    console.error("l-tab-content-container not found.");
-    return;
+	const container = document.querySelector("#l-tab-content-container");
+	if (!container) {
+	  console.error("l-tab-content-container not found.");
+	  return;
+	}
+  
+	if (!container.querySelector("#message-input-container")) {
+	  const inputContainer = `
+		<div class="d-flex" 
+			 style="flex-wrap: wrap; background: #ffffff07; position: absolute; width: 100%;" 
+			 id="message-input-container">
+		  <input type="text" id="message-input" placeholder="Enter your message..." 
+				 class="form-control w-50 me-2 p-3" 
+				 style="flex: auto; color: var(--content-color);" />
+		  <button id="chat-send-button" class="btn btn-sm">Send</button>
+		</div>
+	  `;
+	  container.insertAdjacentHTML("beforeend", inputContainer);
+	}
+  
+	const inputField = container.querySelector("#message-input");
+	const sendButton = container.querySelector("#chat-send-button");
+  
+	const userId = sessionStorage.getItem("userId");
+	if (!userId) {
+	  console.error("No userId. Cannot send message.");
+	  return;
+	}
+  
+	function sendMessage(message, channel = "general") {
+	  const payload = {
+		type: 'chat_message',
+		message,
+		author: userId,
+		channel,
+		timestamp: new Date().toISOString(),
+	  };
+  
+	  ws.send(JSON.stringify(payload));
+	}
+  
+	if (inputField) {
+	  inputField.addEventListener("keydown", (event) => {
+		if (event.key === "Enter") {
+		  event.preventDefault();
+		  if (inputField.value.trim() !== "") {
+			sendMessage(inputField.value.trim());
+			inputField.value = "";
+		  }
+		}
+	  });
+	}
+  
+	if (sendButton) {
+	  sendButton.addEventListener("click", () => {
+		if (inputField && inputField.value.trim() !== "") {
+		  sendMessage(inputField.value.trim());
+		  inputField.value = "";
+		}
+	  });
+	}
   }
-
-  if (!container.querySelector("#message-input-container")) {
-    const inputContainer = `
-      <div class="d-flex" 
-           style="flex-wrap: wrap; background: #ffffff07; position: absolute; width: 100%;" 
-           id="message-input-container">
-        <input type="text" id="message-input" placeholder="Enter your message..." 
-               class="form-control w-50 me-2 p-3" 
-               style="flex: auto; color: var(--content-color);" />
-        <button id="chat-send-button" class="btn btn-sm">Send</button>
-      </div>
-    `;
-    container.insertAdjacentHTML("beforeend", inputContainer);
-  }
-}
-
+  
 /**
  * Supprime la zone de saisie pour les onglets autres que "COMM".
  */
@@ -259,47 +301,7 @@ function initializeWebSocketComm(container) {
     return;
   }
 
-  function sendMessage(message, channel = "general") {
-    console.log(userId);
-    if (!userId) {
-      console.error("No userId. Cannot send message.");
-      return;
-    }
-    const payload = {
-      type: 'chat_message',
-      message,
-      author: userId,
-      channel,
-      timestamp: new Date().toISOString(),
-    };
-
-    ws.send(JSON.stringify(payload));
-  }
-
   const mainContainer = document.querySelector("#l-tab-content-container");
-  const inputField = mainContainer.querySelector("#message-input");
-  const sendButton = mainContainer.querySelector("#chat-send-button");
-
-  if (inputField) {
-    inputField.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        if (inputField.value.trim() !== "") {
-          sendMessage(inputField.value.trim());
-          inputField.value = "";
-        }
-      }
-    });
-  }
-
-  if (sendButton) {
-    sendButton.addEventListener("click", () => {
-      if (inputField && inputField.value.trim() !== "") {
-        sendMessage(inputField.value.trim());
-        inputField.value = "";
-      }
-    });
-  }
 
   ws.onmessage = (event) => {
     try {
