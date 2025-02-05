@@ -1000,6 +1000,7 @@ p {
 #hud-body .user-message,
 #hud-body .other-message {
   padding: 0.6em;
+  margin: 1rem;
   color: var(--content-color);
   gap: 1rem;
   word-wrap: break-word;
