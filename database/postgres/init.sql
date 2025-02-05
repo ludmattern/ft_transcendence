@@ -16,11 +16,3 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone_number);
-
-CREATE TABLE IF NOT EXISTS social (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    connected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE INDEX IF NOT EXISTS idx_social_username ON social(username);
