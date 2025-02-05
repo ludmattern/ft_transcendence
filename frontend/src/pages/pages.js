@@ -57,7 +57,8 @@ import {
 	deleteAccount: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: "#central-window", component: deleteAccountForm }] },
 	logout: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: "#central-window", component: logoutForm }] },
   
-	home: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: "#freeView-container", component: freeViewButton }] },
+	home: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents] },
+	// home: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: "#freeView-container", component: freeViewButton }] },
 	race: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents] },
 	pong: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents] },
   };

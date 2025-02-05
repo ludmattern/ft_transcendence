@@ -1,7 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
 import { startAnimation } from "/src/components/hud/index.js";
-//import { getSocket } from "/src/services/socketManager.js";
 import { ws } from "/src/services/socketManager.js";
 
 export const leftSideWindow = createComponent({
@@ -9,22 +8,29 @@ export const leftSideWindow = createComponent({
 
   render: () => `
 	<div class="d-flex flex-column">
-	<div class="l-side-window left-side-window" id="l-tab-content-container">
-		<ul class="nav nav-tabs">
-		${createNavItem("INFO", true)}
-		${createNavItem("COMM", false)}
-		<li class="nav-item">
-			<div class="container">
-			<div class="left-side-window-expander active" id="l-sw-expander">
-				<span class="l-line"></span>
-				<span class="l-line"></span>
-				<span class="l-line"></span>
-			</div>
-			</div>
-		</li>
-		</ul>
-		<div class="l-tab-content" id="l-tab-content"></div>
+		<div class="l-side-window left-side-window" id="l-tab-content-container">
+			<ul class="nav nav-tabs">
+				${createNavItem("INFO", true)}
+				${createNavItem("COMM", false)}
+				<li class="nav-item">
+					<div class="container">
+						<div class="left-side-window-expander active" id="l-sw-expander">
+							<span class="l-line"></span>
+							<span class="l-line"></span>
+							<span class="l-line"></span>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div class="l-tab-content" id="l-tab-content"></div>
+		</div>
 	</div>
+	<div class="d-flex flex-column">
+		<div id="bottom-notification-container">
+			<span class="m-2 bi bi-chat-left-text-fill">
+				<span>New private message from <b>theOther</b></span>
+			</span>
+		</div>
 	</div>
 `,
 
@@ -67,8 +73,39 @@ export const leftSideWindow = createComponent({
     startAnimation(parentContainer, "light-animation", 1000);
 
     initializeWebSocketComm(tabContentContainer);
+	createNotificationMessage('New private message from <b>theOther</b>');
+	createNotificationMessage('New private message from <b>theOther</b>');
+	createNotificationMessage('New private message from <b>theOther</b>');
   },
 });
+
+/**
+ * Crée et affiche une notification qui disparaît après un certain délai.
+ *
+ * @param {string} message - Le contenu HTML ou texte de la notification.
+ * @param {number} [duration=30000] - La durée en millisecondes avant disparition (par défaut 30s).
+ */
+function createNotificationMessage(message, duration = 30000) {
+	const container = document.getElementById("bottom-notification-container");
+	if (!container) {
+	  console.error("Le container de notification n'a pas été trouvé.");
+	  return;
+	}
+  
+	const notification = document.createElement("div");
+	notification.classList.add("notification-message");
+	notification.innerHTML = message;
+  
+	container.appendChild(notification);
+  
+	setTimeout(() => {
+	  notification.classList.add("fade-out");
+	  notification.addEventListener("transitionend", () => {
+		notification.remove();
+	  });
+	}, duration);
+  }
+  
 
 /**
  * Génère un élément de navigation (onglet) avec un lien.
@@ -299,8 +336,6 @@ function initializeWebSocketComm(container) {
     console.warn("Chat socket not initialized or user not authenticated.");
     return;
   }
-
-  const mainContainer = document.querySelector("#l-tab-content-container");
 
   ws.onmessage = (event) => {
     try {
