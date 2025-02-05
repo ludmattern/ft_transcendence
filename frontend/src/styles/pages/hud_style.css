@@ -48,6 +48,7 @@ body {
   background: transparent;
   color: #fff;
   font-family: var(--font-family);
+  scroll-behavior: smooth;
 }
 
 #hud-body a {
@@ -814,26 +815,60 @@ body {
 
 #hud-body .form-control {
   width: 100%;
-  border: 0 solid var(--active-menu-color);
+  border: 1px solid #99999900;
   background-color: rgba(255, 255, 255, 0.1);
   color: var(--content-color);
   opacity: 0.9;
   border-radius: 0;
-  text-decoration: none;
   transition: background-color 0.15s;
 }
 
 #hud-body #left-window-container .form-control#message-input:focus {
-  border: 0 solid var(--active-menu-color);
+  border: 1px solid #99999900;
   box-shadow: none;
   transition: background-color 0.15s;
 }
 
+#hud-body #left-window-container #message-input-container {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+#hud-body #left-window-container #bottom-notification-container {
+  transform: rotateX(-345deg) rotateY(25deg) rotateZ(-14deg)
+    translate3d(0px, -35px, 0px);
+  height: 20vh;
+  overflow: hidden;
+  font-size: 0.9rem;
+  opacity: 0.9;
+  padding-left: 2rem;
+  text-shadow: 0px 0px 10px var(--info-hud-elements-color);
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+#hud-body #left-window-container #bottom-notification-container .notification-message {
+  padding: 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  margin: 5px;
+  border-radius: 4px;
+  transition: opacity 1s ease-out;
+}
+
+/* Classe ajoutée pour lancer le fade-out */
+#hud-body #left-window-container #bottom-notification-container .notification-message.fade-out {
+  opacity: 0;
+}
+
+
 #hud-body .form-control:focus {
-  border: 1px solid var(--active-menu-color);
+  border: 1px solid #99ffff7e;
   background-color: rgba(255, 255, 255, 0.2);
   color: var(--content-color);
   opacity: 1;
+  box-shadow: none;
 }
 
 #hud-body .form-control option {
@@ -999,6 +1034,7 @@ p {
 #hud-body .user-message,
 #hud-body .other-message {
   padding: 0.6em;
+  margin: 1rem;
   color: var(--content-color);
   gap: 1rem;
   word-wrap: break-word;
@@ -1059,6 +1095,7 @@ p {
 #hud-body #left-window-container,
 #hud-body #right-window-container {
   opacity: 0;
+  justify-content: space-between;
 }
 
 #hud-body footer .point.fw-bold {

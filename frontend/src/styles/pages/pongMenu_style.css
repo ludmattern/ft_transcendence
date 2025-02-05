@@ -224,6 +224,11 @@
     border-left: 1px solid;
 }
 
+#pong-screen-container #pong-header-container #shipctrl-path
+{
+	min-width: 480px;
+}
+
 .text-muted {
 	color: rgb(91 100 109) !important;
 }
