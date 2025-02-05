@@ -18,23 +18,35 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 	async def receive(self, text_data):
 		try:
 			data = json.loads(text_data)
-			if data.get("type") != "chat_message":
-				await self.send(json.dumps({"error": "Type de message non supporté"}))
-				return
-
-			event = {
-				"type": "chat_message",  # Ceci va appeler la méthode chat_message dans le ChatConsumer
-				"message": data.get("message"),
-				"author": data.get("author"),
-				"channel": data.get("channel"),
-				"timestamp": data.get("timestamp")
-			}
-
-			logger.info(f"Data reçue : {data}")
+			if data.get("type") == "chat_message":
+				event = {
+					"type": "chat_message",
+					"message": data.get("message"),
+					"author": data.get("author"),
+					"channel": data.get("channel"),
+					"timestamp": data.get("timestamp")
+				}
+				logger.info(f"Data reçue : {data}")
 
 
-			await self.channel_layer.group_send("chat_service", event)
-			logger.info(f"Message relayé à 'chat_service' depuis {self.user_id}")
+				await self.channel_layer.group_send("chat_service", event)
+				logger.info(f"Message relayé à 'chat_service' depuis {self.user_id}")
+			elif data.get("type") == "game_event":
+       
+				if data.get("action") == "start_game":
+					game_id = data.get("game_id")
+					await self.channel_layer.group_add(f"game_{game_id}", self.channel_name)
+					logger.info(f"👥 Client rejoint le groupe game_{game_id}")
+				await self.channel_layer.group_send("pong_service", 
+                {
+					"type": "game_event",
+					"game_id": data.get("game_id"),
+					"action": data.get("action"),
+					"direction": data.get("direction"),
+					"player_id": data.get("player_id"),
+				})
+				logger.info("🚀 Événement de jeu relayé à 'pong_service'")
+			
 		except json.JSONDecodeError:
 			await self.send(json.dumps({"error": "Format JSON invalide"}))
 
@@ -42,3 +54,13 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		"""Reçoit un message (provenant du chat-service) et le renvoie au client."""
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket : {event}")
+
+	
+	async def game_state(self, event):
+		await self.send(json.dumps(event))
+		logger.info(f"Game state transmis au client : {event}")
+
+	async def game_over(self, event):
+		"""Gère la fin du jeu et envoie le message au client."""
+		await self.send(json.dumps(event))
+		logger.info(f"🚨 Game over transmis au client WebSocket : {event}")

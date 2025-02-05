@@ -12,3 +12,7 @@ class GatewayServiceConfig(AppConfig):
         from service.chat_connection import start_dummy_chat_connection
         start_dummy_chat_connection()
         logger.info("Dummy chat connection lancée.")
+
+        from service.pong_connection import start_dummy_pong_connection
+        start_dummy_pong_connection()
+        logger.info("Dummy pong connection lancée.")

@@ -1,5 +1,8 @@
 export let ws = null;
 let isWsConnected = false;
+import { gameManager } from "/src/pongGame/gameManager.js";
+
+
 
 export function initializeWebSocket() {
     if (ws) {
@@ -14,16 +17,16 @@ export function initializeWebSocket() {
 
     ws.onopen = () => {
         console.log(" WebSocket connecté !");
-        ws.send(JSON.stringify({
-          type: "chat_message",
-          sender_id: "userA",
-          message: "Salut tout le monde !",
-          timestamp: new Date().toISOString()
-      }));
         isWsConnected = true;
     };
 
     ws.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+        if (data.type === "game_state" || data.type === "game_over") {
+            gameManager.handleGameUpdate(data);
+            console.log(data);
+            return;
+          }
         console.log("📩 Message reçu :", JSON.parse(event.data));
     };
 

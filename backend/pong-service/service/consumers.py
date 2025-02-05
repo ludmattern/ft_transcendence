@@ -1,99 +1,129 @@
 import asyncio
-import json
+import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .game_manager import game_manager  # Le GameManager côté backend
+from .game_manager import game_manager
 
-class PongConsumer(AsyncWebsocketConsumer):
+logger = logging.getLogger(__name__)
+
+class PongGroupConsumer(AsyncWebsocketConsumer):
+
+    running_games = {}
+
     async def connect(self):
-        self.game_id = self.scope['url_route']['kwargs']['game_id']
-        self.room_group_name = f"pong_game_{self.game_id}"
 
-        self.game = game_manager.get_or_create_game(self.game_id)
-
-        # Ajouter le joueur au groupe WebSocket
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
-
-        # Accepter la connexion WebSocket
         await self.accept()
-
-        # Démarrer une tâche pour la boucle du jeu
-        self.update_task = asyncio.create_task(self.game_loop())
-
-        # Envoyer l'état initial de la partie
-        await self.send(json.dumps({
-            "type": "game_state",
-            "payload": self.game.to_dict()
-        }))
+        await self.channel_layer.group_add("pong_service", self.channel_name)
+        logger.info(f"🔗 Connecté au groupe 'pong_service' (channel={self.channel_name})")
 
     async def disconnect(self, close_code):
-        if hasattr(self, 'update_task'):
-            self.update_task.cancel()
+        await self.channel_layer.group_discard("pong_service", self.channel_name)
 
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+    async def game_event(self, event):
 
-        game_manager.cleanup_game(self.game_id)
+        logger.info(f"[PongGroupConsumer] Reçu un game_event: {event}")
 
-    async def receive(self, text_data):
-        data = json.loads(text_data)
-        message_type = data.get("type")
+        game_id = event.get("game_id")
+        action = event.get("action", "")
+        
+        await self.channel_layer.group_add(f"game_{game_id}", self.channel_name)
+        logger.info(f"Client ajouté au groupe game_{game_id}")
 
-        if message_type == "move":
-            direction = data.get("direction")
-            player_id = data.get("player_id", 1)
-            # Déplacement raquette
-            self.game.move_paddle(player_id, direction)
-            # Mise à jour immédiate et diffusion de l'état
+        game = game_manager.get_or_create_game(game_id)
+
+        if action == "start_game":
+            if game_id not in self.running_games:
+                task = asyncio.create_task(self.game_loop(game_id))
+                self.running_games[game_id] = task
+                logger.info(f" Boucle de jeu démarrée pour game_id={game_id}")
+
+            payload = game.to_dict()
             await self.channel_layer.group_send(
-                self.room_group_name,
-                {"type": "update_game_state"}
+                f"game_{game_id}",
+                {
+                    "type": "game_state",
+                    "game_id": game_id,
+                    "payload": payload
+                }
             )
 
-    async def update_game_state(self, event):
-        await self.send(json.dumps({
-            "type": "game_state",
-            "payload": self.game.to_dict()
-        }))
+        elif action == "move":
+            direction = event.get("direction")
+            player_id = event.get("player_id")
+            game.move_paddle(player_id, direction)
+            game.update()
 
-    async def game_loop(self):
+            payload = game.to_dict()
+            await self.channel_layer.group_send(
+                f"game_{game_id}",
+                {
+                    "type": "game_state",
+                    "game_id": game_id,
+                    "payload": payload
+                }
+            )
+
+        elif action == "leave_game":
+            if game_id in self.running_games:
+                self.running_games[game_id].cancel()
+                del self.running_games[game_id]
+                game_manager.cleanup_game(game_id)
+                logger.info(f" Partie {game_id} terminée (leave_game)")
+
+    async def game_state(self, event):
+       
+        logger.info(f"[PongGroupConsumer] game_state reçu pour {event.get('game_id')}")
+
+        pass
+
+    async def game_loop(self, game_id):
+        """
+        Boucle régulière de mise à jour. Tourne tant que la partie n'est pas finie.
+        """
+        logger.info(f"🌀 game_loop démarrée pour {game_id}")
         try:
             while True:
-                self.game.update()  # Mise à jour régulière
-                # Diffuser l'état du jeu
+                game = game_manager.get_game(game_id)
+                if not game:
+                    logger.warning(f"Game {game_id} introuvable, on quitte la boucle.")
+                    break
+
+                game.update()
+                payload = game.to_dict()
+
                 await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {"type": "update_game_state"}
+                    f"game_{game_id}",
+                    {
+                        "type": "game_state",
+                        "game_id": game_id,
+                        "payload": payload
+                    }
                 )
 
-                # Si la partie est terminée
-                if self.game.game_over:
-                    # Envoyer un message de fin
+                if game.game_over:
                     await self.channel_layer.group_send(
-                        self.room_group_name,
-                        {"type": "game_over"}
+                        f"game_{game_id}",
+                        {
+                            "type": "game_over",
+                            "game_id": str(game_id),
+                            "winner": str(1),
+                            "final_scores": {str(k): v for k, v in game.state["scores"].items()}
+                        }
                     )
-                    break  # On sort de la boucle => arrête la mise à jour
+                    game_manager.cleanup_game(game_id)
+                    logger.info(f"Partie {game_id} terminée (game_over)")
+                    break
 
-                await asyncio.sleep(0.02)  # 20 ticks/s
+                await asyncio.sleep(0.02)
+
         except asyncio.CancelledError:
-            pass
+            logger.info(f"game_loop annulée pour {game_id}")
+        finally:
+            # Nettoyage
+            if game_id in self.running_games:
+                del self.running_games[game_id]
+            game_manager.cleanup_game(game_id)
+            logger.info(f"game_loop fermée pour {game_id}")
 
     async def game_over(self, event):
-        """Notifier le client que la partie est terminée."""
-        # Tu peux calculer quel joueur a gagné en regardant les scores
-        scores = self.game.state["scores"]
-        winner = 1 if scores[1] >= self.game.max_score else 2
-
-        await self.send(json.dumps({
-            "type": "game_over",
-            "winner": winner,
-            "final_scores": scores
-        }))
-
-        # On peut ensuite fermer la WebSocket côté serveur
-        await self.close()
+        """Gère la fin de partie."""
+        logger.info(f"[PongGroupConsumer] game_over reçu: {event}")

@@ -129,6 +129,7 @@ export const multiplayerContent = createComponent({
         playerCount: parseInt(document.getElementById("playerCount-local").value, 10),
       };
       gameManager.startGame(gameConfig);
+      
 
     });
 

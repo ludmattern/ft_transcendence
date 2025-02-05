@@ -97,5 +97,11 @@ class BasePongGame:
         self.state["ball"]["vy"] = 0.01
 
     def to_dict(self):
-        # Retourne l'état du jeu sous forme de dictionnaire
-        return self.state
+        return {
+            "ball": self.state["ball"],
+            "players": {str(k): v for k, v in self.state["players"].items()},  # 🔄 Convertir les clés en str
+            "scores": {str(k): v for k, v in self.state["scores"].items()},  # 🔄 Convertir les clés en str
+            "game_over": self.game_over
+        }
+
+

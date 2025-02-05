@@ -1,6 +1,7 @@
+# pong_service/routing.py
 from django.urls import path
-from service.consumers import PongConsumer
+from .consumers import PongGroupConsumer
 
 websocket_urlpatterns = [
-    path('ws/pong/<str:game_id>/', PongConsumer.as_asgi()),
+    path("ws/pong/", PongGroupConsumer.as_asgi()),
 ]
