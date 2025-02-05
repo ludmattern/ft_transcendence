@@ -72,9 +72,9 @@ export const leftSideWindow = createComponent({
     const parentContainer = el.parentElement;
     startAnimation(parentContainer, "light-animation", 1000);
 
-	createNotificationMessage('New private message from <b>theOther</b>');
-	createNotificationMessage('New private message from <b>theOther</b>');
-	createNotificationMessage('New private message from <b>theOther</b>');
+    createNotificationMessage('New private message from <b>theOther</b>');
+    createNotificationMessage('New private message from <b>theOther</b>');
+    createNotificationMessage('New private message from <b>theOther</b>');
   },
 });
 
@@ -85,26 +85,26 @@ export const leftSideWindow = createComponent({
  * @param {number} [duration=30000] - La durée en millisecondes avant disparition (par défaut 30s).
  */
 function createNotificationMessage(message, duration = 30000) {
-	const container = document.getElementById("bottom-notification-container");
-	if (!container) {
-	  console.error("Le container de notification n'a pas été trouvé.");
-	  return;
-	}
-  
-	const notification = document.createElement("div");
-	notification.classList.add("notification-message");
-	notification.innerHTML = message;
-  
-	container.appendChild(notification);
-  
-	setTimeout(() => {
-	  notification.classList.add("fade-out");
-	  notification.addEventListener("transitionend", () => {
-		notification.remove();
-	  });
-	}, duration);
+  const container = document.getElementById("bottom-notification-container");
+  if (!container) {
+    console.error("Le container de notification n'a pas été trouvé.");
+    return;
   }
-  
+
+  const notification = document.createElement("div");
+  notification.classList.add("notification-message");
+  notification.innerHTML = message;
+
+  container.appendChild(notification);
+
+  setTimeout(() => {
+    notification.classList.add("fade-out");
+    notification.addEventListener("transitionend", () => {
+      notification.remove();
+    });
+  }, duration);
+}
+
 
 /**
  * Génère un élément de navigation (onglet) avec un lien.
@@ -116,9 +116,8 @@ function createNotificationMessage(message, duration = 30000) {
 function createNavItem(label, active = false) {
   return `
 	<li class="nav-item">
-	<span class="nav-link ${
-    active ? "active" : ""
-  }" data-tab="${label.toLowerCase()}">
+	<span class="nav-link ${active ? "active" : ""
+    }" data-tab="${label.toLowerCase()}">
 		<a href="#" data-tab="${label.toLowerCase()}">${label}</a>
 	</span>
 	</li>
@@ -276,15 +275,36 @@ function setupChatInput() {
     return;
   }
 
-  function sendMessage(message, channel = "general") {
+  function sendMessage(message) {
+    const privateMessageMatch = message.match(/^@(\w+)\s+(.*)/);
+
+    // Common payload structure
     const payload = {
-      type: "chat_message",
-      message,
+      type: null,
+      message: null,
       author: userId,
-      channel,
+      recipient: null,
+      channel: null,
       timestamp: new Date().toISOString(),
     };
 
+    if (privateMessageMatch) {
+      // Private message case
+      const recipient = privateMessageMatch[1];
+      const privateMessage = privateMessageMatch[2];
+
+      payload.type = "private_message";
+      payload.message = privateMessage;
+      payload.recipient = recipient;
+      payload.channel = "private";
+    } else {
+      // General chat message case
+      payload.type = "chat_message";
+      payload.message = message;
+      payload.channel = "general";
+    }
+
+    // Send the payload
     ws.send(JSON.stringify(payload));
   }
 
@@ -336,23 +356,36 @@ function storeMessageInSessionStorage(msg) {
 
 
 export function handleIncomingMessage(data) {
-  const { message, author, channel, timestamp, username } = data;
-
-  const newItem = {
-    message,
-    author: author,
-    channel,
-    timestamp: timestamp,
-    username: username,
-  };
+  const { type, message, author, channel, timestamp, username, recipient } = data;
 
   const userId = sessionStorage.getItem("userId");
   const container = document.getElementById("l-tab-content");
 
-  const activeTab = document.querySelector(".nav-link.active");
-  if (activeTab && activeTab.dataset.tab === "comm") {
-    renderCommMessage(newItem, container, userId.toString(), username);
+  // Create a new message object to store and render
+  const newItem = {
+    type,
+    message,
+    author,
+    channel,
+    timestamp,
+    username,
+    recipient,
+  };
+
+  // Handle different message types
+  if (type === "private_message" && recipient === userId) {
+    console.log(`🔒 Private message from ${username}: ${message}`);
+    renderPrivateMessage(newItem, container, userId);
+  } else if (type === "chat_message" && channel === "general") {
+    const activeTab = document.querySelector(".nav-link.active");
+    if (activeTab && activeTab.dataset.tab === "comm") {
+      renderCommMessage(newItem, container, userId.toString(), username);
+    }
+  } else {
+    console.warn("Unhandled message type or channel:", type, channel);
   }
 
+  // Store the message in session storage for history
   storeMessageInSessionStorage(newItem);
 }
+

@@ -7,7 +7,7 @@ import { handleIncomingMessage } from "/src/components/hud/sideWindow/left/leftS
 
 export function initializeWebSocket() {
     if (ws) {
-        if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING || isWsConnected == true)  {
+        if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING || isWsConnected == true) {
             return;
         } else {
             closeWebSocket();
@@ -28,11 +28,10 @@ export function initializeWebSocket() {
             console.log(data);
             return;
         }
-        else if (data.type === "chat_message")
-        {
+        else if (data.type === "chat_message" || data.type === "private_message") {
             handleIncomingMessage(data);
         }
-        
+
         console.log("📩 Message reçu :", JSON.parse(event.data));
     };
 
@@ -47,7 +46,7 @@ export function initializeWebSocket() {
     ws.onclose = () => {
         console.log("WebSocket fermé.");
         isWsConnected = false;
-        ws = null; 
+        ws = null;
     };
 }
 
