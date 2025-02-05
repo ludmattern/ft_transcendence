@@ -24,7 +24,6 @@ function formatTimestamp(timestamp) {
    }
   
   const diffMs = Date.now() - dateObj.getTime();
-  // Moins de 60 secondes ?
   return dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 

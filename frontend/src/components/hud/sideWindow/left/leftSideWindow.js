@@ -132,7 +132,6 @@ function loadTabContent(tabName, container) {
     });
 
     setupChatInput(container);
-
     initializeWebSocketComm(container);
   }
 }
@@ -325,7 +324,11 @@ function initializeWebSocketComm(container) {
     console.log(userId);
     console.log(newItem);
 
-    renderCommMessage(newItem, container, userId.toString());
+	const activeTab = document.querySelector('.nav-link.active');
+	if (activeTab && activeTab.dataset.tab === 'comm') {
+	  renderCommMessage(newItem, container, userId.toString(), username);
+	}
+  
     storeMessageInSessionStorage(newItem);
   }
 
