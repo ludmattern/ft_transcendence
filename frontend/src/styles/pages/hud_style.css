@@ -824,9 +824,15 @@ body {
 }
 
 #hud-body #left-window-container .form-control#message-input:focus {
-  border: 0 solid var(--active-menu-color);
+  border: 1px solid #99999900;
   box-shadow: none;
   transition: background-color 0.15s;
+}
+
+#hud-body #left-window-container #message-input-container {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
 }
 
 #hud-body .form-control:focus {
