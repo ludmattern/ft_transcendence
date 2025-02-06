@@ -388,7 +388,7 @@ export function handleIncomingMessage(data) {
     renderCommMessage(newItem, container, userId.toString(), username);	
   }
   else {
-	if (channel === "general") {
+	if (channel === "private") {
 		createNotificationMessage(`New private message from ${username} !`);
 	}
   }
