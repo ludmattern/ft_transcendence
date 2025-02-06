@@ -88,6 +88,7 @@ function handleMessageAction(author) {
 export function showContextMenu(item, event) {
 	console.log("showContextMenu");
   event.preventDefault();
+  event.stopPropagation(); 
 
   // Supprime un menu déjà existant s'il existe
   hideContextMenu();

@@ -61,7 +61,7 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  z-index: 9999999;
+  z-index: 70;
   pointer-events: none;
 }
 
@@ -149,6 +149,7 @@ body {
 
 .hud_screen-effect {
   position: absolute;
+  z-index: 90;
   width: 100.1%;
   height: 101%;
   background-size: 102% 10px;
@@ -171,7 +172,6 @@ body {
     rgba(0, 0, 0, 1) 100%
   );
   filter: blur(2px);
-  z-index: 99;
   translate: 0 -2px;
   opacity: 0;
 }
@@ -200,7 +200,6 @@ body {
 .svg-element {
   position: fixed;
   pointer-events: none;
-  z-index: 10;
   overflow: visible;
 }
 .svg-top-left {
@@ -259,7 +258,7 @@ body {
 
 .helmet-svg {
   position: absolute;
-  z-index: 9999999;
+  z-index: 100;
 }
 
 .helmet-svg .tl-1,
@@ -349,6 +348,10 @@ body {
 .hud-svg .hud-svg-footer,
 .hud-svg .hud-svg-header {
   opacity: 0;
+}
+
+.hud-svg .svg-element {
+	z-index: 80;
 }
 
 .hud-svg .hud-svg-footer {
@@ -714,7 +717,6 @@ body {
   stroke: var(--primary-hud-elements-color);
   stroke-width: 4px;
   overflow: visible;
-  z-index: 10;
 
   mask-image: linear-gradient(
     to right,
@@ -951,7 +953,7 @@ p {
   height: 100%;
   backdrop-filter: blur(1rem);
   transition: all 0.15s;
-  z-index: 9;
+  z-index: 50;
 }
 
 #hud-body .transparent-table {
@@ -1029,8 +1031,8 @@ p {
   height: 100%;
   backdrop-filter: blur(1rem);
   transition: all 0.15s;
-  z-index: 1;
   background-color: black;
+  z-index: 30;
 }
 
 #hud-body .message-header span {
@@ -1154,7 +1156,6 @@ p {
 
 .flicker-animation {
   animation: neonFlicker 1s ease-in-out forwards;
-  z-index: 10;
 }
 
 @keyframes neonFlicker {
@@ -1189,16 +1190,14 @@ p {
 
 /* Styles de base pour le menu contextuel */
 .context-menu {
-	position: absolute;
-	display: none; /* caché par défaut */
-	background-color: #fff;
-	border: 1px solid #ccc;
-	box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-	z-index: 1000;
-	min-width: 150px;
-	padding: 0;
-	margin: 0;
-	font-family: sans-serif;
+    position: absolute;
+    display: none;
+    background: #000000d9;
+    min-width: 150px;
+    padding: 0;
+    margin: 0;
+    z-index: 75;
+    transform: rotateX(345deg) rotateY(25deg) rotateZ(14deg) translate3d(-31px, 7px, 0px);
   }
   
   .context-menu ul {
@@ -1208,11 +1207,12 @@ p {
   }
   
   .context-menu li {
-	padding: 8px 12px;
-	cursor: pointer;
+    cursor: pointer;
+    padding: 5px 10px 5px 10px;
+    transition: all 0.30s;
   }
   
   .context-menu li:hover {
-	background-color: #eee;
+	background-color: #eeeeee3b;
   }
   
