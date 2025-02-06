@@ -1,7 +1,8 @@
 import { createComponent } from "/src/utils/component.js";
 import { gameManager } from "/src/pongGame/gameManager.js";
+import { ws } from "/src/services/socketManager.js";
 
-import { joinRoom  , launchMatchmaking, leaveMatchmaking ,leavePrivate} from "/src/services/multiplayerPong.js";
+import { joinRoom  , launchMatchmaking ,leavePrivate} from "/src/services/multiplayerPong.js";
 export const multiplayerContent = createComponent({
   tag: "multiplayerContent",
 
@@ -138,7 +139,7 @@ export const multiplayerContent = createComponent({
       leaveMatchButton.style.display = "block";
       matchButton.style.display = "none";
 
-      launchMatchmaking();
+      joinMatchmaking();
 
     });
 
@@ -203,4 +204,25 @@ function generatePlayerCountSelector(context) {
         <small id="playerHelp-${context}" class="text-muted">More players won’t help you win, just make your defeat more public.</small>
     </div>
   `;
+}
+
+
+function joinMatchmaking() {
+  const userId = sessionStorage.getItem("userId");
+  ws.send(JSON.stringify({
+      type: "matchmaking",
+      action: "join",
+      user_id: userId
+  }));
+  console.log("🔍 Sent 'join matchmaking' via WebSocket");
+}
+
+function leaveMatchmaking() {
+  const userId = sessionStorage.getItem("userId");
+  ws.send(JSON.stringify({
+      type: "matchmaking",
+      action: "leave",
+      user_id: userId
+  }));
+  console.log("🔴 Sent 'leave matchmaking' via WebSocket");
 }

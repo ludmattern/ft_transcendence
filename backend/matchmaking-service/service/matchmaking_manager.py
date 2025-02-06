@@ -1,11 +1,15 @@
 import uuid
+import logging
 
+logger = logging.getLogger(__name__)
 class MatchmakingManager:
+
     def __init__(self):
         self.waiting_players = []
         self.match_found = {}
 
     def join_queue(self, user_id):
+        logger.info(f"📥 join_queue called by {user_id}")
         if user_id in self.match_found:
             return self.match_found[user_id]
 
@@ -29,6 +33,9 @@ class MatchmakingManager:
             }
             self.match_found[p1] = match_info_p1
             self.match_found[p2] = match_info_p2
+            result = self.match_found[user_id]
+            logger.info(f"🎯 p1={p1}, p2={p2}, user_id={user_id}, returning side=...")
+            logger.info(f"🔎 match_info retourné pour user={user_id} = {result}")
 
             return self.match_found[user_id] 
         else:

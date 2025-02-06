@@ -87,6 +87,8 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
     }
   }
 
+  
+
   export async function startMatchmakingGame(gameId, side, userId) {
   
     const response = await fetch(`/api/matchmaking-service/leave_matchmaking/${userId}/`);
@@ -107,7 +109,7 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
     gameManager.startGame(gameConfig);
   }
 
-  export async function leaveMatchmaking() {
+ /* export async function leaveMatchmaking() {
     isInMatchmaking = false;
     if (matchmakingPollId) {
       clearTimeout(matchmakingPollId);
@@ -118,7 +120,7 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
       return;
     const resp = await fetch(`/api/matchmaking-service/leave_matchmaking/${userId}/`);
     console.log("Left matchmaking:", await resp.json());
-  }
+  }*/
 
   export async function leavePrivate() {
       isInPrivateRoom = false;
