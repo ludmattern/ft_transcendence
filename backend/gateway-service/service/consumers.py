@@ -35,7 +35,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				self.user_id = data.get("userId")
 				self.username = data.get("username")
 				# Now add this channel to the user's personal group.
-				await self.channel_layer.group_add(f"user_{self.username}", self.channel_name)
+				await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
 				logger.info(f"Initialization complete: Client {self.username} (ID: {self.user_id}) connected.")
 				return  # Stop further processing for the init message.
 			
