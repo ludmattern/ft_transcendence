@@ -36,7 +36,7 @@ export const contextMenu = createComponent({
       hideContextMenu();
     });
     el.querySelector("#action-message").addEventListener("click", () => {
-      handleMessageAction(item.author);
+      handleMessageAction(item.username);
       hideContextMenu();
     });
   },
@@ -76,8 +76,14 @@ function handleProfileAction(author) {
 }
 
 function handleMessageAction(author) {
-  console.log(`Messaging ${author}...`);
-  // Logique pour envoyer un message
+	console.log(`Messaging ${author}...`);
+	const inputField = document.querySelector("#message-input");
+	if (inputField) {
+		// Injecte "@pseudo" dans le champ d'entrée
+		// On peut ajouter un espace à la fin pour faciliter la saisie
+		inputField.value = "@" + author + " ";
+		inputField.focus();
+	}
 }
 
 /**

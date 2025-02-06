@@ -2,6 +2,7 @@ from django.db import models
 import pyotp
 
 class ManualUser(models.Model):
+    id = models.CharField(max_length=50, unique=True, primary_key=True)
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     password = models.CharField(max_length=255)

@@ -16,11 +16,11 @@ def get_username(user_id):
 
 @database_sync_to_async
 def get_id(user_username):
-	try:
-		user = ManualUser.objects.get(username=user_username)
-		return user.id
-	except ManualUser.DoesNotExist:
-		return None
+    user = ManualUser.objects.filter(username=user_username).first()
+    if user:
+        return user.id
+    return None
+
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -43,15 +43,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		logger.info(f"Message transmis au groupe gateway depuis chat_service (General): {event}")
 
 	async def private_message(self,event):
-		try:
+		try:	
 			logger.info(f"ChatConsumer.private_message received event: {event}")
 			author_id = event.get("author")
 			username = await get_username(author_id)
 			recipient = event.get("recipient")	
+			recipient_id = await get_id(recipient)
 
 			event["username"] = username
 
-			await self.channel_layer.group_send(f"user_{recipient}", event)
+			await self.channel_layer.group_send(f"user_{recipient_id}", event)
+			await self.channel_layer.group_send(f"user_{author_id}", event)
 			logger.info(f"Message transmis au groupe user_{recipient} depuis chat_service (Private): {event}")
 		except Exception as e:
 			logger.error(f"Error in private_message handler: {e}")

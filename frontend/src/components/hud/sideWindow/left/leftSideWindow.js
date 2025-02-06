@@ -76,9 +76,6 @@ export const leftSideWindow = createComponent({
     startAnimation(parentContainer, "light-animation", 1000);
 
 	createNotificationMessage(`Welcome to your spaceship ${sessionStorage.getItem("username")} !`, 15000);
-    createNotificationMessage('New private message from <b>theOther</b>');
-    createNotificationMessage('New private message from <b>theOther</b>');
-    createNotificationMessage('New private message from <b>theOther</b>');
   },
 });
 
@@ -161,8 +158,6 @@ function createNavItem(label, active = false) {
   return `
 	<li class="nav-item">
 	<span class="nav-link ${active ? "active" : ""}" data-tab="${label.toLowerCase()}">
-	<span class="nav-link ${active ? "active" : ""
-    }" data-tab="${label.toLowerCase()}">
 		<a href="#" data-tab="${label.toLowerCase()}">${label}</a>
 	</span>
 	</li>`;
@@ -398,16 +393,37 @@ function storeMessageInSessionStorage(msg) {
 
 
 export function handleIncomingMessage(data) {
-  const { type, message, author, channel, timestamp, username, recipient } = data;
+	const { type, message, author, channel, timestamp, username, recipient } = data;
+  
+	const userId = sessionStorage.getItem("userId");
+	const container = document.getElementById("l-tab-content");
+  
+	// Create a new message object to store and render
+	const newItem = {
+	  type,
+	  message,
+	  author,
+	  channel,
+	  timestamp,
+	  username,
+	  recipient,
+	};
 
-  const userId = sessionStorage.getItem("userId");
-  const container = document.getElementById("l-tab-content");
 
-  const activeTab = document.querySelector(".nav-link.active");
-  if (activeTab && activeTab.dataset.tab === "comm") {
-    renderCommMessage(newItem, container, userId.toString(), username);
-  }
-  storeMessageInSessionStorage(newItem);
+	const activeTab = document.querySelector(".nav-link.active");
+	if (activeTab && activeTab.dataset.tab === "comm")
+	{
+		renderCommMessage(newItem, container, userId.toString(), username);	
+	}
+	else 
+	{
+		if (channel === "private")
+		{
+			createNotificationMessage(`New private message from ${username} !`);
+		}
+	}
+
+	storeMessageInSessionStorage(newItem);
 }
 
 function removePrivateNotifications() {
