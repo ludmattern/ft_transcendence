@@ -4,29 +4,31 @@ import { initializeWebSocket, closeWebSocket } from "/src/services/socketManager
 export async function isClientAuthenticated() {
 
   try {
-    const response = await fetch("/api/auth-service/check-auth/", {
-      method: "GET",
-      credentials: "include"
-    });
+		const response = await fetch("/api/auth-service/check-auth/", {
+		method: "GET",
+		credentials: "include"
+		});
 
-    if (response.status === 401) 
-    {
-      const errData = await response.json().catch(() => ({}));
-      return false;
-    }
+		if (response.status === 401) 
+		{
+		const errData = await response.json().catch(() => ({}));
+		return false;
+		}
 
-    const data = await response.json();
-    if (!data.success) {
-      return false;
-    }
+		const data = await response.json();
+		if (!data.success) {
+		return false;
+		}
 
-    initializeWebSocket(); 
+		sessionStorage.setItem("userId", data.id);
+		sessionStorage.setItem("username", data.username);
+		
+		initializeWebSocket(); 
 
-
-    return true;
-  } catch (error) {
-    return false;
-  }
+		return true;
+	} catch (error) {
+		return false;
+	}
 }
 
 export async function logoutUser() {
@@ -58,17 +60,13 @@ export async function loginUser(username, password) {
 
   const data = await response.json();
 
-  if (data.success) {
-    sessionStorage.setItem("userId", data.id);
-    sessionStorage.setItem("username", data.username);
-    closeWebSocket();
-
-    initializeWebSocket(); 
-
+  if (data.success)
+  {
     return data;
-
-  } else {
-    return (data.message);
+  }
+  else
+  {
+	return (data.message);
   }
 }
 

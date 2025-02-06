@@ -64,7 +64,7 @@ def check_auth_view(request):
             user.session_token = new_token_str
             user.save()
 
-            response = JsonResponse({'success': True, 'message': 'Cookie renewed'})
+            response = JsonResponse({'success': True, 'id': user.id, 'username': user.username, 'message': 'Cookie renewed'})
             response.set_cookie(
                 key='access_token',
                 value=new_token_str,
@@ -75,7 +75,7 @@ def check_auth_view(request):
             )
             return response
 
-        return JsonResponse({'success': True, 'message': 'Cookie still valid'})
+        return JsonResponse({'success': True, 'id': user.id, 'username': user.username, 'message': 'Cookie still valid'})
 
     except jwt.ExpiredSignatureError:
         return JsonResponse({'success': False, 'message': 'Token expired'}, status=401)
