@@ -156,8 +156,6 @@ function createNavItem(label, active = false) {
   return `
 	<li class="nav-item">
 	<span class="nav-link ${active ? "active" : ""}" data-tab="${label.toLowerCase()}">
-	<span class="nav-link ${active ? "active" : ""
-    }" data-tab="${label.toLowerCase()}">
 		<a href="#" data-tab="${label.toLowerCase()}">${label}</a>
 	</span>
 	</li>`;
@@ -393,23 +391,37 @@ function storeMessageInSessionStorage(msg) {
 
 
 export function handleIncomingMessage(data) {
-  const { type, message, author, channel, timestamp, username, recipient } = data;
+	const { type, message, author, channel, timestamp, username, recipient } = data;
+  
+	const userId = sessionStorage.getItem("userId");
+	const container = document.getElementById("l-tab-content");
+  
+	// Create a new message object to store and render
+	const newItem = {
+	  type,
+	  message,
+	  author,
+	  channel,
+	  timestamp,
+	  username,
+	  recipient,
+	};
 
-  const userId = sessionStorage.getItem("userId");
-  const container = document.getElementById("l-tab-content");
 
-
-  const activeTab = document.querySelector(".nav-link.active");
-  if (activeTab && activeTab.dataset.tab === "comm") {
-    renderCommMessage(data, container, userId.toString(), username);
-  }
-  else {
-	if (channel === "private") {
-		createNotificationMessage(`New private message from ${username} !`);
+	const activeTab = document.querySelector(".nav-link.active");
+	if (activeTab && activeTab.dataset.tab === "comm")
+	{
+		renderCommMessage(newItem, container, userId.toString(), username);	
 	}
-  }
+	else 
+	{
+		if (channel === "private")
+		{
+			createNotificationMessage(`New private message from ${username} !`);
+		}
+	}
 
-  storeMessageInSessionStorage(newItem);
+	storeMessageInSessionStorage(newItem);
 }
 
 function removePrivateNotifications() {
