@@ -71,12 +71,12 @@ export const leftSideWindow = createComponent({
     const parentContainer = el.parentElement;
     startAnimation(parentContainer, "light-animation", 1000);
 
+	createNotificationMessage("5Bienvenue sur le serveur5Bienvenue sur le");
 	createNotificationMessage("Bienvenue sur le serveur !");
 	createNotificationMessage("1Bienvenue sur le serveur !");
 	createNotificationMessage("2Bienvenue sur le serveur !");
 	createNotificationMessage("3Bienvenue sur le serveur !");
 	createNotificationMessage("4Bienvenue sur le serveur !");
-	createNotificationMessage("5Bienvenue sur le serveur !");
 	createNotificationMessage("6Bienvenue sur le serveur !");
 	createNotificationMessage("7Bienvenue sur le serveur !");
 	createNotificationMessage("8Bienvenue sur le serveur !");

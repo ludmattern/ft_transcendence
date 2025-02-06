@@ -845,6 +845,7 @@ body {
   opacity: 0.9;
   margin-left: 2rem;
   text-shadow: 0px 0px 10px var(--info-hud-elements-color);
+  background: #ffffff07;
 }
 
 #hud-body #left-window-container #bottom-notification-container .notification-message {
