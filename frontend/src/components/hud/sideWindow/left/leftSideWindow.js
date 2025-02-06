@@ -3,6 +3,8 @@ import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
 import { startAnimation } from "/src/components/hud/index.js";
 import { ws } from "/src/services/socketManager.js";
 
+let notificationbuffer = [];
+
 export const leftSideWindow = createComponent({
   tag: "leftSideWindow",
 
@@ -27,9 +29,6 @@ export const leftSideWindow = createComponent({
 	</div>
 	<div class="d-flex flex-column">
 		<div id="bottom-notification-container">
-			<span class="m-2 bi bi-chat-left-text-fill">
-				<span>New private message from <b>theOther</b></span>
-			</span>
 		</div>
 	</div>
 `,
@@ -72,39 +71,82 @@ export const leftSideWindow = createComponent({
     const parentContainer = el.parentElement;
     startAnimation(parentContainer, "light-animation", 1000);
 
-	createNotificationMessage('New private message from <b>theOther</b>');
-	createNotificationMessage('New private message from <b>theOther</b>');
-	createNotificationMessage('New private message from <b>theOther</b>');
+	createNotificationMessage("Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("1Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("2Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("3Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("4Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("5Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("6Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("7Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("8Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("9Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("10Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("11Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("12Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("13Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("14Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("15Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("16Bienvenue sur le serveur !", 5000);
+
   },
 });
 
 /**
- * Crée et affiche une notification qui disparaît après un certain délai.
+ * Crée et affiche une notification qui fade-in, reste visible pendant une durée donnée,
+ * puis s'effondre en douceur avant d'être retirée du DOM.
  *
  * @param {string} message - Le contenu HTML ou texte de la notification.
- * @param {number} [duration=30000] - La durée en millisecondes avant disparition (par défaut 30s).
+ * @param {number} [duration=5000] - La durée en millisecondes avant de lancer le collapse (par défaut 30s).
  */
-function createNotificationMessage(message, duration = 30000) {
+function collapseNotification(notification) {
+	notification.classList.add('collapsing');
+  
+	notification.addEventListener('transitionend', function handler(e) {
+	  if (e.propertyName === 'height') {
+		notification.removeEventListener('transitionend', handler);
+		notification.remove();
+
+		processNotificationBuffer();
+	  }
+	});
+  }
+
+function processNotificationBuffer() {
+	const container = document.getElementById("bottom-notification-container");
+	while (container.childElementCount < 3 && notificationbuffer.length > 0) {
+	  const { message, duration } = notificationbuffer.shift();
+	  createNotificationMessage(message, duration);
+	}
+}
+  
+  function createNotificationMessage(message, duration = 5000) {
 	const container = document.getElementById("bottom-notification-container");
 	if (!container) {
 	  console.error("Le container de notification n'a pas été trouvé.");
+	  return;
+	}
+	
+	if (container.childElementCount >= 3) {
+	  notificationbuffer.push({ message, duration });
 	  return;
 	}
   
 	const notification = document.createElement("div");
 	notification.classList.add("notification-message");
 	notification.innerHTML = message;
-  
 	container.appendChild(notification);
   
+	notification.offsetWidth;
+	notification.classList.add("visible");
+	
 	setTimeout(() => {
-	  notification.classList.add("fade-out");
-	  notification.addEventListener("transitionend", () => {
-		notification.remove();
-	  });
+	  notification.classList.remove("visible");
+	  setTimeout(() => { 
+		collapseNotification(notification); 
+	  }, 300);
 	}, duration);
-  }
-  
+ }
 
 /**
  * Génère un élément de navigation (onglet) avec un lien.
@@ -116,13 +158,10 @@ function createNotificationMessage(message, duration = 30000) {
 function createNavItem(label, active = false) {
   return `
 	<li class="nav-item">
-	<span class="nav-link ${
-    active ? "active" : ""
-  }" data-tab="${label.toLowerCase()}">
+	<span class="nav-link ${active ? "active" : ""}" data-tab="${label.toLowerCase()}">
 		<a href="#" data-tab="${label.toLowerCase()}">${label}</a>
 	</span>
-	</li>
-`;
+	</li>`;
 }
 
 /**
@@ -150,7 +189,6 @@ function loadTabContent(tabName, container) {
         console.error(`Error loading tab content for ${tabName}:`, error);
       });
   } else if (tabName === "comm") {
-    // On charge l'historique depuis sessionStorage
     let tabItems = [];
     const storedHistory = sessionStorage.getItem("chatHistory");
     if (storedHistory) {
@@ -161,7 +199,6 @@ function loadTabContent(tabName, container) {
       }
     }
 
-    // Convertir ici en string pour être sûr d'avoir le même type
     const userId = sessionStorage.getItem("userId").toString();
     const username = sessionStorage.getItem("username").toString();
     console.log(username);
