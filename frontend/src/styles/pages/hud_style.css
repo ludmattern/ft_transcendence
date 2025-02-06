@@ -82,7 +82,8 @@ body {
 #hud-body h6,
 #hud-body input,
 #hud-body select,
-#hud-body .btn {
+#hud-body .btn,
+#hud body #bottom-notification-container .notification-message {
   font-size: clamp(1rem, calc(1rem + ((100vw - 1920px) * 0.0083333)), 2rem);
 }
 
@@ -839,17 +840,17 @@ body {
   transform: rotateX(-345deg) rotateY(25deg) rotateZ(-14deg)
     translate3d(0px, -35px, 0px);
   height: 10vh;
+  border-left: 2px solid var(--secondary-hud-elements-color);
   overflow: hidden;
-  font-size: 0.9rem;
   opacity: 0.9;
-  padding-left: 2rem;
+  margin-left: 2rem;
   text-shadow: 0px 0px 10px var(--info-hud-elements-color);
 }
 
 #hud-body #left-window-container #bottom-notification-container .notification-message {
   opacity: 0;  
   padding: 10px;
-  height: 2rem;
+  height: clamp(0.8rem, calc(0.8rem + ((100vw - 1920px) * 0.0083333)), 2rem);
   overflow: hidden;
   transition: opacity 0.15s ease-in-out, height 0.30s ease-in-out, margin 0.30s ease-in-out, padding 0.30s ease-in-out, text-shadow 0.15s ease-in-out;
 }
@@ -857,7 +858,7 @@ body {
 /* Classe ajoutée pour lancer le fade-out */
 #hud-body #left-window-container #bottom-notification-container .notification-message.visible {
 	opacity: 1;
-	height: 2rem;
+	height: clamp(0.8rem, calc(0.8rem + ((100vw - 1920px) * 0.0083333)), 2rem);
 }
 
 #hud-body #left-window-container #bottom-notification-container .notification-message.collapsing {
