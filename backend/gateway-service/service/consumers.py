@@ -46,6 +46,16 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 					"player_id": data.get("player_id"),
 				})
 				logger.info("🚀 Événement de jeu relayé à 'pong_service'")
+			elif data.get("type") == "matchmaking":
+				action = data.get("action") 
+				user_id = data.get("user_id", self.user_id)
+
+				await self.channel_layer.group_send("matchmaking_service", {
+					"type": "matchmaking_event",
+					"action": action,
+					"user_id": user_id
+				})
+				logger.info(f"🚀 matchmaking_event envoyé à matchmaking_service : {action} {user_id}")
 			
 		except json.JSONDecodeError:
 			await self.send(json.dumps({"error": "Format JSON invalide"}))
@@ -64,3 +74,12 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		"""Gère la fin du jeu et envoie le message au client."""
 		await self.send(json.dumps(event))
 		logger.info(f"🚨 Game over transmis au client WebSocket : {event}")
+
+
+	async def match_found(self, event):
+			"""
+			envoyé par matchmaking-service. 
+			"""
+			await self.send(json.dumps(event))
+   
+			logger.info(f"  tch_found envoyé au client: {event}")

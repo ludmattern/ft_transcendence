@@ -10,7 +10,10 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
+    'django.contrib.auth',
+	'django.contrib.contenttypes',
     'service',
+    'channels'
 ]
 
 MIGRATION_MODULES = {
@@ -20,8 +23,6 @@ MIGRATION_MODULES = {
 }
 
 ROOT_URLCONF = 'matchmaking.urls'
-
-ASGI_APPLICATION = 'pong.asgi.application'
 
 DATABASES = {
     'default': {
@@ -34,6 +35,19 @@ DATABASES = {
     }
 }
 
+CHANNEL_LAYERS = {
+	"default": {
+		"BACKEND": "channels_redis.core.RedisChannelLayer",
+		"CONFIG": {
+			"hosts": [("redis-livechat", 6379)],
+			"capacity": 10000,
+		},
+	},
+}
+
+ASGI_APPLICATION = 'service.asgi.application'
+
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -43,3 +57,5 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+
+
