@@ -849,8 +849,10 @@ body {
 
 #hud-body #left-window-container #bottom-notification-container .notification-message {
   opacity: 0;  
-  padding: 10px;
-  height: clamp(0.8rem, calc(0.8rem + ((100vw - 1920px) * 0.0083333)), 2rem);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.5rem;
+  height: clamp(2rem, calc(2.2rem + ((100vw - 1920px)* 0.0083333)), 5rem);
   overflow: hidden;
   transition: opacity 0.15s ease-in-out, height 0.30s ease-in-out, margin 0.30s ease-in-out, padding 0.30s ease-in-out, text-shadow 0.15s ease-in-out;
 }
@@ -858,7 +860,7 @@ body {
 /* Classe ajoutée pour lancer le fade-out */
 #hud-body #left-window-container #bottom-notification-container .notification-message.visible {
 	opacity: 1;
-	height: clamp(0.8rem, calc(0.8rem + ((100vw - 1920px) * 0.0083333)), 2rem);
+	height: clamp(2rem, calc(2.2rem + ((100vw - 1920px)* 0.0083333)), 5rem);
 }
 
 #hud-body #left-window-container #bottom-notification-container .notification-message.collapsing {
