@@ -147,27 +147,6 @@ function processNotificationBuffer() {
 	  }, 300);
 	}, duration);
  }
-function createNotificationMessage(message, duration = 30000) {
-  const container = document.getElementById("bottom-notification-container");
-  if (!container) {
-    console.error("Le container de notification n'a pas été trouvé.");
-    return;
-  }
-
-  const notification = document.createElement("div");
-  notification.classList.add("notification-message");
-  notification.innerHTML = message;
-
-  container.appendChild(notification);
-
-  setTimeout(() => {
-    notification.classList.add("fade-out");
-    notification.addEventListener("transitionend", () => {
-      notification.remove();
-    });
-  }, duration);
-}
-
 
 /**
  * Génère un élément de navigation (onglet) avec un lien.
@@ -422,11 +401,12 @@ export function handleIncomingMessage(data) {
   const userId = sessionStorage.getItem("userId");
   const container = document.getElementById("l-tab-content");
 
+
   const activeTab = document.querySelector(".nav-link.active");
   if (activeTab && activeTab.dataset.tab === "comm") {
-    renderCommMessage(newItem, container, userId.toString(), username);
+    renderCommMessage(data, container, userId.toString(), username);
   }
-  storeMessageInSessionStorage(newItem);
+  storeMessageInSessionStorage(data);
 }
 
 function removePrivateNotifications() {

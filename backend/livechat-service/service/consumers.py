@@ -43,7 +43,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		logger.info(f"Message transmis au groupe gateway depuis chat_service (General): {event}")
 
 	async def private_message(self,event):
-		try:
+		try:	
 			logger.info(f"ChatConsumer.private_message received event: {event}")
 			author_id = event.get("author")
 			username = await get_username(author_id)
