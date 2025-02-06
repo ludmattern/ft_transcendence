@@ -10,5 +10,7 @@ export function initCSSRenderer() {
     Store.cssRenderer.domElement.style.top = "0";
     Store.cssRenderer.domElement.style.left = "0";
     Store.cssRenderer.domElement.style.pointerEvents = "none";
+	//identifiant cssRenderer scene pour le retrouver dans le DOM
+	Store.cssRenderer.domElement.id = "cssRendererScene";
     document.getElementById("app").appendChild(Store.cssRenderer.domElement);
   }

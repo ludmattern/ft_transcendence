@@ -1,39 +1,44 @@
+// contextMenu.js
 import { createComponent } from "/src/utils/component.js";
 
 export const contextMenu = createComponent({
   tag: "contextMenu",
 
-  // Générer le HTML du menu contextuel
+  // Génère le HTML du menu contextuel en fonction de l'item et d'un objet userStatus
   render: (item, userStatus) => `
-    <div class="context-menu" 
-         style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 0.5rem; background: rgba(255, 255, 255, 0.1); color: var(--content-color); margin-bottom: 0.5rem; z-index: 10;">
-      <div class="context-menu-buttons" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
-        <button class="btn" id="friend-action">${userStatus.isFriend ? "Remove" : "Add"}</button>
-        <button class="btn" id="block-action">${userStatus.isBlocked ? "Unblock" : "Block"}</button>
-        <button class="btn" id="invite-action">Invite</button>
-        <button class="btn" id="profile-action">Profile</button>
-        <button class="btn" id="message-action">Message</button>
-      </div>
+    <div id="context-menu" class="context-menu">
+      <ul>
+        <li id="action-friend">${userStatus.isFriend ? "Remove Friend" : "Add Friend"}</li>
+        <li id="action-block">${userStatus.isBlocked ? "Unblock" : "Block"}</li>
+        <li id="action-invite">Invite</li>
+        <li id="action-profile">Profile</li>
+        <li id="action-message">Message</li>
+      </ul>
     </div>
   `,
 
-  // Attacher les événements aux boutons
+  // Attache les événements aux boutons du menu
   attachEvents: (el, item, userStatus) => {
-    el.querySelector("#friend-action").addEventListener("click", () =>
-      handleFriendAction(userStatus.isFriend, item.author)
-    );
-    el.querySelector("#block-action").addEventListener("click", () =>
-      handleBlockAction(userStatus.isBlocked, item.author)
-    );
-    el.querySelector("#invite-action").addEventListener("click", () =>
-      handleInviteAction(item.author)
-    );
-    el.querySelector("#profile-action").addEventListener("click", () =>
-      handleProfileAction(item.author)
-    );
-    el.querySelector("#message-action").addEventListener("click", () =>
-      handleMessageAction(item.author)
-    );
+    el.querySelector("#action-friend").addEventListener("click", () => {
+      handleFriendAction(userStatus.isFriend, item.author);
+      hideContextMenu();
+    });
+    el.querySelector("#action-block").addEventListener("click", () => {
+      handleBlockAction(userStatus.isBlocked, item.author);
+      hideContextMenu();
+    });
+    el.querySelector("#action-invite").addEventListener("click", () => {
+      handleInviteAction(item.author);
+      hideContextMenu();
+    });
+    el.querySelector("#action-profile").addEventListener("click", () => {
+      handleProfileAction(item.author);
+      hideContextMenu();
+    });
+    el.querySelector("#action-message").addEventListener("click", () => {
+      handleMessageAction(item.author);
+      hideContextMenu();
+    });
   },
 });
 
@@ -75,47 +80,52 @@ function handleMessageAction(author) {
   // Logique pour envoyer un message
 }
 
-export function showContextMenu(item, messageElement) {
-	const existingMenu = document.querySelector(".context-menu");
-  
-	// Vérifie si le message appartient à l'utilisateur
-	const isUserMessage = item.author === "USER"; // Ajuster cette logique selon vos données
-	if (isUserMessage) {
-	  return;
-	}
-  
-	if (existingMenu) {
-	  const associatedMessage = existingMenu.nextElementSibling;
-  
-	  // Supprime le menu existant
-	  existingMenu.remove();
-  
-	  // Si le clic est sur le même message, ne recrée pas de menu
-	  if (associatedMessage === messageElement) {
-		return;
-	  }
-	}
-  
-	// Exemple des statuts utilisateur
-	const userStatus = {
-	  isFriend: true, // Exemple : mettre à jour selon votre logique
-	  isBlocked: false, // Exemple : mettre à jour selon votre logique
-	};
-  
-	// Générer et attacher le menu contextuel
-	const menuHTML = contextMenu.render(item, userStatus);
-	messageElement.insertAdjacentHTML("beforebegin", menuHTML);
-  
-	const menuElement = messageElement.previousElementSibling;
-	contextMenu.attachEvents(menuElement, item, userStatus);
-  
-	// Ajoute un défilement fluide pour positionner le menu visible dans le conteneur parent
-	const parentContainer = document.querySelector("#l-tab-content"); // Conteneur parent
-	if (parentContainer) {
-	  parentContainer.scrollTo({
-		top: menuElement.offsetTop - parentContainer.offsetTop, // Position relative au conteneur
-		behavior: "smooth", // Défilement fluide
-	  });
-	}
+/**
+ * Affiche le menu contextuel à la position du clic droit.
+ * @param {Object} item - L'objet associé au message.
+ * @param {MouseEvent} event - L'événement contextmenu.
+ */
+export function showContextMenu(item, event) {
+	console.log("showContextMenu");
+  event.preventDefault();
+  event.stopPropagation(); 
+
+  // Supprime un menu déjà existant s'il existe
+  hideContextMenu();
+
+  // Exemple d'objet userStatus (à adapter selon votre logique)
+  const userStatus = {
+    isFriend: false,
+    isBlocked: false,
+  };
+
+  // Générer le HTML du menu et l'insérer dans le body
+  const menuHTML = contextMenu.render(item, userStatus);
+  document.body.insertAdjacentHTML("beforeend", menuHTML);
+  const menuElement = document.getElementById("context-menu");
+
+  // Positionner le menu à la position du clic
+  menuElement.style.left = event.pageX + "px";
+  menuElement.style.top = event.pageY + "px";
+  menuElement.style.display = "block";
+
+  // Attacher les événements aux boutons
+  contextMenu.attachEvents(menuElement, item, userStatus);
+}
+
+/**
+ * Cache et supprime le menu contextuel s'il existe.
+ */
+export function hideContextMenu() {
+  const menuElement = document.getElementById("context-menu");
+  if (menuElement) {
+    menuElement.remove();
   }
-  
+}
+
+// Cacher le menu lorsqu'on clique ailleurs
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".context-menu")) {
+    hideContextMenu();
+  }
+});
