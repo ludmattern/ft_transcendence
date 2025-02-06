@@ -42,20 +42,26 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_send("gateway", event)
 		logger.info(f"Message transmis au groupe gateway depuis chat_service (General): {event}")
 
-	async def private_message(self,event):
-		try:	
-			logger.info(f"ChatConsumer.private_message received event: {event}")
-			author_id = event.get("author")
-			username = await get_username(author_id)
-			recipient = event.get("recipient")	
-			recipient_id = await get_id(recipient)
+	async def private_message(self, event):
+		logger.info(f"ChatConsumer.private_message received event: {event}")
+		
+		author_id = event.get("author")
+		username = await get_username(author_id)
+		recipient = event.get("recipient")
+		recipient_id = await get_id(recipient)
 
-			event["username"] = username
+		if recipient_id is None:
+			logger.info(f"No valid recipient id for recipient: {recipient}")
+			return
 
-			await self.channel_layer.group_send(f"user_{recipient_id}", event)
-			await self.channel_layer.group_send(f"user_{author_id}", event)
-			logger.info(f"Message transmis au groupe user_{recipient} depuis chat_service (Private): {event}")
-		except Exception as e:
-			logger.error(f"Error in private_message handler: {e}")
+		if str(author_id) == str(recipient_id):
+			logger.info(f"Skipping message sending because author_id ({author_id}) equals recipient_id ({recipient_id})")
+			return
+
+		event["username"] = username
+
+		await self.channel_layer.group_send(f"user_{recipient_id}", event)
+		await self.channel_layer.group_send(f"user_{author_id}", event)
+		logger.info(f"Message transmitted to groups user_{recipient_id} and user_{author_id}: {event}")
 
 		
