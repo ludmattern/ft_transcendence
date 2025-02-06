@@ -32,8 +32,6 @@ export async function loadModels() {
 
 					resolve(gltf);
 				},
-				onProgress,
-				(error) => reject(`Erreur lors du chargement du modèle 3D: ${url}, ${error}`)
 			);
 		});
 	}

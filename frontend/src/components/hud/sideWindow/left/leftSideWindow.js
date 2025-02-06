@@ -56,6 +56,10 @@ export const leftSideWindow = createComponent({
         e.preventDefault();
         const tabName = tab.dataset.tab;
 
+        if (tabName === "comm") {
+			removePrivateNotifications();
+		  }
+
         tabs.forEach((t) => t.classList.remove("active"));
         tab.classList.add("active");
 
@@ -111,9 +115,9 @@ function processNotificationBuffer() {
  * Crée et affiche une notification qui fade-in, reste visible pendant une durée donnée,
  * 
  * @param {string} message - Le contenu HTML ou texte de la notification.
- * @param {number} [duration=5000] - La durée en millisecondes avant de lancer le collapse (par défaut 30s).
+ * @param {number} [duration=2500] - La durée en millisecondes avant de lancer le collapse (par défaut 30s).
  */
-  export function createNotificationMessage(message, duration = 5000) {
+  export function createNotificationMessage(message, duration = 2500) {
 	const container = document.getElementById("bottom-notification-container");
 	if (!container) {
 	  console.error("Le container de notification n'a pas été trouvé.");
@@ -384,10 +388,19 @@ export function handleIncomingMessage(data) {
     renderCommMessage(newItem, container, userId.toString(), username);	
   }
   else {
-	if (channel === "private") {
-		createNotificationMessage(`New private message from ${username} !`, 15000);
+	if (channel === "general") {
+		createNotificationMessage(`New private message from ${username} !`);
 	}
   }
 
   storeMessageInSessionStorage(newItem);
 }
+
+function removePrivateNotifications() {
+	// On garde dans le buffer uniquement les notifications dont le message ne contient pas "private message"
+	notificationbuffer = notificationbuffer.filter(({ message }) => {
+	  return !(message && message.includes("private message"));
+	});
+	console.log("Buffer après suppression des private messages:", notificationbuffer);
+  }
+  
