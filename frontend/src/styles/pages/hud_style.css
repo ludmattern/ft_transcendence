@@ -1044,6 +1044,11 @@ p {
   cursor: pointer;
 }
 
+#hud-body .message-header .author.me {
+	font-weight: 400 !important;
+    cursor: default !important;
+}
+
 #hud-body .user-message,
 #hud-body .other-message {
   padding: 0.6em;
