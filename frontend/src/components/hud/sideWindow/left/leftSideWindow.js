@@ -76,9 +76,6 @@ export const leftSideWindow = createComponent({
     startAnimation(parentContainer, "light-animation", 1000);
 
 	createNotificationMessage(`Welcome to your spaceship ${sessionStorage.getItem("username")} !`, 15000);
-    createNotificationMessage('New private message from <b>theOther</b>');
-    createNotificationMessage('New private message from <b>theOther</b>');
-    createNotificationMessage('New private message from <b>theOther</b>');
   },
 });
 
