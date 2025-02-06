@@ -3,6 +3,8 @@ import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
 import { startAnimation } from "/src/components/hud/index.js";
 import { ws } from "/src/services/socketManager.js";
 
+let notificationbuffer = [];
+
 export const leftSideWindow = createComponent({
   tag: "leftSideWindow",
 
@@ -27,9 +29,6 @@ export const leftSideWindow = createComponent({
 	</div>
 	<div class="d-flex flex-column">
 		<div id="bottom-notification-container">
-			<span class="m-2 bi bi-chat-left-text-fill">
-				<span>New private message from <b>theOther</b></span>
-			</span>
 		</div>
 	</div>
 `,
@@ -57,6 +56,10 @@ export const leftSideWindow = createComponent({
         e.preventDefault();
         const tabName = tab.dataset.tab;
 
+        if (tabName === "comm") {
+			removePrivateNotifications();
+		  }
+
         tabs.forEach((t) => t.classList.remove("active"));
         tab.classList.add("active");
 
@@ -72,6 +75,7 @@ export const leftSideWindow = createComponent({
     const parentContainer = el.parentElement;
     startAnimation(parentContainer, "light-animation", 1000);
 
+	createNotificationMessage(`Welcome to your spaceship ${sessionStorage.getItem("username")} !`, 15000);
     createNotificationMessage('New private message from <b>theOther</b>');
     createNotificationMessage('New private message from <b>theOther</b>');
     createNotificationMessage('New private message from <b>theOther</b>');
@@ -79,11 +83,70 @@ export const leftSideWindow = createComponent({
 });
 
 /**
- * Crée et affiche une notification qui disparaît après un certain délai.
+ * Crée et affiche une notification qui fade-in, reste visible pendant une durée donnée,
+ * puis s'effondre en douceur avant d'être retirée du DOM.
  *
  * @param {string} message - Le contenu HTML ou texte de la notification.
- * @param {number} [duration=30000] - La durée en millisecondes avant disparition (par défaut 30s).
+ * @param {number} [duration=5000] - La durée en millisecondes avant de lancer le collapse (par défaut 30s).
  */
+function collapseNotification(notification) {
+	notification.classList.add('collapsing');
+  
+	notification.addEventListener('transitionend', function handler(e) {
+	  if (e.propertyName === 'height') {
+		notification.removeEventListener('transitionend', handler);
+		notification.remove();
+
+		processNotificationBuffer();
+	  }
+	});
+  }
+
+/**
+ * Traite les notifications en attente dans la file d'attente.
+ */
+function processNotificationBuffer() {
+	const container = document.getElementById("bottom-notification-container");
+	while (container.childElementCount < 3 && notificationbuffer.length > 0) {
+	  const { message, duration } = notificationbuffer.shift();
+	  createNotificationMessage(message, duration);
+	}
+}
+  
+
+/**
+ * Crée et affiche une notification qui fade-in, reste visible pendant une durée donnée,
+ * 
+ * @param {string} message - Le contenu HTML ou texte de la notification.
+ * @param {number} [duration=2500] - La durée en millisecondes avant de lancer le collapse (par défaut 30s).
+ */
+  export function createNotificationMessage(message, duration = 2500) {
+	const container = document.getElementById("bottom-notification-container");
+	if (!container) {
+	  console.error("Le container de notification n'a pas été trouvé.");
+	  return;
+	}
+	
+	if (container.childElementCount >= 3) {
+	  notificationbuffer.push({ message, duration });
+	  return;
+	}
+  
+	const notification = document.createElement("div");
+	notification.classList.add("notification-message");
+	notification.innerHTML = message;
+	container.appendChild(notification);
+  
+	notification.offsetWidth;
+	notification.classList.add("visible");
+	
+	setTimeout(() => {
+	  notification.classList.remove("visible");
+	  setTimeout(() => { 
+		collapseNotification(notification); 
+	  }, 300);
+	}, duration);
+ }
 function createNotificationMessage(message, duration = 30000) {
   const container = document.getElementById("bottom-notification-container");
   if (!container) {
@@ -116,12 +179,12 @@ function createNotificationMessage(message, duration = 30000) {
 function createNavItem(label, active = false) {
   return `
 	<li class="nav-item">
+	<span class="nav-link ${active ? "active" : ""}" data-tab="${label.toLowerCase()}">
 	<span class="nav-link ${active ? "active" : ""
     }" data-tab="${label.toLowerCase()}">
 		<a href="#" data-tab="${label.toLowerCase()}">${label}</a>
 	</span>
-	</li>
-`;
+	</li>`;
 }
 
 /**
@@ -149,7 +212,6 @@ function loadTabContent(tabName, container) {
         console.error(`Error loading tab content for ${tabName}:`, error);
       });
   } else if (tabName === "comm") {
-    // On charge l'historique depuis sessionStorage
     let tabItems = [];
     const storedHistory = sessionStorage.getItem("chatHistory");
     if (storedHistory) {
@@ -160,7 +222,6 @@ function loadTabContent(tabName, container) {
       }
     }
 
-    // Convertir ici en string pour être sûr d'avoir le même type
     const userId = sessionStorage.getItem("userId").toString();
     const username = sessionStorage.getItem("username").toString();
     console.log(username);
@@ -361,23 +422,18 @@ export function handleIncomingMessage(data) {
   const userId = sessionStorage.getItem("userId");
   const container = document.getElementById("l-tab-content");
 
-  // Create a new message object to store and render
-  const newItem = {
-    type,
-    message,
-    author,
-    channel,
-    timestamp,
-    username,
-    recipient,
-  };
-
-    const activeTab = document.querySelector(".nav-link.active");
-    if (activeTab && activeTab.dataset.tab === "comm") {
-      renderCommMessage(newItem, container, userId.toString(), username);
-    }
-
-  // Store the message in session storage for history
+  const activeTab = document.querySelector(".nav-link.active");
+  if (activeTab && activeTab.dataset.tab === "comm") {
+    renderCommMessage(newItem, container, userId.toString(), username);
+  }
   storeMessageInSessionStorage(newItem);
 }
 
+function removePrivateNotifications() {
+	// On garde dans le buffer uniquement les notifications dont le message ne contient pas "private message"
+	notificationbuffer = notificationbuffer.filter(({ message }) => {
+	  return !(message && message.includes("private message"));
+	});
+	console.log("Buffer après suppression des private messages:", notificationbuffer);
+  }
+  

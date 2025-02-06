@@ -56,7 +56,7 @@ export const commMessage = createComponent({
         <div class="message-content-wrapper">
           <div class="message-header">
             <span class="channel">${isPrivate ? "[Private]" : "[General]"}</span>
-            <span class="author">${displayAuthor}</span>
+            <span class="author${isUser ? " me" : ""}">${displayAuthor}</span>
            <span class="timestamp">${formatTimestamp(item.timestamp)}</span>
           </div>
           <div class="message-text" style="margin-top: 0.5rem;">
@@ -68,6 +68,14 @@ export const commMessage = createComponent({
   },
 
   attachEvents: (el, item) => {
-    el.addEventListener("click", () => showContextMenu(item, el));
+    if (!item.isUser) {
+      const authorElem = el.querySelector(".author");
+      if (authorElem) {
+        authorElem.addEventListener("click", (e) => {
+          e.preventDefault();
+          showContextMenu(item, e);
+        });
+      }
+    }
   },
 });

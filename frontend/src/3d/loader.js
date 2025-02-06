@@ -7,12 +7,6 @@ export async function loadModels() {
 
 	const loader = new GLTFLoader();
 
-	function onProgress(xhr) {
-		if (xhr.lengthComputable) {
-			const percentComplete = (xhr.loaded / xhr.total) * 100;
-		}
-	}
-
 	async function loadModelFromIndexedDB(url) {
 		const cachedData = await CacheDB.getFile("models", url);
 		if (cachedData) {
@@ -38,8 +32,6 @@ export async function loadModels() {
 
 					resolve(gltf);
 				},
-				onProgress,
-				(error) => reject(`Erreur lors du chargement du modèle 3D: ${url}, ${error}`)
 			);
 		});
 	}
@@ -86,10 +78,7 @@ export async function loadModels() {
       }
     });
 
-
 		Store.scene.add(Store.model);
-
-
 		Store.screenObject1 = Store.model.getObjectByName("_gltfNode_6");
 		Store.screenObject2 = Store.model.getObjectByName("_gltfNode_13");
 		Store.screenObject3 = Store.model.getObjectByName("_gltfNode_7");

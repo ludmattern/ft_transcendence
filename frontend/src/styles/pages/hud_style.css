@@ -61,7 +61,7 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  z-index: 9999999;
+  z-index: 70;
   pointer-events: none;
 }
 
@@ -82,7 +82,8 @@ body {
 #hud-body h6,
 #hud-body input,
 #hud-body select,
-#hud-body .btn {
+#hud-body .btn,
+#hud body #bottom-notification-container .notification-message {
   font-size: clamp(1rem, calc(1rem + ((100vw - 1920px) * 0.0083333)), 2rem);
 }
 
@@ -148,6 +149,7 @@ body {
 
 .hud_screen-effect {
   position: absolute;
+  z-index: 90;
   width: 100.1%;
   height: 101%;
   background-size: 102% 10px;
@@ -170,7 +172,6 @@ body {
     rgba(0, 0, 0, 1) 100%
   );
   filter: blur(2px);
-  z-index: 99;
   translate: 0 -2px;
   opacity: 0;
 }
@@ -199,7 +200,6 @@ body {
 .svg-element {
   position: fixed;
   pointer-events: none;
-  z-index: 10;
   overflow: visible;
 }
 .svg-top-left {
@@ -258,7 +258,7 @@ body {
 
 .helmet-svg {
   position: absolute;
-  z-index: 9999999;
+  z-index: 100;
 }
 
 .helmet-svg .tl-1,
@@ -348,6 +348,10 @@ body {
 .hud-svg .hud-svg-footer,
 .hud-svg .hud-svg-header {
   opacity: 0;
+}
+
+.hud-svg .svg-element {
+	z-index: 80;
 }
 
 .hud-svg .hud-svg-footer {
@@ -713,7 +717,6 @@ body {
   stroke: var(--primary-hud-elements-color);
   stroke-width: 4px;
   overflow: visible;
-  z-index: 10;
 
   mask-image: linear-gradient(
     to right,
@@ -838,30 +841,40 @@ body {
 #hud-body #left-window-container #bottom-notification-container {
   transform: rotateX(-345deg) rotateY(25deg) rotateZ(-14deg)
     translate3d(0px, -35px, 0px);
-  height: 20vh;
+  height: 10vh;
+  border-left: 2px solid var(--secondary-hud-elements-color);
   overflow: hidden;
-  font-size: 0.9rem;
   opacity: 0.9;
-  padding-left: 2rem;
+  margin-left: 2rem;
   text-shadow: 0px 0px 10px var(--info-hud-elements-color);
-  display: flex;
-  flex-direction: column-reverse;
+  background: #ffffff07;
 }
 
 #hud-body #left-window-container #bottom-notification-container .notification-message {
-  padding: 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  margin: 5px;
-  border-radius: 4px;
-  transition: opacity 1s ease-out;
+  opacity: 0;  
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.5rem;
+  height: clamp(2rem, calc(2.2rem + ((100vw - 1920px)* 0.0083333)), 5rem);
+  overflow: hidden;
+  transition: opacity 0.15s ease-in-out, height 0.30s ease-in-out, margin 0.30s ease-in-out, padding 0.30s ease-in-out, text-shadow 0.15s ease-in-out;
 }
 
 /* Classe ajoutée pour lancer le fade-out */
-#hud-body #left-window-container #bottom-notification-container .notification-message.fade-out {
-  opacity: 0;
+#hud-body #left-window-container #bottom-notification-container .notification-message.visible {
+	opacity: 1;
+	height: clamp(2rem, calc(2.2rem + ((100vw - 1920px)* 0.0083333)), 5rem);
 }
 
+#hud-body #left-window-container #bottom-notification-container .notification-message.collapsing {
+	opacity: 0;
+	height: 0rem;
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	text-shadow: 0px 0px 0px var(--info-hud-elements-color);
+  }
 
 #hud-body .form-control:focus {
   border: 1px solid #99ffff7e;
@@ -940,7 +953,7 @@ p {
   height: 100%;
   backdrop-filter: blur(1rem);
   transition: all 0.15s;
-  z-index: 9;
+  z-index: 50;
 }
 
 #hud-body .transparent-table {
@@ -1018,8 +1031,8 @@ p {
   height: 100%;
   backdrop-filter: blur(1rem);
   transition: all 0.15s;
-  z-index: 1;
   background-color: black;
+  z-index: 30;
 }
 
 #hud-body .message-header span {
@@ -1029,6 +1042,11 @@ p {
 #hud-body .message-header .author {
   font-weight: 600;
   cursor: pointer;
+}
+
+#hud-body .message-header .author.me {
+	font-weight: 500 !important;
+    cursor: default !important;
 }
 
 #hud-body .user-message,
@@ -1143,7 +1161,6 @@ p {
 
 .flicker-animation {
   animation: neonFlicker 1s ease-in-out forwards;
-  z-index: 10;
 }
 
 @keyframes neonFlicker {
@@ -1175,3 +1192,32 @@ p {
     opacity: 1;
   }
 }
+
+/* Styles de base pour le menu contextuel */
+.context-menu {
+    position: absolute;
+    display: none;
+    background: #000000d9;
+    min-width: 150px;
+    padding: 0;
+    margin: 0;
+    z-index: 75;
+    transform: rotateX(345deg) rotateY(25deg) rotateZ(14deg) translate3d(-31px, 7px, 0px);
+  }
+  
+  .context-menu ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+  }
+  
+  .context-menu li {
+    cursor: pointer;
+    padding: 5px 10px 5px 10px;
+    transition: all 0.30s;
+  }
+  
+  .context-menu li:hover {
+	background-color: #eeeeee3b;
+  }
+  

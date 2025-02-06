@@ -1,3 +1,10 @@
+/**
+ * Commence une animation sur un élément.
+ * 
+ * @param {HTMLElement} target - L'élément cible.
+ * @param {string} animation - Le nom de l'animation.
+ * @param {number} delay - Le délai en milisecondes avant le début de l'animation.
+ */
 export async function startAnimation(target, animation, delay = 0) {
     const elements = target instanceof NodeList || Array.isArray(target) ? target : [target];
 
