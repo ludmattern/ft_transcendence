@@ -2,7 +2,6 @@ import { createComponent } from "/src/utils/component.js";
 import { gameManager } from "/src/pongGame/gameManager.js";
 import { ws } from "/src/services/socketManager.js";
 
-import { joinRoom  , launchMatchmaking ,leavePrivate} from "/src/services/multiplayerPong.js";
 export const multiplayerContent = createComponent({
   tag: "multiplayerContent",
 
@@ -166,7 +165,7 @@ const leavePrivateButton = document.getElementById("leavePrivate");
 leavePrivateButton.addEventListener("click", async () => {
   leavePrivateButton.style.display = "none";
   createPrivateButton.style.display = "block"; 
-  leavePrivate();
+  leaveRoom();
 });
 
 },
@@ -225,4 +224,27 @@ function leaveMatchmaking() {
       user_id: userId
   }));
   console.log("🔴 Sent 'leave matchmaking' via WebSocket");
+}
+
+
+function joinRoom(roomCode) {
+  const userId = sessionStorage.getItem("userId");
+  ws.send(JSON.stringify({
+      type: "private_event",
+      action: "join",
+      room_code: roomCode,
+      user_id: userId
+  }));
+  console.log("Sent join room event for ", roomCode);
+}
+
+function leaveRoom(roomCode) {
+  const userId = sessionStorage.getItem("userId");
+  ws.send(JSON.stringify({
+      type: "private_event",
+      action: "leave",
+      room_code: roomCode,
+      user_id: userId
+  }));
+  console.log("Sent leave room event for ", roomCode);
 }

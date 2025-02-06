@@ -34,10 +34,9 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 			if message_type == "init":
 				self.user_id = data.get("userId")
 				self.username = data.get("username")
-				# Now add this channel to the user's personal group.
-				await self.channel_layer.group_add(f"user_{self.username}", self.channel_name)
+				await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
 				logger.info(f"Initialization complete: Client {self.username} (ID: {self.user_id}) connected.")
-				return  # Stop further processing for the init message.
+				return  
 			
 
 			if message_type == "chat_message":
@@ -85,18 +84,18 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 					"direction": data.get("direction"),
 					"player_id": data.get("player_id"),
 				})
-				logger.info("🚀 Événement de jeu relayé à 'pong_service'")
-			elif data.get("type") == "matchmaking":
-				action = data.get("action") 
+			elif data.get("type") in ["matchmaking", "private_event"]:
+				action = data.get("action")
 				user_id = data.get("user_id", self.user_id)
+				room_code = data.get("room_code")  # s'il existe
 
 				await self.channel_layer.group_send("matchmaking_service", {
 					"type": "matchmaking_event",
 					"action": action,
-					"user_id": user_id
+					"user_id": user_id,
+					"room_code": room_code  # important pour distinguer le private
 				})
-				logger.info(f"🚀 matchmaking_event envoyé à matchmaking_service : {action} {user_id}")
-			
+				logger.info(f"🚀 matchmaking_event/private_event => service : {action} {user_id}, room={room_code}")
 		except json.JSONDecodeError:
 			await self.send(json.dumps({"error": "Format JSON invalide"}))
 
@@ -121,9 +120,17 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
 
 	async def match_found(self, event):
-			"""
-			envoyé par matchmaking-service. 
-			"""
-			await self.send(json.dumps(event))
-   
-			logger.info(f"  tch_found envoyé au client: {event}")
+		await self.send(json.dumps(event))
+		logger.info(f"🎯 Match trouvé! Envoyé au client {event['user_id']}")
+  
+	async def private_match_found(self, event):
+		"""
+		Handler pour { "type":"private_match_found", "game_id":"...", "side":"...", "user_id":"..." }
+		"""
+		await self.send(json.dumps({
+			"type": "private_match_found",
+			"game_id": event["game_id"],
+			"side": event["side"],
+			"user_id": event["user_id"]
+		}))
+		logger.info(f"🔔 Private match_found envoyé au client {event['user_id']} : game_id={event['game_id']}, side={event['side']}")

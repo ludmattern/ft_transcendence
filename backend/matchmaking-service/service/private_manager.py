@@ -41,5 +41,4 @@ class PrivateManager:
         if user_id in self.match_found:
             del self.match_found[user_id]
 
-
 private_manager = PrivateManager()

@@ -2,7 +2,7 @@ export let ws = null;
 let isWsConnected = false;
 import { gameManager } from "/src/pongGame/gameManager.js";
 import { handleIncomingMessage } from "/src/components/hud/sideWindow/left/leftSideWindow.js";
-import { startMatchmakingGame } from "/src/services/multiplayerPong.js";
+import { startMatchmakingGame , startPrivateGame} from "/src/services/multiplayerPong.js";
 
 
 
@@ -49,6 +49,10 @@ export function initializeWebSocket() {
         {
             console.log("✅ Match found! game_id =", data.game_id, "side =", data.side);
             startMatchmakingGame(data.game_id, data.side, data.user_id);
+        }
+        else  if (data.type === "private_match_found") {
+            console.log("✅ Private match found:", data.game_id, data.side);
+            startPrivateGame(data.game_id, data.side, data.user_id, roomCode);
         }
         
         console.log("📩 Message reçu :", JSON.parse(event.data));
