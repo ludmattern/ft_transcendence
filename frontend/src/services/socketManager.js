@@ -19,6 +19,19 @@ export function initializeWebSocket() {
     ws.onopen = () => {
         console.log(" WebSocket connecté !");
         isWsConnected = true;
+
+        // Retrieve user details from sessionStorage.
+        const userId = sessionStorage.getItem("userId");
+        const username = sessionStorage.getItem("username");
+
+        // Send an initialization message with the user details.
+        const initPayload = {
+            type: "init",
+            userId: userId,
+            username: username,
+            timestamp: new Date().toISOString()
+        };
+        ws.send(JSON.stringify(initPayload));
     };
 
     ws.onmessage = (event) => {

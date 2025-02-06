@@ -372,18 +372,10 @@ export function handleIncomingMessage(data) {
     recipient,
   };
 
-  // Handle different message types
-  if (type === "private_message" && recipient === userId) {
-    console.log(`🔒 Private message from ${username}: ${message}`);
-    renderPrivateMessage(newItem, container, userId);
-  } else if (type === "chat_message" && channel === "general") {
     const activeTab = document.querySelector(".nav-link.active");
     if (activeTab && activeTab.dataset.tab === "comm") {
       renderCommMessage(newItem, container, userId.toString(), username);
     }
-  } else {
-    console.warn("Unhandled message type or channel:", type, channel);
-  }
 
   // Store the message in session storage for history
   storeMessageInSessionStorage(newItem);
