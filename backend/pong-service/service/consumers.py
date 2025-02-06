@@ -79,7 +79,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         """
         Boucle régulière de mise à jour. Tourne tant que la partie n'est pas finie.
         """
-        logger.info(f"🌀 game_loop démarrée pour {game_id}")
+        logger.info(f" game_loop démarrée pour {game_id}")
         try:
             while True:
                 game = game_manager.get_game(game_id)
@@ -118,7 +118,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         except asyncio.CancelledError:
             logger.info(f"game_loop annulée pour {game_id}")
         finally:
-            # Nettoyage
+        
             if game_id in self.running_games:
                 del self.running_games[game_id]
             game_manager.cleanup_game(game_id)
