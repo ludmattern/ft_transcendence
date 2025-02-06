@@ -71,23 +71,23 @@ export const leftSideWindow = createComponent({
     const parentContainer = el.parentElement;
     startAnimation(parentContainer, "light-animation", 1000);
 
-	createNotificationMessage("Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("1Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("2Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("3Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("4Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("5Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("6Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("7Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("8Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("9Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("10Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("11Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("12Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("13Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("14Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("15Bienvenue sur le serveur !", 5000);
-	createNotificationMessage("16Bienvenue sur le serveur !", 5000);
+	createNotificationMessage("Bienvenue sur le serveur !");
+	createNotificationMessage("1Bienvenue sur le serveur !");
+	createNotificationMessage("2Bienvenue sur le serveur !");
+	createNotificationMessage("3Bienvenue sur le serveur !");
+	createNotificationMessage("4Bienvenue sur le serveur !");
+	createNotificationMessage("5Bienvenue sur le serveur !");
+	createNotificationMessage("6Bienvenue sur le serveur !");
+	createNotificationMessage("7Bienvenue sur le serveur !");
+	createNotificationMessage("8Bienvenue sur le serveur !");
+	createNotificationMessage("9Bienvenue sur le serveur !");
+	createNotificationMessage("10Bienvenue sur le serveur !");
+	createNotificationMessage("11Bienvenue sur le serveur !");
+	createNotificationMessage("12Bienvenue sur le serveur !");
+	createNotificationMessage("13Bienvenue sur le serveur !");
+	createNotificationMessage("14Bienvenue sur le serveur !");
+	createNotificationMessage("15Bienvenue sur le serveur !");
+	createNotificationMessage("16Bienvenue sur le serveur !");
 
   },
 });
@@ -112,6 +112,9 @@ function collapseNotification(notification) {
 	});
   }
 
+/**
+ * Traite les notifications en attente dans la file d'attente.
+ */
 function processNotificationBuffer() {
 	const container = document.getElementById("bottom-notification-container");
 	while (container.childElementCount < 3 && notificationbuffer.length > 0) {
@@ -120,6 +123,14 @@ function processNotificationBuffer() {
 	}
 }
   
+
+/**
+ * Crée et affiche une notification qui fade-in, reste visible pendant une durée donnée,
+ * 
+ * @param {string} message - Le contenu HTML ou texte de la notification.
+ * @param {number} [duration=5000] - La durée en millisecondes avant de lancer le collapse (par défaut 30s).
+ * @returns {void}
+ */
   function createNotificationMessage(message, duration = 5000) {
 	const container = document.getElementById("bottom-notification-container");
 	if (!container) {
