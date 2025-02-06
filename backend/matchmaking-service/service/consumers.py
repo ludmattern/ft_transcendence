@@ -49,6 +49,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                         "side": match_info_p2["side"],
                         "user_id": p2
                     })
+
                     logger.info(f"📡 Private match (room={room_code}) ! Notif envoyée à user_{p2}")
                 else:
                     logger.info(f"🔎 user_id={user_id} attend dans la private room {room_code}")

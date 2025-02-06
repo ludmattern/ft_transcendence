@@ -76,7 +76,6 @@ def check_auth_view(request):
             return response
 
         return JsonResponse({'success': True, 'id': user.id, 'username': user.username, 'message': 'Cookie still valid'})
-
     except jwt.ExpiredSignatureError:
         return JsonResponse({'success': False, 'message': 'Token expired'}, status=401)
     except jwt.InvalidTokenError as e:

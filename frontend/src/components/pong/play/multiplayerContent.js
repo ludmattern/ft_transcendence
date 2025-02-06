@@ -216,7 +216,7 @@ function joinMatchmaking() {
   console.log("🔍 Sent 'join matchmaking' via WebSocket");
 }
 
-function leaveMatchmaking() {
+export function leaveMatchmaking() {
   const userId = sessionStorage.getItem("userId");
   ws.send(JSON.stringify({
       type: "matchmaking",
@@ -228,6 +228,7 @@ function leaveMatchmaking() {
 
 
 function joinRoom(roomCode) {
+
   const userId = sessionStorage.getItem("userId");
   ws.send(JSON.stringify({
       type: "private_event",
@@ -235,10 +236,10 @@ function joinRoom(roomCode) {
       room_code: roomCode,
       user_id: userId
   }));
-  console.log("Sent join room event for ", roomCode);
+  console.log("Sent join room event for ", roomCode, userId);
 }
 
-function leaveRoom(roomCode) {
+export function leaveRoom(roomCode) {
   const userId = sessionStorage.getItem("userId");
   ws.send(JSON.stringify({
       type: "private_event",

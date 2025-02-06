@@ -6,8 +6,6 @@ class PrivateManager:
         self.match_found = {}
 
     def join_room(self, room_code, user_id):
-        if user_id in self.match_found:
-            return self.match_found[user_id]
 
         if room_code not in self.waiting_rooms:
             self.waiting_rooms[room_code] = []

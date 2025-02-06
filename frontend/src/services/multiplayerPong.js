@@ -1,18 +1,11 @@
 import { gameManager } from "/src/pongGame/gameManager.js";
-
+import { leaveMatchmaking, leaveRoom} from "/src/components/pong/play/multiplayerContent.js";
 
 
 
 
 export async function startPrivateGame(gameId,side,userId, roomCode) {
-    const response = await fetch(`/api/matchmaking-service/leave_private_room/` , {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ room_code: roomCode, user_id: userId })
-    });
-    const responseData = await response.json();
-  
-    console.log(responseData);
+    leaveRoom(roomCode);
     const gameConfig = {
       mode: "private",
       gameId: gameId,
@@ -29,12 +22,7 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
   
 
   export async function startMatchmakingGame(gameId, side, userId) {
-  
-    const response = await fetch(`/api/matchmaking-service/leave_matchmaking/${userId}/`);
-    const responseData = await response.json();
-  
-    console.log(responseData);
-  
+    leaveMatchmaking();
     const gameConfig = {
       mode: "matchmaking",
       map: document.getElementById("mapSelect-matchmaking").value,
