@@ -1045,7 +1045,7 @@ p {
 }
 
 #hud-body .message-header .author.me {
-	font-weight: 400 !important;
+	font-weight: 500 !important;
     cursor: default !important;
 }
 
