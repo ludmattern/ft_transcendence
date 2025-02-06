@@ -8,7 +8,7 @@ import { startMatchmakingGame } from "/src/services/multiplayerPong.js";
 
 export function initializeWebSocket() {
     if (ws) {
-        if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING || isWsConnected == true)  {
+        if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING || isWsConnected == true) {
             return;
         } else {
             closeWebSocket();
@@ -20,6 +20,19 @@ export function initializeWebSocket() {
     ws.onopen = () => {
         console.log(" WebSocket connecté !");
         isWsConnected = true;
+
+        // Retrieve user details from sessionStorage.
+        const userId = sessionStorage.getItem("userId");
+        const username = sessionStorage.getItem("username");
+
+        // Send an initialization message with the user details.
+        const initPayload = {
+            type: "init",
+            userId: userId,
+            username: username,
+            timestamp: new Date().toISOString()
+        };
+        ws.send(JSON.stringify(initPayload));
     };
 
     ws.onmessage = (event) => {
@@ -29,8 +42,7 @@ export function initializeWebSocket() {
             console.log(data);
             return;
         }
-        else if (data.type === "chat_message")
-        {
+        else if (data.type === "chat_message" || data.type === "private_message") {
             handleIncomingMessage(data);
         }
         else if (data.type === "match_found")
@@ -51,7 +63,7 @@ export function initializeWebSocket() {
     ws.onclose = () => {
         console.log("WebSocket fermé.");
         isWsConnected = false;
-        ws = null; 
+        ws = null;
     };
 }
 
