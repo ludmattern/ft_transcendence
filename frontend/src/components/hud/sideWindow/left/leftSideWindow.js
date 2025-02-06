@@ -76,6 +76,9 @@ export const leftSideWindow = createComponent({
     startAnimation(parentContainer, "light-animation", 1000);
 
 	createNotificationMessage(`Welcome to your spaceship ${sessionStorage.getItem("username")} !`, 15000);
+    createNotificationMessage('New private message from <b>theOther</b>');
+    createNotificationMessage('New private message from <b>theOther</b>');
+    createNotificationMessage('New private message from <b>theOther</b>');
   },
 });
 
@@ -156,6 +159,8 @@ function createNavItem(label, active = false) {
   return `
 	<li class="nav-item">
 	<span class="nav-link ${active ? "active" : ""}" data-tab="${label.toLowerCase()}">
+	<span class="nav-link ${active ? "active" : ""
+    }" data-tab="${label.toLowerCase()}">
 		<a href="#" data-tab="${label.toLowerCase()}">${label}</a>
 	</span>
 	</li>`;
@@ -310,15 +315,36 @@ function setupChatInput() {
     return;
   }
 
-  function sendMessage(message, channel = "general") {
+  function sendMessage(message) {
+    const privateMessageMatch = message.match(/^@(\w+)\s+(.*)/);
+
+    // Common payload structure
     const payload = {
-      type: "chat_message",
-      message,
+      type: null,
+      message: null,
       author: userId,
-      channel,
+      recipient: null,
+      channel: null,
       timestamp: new Date().toISOString(),
     };
 
+    if (privateMessageMatch) {
+      // Private message case
+      const recipient = privateMessageMatch[1];
+      const privateMessage = privateMessageMatch[2];
+
+      payload.type = "private_message";
+      payload.message = privateMessage;
+      payload.recipient = recipient;
+      payload.channel = "private";
+    } else {
+      // General chat message case
+      payload.type = "chat_message";
+      payload.message = message;
+      payload.channel = "general";
+    }
+
+    // Send the payload
     ws.send(JSON.stringify(payload));
   }
 
@@ -370,22 +396,15 @@ function storeMessageInSessionStorage(msg) {
 
 
 export function handleIncomingMessage(data) {
-  const { message, author, channel, timestamp, username } = data;
-
-  const newItem = {
-    message,
-    author: author,
-    channel,
-    timestamp: timestamp,
-    username: username,
-  };
+  const { type, message, author, channel, timestamp, username, recipient } = data;
 
   const userId = sessionStorage.getItem("userId");
   const container = document.getElementById("l-tab-content");
 
+
   const activeTab = document.querySelector(".nav-link.active");
   if (activeTab && activeTab.dataset.tab === "comm") {
-    renderCommMessage(newItem, container, userId.toString(), username);	
+    renderCommMessage(data, container, userId.toString(), username);
   }
   else {
 	if (channel === "private") {

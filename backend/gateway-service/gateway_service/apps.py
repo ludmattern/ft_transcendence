@@ -16,3 +16,7 @@ class GatewayServiceConfig(AppConfig):
         from service.pong_connection import start_dummy_pong_connection
         start_dummy_pong_connection()
         logger.info("Dummy pong connection lancée.")
+        
+        from service.matchmaking_connection import start_dummy_matchmaking_connection
+        start_dummy_matchmaking_connection()
+        logger.info("Dummy matchmaking connection lancée.")
