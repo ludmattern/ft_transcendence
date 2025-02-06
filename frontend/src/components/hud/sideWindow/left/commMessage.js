@@ -68,6 +68,8 @@ export const commMessage = createComponent({
   },
 
   attachEvents: (el, item) => {
-    el.addEventListener("click", () => showContextMenu(item, el));
+    el.addEventListener("contextmenu", (e) => {
+      showContextMenu(item, e);
+    });
   },
 });
