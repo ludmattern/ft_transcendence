@@ -71,24 +71,7 @@ export const leftSideWindow = createComponent({
     const parentContainer = el.parentElement;
     startAnimation(parentContainer, "light-animation", 1000);
 
-	createNotificationMessage("5Bienvenue sur le serveur5Bienvenue sur le");
-	createNotificationMessage("Bienvenue sur le serveur !");
-	createNotificationMessage("1Bienvenue sur le serveur !");
-	createNotificationMessage("2Bienvenue sur le serveur !");
-	createNotificationMessage("3Bienvenue sur le serveur !");
-	createNotificationMessage("4Bienvenue sur le serveur !");
-	createNotificationMessage("6Bienvenue sur le serveur !");
-	createNotificationMessage("7Bienvenue sur le serveur !");
-	createNotificationMessage("8Bienvenue sur le serveur !");
-	createNotificationMessage("9Bienvenue sur le serveur !");
-	createNotificationMessage("10Bienvenue sur le serveur !");
-	createNotificationMessage("11Bienvenue sur le serveur !");
-	createNotificationMessage("12Bienvenue sur le serveur !");
-	createNotificationMessage("13Bienvenue sur le serveur !");
-	createNotificationMessage("14Bienvenue sur le serveur !");
-	createNotificationMessage("15Bienvenue sur le serveur !");
-	createNotificationMessage("16Bienvenue sur le serveur !");
-
+	createNotificationMessage(`Welcome to your spaceship ${sessionStorage.getItem("username")} !`, 15000);
   },
 });
 
@@ -129,9 +112,8 @@ function processNotificationBuffer() {
  * 
  * @param {string} message - Le contenu HTML ou texte de la notification.
  * @param {number} [duration=5000] - La durée en millisecondes avant de lancer le collapse (par défaut 30s).
- * @returns {void}
  */
-  function createNotificationMessage(message, duration = 5000) {
+  export function createNotificationMessage(message, duration = 5000) {
 	const container = document.getElementById("bottom-notification-container");
 	if (!container) {
 	  console.error("Le container de notification n'a pas été trouvé.");
@@ -399,7 +381,12 @@ export function handleIncomingMessage(data) {
 
   const activeTab = document.querySelector(".nav-link.active");
   if (activeTab && activeTab.dataset.tab === "comm") {
-    renderCommMessage(newItem, container, userId.toString(), username);
+    renderCommMessage(newItem, container, userId.toString(), username);	
+  }
+  else {
+	if (channel === "private") {
+		createNotificationMessage(`New private message from ${username} !`, 15000);
+	}
   }
 
   storeMessageInSessionStorage(newItem);
