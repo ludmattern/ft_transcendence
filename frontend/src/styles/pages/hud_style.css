@@ -1049,13 +1049,22 @@ p {
     cursor: default !important;
 }
 
+#hud-body .other-message {
+	max-width: calc(100% - 12%);
+}
+
+#hud-body .user-message {
+	max-width: calc(100% - 2rem);
+}
+
 #hud-body .user-message,
 #hud-body .other-message {
-  padding: 0.6em;
-  margin: 1rem;
-  color: var(--content-color);
-  gap: 1rem;
-  word-wrap: break-word;
+	display: flex;
+	color: var(--content-color);
+	gap: 1rem;
+	margin: 1rem;
+	padding: 1rem;
+	word-wrap: break-word;
 }
 
 #hud-body .user-message {

@@ -39,11 +39,8 @@ export const commMessage = createComponent({
 
     return `
       <div class="message ${isUser ? "user-message" : "other-message"}" 
-           style="display: flex; padding: 1rem; ${
-             isPrivate ? "color: #ffff59;" : "color: var(--content-color);"
-           }"
-		   data-rawtimestamp="${rawTimestamp}"
-		>
+           style=" ${isPrivate ? "color: #ffff59;" : "color: var(--content-color);"}"
+		   data-rawtimestamp="${rawTimestamp}">
         ${!isUser
             ? `<img class="profile-picture" 
                    src="${
@@ -53,7 +50,7 @@ export const commMessage = createComponent({
                    alt="${displayAuthor}'s profile picture" />`
             : ""
         }
-        <div class="message-content-wrapper">
+        <div class="message-content-wrapper" style="max-width: ${isUser ? '100%' : 'inherit'};">
           <div class="message-header">
             <span class="channel">${isPrivate ? "[Private]" : "[General]"}</span>
             <span class="author${isUser ? " me" : ""}">${displayAuthor}</span>
