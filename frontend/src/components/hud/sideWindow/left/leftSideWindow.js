@@ -200,9 +200,8 @@ function loadTabContent(tabName, container) {
 
     const userId = sessionStorage.getItem("userId").toString();
     const username = sessionStorage.getItem("username").toString();
-    console.log(username);
     tabItems.forEach((item) => {
-      renderCommMessage(item, container, userId, username);
+      renderCommMessage(item, container, userId);
     });
 
     setupChatInput(container);
@@ -213,8 +212,7 @@ function loadTabContent(tabName, container) {
  * Affiche un message dans le conteneur "COMM" en utilisant `commMessage.render(...)`,
  * tout en gérant le regroupement si c'est le même auteur + même channel.
  */
-function renderCommMessage(item, container, currentUserId, username) {
-  // Forcer l'auteur au format string pour éviter tout souci de comparaison
+function renderCommMessage(item, container, currentUserId) {
   const authorAsString = item.author ? item.author.toString() : "";
 
   let isUser = authorAsString === currentUserId;
@@ -231,7 +229,7 @@ function renderCommMessage(item, container, currentUserId, username) {
     author: displayAuthor, // "USER" ou "User 123..."
     channel: displayChannel, // "General" ou "Private"
     timestamp: item.timestamp,
-    username: username,
+    username: item.username,
   };
 
   const lastChild = container.lastElementChild;
@@ -393,41 +391,25 @@ function storeMessageInSessionStorage(msg) {
 
 
 export function handleIncomingMessage(data) {
-	const { type, message, author, channel, timestamp, username, recipient } = data;
   
 	const userId = sessionStorage.getItem("userId");
 	const container = document.getElementById("l-tab-content");
-  
-	// Create a new message object to store and render
-	const newItem = {
-	  type,
-	  message,
-	  author,
-	  channel,
-	  timestamp,
-	  username,
-	  recipient,
-	};
-
 
 	const activeTab = document.querySelector(".nav-link.active");
-	if (activeTab && activeTab.dataset.tab === "comm")
-	{
-		renderCommMessage(newItem, container, userId.toString(), username);	
+	if (activeTab && activeTab.dataset.tab === "comm") {
+		renderCommMessage(data, container, userId.toString());	
 	}
 	else 
 	{
-		if (channel === "private")
-		{
-			createNotificationMessage(`New private message from ${username} !`);
+		if (data.channel === "private") {
+			createNotificationMessage(`New private message from ${data.username} !`);
 		}
 	}
 
-	storeMessageInSessionStorage(newItem);
+	storeMessageInSessionStorage(data);
 }
 
 function removePrivateNotifications() {
-	// On garde dans le buffer uniquement les notifications dont le message ne contient pas "private message"
 	notificationbuffer = notificationbuffer.filter(({ message }) => {
 	  return !(message && message.includes("private message"));
 	});
