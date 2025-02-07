@@ -2,6 +2,7 @@ import { switchwindow } from "/src/3d/animation.js";
 import { buildGameScene } from "/src/3d/pongScene.js";
 import Store from "/src/3d/store.js";
 import { ws } from "/src/services/socketManager.js";
+import { showCountdown } from "/src/components/midScreen.js";
 
 class GameManager {
   constructor() {
@@ -43,6 +44,9 @@ class GameManager {
 
     buildGameScene(gameConfig);
     switchwindow("game");
+    setTimeout(() => {
+      showCountdown();
+    }, 2200);
 
     if (gameConfig.mode === "local") 
       document.addEventListener("keydown", this.localKeydownHandler);

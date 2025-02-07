@@ -90,6 +90,7 @@ export function switchwindow(screen) {
           Store.menuElement.classList.remove("active");
         }
         if (nb == 0) {
+          Store.menuElement.querySelector(".mid-screensaver").display = "block";
           Store.menuElement.classList.add("active");
         }
         if (nb == 2) {

@@ -21,11 +21,9 @@ export function initializeWebSocket() {
         console.log(" WebSocket connecté !");
         isWsConnected = true;
 
-        // Retrieve user details from sessionStorage.
         const userId = sessionStorage.getItem("userId");
         const username = sessionStorage.getItem("username");
 
-        // Send an initialization message with the user details.
         const initPayload = {
             type: "init",
             userId: userId,
@@ -46,16 +44,16 @@ export function initializeWebSocket() {
             handleIncomingMessage(data);
         }
         else  if (data.type === "private_match_found") {
-            console.log("✅ Private match found:", data);
+            console.log(" Private match found:", data);
             startPrivateGame(data.game_id, data.side, data.user_id, data.roomCode);
         }
         else if (data.type === "match_found")
         {
-            console.log("✅ Match found! game_id =", data.game_id, "side =", data.side);
+            console.log("Match found! game_id =", data.game_id, "side =", data.side);
             startMatchmakingGame(data.game_id, data.side, data.user_id);
         }
         
-        console.log("📩 Message reçu :", JSON.parse(event.data));
+        console.log("Message reçu :", JSON.parse(event.data));
     };
 
 

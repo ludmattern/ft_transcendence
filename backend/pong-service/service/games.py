@@ -4,7 +4,7 @@ import time
 class BasePongGame:
     def __init__(self, game_id):
         self.game_id = game_id
-        self.start_delay = 3 
+        self.start_delay = 7.2
         self.start_time = time.time()
         self.max_score = 3
         self.game_over = False
@@ -93,7 +93,6 @@ class BasePongGame:
         else:
             self.state["ball"]["vx"] = -0.30
 
-        # On peut donner une petite vitesse en y aléatoire si on veut
         self.state["ball"]["vy"] = 0.01
 
     def to_dict(self):
