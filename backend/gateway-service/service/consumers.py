@@ -124,13 +124,5 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		logger.info(f"🎯 Match trouvé! Envoyé au client {event['user_id']}")
   
 	async def private_match_found(self, event):
-		"""
-		Handler pour { "type":"private_match_found", "game_id":"...", "side":"...", "user_id":"..." }
-		"""
-		await self.send(json.dumps({
-			"type": "private_match_found",
-			"game_id": event["game_id"],
-			"side": event["side"],
-			"user_id": event["user_id"]
-		}))
+		await self.send(json.dumps(event))
 		logger.info(f"🔔 Private match_found envoyé au client {event['user_id']} : game_id={event['game_id']}, side={event['side']}")

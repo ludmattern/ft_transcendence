@@ -162,10 +162,12 @@ export const multiplayerContent = createComponent({
     });
 
 const leavePrivateButton = document.getElementById("leavePrivate");
+
 leavePrivateButton.addEventListener("click", async () => {
   leavePrivateButton.style.display = "none";
   createPrivateButton.style.display = "block"; 
-  leaveRoom();
+  const roomCode = document.getElementById("privateRoomCode").value;
+  leaveRoom(roomCode);
 });
 
 },
