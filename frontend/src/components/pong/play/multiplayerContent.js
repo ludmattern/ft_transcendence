@@ -1,6 +1,7 @@
 import { createComponent } from "/src/utils/component.js";
 import { gameManager } from "/src/pongGame/gameManager.js";
 import { ws } from "/src/services/socketManager.js";
+import { handleRoute } from "/src/services/router.js";
 
 export const multiplayerContent = createComponent({
   tag: "multiplayerContent",
@@ -121,9 +122,8 @@ export const multiplayerContent = createComponent({
         map: document.getElementById("mapSelect-local").value, 
         playerCount: parseInt(document.getElementById("playerCount-local").value, 10),
       };
-      gameManager.startGame(gameConfig);
-      
-
+    //   gameManager.startGame(gameConfig);
+		handleRoute("goto/local", false, true);
     });
 
     const matchButton = document.getElementById("launchMatch");
