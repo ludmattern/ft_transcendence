@@ -39,7 +39,7 @@ CHANNEL_LAYERS = {
 	"default": {
 		"BACKEND": "channels_redis.core.RedisChannelLayer",
 		"CONFIG": {
-			"hosts": [("redis-livechat", 6379)],
+			"hosts": [("redis", 6379)],
 			"capacity": 10000,
 		},
 	},

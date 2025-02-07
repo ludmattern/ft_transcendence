@@ -15,14 +15,14 @@ services:
       timeout: 5s
       retries: 5
 
-  redis-livechat:
+  redis:
     build:
-      context: ./backend/redis/livechat
-    container_name: redis_livechat
+      context: ./backend/redis/
+    container_name: redis
     networks:
       - backend_network
     volumes:
-      - redis_livechat_data:/data
+      - redis_data:/data
     ports:
       - "6380:6379"
 
@@ -92,7 +92,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis-livechat:
+      redis:
         condition: service_started
       gateway-service:
         condition: service_started
@@ -108,7 +108,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DB_HOST=postgres_db
       - DB_PORT=5432
-      - REDIS_HOST=redis-livechat
+      - REDIS_HOST=redis
       - REDIS_PORT=6379
     ports:
       - "3003:3003"
@@ -120,7 +120,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis-pong:
+      redis:
         condition: service_started
       gateway-service:
         condition: service_started
@@ -134,16 +134,6 @@ services:
     ports:
       - "3004:3004"
 
-  redis-pong:
-    build:
-      context: ./backend/redis/pong
-    container_name: redis_pong
-    networks:
-      - backend_network
-    volumes:
-      - redis_pong_data:/data
-    ports:
-      - "6381:6379"
 
   matchmaking-service:
     build:
@@ -198,7 +188,6 @@ networks:
 volumes:
   postgres_data_volume:
     name: postgres_data_volume
-  redis_pong_data:
-    name: redis_pong_data_volume
-  redis_livechat_data:
-    name: redis_livechat_data_volume
+
+  redis_data:
+    name: redis_data_volume
