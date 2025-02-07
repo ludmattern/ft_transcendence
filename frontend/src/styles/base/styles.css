@@ -35,6 +35,21 @@ body {
   transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
+
+.countdown-text {
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 8em;
+    font-weight: bold;
+    color: #0ff;
+    text-shadow: 0 0 1px #0ff, 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;
+    
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
 #app .menu2.active .row.mt-3 {
   opacity: 0;
   visibility: hidden;

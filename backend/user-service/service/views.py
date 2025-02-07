@@ -11,6 +11,9 @@ from django.conf import settings
 
 cipher = Fernet(settings.FERNET_KEY)
 
+def decrypt_thing(encrypted_args):
+    """Decrypts the args."""
+    return cipher.decrypt(encrypted_args.encode('utf-8')).decode('utf-8')
 
 def encrypt_thing(args):
     """Encrypts the args."""
@@ -47,10 +50,16 @@ def register_user(request):
             if ManualUser.objects.filter(username=username).exists():
                 return JsonResponse({'success': False, 'message': 'Username already taken'}, status=409)
 
+            
             encrypted_email = encrypt_thing(email)
 
-            if ManualUser.objects.filter(email=encrypted_email).exists():
-                return JsonResponse({'success': False, 'message': 'Email already in use'}, status=409)
+
+            existing_users = ManualUser.objects.all()
+
+            for user in existing_users:
+                decrypted_email = decrypt_thing(user.email)
+                if decrypted_email == email:
+                    return JsonResponse({'success': False, 'message': 'Email already in use'}, status=409)
 
             if is_2fa_enabled and twofa_method == 'sms' and not phone_number:
                 return JsonResponse({'success': False, 'message': 'Phone number is required for SMS 2FA'}, status=400)

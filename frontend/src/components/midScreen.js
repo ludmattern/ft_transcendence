@@ -34,3 +34,54 @@ function initM2() {
     Store.menuElement.classList.add("active");
     if (Store.menuObject) Store.scene.add(Store.menuObject);
   }
+
+  export function showCountdown() {
+    if (!Store.menuElement) {
+      console.error("Store.menuElement is not defined.");
+      return;
+    }
+  
+    Store.menuElement.style.display = "block";
+    Store.menuElement.classList.add("active"); // Ajout de "active" au début
+  
+    const screensaverImg = Store.menuElement.querySelector(".mid-screensaver");
+    if (screensaverImg) 
+    {
+      screensaverImg.style.display = "none";
+    }
+  
+    let countdownEl = Store.menuElement.querySelector("#myCountdown");
+    if (!countdownEl) {
+      countdownEl = document.createElement("h1");
+      countdownEl.classList.add("countdown-text");
+      countdownEl.id = "myCountdown";
+      const wait2 = Store.menuElement.querySelector(".wait2");
+      if (wait2) {
+        wait2.appendChild(countdownEl);
+      }
+    }
+  
+    let count = 5;
+    countdownEl.textContent = count;
+  
+    const intervalId = setInterval(() => {
+      count--;
+      if (count > 0) {
+        countdownEl.textContent = count;
+      } else {
+        countdownEl.textContent = "GO!";
+        clearInterval(intervalId);
+        setTimeout(() => {
+          countdownEl.style.display = "none";
+          Store.menuElement.classList.remove("active");
+          setTimeout(() => {
+            countdownEl.remove();
+            if (screensaverImg) 
+              screensaverImg.style.display = "block";
+          }, 1000); 
+        }, 800);
+      }
+    }, 1000);
+
+  }
+  
