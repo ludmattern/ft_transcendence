@@ -118,7 +118,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		await self.send(json.dumps(event))
 		logger.info(f"🚨 Game over transmis au client WebSocket : {event}")
 
-
 	async def match_found(self, event):
 		await self.send(json.dumps(event))
 		logger.info(f"🎯 Match trouvé! Envoyé au client {event['user_id']}")
