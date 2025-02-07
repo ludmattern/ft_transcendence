@@ -45,14 +45,14 @@ export function initializeWebSocket() {
         else if (data.type === "chat_message" || data.type === "private_message") {
             handleIncomingMessage(data);
         }
+        else  if (data.type === "private_match_found") {
+            console.log("✅ Private match found:", data);
+            startPrivateGame(data.game_id, data.side, data.user_id, data.roomCode);
+        }
         else if (data.type === "match_found")
         {
             console.log("✅ Match found! game_id =", data.game_id, "side =", data.side);
             startMatchmakingGame(data.game_id, data.side, data.user_id);
-        }
-        else  if (data.type === "private_match_found") {
-            console.log("✅ Private match found:", data.game_id, data.side);
-            startPrivateGame(data.game_id, data.side, data.user_id, roomCode);
         }
         
         console.log("📩 Message reçu :", JSON.parse(event.data));

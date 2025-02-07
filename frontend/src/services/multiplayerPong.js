@@ -6,6 +6,7 @@ import { leaveMatchmaking, leaveRoom} from "/src/components/pong/play/multiplaye
 
 export async function startPrivateGame(gameId,side,userId, roomCode) {
     leaveRoom(roomCode);
+    console.log(roomCode);
     const gameConfig = {
       mode: "private",
       gameId: gameId,
