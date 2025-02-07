@@ -10,6 +10,8 @@ export const settingsForm = createComponent({
       <h5>SETTINGS</h5>
       <span class="background-central-span">
         <form action="#" method="post" class="w-100">
+          <!-- New Username -->
+          ${createFormGroup('new-username', 'username', 'New username')}
           <!-- Old Password -->
           ${createFormGroup('old-password', 'password', 'Old password')}
           <!-- New Password -->
@@ -88,6 +90,7 @@ function createFormGroup(id, type, label) {
  */
 function collectFormData(el) {
   return {
+    newUsername: el.querySelector('#new-username').value,
     oldPassword: el.querySelector('#old-password').value,
     newPassword: el.querySelector('#new-password').value,
     confirmPassword: el.querySelector('#confirm-new-password').value,
