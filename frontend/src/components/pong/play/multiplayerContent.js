@@ -5,7 +5,6 @@ import { ws } from "/src/services/socketManager.js";
 export const multiplayerContent = createComponent({
   tag: "multiplayerContent",
 
-  // Générer le HTML
   render: () => `
     <section class="p-5 flex-grow-1" style="background-color: #111111; max-height: 700px; overflow: auto;">
         <h2 class="text-white text-center">So, You Actually Want to Play Multiplayer?</h2>
@@ -86,31 +85,25 @@ export const multiplayerContent = createComponent({
       }
     }
   
-    // Ajouter les événements pour sauvegarder l'onglet actif
     tabs.forEach(tab => {
       tab.addEventListener("click", (e) => {
         e.preventDefault();
         const target = tab.getAttribute("href").substring(1);
   
-        // Désactiver tous les onglets et les cacher
         tabs.forEach(t => t.classList.remove("active"));
         tabPanes.forEach(pane => pane.classList.remove("show", "active"));
   
-        // Activer l'onglet sélectionné
         tab.classList.add("active");
         el.querySelector(`#${target}`).classList.add("show", "active");
   
-        // Sauvegarder l'onglet actif dans sessionStorage
         sessionStorage.setItem("activeTab", target);
       });
     });
   
-    // Sauvegarde et restauration des sélections
     const selectors = el.querySelectorAll("select");
     selectors.forEach(select => {
       const key = select.id;
   
-      // Restaurer les valeurs sauvegardées
       const savedValue = sessionStorage.getItem(key);
       if (savedValue) {
         select.value = savedValue;
@@ -156,26 +149,25 @@ export const multiplayerContent = createComponent({
         console.log("Enter a room code");
         return;
       }
+      document.getElementById("privateRoomCode").disabled = true;
       createPrivateButton.style.display = "none"; 
       leavePrivateButton.style.display = "block"; 
       joinRoom(roomCode);             
     });
 
-const leavePrivateButton = document.getElementById("leavePrivate");
-
-leavePrivateButton.addEventListener("click", async () => {
-  leavePrivateButton.style.display = "none";
-  createPrivateButton.style.display = "block"; 
-  const roomCode = document.getElementById("privateRoomCode").value;
-  leaveRoom(roomCode);
-});
+  const leavePrivateButton = document.getElementById("leavePrivate");
+  leavePrivateButton.addEventListener("click", async () => {
+    leavePrivateButton.style.display = "none";
+    createPrivateButton.style.display = "block";
+    const roomCode = document.getElementById("privateRoomCode").value;
+    document.getElementById("privateRoomCode").disabled = false;
+    leaveRoom(roomCode);
+  });
 
 },
 });
 
-/**
- * Génère le sélecteur de map (avec un identifiant spécifique)
- */
+
 function generateMapSelector(context) {
   return `
     <div class="mb-3">
@@ -191,9 +183,7 @@ function generateMapSelector(context) {
   `;
 }
 
-/**
- * Génère le sélecteur du nombre de joueurs (avec un identifiant spécifique)
- */
+
 function generatePlayerCountSelector(context) {
   return `
     <div class="mb-3">
@@ -215,7 +205,7 @@ function joinMatchmaking() {
       action: "join",
       user_id: userId
   }));
-  console.log("🔍 Sent 'join matchmaking' via WebSocket");
+  console.log("Sent 'join matchmaking' via WebSocket");
 }
 
 export function leaveMatchmaking() {
@@ -225,7 +215,7 @@ export function leaveMatchmaking() {
       action: "leave",
       user_id: userId
   }));
-  console.log("🔴 Sent 'leave matchmaking' via WebSocket");
+  console.log("Sent 'leave matchmaking' via WebSocket");
 }
 
 

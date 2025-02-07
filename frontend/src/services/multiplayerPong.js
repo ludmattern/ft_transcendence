@@ -14,6 +14,7 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
       map: document.getElementById("mapSelect-private").value,
       playerCount: parseInt(document.getElementById("playerCount-private").value, 10),
     };
+    document.getElementById("privateRoomCode").disabled = false;
     document.getElementById("leavePrivate").style.display = "none";
     document.getElementById("createPrivate").style.display = "block"
     gameManager.startGame(gameConfig);
@@ -24,6 +25,7 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
 
   export async function startMatchmakingGame(gameId, side, userId) {
     leaveMatchmaking();
+
     const gameConfig = {
       mode: "matchmaking",
       map: document.getElementById("mapSelect-matchmaking").value,
