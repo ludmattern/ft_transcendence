@@ -34,7 +34,7 @@ export const multiplayerContent = createComponent({
                 ${generateMapSelector("local")}
                 ${generatePlayerCountSelector("local")}
 
-                <button class="btn btn-warning mt-3" id="launchLocal">Challenge Your Friend and Lose Together</button>
+                <button class="btn btn-warning mt-3" id="launchLocal">Challenge Your Friends and Lose Together</button>
             </div>
 
             <!-- Matchmaking -->

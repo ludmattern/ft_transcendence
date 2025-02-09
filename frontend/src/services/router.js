@@ -103,7 +103,8 @@ function processRoute(route, shouldPushState) {
   }
 
   if (shouldPushState) {
-    history.pushState(null, "", finalRoute);
+	const cleanRoute = finalRoute.replace(/\/{2,}/g, "/").trim();
+    history.pushState(null, "", cleanRoute);
   }
 
   emit("routeChanged", finalRoute);
