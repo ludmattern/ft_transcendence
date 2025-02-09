@@ -84,3 +84,56 @@ def register_user(request):
         return JsonResponse({'success': False, 'message': 'Only POST method is allowed'}, status=405)
 
 
+@csrf_exempt
+def update_info(request):
+    if request.method == 'POST':
+        try:
+            body = json.loads(request.body.decode('utf-8'))
+            old_password = body.get('oldPassword')
+            new_username = body.get('newUsername')
+            new_password = body.get('newPassword')
+            confirm_password = body.get('confirmPassword')
+            new_email = body.get('newEmail')
+            confirm_email = body.get('confirmEmail')
+            language = body.get('language')
+
+            # Validate user by current password
+            user = ManualUser.objects.get(username=request.user.username)
+
+            if not bcrypt.checkpw(old_password.encode('utf-8'), user.password.encode('utf-8')):
+                return JsonResponse({'success': False, 'message': 'Current password is incorrect'}, status=400)
+
+            # Validate and update username
+            if new_username and ManualUser.objects.filter(username=new_username).exists():
+                return JsonResponse({'success': False, 'message': 'Username already taken'}, status=409)
+            if new_username:
+                user.username = new_username
+
+            # Validate and update email
+            if new_email:
+                if new_email != confirm_email:
+                    return JsonResponse({'success': False, 'message': 'Emails do not match'}, status=400)
+                encrypted_email = encrypt_thing(new_email)
+                user.email = encrypted_email
+
+            # Validate and update password
+            if new_password:
+                if new_password != confirm_password:
+                    return JsonResponse({'success': False, 'message': 'Passwords do not match'}, status=400)
+                hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                user.password = hashed_password
+
+            # Update language
+            user.language = language
+
+            # Save changes
+            user.save()
+
+            return JsonResponse({'success': True, 'message': 'Information updated successfully'})
+
+        except ManualUser.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'success': False, 'message': 'Only POST method is allowed'}, status=405)

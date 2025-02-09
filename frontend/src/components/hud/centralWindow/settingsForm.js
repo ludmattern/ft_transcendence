@@ -48,13 +48,39 @@ export const settingsForm = createComponent({
   `,
 
   // Ajouter les événements après le chargement
-  attachEvents: (el) => {
+  attachEvents: async (el) => {
     // Gestionnaire pour le bouton "Update"
-    el.querySelector('#update-button').addEventListener('click', (e) => {
+    el.querySelector('#update-button').addEventListener('click', async (e) => {
       e.preventDefault();
       const formData = collectFormData(el);
+
       console.log('Form data:', formData);
-      // TODO: Appel API pour la mise à jour des paramètres
+      // TODO: Appel API pour la mise à jour des paramètres.
+
+      try {
+        const response = await fetch("/api/user-service/update/", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+      
+        if (!response.ok) {
+          const errorText = await response.text();  // Get full server response
+          console.error('Server error response:', errorText);
+          alert('Server error occurred. See console for details.');
+          return;
+        }
+      
+        const result = await response.json();
+        if (result.success) {
+          alert('Information updated successfully.');
+        } else {
+          alert(`Error: ${result.message}`);
+        }
+      } catch (error) {
+        console.error('Error updating information:', error);
+        alert('An unexpected error occurred.');
+      }
     });
 
     // Gestionnaire pour le lien "Delete Account"
@@ -99,3 +125,5 @@ function collectFormData(el) {
     language: el.querySelector('#language').value,
   };
 }
+
+
