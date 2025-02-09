@@ -27,7 +27,7 @@ class BasePongGame:
         if player_id not in self.state["players"]:
             return
 
-        step = 0.1  # Vitesse de déplacement
+        step = 0.05  # Vitesse de déplacement
         old_y = self.state["players"][player_id]["y"] 
 
         if direction == "up":

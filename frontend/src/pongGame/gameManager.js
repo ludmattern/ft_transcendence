@@ -7,37 +7,73 @@ import { showCountdown } from "/src/components/midScreen.js";
 class GameManager {
   constructor() {
     this.activeGame = null;
+    this.activeKeys = {}; // 🔹 Stocke les touches enfoncées
+    this.moveInterval = null; // 🔹 Intervalle pour envoyer les requêtes
 
     this.localKeydownHandler = (e) => {
-      if (e.key === "w") {
-        ws.send(JSON.stringify({type: "game_event",action: "move",direction: "up",player_id: 1,game_id: this.gameId,}));
-      } else if (e.key === "s") {
-        ws.send(JSON.stringify({type: "game_event",action: "move",direction: "down",player_id: 1,game_id: this.gameId,}));
-      } else if (e.key === "ArrowUp") {
-        ws.send(JSON.stringify({type: "game_event",action: "move",direction: "up",player_id: 2, game_id: this.gameId,}));
-      } else if (e.key === "ArrowDown") {
-        ws.send(JSON.stringify({type: "game_event",action: "move",direction: "down",player_id: 2,game_id: this.gameId,}));
+      this.activeKeys[e.key] = true;
+      this.startMovement("local");
+    };
+
+    this.localKeyupHandler = (e) => {
+      delete this.activeKeys[e.key];
+      if (Object.keys(this.activeKeys).length === 0) {
+        this.stopMovement();
       }
     };
 
     this.matchMakingKeydownHandler = (e) => {
       if (!this.activeGame) return;
-      const playerId = (this.activeGame.side === "left") ? 1 : 2;
+      this.activeKeys[e.key] = true;
+      this.startMovement("matchmaking");
+    };
 
-      if (e.key === "w") {
-        ws.send(JSON.stringify({type: "game_event",action: "move",direction: "up", player_id: playerId,game_id: this.gameId,
-        }));
-      } else if (e.key === "s") {
-        ws.send(JSON.stringify({type: "game_event",action: "move",direction: "down", player_id: playerId,game_id: this.gameId,}));
+    this.matchMakingKeyupHandler = (e) => {
+      delete this.activeKeys[e.key];
+      if (Object.keys(this.activeKeys).length === 0) {
+        this.stopMovement();
       }
     };
+  }
+
+  startMovement(mode) {
+    if (this.moveInterval) return; // 🔄 Évite les doublons
+
+    this.moveInterval = setInterval(() => {
+      if (mode === "local") {
+        if (this.activeKeys["w"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "down", player_id: 1, game_id: this.gameId }));
+        }
+        if (this.activeKeys["s"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "up", player_id: 1, game_id: this.gameId }));
+        }
+        if (this.activeKeys["ArrowUp"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "down", player_id: 2, game_id: this.gameId }));
+        }
+        if (this.activeKeys["ArrowDown"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "up", player_id: 2, game_id: this.gameId }));
+        }
+      } else if (mode === "matchmaking") {
+        const playerId = (this.activeGame.side === "left") ? 1 : 2;
+        if (this.activeKeys["w"] || this.activeKeys["ArrowUp"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "down", player_id: playerId, game_id: this.gameId }));
+        }
+        if (this.activeKeys["s"] || this.activeKeys["ArrowDown"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "up", player_id: playerId, game_id: this.gameId }));
+        }
+      }
+    }, 50);
+  }
+
+  stopMovement() {
+    clearInterval(this.moveInterval);
+    this.moveInterval = null;
   }
 
   startGame(gameConfig) {
     console.log("Starting game with config:", gameConfig);
 
-    if (this.activeGame) 
-      this.endGame();
+    if (this.activeGame) this.endGame();
 
     this.activeGame = gameConfig;
     this.gameId = this.generateGameId(gameConfig);
@@ -48,11 +84,13 @@ class GameManager {
       showCountdown();
     }, 2200);
 
-    if (gameConfig.mode === "local") 
+    if (gameConfig.mode === "local") {
       document.addEventListener("keydown", this.localKeydownHandler);
-    else 
+      document.addEventListener("keyup", this.localKeyupHandler);
+    } else {
       document.addEventListener("keydown", this.matchMakingKeydownHandler);
-    
+      document.addEventListener("keyup", this.matchMakingKeyupHandler);
+    }
 
     ws.send(JSON.stringify({
       type: "game_event",
@@ -71,9 +109,13 @@ class GameManager {
 
     if (this.activeGame.mode === "local") {
       document.removeEventListener("keydown", this.localKeydownHandler);
+      document.removeEventListener("keyup", this.localKeyupHandler);
     } else {
       document.removeEventListener("keydown", this.matchMakingKeydownHandler);
+      document.removeEventListener("keyup", this.matchMakingKeyupHandler);
     }
+
+    this.stopMovement();
 
     ws.send(JSON.stringify({
       type: "game_event",
