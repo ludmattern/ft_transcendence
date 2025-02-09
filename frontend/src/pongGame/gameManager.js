@@ -3,6 +3,7 @@ import { buildGameScene } from "/src/3d/pongScene.js";
 import Store from "/src/3d/store.js";
 import { ws } from "/src/services/socketManager.js";
 import { showCountdown } from "/src/components/midScreen.js";
+import {createTextTexture} from "/src/3d/pongScene.js";
 
 class GameManager {
   constructor() {
@@ -130,6 +131,15 @@ class GameManager {
 
   updateGameState(gameState) {
     console.log("Updating game state:", gameState);
+
+    if (gameState.scores) {
+      // Met à jour les textures des scores
+      Store.scoreP1.material.map = createTextTexture(gameState.scores["1"]);
+      Store.scoreP1.material.map.needsUpdate = true;
+
+      Store.scoreP2.material.map = createTextTexture(gameState.scores["2"]);
+      Store.scoreP2.material.map.needsUpdate = true;
+  }
     if (gameState.ball) {
       const { x, y } = gameState.ball;
       if (Store.meshBall) {
