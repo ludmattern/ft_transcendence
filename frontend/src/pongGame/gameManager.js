@@ -146,7 +146,7 @@ class GameManager {
         Store.meshBall.position.set(x, y, 0);
       }
     }
-
+    
     if (gameState.players) {
       const p1 = gameState.players["1"];
       if (p1 && Store.player1Paddle) {

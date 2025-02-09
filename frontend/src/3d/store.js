@@ -35,7 +35,7 @@ const Store = {
   meshBall: null,
   player1Paddle: null,
   player2Paddle: null,
-
+  lastBallY: null,
   cameraRotationEvent: 0,
   listeners: [],
 

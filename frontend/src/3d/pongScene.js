@@ -77,6 +77,23 @@ function updateCameraPosition() {
   cameraCube.lookAt(0, 0, 0);
 }
 
+/*
+function updateCameraPosition() {
+  if (!Store.meshBall || !cameraCube) return;
+
+  const lerpFactor = 0.05; // Vitesse de rattrapage
+  cameraCube.position.x += (Store.meshBall.position.x - cameraCube.position.x) * lerpFactor;
+  cameraCube.position.y += (Store.meshBall.position.y - cameraCube.position.y) * lerpFactor;
+  
+  const distanceFactor = Math.abs(Store.meshBall.position.x) / 1.5; 
+  cameraCube.position.z = 6 - distanceFactor * 2; 
+
+  cameraCube.lookAt(0, 0, 0);
+}
+*/ 
+
+
+
 
 
 export let cameraCube;
@@ -175,7 +192,12 @@ Store.pongScene.add(middleLine);
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.3); 
   Store.pongScene.add(ambientLight);
   
-
+  const spotLight = new THREE.SpotLight(0x00ffcc, 1);
+  spotLight.position.set(0, 5, 5);
+  spotLight.angle = Math.PI / 4;
+  spotLight.penumbra = 0.2;
+  Store.pongScene.add(spotLight);
+  
 
 // Ajouter les scores sur le sol
 Store.scoreP1 = createScoreText(-0.8);
