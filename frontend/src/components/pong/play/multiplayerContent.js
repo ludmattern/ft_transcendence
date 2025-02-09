@@ -117,13 +117,7 @@ export const multiplayerContent = createComponent({
 
     const localButton = document.getElementById("launchLocal");
     localButton.addEventListener("click", () => {
-      const gameConfig = {
-        mode: "local", 
-        map: document.getElementById("mapSelect-local").value, 
-        playerCount: parseInt(document.getElementById("playerCount-local").value, 10),
-      };
-    //   gameManager.startGame(gameConfig);
-		handleRoute("goto/local", false, true);
+		handleRoute("/pong/play/multiplayer/local", true);
     });
 
     const matchButton = document.getElementById("launchMatch");

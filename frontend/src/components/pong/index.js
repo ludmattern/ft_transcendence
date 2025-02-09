@@ -13,5 +13,7 @@ export { multiplayerContent } from "/src/components/pong/play/multiplayerContent
 export { soloContent } from "/src/components/pong/play/soloContent.js";
 export { tournamentContent } from "/src/components/pong/play/tournamentContent.js";
 
+export { gotolocal } from "/src/components/pong/play/gotolocal.js";
+
 //leaderboard components
 export { leaderboard } from "/src/components/pong/leaderboard/leaderboard.js";

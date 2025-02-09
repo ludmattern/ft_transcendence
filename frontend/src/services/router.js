@@ -94,6 +94,7 @@ export async function handleRoute(route, shouldPushState = true, internal = fals
  * @param {boolean} shouldPushState - Si `true`, met à jour l'historique.
  */
 function processRoute(route, shouldPushState) {
+	console.log("processRoute : " + route);
   updatePreviousRoute(route);
 
   let finalRoute = route;
@@ -109,12 +110,15 @@ function processRoute(route, shouldPushState) {
 
   emit("routeChanged", finalRoute);
 
+  console.log("finalRoute : " + finalRoute);
+
   if (routeMappings[finalRoute]) {
     routeMappings[finalRoute]();
   } else if (finalRoute.startsWith("/social/pilot=")) {
     const pilot = finalRoute.split("=")[1];
     navigateToOtherProfile(pilot);
   } else if (finalRoute.startsWith("/pong")) {
+	console.log("navigateToPong : " + finalRoute.substring(6));
     navigateToPong(finalRoute.substring(6));
   } else {
     navigateToLost();
@@ -123,11 +127,11 @@ function processRoute(route, shouldPushState) {
 
 function processInternalRoute(route, shouldPushState) {
 
-	updatePreviousRoute(route);
+	// updatePreviousRoute(route);
 
-	if (shouldPushState) {
-		history.pushState(null, "", route);
-	}
+	// if (!shouldPushState) {
+	// 	history.pushState(null, "", route);
+	// }
 
 	// emit("routeChanged", route);
 
