@@ -39,7 +39,7 @@ def check_auth_view(request):
             return JsonResponse({'success': False, 'message': 'Invalid token payload'}, status=401)
 
         try:
-            user = ManualUser.objects.get(username=payload['sub'])
+            user = ManualUser.objects.get(id=int(payload['sub']))
         except ManualUser.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
 
@@ -112,8 +112,14 @@ def jwt_required(view_func):
 @jwt_required
 def protected_view(request):
     payload = getattr(request, 'jwt_payload', {})
-    username = payload.get('sub')
-    return JsonResponse({'success': True, 'message': f'Hello, {username}. You are authenticated!'})
+    user_id = int(payload.get('sub'))  # Convert 'sub' to an integer
+
+    try:
+        user = ManualUser.objects.get(id=user_id)
+    except ManualUser.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
+
+    return JsonResponse({'success': True, 'message': f'Hello, {user.username}. You are authenticated!'})
 
 
 
@@ -169,7 +175,7 @@ def login_view(request):
                 return JsonResponse({'success': False, 'message': 'User is already connected'}, status=403)
 
         new_session_token = jwt.encode(
-            {"sub": user.username, "iat": now, "exp": (now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)).timestamp()},
+            {"sub": str(user.id), "iat": now, "exp": (now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)).timestamp()},
             settings.JWT_SECRET_KEY,
             algorithm=settings.JWT_ALGORITHM
         )
@@ -250,7 +256,7 @@ def verify_2fa_view(request):
                 user.token_expiry = exp
                 user.save()
                 access_payload = {
-                    "sub": user.username,
+                    "sub": str(user.id),
                     "iat": now,
                     "exp": exp.timestamp()
                 }
@@ -279,7 +285,7 @@ def verify_2fa_view(request):
             user.token_expiry = exp
             user.save()
             access_payload = {
-                "sub": user.username,
+                "sub": str(user.id),
                 "iat": now,
                 "exp": exp.timestamp()
             }

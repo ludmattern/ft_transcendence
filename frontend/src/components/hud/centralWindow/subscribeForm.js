@@ -161,7 +161,7 @@ function getFormValues(el) {
 /**
  * Cache tous les messages d'erreur liés au formulaire
  */
-function resetErrorMessages() {
+export function resetErrorMessages() {
   const errorIds = [
     "bad-id",
     "bad-pass-size",
@@ -185,7 +185,7 @@ function resetErrorMessages() {
  * @returns {boolean} true si valide, false sinon
  */
 
-function validateId(id) {
+export function validateId(id) {
   if (id.length < 6 || id.length > 20) {
     document.getElementById("bad-id").style.display = "block";
     return false;
@@ -197,7 +197,7 @@ function validateId(id) {
  * Vérifie la validité du mot de passe et affiche les erreurs correspondantes
  * @returns {boolean} true si valide, false sinon
  */
-function validatePassword(password) {
+export function validatePassword(password) {
   let isValid = true;
 
   if (password.length < 6 || password.length > 20) {
@@ -226,7 +226,7 @@ function validatePassword(password) {
 }
 
 
-function checkPasswordConfirmation(password, confirmPassword) {
+export function checkPasswordConfirmation(password, confirmPassword) {
   if (password !== confirmPassword) {
     document.getElementById("error-message-pass").style.display = "block";
     return false;
@@ -235,7 +235,7 @@ function checkPasswordConfirmation(password, confirmPassword) {
 }
 
 
-function checkEmailConfirmation(mail, confirmMail) {
+export function checkEmailConfirmation(mail, confirmMail) {
   if (mail !== confirmMail) {
     document.getElementById("error-message-mail2").style.display = "block";
     document.getElementById("error-message-mail").style.display = "none";
@@ -244,7 +244,7 @@ function checkEmailConfirmation(mail, confirmMail) {
   return true;
 }
 
-function validatePhoneNumber(phoneNumber) {
+export function validatePhoneNumber(phoneNumber) {
   const phoneRegex = /^\d{10}$/;
   if (!phoneRegex.test(phoneNumber)) {
     document.getElementById("error-message-phone").style.display = "block";
@@ -254,7 +254,7 @@ function validatePhoneNumber(phoneNumber) {
   return true;
 }
 
-function validateMail(mail) {
+export function validateMail(mail) {
   if (mail && mail.length <= 50) {
       return true; 
   }
