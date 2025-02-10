@@ -13,8 +13,8 @@ class BasePongGame:
         self.state = {
             "ball": {"x": 0, "y": 0, "vx": 0.6, "vy": 0.6},
             "players": {
-                1: {"x": -1.5, "y": 0},  # Joueur 1 (gauche) ✅ Correspond à -1.5 en frontend
-                2: {"x": 1.5, "y": 0},  # Joueur 2 (droite) ✅ Correspond à 1.5 en frontend
+                1: {"x": -8, "y": 0},  # Joueur 1 (gauche) ✅ Correspond à -1.5 en frontend
+                2: {"x": 8, "y": 0},  # Joueur 2 (droite) ✅ Correspond à 1.5 en frontend
             },
             "scores": {1: 0, 2: 0}
         }
@@ -62,16 +62,16 @@ class BasePongGame:
         ball["y"] += ball["vy"] * dt
 
         # 2) Vérifier les collisions avec les murs (haut/bas)
-        if ball["y"] >= 0.95:  # Mur du haut
-            ball["y"] = 0.95
-            ball["vy"] *= -1
-        elif ball["y"] <= -0.95:  # Mur du bas
-            ball["y"] = -0.95
-            ball["vy"] *= -1
+        if ball["y"] >= 2:  # Mur du haut
+            ball["y"] = 2
+            ball["vy"] *= -2
+        elif ball["y"] <= -2:  # Mur du bas
+            ball["y"] = -2
+            ball["vy"] *= -2
 
         # 3) Collision avec la paddle du Joueur 1 (gauche)
 # 3) Collision avec la paddle du Joueur 1 (gauche)
-        if ball["x"] <= -1.55:
+        if ball["x"] <= -8:
             if p1["y"] - self.paddle_half_height <= ball["y"] <= p1["y"] + self.paddle_half_height:
                 impact = (ball["y"] - p1["y"]) / self.paddle_half_height  # Impact normalisé (-1 à 1)
                 ball["vx"] = abs(ball["vx"]) * 1.1  # 🚀 Augmente légèrement la vitesse
@@ -82,7 +82,7 @@ class BasePongGame:
                 self.reset_ball("right")
 
         # 4) Collision avec la paddle du Joueur 2 (droite)
-        if ball["x"] >= 1.55:
+        if ball["x"] >= 8:
             if p2["y"] - self.paddle_half_height <= ball["y"] <= p2["y"] + self.paddle_half_height:
                 impact = (ball["y"] - p2["y"]) / self.paddle_half_height  # Impact normalisé (-1 à 1)
                 ball["vx"] = -abs(ball["vx"]) * 1.1  # 🚀 Augmente légèrement la vitesse

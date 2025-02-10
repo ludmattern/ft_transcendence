@@ -92,5 +92,4 @@ export async function loadModels() {
 	} catch (error) {
 		console.error("Erreur lors du chargement du modèle SN13 :", error);
 	}
-
 }

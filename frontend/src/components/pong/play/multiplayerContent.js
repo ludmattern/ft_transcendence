@@ -120,6 +120,17 @@ export const multiplayerContent = createComponent({
   },
 });
 
+
+function joinMatchmaking() {
+  const userId = sessionStorage.getItem("userId");
+  ws.send(JSON.stringify({
+      type: "matchmaking",
+      action: "join",
+      user_id: userId
+  }));
+  console.log("Sent 'join matchmaking' via WebSocket");
+}
+
 export function leaveMatchmaking() {
   const userId = sessionStorage.getItem("userId");
   ws.send(JSON.stringify({

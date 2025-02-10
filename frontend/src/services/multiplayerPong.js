@@ -28,7 +28,6 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
 
     const gameConfig = {
       mode: "matchmaking",
-      map: document.getElementById("mapSelect-matchmaking").value,
       playerCount: 2,
       gameId: gameId,
       side: side

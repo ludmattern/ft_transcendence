@@ -1,16 +1,16 @@
 import * as THREE from "https://esm.sh/three";
 import Store from './store.js';
 
-const aspectRatio = 2048 / 1024;  // Ajuste selon ton écran
+let aspectRatio;
 
-export const renderTargetP1 = new THREE.WebGLRenderTarget(1024, 1024, {
+export const renderTargetP1 = new THREE.WebGLRenderTarget(2048, 1024, {
   minFilter: THREE.LinearFilter,
   magFilter: THREE.LinearFilter,
   format: THREE.RGBAFormat,
   type: THREE.UnsignedByteType
 });
 
-export const renderTargetP2 = new THREE.WebGLRenderTarget(1024, 1024, {
+export const renderTargetP2 = new THREE.WebGLRenderTarget(2048, 1024, {
   minFilter: THREE.LinearFilter,
   magFilter: THREE.LinearFilter,
   format: THREE.RGBAFormat,
@@ -89,13 +89,14 @@ export function buildGameScene(gameConfig) {
   }
 
   if (gameConfig.mode === "local") {
-    // 🟢 Mode Local : Split-Screen
-    cameraPlayer1 = new THREE.PerspectiveCamera(30, 1, 0.1, 1000);
-    cameraPlayer1.position.set(-4, 2, 5);
+    aspectRatio = 1;
+
+    cameraPlayer1 = new THREE.PerspectiveCamera(30, aspectRatio, 0.1, 1000);
+    cameraPlayer1.position.set(0, 0, -12);
     cameraPlayer1.lookAt(0, 0, 0);
 
-    cameraPlayer2 = new THREE.PerspectiveCamera(30, 1, 0.1, 1000);
-    cameraPlayer2.position.set(4, 2, 5);
+    cameraPlayer2 = new THREE.PerspectiveCamera(30, aspectRatio, 0.1, 1000);
+    cameraPlayer2.position.set(0, 0, 12);
     cameraPlayer2.lookAt(0, 0, 0);
 
     // Applique le shader split-screen
@@ -103,12 +104,19 @@ export function buildGameScene(gameConfig) {
     screenMaterial.fragmentShader = shaders.local.fragment;
     screenMaterial.needsUpdate = true;
 
+    cameraPlayer1.aspect = aspectRatio;
+    cameraPlayer1.updateProjectionMatrix();
+
+    cameraPlayer2.aspect = aspectRatio;
+    cameraPlayer2.updateProjectionMatrix();
+
   } else if (gameConfig.mode === "matchmaking") {
-    cameraPlayer1 = new THREE.PerspectiveCamera(25, 1024 / 512, 0.01, 1000);
-    cameraPlayer1.position.set(0, 2, 5);
+    aspectRatio = 2;
+
+    cameraPlayer1 = new THREE.PerspectiveCamera(25, aspectRatio, 0.01, 1000);
+    cameraPlayer1.position.set(0, 0, 12);
     cameraPlayer1.lookAt(0, 0, 0);
 
-    // Applique le shader simple
     screenMaterial.vertexShader = shaders.matchmaking.vertex;
     screenMaterial.fragmentShader = shaders.matchmaking.fragment;
     screenMaterial.needsUpdate = true;
@@ -121,142 +129,120 @@ export function buildGameScene(gameConfig) {
 
 
 
-  cameraCube = new THREE.PerspectiveCamera(25, 1024 / 512, 0.01, 1000); 
+  cameraCube = new THREE.PerspectiveCamera(25, aspectRatio, 0.01, 1000); 
   cameraCube.position.z = 7;
 
+
+
+const sideWallMaterial = new THREE.MeshStandardMaterial({
+  color: 0x444444,
+  side: THREE.DoubleSide,
+  transparent: true, 
+  opacity: 0.5, 
+});
+
+const floorCeilingMaterial = new THREE.MeshStandardMaterial({
+  color: 0x333333,
+  side: THREE.DoubleSide,
+  transparent: true, 
+  opacity: 0.7,
+});
+
+const endWallMaterial = new THREE.MeshStandardMaterial({
+  color: 0x222222,
+  side: THREE.DoubleSide,
+  transparent: true,
+  opacity: 0.8,
+});
+
+  const tunnelWidth = 15;  
+  const tunnelHeight = 4;  
+  const tunnelDepth = 7;  
   
-  const ballGeometry = new THREE.SphereGeometry(0.15, 32, 32); 
-const ballMaterial = new THREE.MeshStandardMaterial({
-  color: 0xffffff,
-  emissive: 0xffcc00, 
-  emissiveIntensity: 0.3,
-  roughness: 0.3,  
-  metalness: 0.5,
-});
-Store.meshBall = new THREE.Mesh(ballGeometry, ballMaterial);
-Store.pongScene.add(Store.meshBall);
+  const leftWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(tunnelDepth, tunnelHeight),
+    sideWallMaterial
+  );
+  leftWall.position.set(-tunnelWidth / 2, 0, 0);
+  leftWall.rotation.y = Math.PI / 2;
+  
+  const rightWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(tunnelDepth, tunnelHeight),
+    sideWallMaterial
+  );
+  rightWall.position.set(tunnelWidth / 2, 0, 0);
+  rightWall.rotation.y = -Math.PI / 2;
+  
+  const ceiling = new THREE.Mesh(
+    new THREE.PlaneGeometry(tunnelWidth, tunnelDepth),
+    floorCeilingMaterial
+  );
+  ceiling.position.set(0, tunnelHeight / 2, 0);
+  ceiling.rotation.x = Math.PI / 2;
+  
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(tunnelWidth, tunnelDepth),
+    floorCeilingMaterial
+  );
+  floor.position.set(0, -tunnelHeight / 2, 0);
+  floor.rotation.x = -Math.PI / 2;
+  
+  const frontWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(tunnelWidth, tunnelHeight),
+    endWallMaterial
+  );
+  frontWall.position.set(0, 0, -tunnelDepth / 2);
+  
+  const backWall = new THREE.Mesh(
+    new THREE.PlaneGeometry(tunnelWidth, tunnelHeight),
+    endWallMaterial
+  );
+  backWall.position.set(0, 0, tunnelDepth / 2);
+  backWall.rotation.y = Math.PI;
+  
+  //Store.pongScene.add(leftWall);
+  //Store.pongScene.add(rightWall);
+  Store.pongScene.add(ceiling);
+  Store.pongScene.add(floor);
+  Store.pongScene.add(frontWall);
+  Store.pongScene.add(backWall);
+  
+  
 
 
-
-  const paddleGeometry = new THREE.BoxGeometry(0.2, 0.6, 0.1);
-  const paddleMaterial = new THREE.MeshPhongMaterial({
-    color: 0x00ff00,
-    emissive: 0x00ff00,
-    emissiveIntensity: 0.2,
+  const paddleGeometry = new THREE.BoxGeometry(1, 1, 1);
+  const paddleMaterial = new THREE.MeshStandardMaterial({
+    color: 0x00ff00, 
+    opacity: 0.2,
+    transparent: true  
   });
-
-
-const wallGeometry = new THREE.BoxGeometry(0.05, 2.1, 0.2);
-const wallMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-
-const leftWall = new THREE.Mesh(wallGeometry, wallMaterial);
-leftWall.position.set(-1, 0, 0);
-Store.pongScene.add(leftWall);
-
-const rightWall = new THREE.Mesh(wallGeometry, wallMaterial);
-rightWall.position.set(1, 0, 0);
-Store.pongScene.add(rightWall);
-
-const topBottomWallGeometry = new THREE.BoxGeometry(3.4, 0.05, 0.2); 
-const topWall = new THREE.Mesh(topBottomWallGeometry, wallMaterial);
-const bottomWall = new THREE.Mesh(topBottomWallGeometry, wallMaterial);
-
-const floorGeometry = new THREE.PlaneGeometry(3.4, 2.1);
-const floorMaterial = new THREE.MeshStandardMaterial({
-  color: 0xaaaaaa, 
-  roughness: 0.8,  
-  side: THREE.DoubleSide 
-});
-
-const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-floor.position.z = -0.1; 
-
-Store.pongScene.add(floor);
-
-leftWall.position.set(-1.7, 0, 0);
-rightWall.position.set(1.7, 0, 0);
-
-topWall.position.set(0, 1.03, 0); 
-bottomWall.position.set(0, -1.03, 0);  
-
-Store.pongScene.add(topWall);
-Store.pongScene.add(bottomWall);
-
-const middleLineGeometry = new THREE.BoxGeometry(0.05, 2.1, 0.01);
-const middleLineMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-
-const middleLine = new THREE.Mesh(middleLineGeometry, middleLineMaterial);
-middleLine.position.set(0, 0, 0.01); 
-
-Store.pongScene.add(middleLine);
-
-
+  
   Store.player1Paddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
-  Store.player2Paddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
-
-  Store.player1Paddle.position.set(-1.5, 0, 0);
-  Store.player2Paddle.position.set(1.5, 0, 0);
-
+  Store.player1Paddle.position.set(-6, -2, 0); 
   Store.pongScene.add(Store.player1Paddle);
+
+  Store.player2Paddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
+  Store.player2Paddle.position.set(6, -2, 0); 
   Store.pongScene.add(Store.player2Paddle);
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.3); 
+  const meshBallGeometry = new THREE.BoxGeometry(0.25, 0.25, 0.25);
+  const meshBallMaterial = new THREE.MeshStandardMaterial({ color: 0xffcc00 });
+  Store.meshBall = new THREE.Mesh(meshBallGeometry, meshBallMaterial);
+  Store.meshBall.position.set(0, 0, 0);
+  Store.pongScene.add(Store.meshBall);
+
+  cameraPlayer1 = new THREE.PerspectiveCamera(60, aspectRatio, 0.1, 100);
+  cameraPlayer1.lookAt(0, 0, 0);
+
+  cameraPlayer2 = new THREE.PerspectiveCamera(60,  aspectRatio, 0.1, 100);
+  cameraPlayer2.lookAt(0, 0, 0);
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 1);
   Store.pongScene.add(ambientLight);
+  const light = new THREE.PointLight(0xffffff, 1.5);
+  light.position.set(0, 5, 0);
+  Store.pongScene.add(light);
   
-  const spotLight = new THREE.SpotLight(0x00ffcc, 1);
-  spotLight.position.set(0, 5, 5);
-  spotLight.angle = Math.PI / 4;
-  spotLight.penumbra = 0.2;
-  Store.pongScene.add(spotLight);
-  
-
-Store.scoreP1 = createScoreText(-0.8);
-Store.scoreP2 = createScoreText(0.8);
-
-Store.pongScene.add(Store.scoreP1);
-Store.pongScene.add(Store.scoreP2);
-}
-
-export function createTextTexture(text) {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-
-  canvas.width = 256; 
-  canvas.height = 128;
-
-  ctx.fillStyle = "transparent"; 
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.font = "Bold 120px Arial";
-  ctx.fillStyle = "white"; 
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-
-  const texture = new THREE.CanvasTexture(canvas);
-  return texture;
-}
-
-function createScoreText(positionX) 
-{
-  const textTexture = createTextTexture("0");
-
-  textTexture.center.set(0.5, 0.5);
-
-  const textMaterial = new THREE.MeshBasicMaterial({ 
-      map: textTexture, 
-      transparent: true,
-      side: THREE.DoubleSide  
-
-  });
-
-  const textGeometry = new THREE.PlaneGeometry(0.8, 0.4);
-  const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-
-  textMesh.position.set(positionX, 0, 0.03);
-  textMesh.rotation.x = THREE.MathUtils.degToRad(-180);
-
-  return textMesh;
 }
 
 
@@ -266,7 +252,24 @@ export function animatePong(renderer) {
   if (Store.gameConfig.mode === "local") {
     if (!cameraPlayer1 || !cameraPlayer2) return;
 
+    cameraPlayer1.position.set(
+      Store.player1Paddle.position.x - 3,
+      Store.player1Paddle.position.y ,
+      Store.player1Paddle.position.z 
+    );
+    cameraPlayer1.lookAt(Store.player1Paddle.position);
+
+    cameraPlayer2.position.set(
+      Store.player2Paddle.position.x + 3,
+      Store.player2Paddle.position.y ,
+      Store.player2Paddle.position.z 
+    );
+    cameraPlayer2.lookAt(Store.player2Paddle.position);
+
+
     screenMesh.visible = false;
+
+
 
     renderer.setRenderTarget(renderTargetP1);
     renderer.render(Store.pongScene, cameraPlayer1);
@@ -284,12 +287,31 @@ export function animatePong(renderer) {
 
   } else if (Store.gameConfig.mode === "matchmaking") {
     if (!cameraPlayer1) return;
-
+    let cam;
+    if (Store.gameConfig.side == "left")
+    {
+      cameraPlayer1.position.set(
+        Store.player1Paddle.position.x - 3,
+        Store.player1Paddle.position.y,
+        Store.player1Paddle.position.z
+      );
+      cameraPlayer1.lookAt(Store.player1Paddle.position);
+      cam = cameraPlayer1;
+    }
+    else if (Store.gameConfig.side == "right")
+    {
+      cameraPlayer2.position.set(
+        Store.player2Paddle.position.x + 3,
+        Store.player2Paddle.position.y,
+        Store.player2Paddle.position.z
+      );
+      cameraPlayer2.lookAt(Store.player2Paddle.position);
+      cam = cameraPlayer2;
+    }
     screenMesh.visible = false;
 
-    // 🔵 Rendu du matchmaking avec une seule caméra
     renderer.setRenderTarget(renderTargetP1);
-    renderer.render(Store.pongScene, cameraPlayer1);
+    renderer.render(Store.pongScene, cam);
     
     screenMesh.visible = true;
     screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
