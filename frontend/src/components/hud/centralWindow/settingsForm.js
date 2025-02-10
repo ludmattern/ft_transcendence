@@ -1,5 +1,12 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
+import { validatePassword } from '/src/components/hud/centralWindow/subscribeForm.js';
+import { validateId } from '/src/components/hud/centralWindow/subscribeForm.js';
+import { checkPasswordConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
+import { checkEmailConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
+import { validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
+import { resetErrorMessages } from '/src/components/hud/centralWindow/subscribeForm.js';
+
 
 export const settingsForm = createComponent({
   tag: 'settingsForm',
@@ -57,31 +64,54 @@ export const settingsForm = createComponent({
       console.log('Form data:', formData);
       // TODO: Appel API pour la mise à jour des paramètres.
 
-      try {
-        const response = await fetch("/api/user-service/update/", {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        });
-      
-        if (!response.ok) {
-          const errorText = await response.text();  // Get full server response
-          console.error('Server error response:', errorText);
-          alert('Server error occurred. See console for details.');
-          return;
+      resetErrorMessages();
+
+      let canRegister = true;
+
+      if (!validateId(formData.username)) canRegister = false;
+      if (canRegister && formData.newEmail)
+        if (!validateMail(formData.newEmail))
+          canRegister = false;
+      if (canRegister && formData.newPassword && !validatePassword(formData.newPassword)) canRegister = false;
+      if (canRegister && formData.newPassword && formData.confirmPassword && !checkPasswordConfirmation(formData.newPassword, formData.confirmPassword)) canRegister = false;
+      if (canRegister && formData.newEmail && formData.confirmMail && !checkEmailConfirmation(formData.newEmail, formData.confirmMail)) canRegister = false;
+      if (canRegister) {
+        try {
+          const response = await fetch("/api/user-service/update/", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          });
+          const data = await response.json();
+          if (data.success) {
+            if (formData.newUsername) {
+              sessionStorage.setItem("registered_user", formData.newUsername);
+              sessionStorage.setItem("username", formData.newUsername);
+            }
+            alert('Information updated successfully.');
+          } else {
+            {
+              if (data.message.includes("Username already taken")) {
+                document.getElementById("error-message-id").style.display = "block";
+              } else {
+                document.getElementById("error-message-id").style.display = "none";
+              }
+
+              if (data.message.includes("Email already in use")) {
+                document.getElementById("error-message-mail").style.display = "block";
+                document.getElementById("error-message-mail2").style.display = "none";
+              } else {
+                document.getElementById("error-message-mail").style.display = "none";
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error updating information:', error);
+          alert('An unexpected error occurred.');
         }
-      
-        const result = await response.json();
-        if (result.success) {
-          alert('Information updated successfully.');
-        } else {
-          alert(`Error: ${result.message}`);
-        }
-      } catch (error) {
-        console.error('Error updating information:', error);
-        alert('An unexpected error occurred.');
       }
     });
+
 
     // Gestionnaire pour le lien "Delete Account"
     el.querySelector('#delete-account-link').addEventListener('click', (e) => {
@@ -104,6 +134,16 @@ function createFormGroup(id, type, label) {
     <div class="form-group">
       <label class="mb-3" for="${id}">${label}</label>
       <input type="${type}" id="${id}" name="${id}" class="form-control" required />
+      ${id === 'new-username' ? '<div id="error-message-id" class="text-danger mt-2" style="display: none;">Id already taken</div>' : ''}
+      ${id === 'new-username' ? '<div id="bad-id" class="text-danger mt-2" style="display: none;">Id must contain between 6 and 20 char</div>' : ''}
+      ${id === 'new-password' ? '<div id="bad-pass-size" class="text-danger mt-2" style="display: none;">Password must contain between 6 and 20 char</div>' : ''}
+      ${id === 'new-password' ? '<div id="bad-pass-upper" class="text-danger mt-2" style="display: none;">Password must have at least one uppercase char</div>' : ''}
+      ${id === 'new-password' ? '<div id="bad-pass-lower" class="text-danger mt-2" style="display: none;">Password must have at least one lowercase char</div>' : ''}
+      ${id === 'new-password' ? '<div id="bad-pass-special" class="text-danger mt-2" style="display: none;">Password must have at least one special char</div>' : ''}
+      ${id === 'confirm-new-password' ? '<div id="error-message-pass" class="text-danger mt-2" style="display: none;">Password does not match</div>' : ''}
+      ${id === 'new-email' ? '<div id="error-message-mail" class="text-danger mt-2" style="display: none;">E-mail already taken</div>' : ''}
+      ${id === 'new-email' ? '<div id="error-message-mail-size" class="text-danger mt-2" style="display: none;">E-mail too long</div>' : ''}
+      ${id === 'confirm-new-email' ? '<div id="error-message-mail2" class="text-danger mt-2" style="display: none;">E-mail does not match</div>' : ''}
     </div>
   `;
 }
@@ -116,6 +156,7 @@ function createFormGroup(id, type, label) {
  */
 function collectFormData(el) {
   return {
+    username: sessionStorage.getItem('username'),
     newUsername: el.querySelector('#new-username').value,
     oldPassword: el.querySelector('#old-password').value,
     newPassword: el.querySelector('#new-password').value,

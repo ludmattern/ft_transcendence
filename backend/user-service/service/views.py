@@ -53,7 +53,6 @@ def register_user(request):
             
             encrypted_email = encrypt_thing(email)
 
-
             existing_users = ManualUser.objects.all()
 
             for user in existing_users:
@@ -89,6 +88,7 @@ def update_info(request):
     if request.method == 'POST':
         try:
             body = json.loads(request.body.decode('utf-8'))
+            username= body.get('username')
             old_password = body.get('oldPassword')
             new_username = body.get('newUsername')
             new_password = body.get('newPassword')
@@ -98,7 +98,7 @@ def update_info(request):
             language = body.get('language')
 
             # Validate user by current password
-            user = ManualUser.objects.get(username=request.user.username)
+            user = ManualUser.objects.get(username=username)
 
             if not bcrypt.checkpw(old_password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({'success': False, 'message': 'Current password is incorrect'}, status=400)
@@ -115,6 +115,12 @@ def update_info(request):
                     return JsonResponse({'success': False, 'message': 'Emails do not match'}, status=400)
                 encrypted_email = encrypt_thing(new_email)
                 user.email = encrypted_email
+                if new_email != decrypt_thing(user.email):
+                    existing_users = ManualUser.objects.all()
+                    for user in existing_users:
+                        decrypted_email = decrypt_thing(user.email)
+                        if decrypted_email == new_email:
+                            return JsonResponse({'success': False, 'message': 'Email already in use'}, status=409)
 
             # Validate and update password
             if new_password:
