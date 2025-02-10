@@ -109,6 +109,11 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (Private): {event}")
 
+	async def error_message(self, event):
+		"""This method handles error_message events delivered to this consumer."""
+		await self.send(json.dumps(event))
+		logger.info(f"Message d'erreur transmis au client WebSocket (Private): {event}")
+
 	async def game_state(self, event):
 		await self.send(json.dumps(event))
 		logger.info(f"Game state transmis au client : {event}")

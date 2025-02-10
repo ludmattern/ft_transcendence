@@ -395,6 +395,11 @@ export function handleIncomingMessage(data) {
 	const userId = sessionStorage.getItem("userId");
 	const container = document.getElementById("l-tab-content");
 
+	if (data.type === "error_message") {
+		createErrorInput(data.message);
+		return;
+	}
+
 	const activeTab = document.querySelector(".nav-link.active");
 	if (activeTab && activeTab.dataset.tab === "comm") {
 		renderCommMessage(data, container, userId.toString());	
@@ -414,5 +419,17 @@ function removePrivateNotifications() {
 	  return !(message && message.includes("private message"));
 	});
 	console.log("Buffer après suppression des private messages:", notificationbuffer);
-  }
+}
   
+export function createErrorInput(error_message) {
+	let inputElement = document.getElementById("message-input");
+
+	inputElement.placeholder = error_message;
+
+	inputElement.classList.add("error");
+
+	setTimeout(() => {
+		inputElement.classList.remove("error");
+		inputElement.placeholder = "Enter your message...";
+	}, 5000);
+}

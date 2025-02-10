@@ -40,7 +40,7 @@ export function initializeWebSocket() {
 			console.log(data);
 			return;
 		}
-		else if (data.type === "chat_message" || data.type === "private_message") {
+		else if (data.type === "chat_message" || data.type === "private_message" || data.type === "error_message") {
 			handleIncomingMessage(data);
 		}
 		else  if (data.type === "private_match_found") {
