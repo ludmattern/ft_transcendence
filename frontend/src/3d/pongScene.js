@@ -1,96 +1,77 @@
 import * as THREE from "https://esm.sh/three";
 import Store from './store.js';
-import { FontLoader } from "https://esm.sh/three/examples/jsm/loaders/FontLoader.js";
-import { TextGeometry } from "https://esm.sh/three/examples/jsm/geometries/TextGeometry.js";
-export const mapConfigs = {
-  map1: { color: 0xff0000 },
-  map2: { color: 0x0000ff },
-  map3: { color: 0x00ff00 },
-  map4: { color: 0x00ffff },
-};
-
 
 const aspectRatio = 2048 / 1024;  // Ajuste selon ton écran
 
-export const renderTarget = new THREE.WebGLRenderTarget(2048, Math.round(1024 / aspectRatio), {
+export const renderTargetP1 = new THREE.WebGLRenderTarget(1024, 1024, {
   minFilter: THREE.LinearFilter,
   magFilter: THREE.LinearFilter,
   format: THREE.RGBAFormat,
   type: THREE.UnsignedByteType
 });
 
-
-export const screenMaterial = new THREE.MeshStandardMaterial({
-  map: renderTarget.texture,
-  emissive: 0x000000,
-  emissiveIntensity: 0.1,
+export const renderTargetP2 = new THREE.WebGLRenderTarget(1024, 1024, {
+  minFilter: THREE.LinearFilter,
+  magFilter: THREE.LinearFilter,
+  format: THREE.RGBAFormat,
+  type: THREE.UnsignedByteType
 });
 
-let isDragging = false;
-let lastMouseX = 0;
-let lastMouseY = 0;
-let cameraAngleX = 0;
-let cameraAngleY = 0;
-let cameraDistance = 7;  
+export let cameraPlayer1, cameraPlayer2, screenMesh;
 
+export let screenMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    textureP1: { value: renderTargetP1.texture },
+    textureP2: { value: renderTargetP2.texture }
+  },
+  vertexShader: ``,
+  fragmentShader: ``
+});
 
-function onMouseDown(event) {
-  isDragging = true;
-  lastMouseX = event.clientX;
-  lastMouseY = event.clientY;
-}
+const shaders = {
+  local: {
+    vertex: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragment: `
+      uniform sampler2D textureP1;
+      uniform sampler2D textureP2;
+      varying vec2 vUv;
 
-function onMouseMove(event) {
-  if (!isDragging) return;
+      void main() {
+        vec4 color;
+        if (vUv.x < 0.5) {
+          color = texture2D(textureP1, vec2(vUv.x * 2.0, vUv.y));
+        } else {
+          color = texture2D(textureP2, vec2((vUv.x - 0.5) * 2.0, vUv.y));
+        }
+        gl_FragColor = color;
+      }
+    `
+  },
+  matchmaking: {
+    vertex: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragment: `
+      uniform sampler2D textureP1;
+      varying vec2 vUv;
 
-  const deltaX = event.clientX - lastMouseX;
-  const deltaY = event.clientY - lastMouseY;
+      void main() {
+        gl_FragColor = texture2D(textureP1, vUv);
+      }
+    `
+  }
+};
 
-  lastMouseX = event.clientX;
-  lastMouseY = event.clientY;
-
-  cameraAngleX -= deltaX * 0.005; 
-  cameraAngleY -= deltaY * 0.005; 
-
-  cameraAngleY = Math.max(-Math.PI / 4, Math.min(Math.PI / 4, cameraAngleY));
-}
-
-function onMouseUp() {
-  isDragging = false;
-}
-
-function onMouseWheel(event) {
-  cameraDistance += event.deltaY * 0.01;
-  cameraDistance = Math.max(5, Math.min(10, cameraDistance)); 
-}
-
-function updateCameraPosition() {
-  const maxAngle = Math.PI / 3; 
-  cameraAngleX = Math.max(-maxAngle, Math.min(maxAngle, cameraAngleX));
-
-  cameraDistance = Math.max(5, Math.min(10, cameraDistance));
-
-  cameraCube.position.x = cameraDistance * Math.sin(cameraAngleX);
-  cameraCube.position.z = cameraDistance * Math.cos(cameraAngleX);
-  cameraCube.position.y = cameraDistance * Math.sin(cameraAngleY);
-
-  cameraCube.lookAt(0, 0, 0);
-}
-
-/*
-function updateCameraPosition() {
-  if (!Store.meshBall || !cameraCube) return;
-
-  const lerpFactor = 0.05; // Vitesse de rattrapage
-  cameraCube.position.x += (Store.meshBall.position.x - cameraCube.position.x) * lerpFactor;
-  cameraCube.position.y += (Store.meshBall.position.y - cameraCube.position.y) * lerpFactor;
-  
-  const distanceFactor = Math.abs(Store.meshBall.position.x) / 1.5; 
-  cameraCube.position.z = 6 - distanceFactor * 2; 
-
-  cameraCube.lookAt(0, 0, 0);
-}
-*/ 
 
 
 
@@ -99,15 +80,45 @@ function updateCameraPosition() {
 export let cameraCube;
 
 export function buildGameScene(gameConfig) {
+  Store.gameConfig = gameConfig; 
+
   if (Store.pongScene) {
     Store.pongScene.clear();
   } else {
     Store.pongScene = new THREE.Scene();
   }
-  window.addEventListener("mousedown", onMouseDown);
-  window.addEventListener("mousemove", onMouseMove);
-  window.addEventListener("mouseup", onMouseUp);
-  window.addEventListener("wheel", onMouseWheel);
+
+  if (gameConfig.mode === "local") {
+    // 🟢 Mode Local : Split-Screen
+    cameraPlayer1 = new THREE.PerspectiveCamera(30, 1, 0.1, 1000);
+    cameraPlayer1.position.set(-4, 2, 5);
+    cameraPlayer1.lookAt(0, 0, 0);
+
+    cameraPlayer2 = new THREE.PerspectiveCamera(30, 1, 0.1, 1000);
+    cameraPlayer2.position.set(4, 2, 5);
+    cameraPlayer2.lookAt(0, 0, 0);
+
+    // Applique le shader split-screen
+    screenMaterial.vertexShader = shaders.local.vertex;
+    screenMaterial.fragmentShader = shaders.local.fragment;
+    screenMaterial.needsUpdate = true;
+
+  } else if (gameConfig.mode === "matchmaking") {
+    cameraPlayer1 = new THREE.PerspectiveCamera(25, 1024 / 512, 0.01, 1000);
+    cameraPlayer1.position.set(0, 2, 5);
+    cameraPlayer1.lookAt(0, 0, 0);
+
+    // Applique le shader simple
+    screenMaterial.vertexShader = shaders.matchmaking.vertex;
+    screenMaterial.fragmentShader = shaders.matchmaking.fragment;
+    screenMaterial.needsUpdate = true;
+  }
+
+  const screenGeometry = new THREE.PlaneGeometry(2, 1);
+  screenMesh = new THREE.Mesh(screenGeometry, screenMaterial);
+  screenMesh.position.set(0, 1, -2);
+  Store.pongScene.add(screenMesh);
+
 
 
   cameraCube = new THREE.PerspectiveCamera(25, 1024 / 512, 0.01, 1000); 
@@ -171,7 +182,7 @@ bottomWall.position.set(0, -1.03, 0);
 Store.pongScene.add(topWall);
 Store.pongScene.add(bottomWall);
 
-const middleLineGeometry = new THREE.BoxGeometry(0.05, 2.1, 0.01); // 🔲 Long et fin
+const middleLineGeometry = new THREE.BoxGeometry(0.05, 2.1, 0.01);
 const middleLineMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
 
 const middleLine = new THREE.Mesh(middleLineGeometry, middleLineMaterial);
@@ -199,16 +210,12 @@ Store.pongScene.add(middleLine);
   Store.pongScene.add(spotLight);
   
 
-// Ajouter les scores sur le sol
 Store.scoreP1 = createScoreText(-0.8);
 Store.scoreP2 = createScoreText(0.8);
 
 Store.pongScene.add(Store.scoreP1);
 Store.pongScene.add(Store.scoreP2);
-
-
 }
-
 
 export function createTextTexture(text) {
   const canvas = document.createElement("canvas");
@@ -230,7 +237,8 @@ export function createTextTexture(text) {
   return texture;
 }
 
-function createScoreText(positionX) {
+function createScoreText(positionX) 
+{
   const textTexture = createTextTexture("0");
 
   textTexture.center.set(0.5, 0.5);
@@ -252,14 +260,41 @@ function createScoreText(positionX) {
 }
 
 
-
 export function animatePong(renderer) {
-  if (!Store.pongScene || !cameraCube) return;
+  if (!Store.pongScene || !Store.gameConfig) return;
 
-  updateCameraPosition();
+  if (Store.gameConfig.mode === "local") {
+    if (!cameraPlayer1 || !cameraPlayer2) return;
 
-  renderer.setRenderTarget(renderTarget);
+    screenMesh.visible = false;
 
-  renderer.render(Store.pongScene, cameraCube);
-  renderer.setRenderTarget(null);
+    renderer.setRenderTarget(renderTargetP1);
+    renderer.render(Store.pongScene, cameraPlayer1);
+
+    renderer.setRenderTarget(renderTargetP2);
+    renderer.render(Store.pongScene, cameraPlayer2);
+    
+    screenMesh.visible = true;
+
+    screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
+    screenMaterial.uniforms.textureP2.value = renderTargetP2.texture;
+
+    renderer.setRenderTarget(null);
+    renderer.render(Store.pongScene, cameraCube);
+
+  } else if (Store.gameConfig.mode === "matchmaking") {
+    if (!cameraPlayer1) return;
+
+    screenMesh.visible = false;
+
+    // 🔵 Rendu du matchmaking avec une seule caméra
+    renderer.setRenderTarget(renderTargetP1);
+    renderer.render(Store.pongScene, cameraPlayer1);
+    
+    screenMesh.visible = true;
+    screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
+
+    renderer.setRenderTarget(null);
+    renderer.render(Store.pongScene, cameraCube);
+  }
 }
