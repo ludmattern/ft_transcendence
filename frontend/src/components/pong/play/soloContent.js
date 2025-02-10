@@ -17,17 +17,6 @@ export const soloContent = createComponent({
               <legend class="h4">Pointless Battle Settings</legend>
 
               <div class="mb-3">
-                <label for="battlefield" class="form-label">Select Where You’ll Be Annihilated</label>
-                <select class="form-select" id="battlefield" aria-describedby="battlefieldHelp">
-                  <option value="map1">The Pit of Futility</option>
-                  <option value="map2">Asteroid Wasteland of Despair</option>
-                  <option value="map3">Nebula of Certain Defeat</option>
-                  <option value="map4">The Black Hole of No Return</option>
-                </select>
-                <small id="battlefieldHelp" class="text-secondary">Not that it matters. You're losing anyway.</small>
-              </div>
-
-              <div class="mb-3">
                 <label for="difficulty" class="form-label">Select How Fast You’ll Regret This</label>
                 <select class="form-select" id="difficulty" aria-describedby="difficultyHelp">
                   <option value="hard">Painful</option>
@@ -56,23 +45,16 @@ export const soloContent = createComponent({
 
   // Ajouter les événements pour gérer sessionStorage
   attachEvents: () => {
-    const battlefield = document.getElementById("battlefield");
     const difficulty = document.getElementById("difficulty");
     const liabilityCheckbox = document.getElementById("liabilityCheckbox");
 
     // Charger les valeurs sauvegardées
-    const savedBattlefield = sessionStorage.getItem("battlefield");
     const savedDifficulty = sessionStorage.getItem("difficulty");
     const savedLiability = sessionStorage.getItem("liabilityCheckbox");
 
-    if (savedBattlefield) battlefield.value = savedBattlefield;
     if (savedDifficulty) difficulty.value = savedDifficulty;
     if (savedLiability) liabilityCheckbox.checked = savedLiability === "true";
 
-    // Sauvegarder les changements
-    battlefield.addEventListener("change", () => {
-      sessionStorage.setItem("battlefield", battlefield.value);
-    });
 
     difficulty.addEventListener("change", () => {
       sessionStorage.setItem("difficulty", difficulty.value);

@@ -23,11 +23,10 @@ export const tournamentContent = createComponent({
 
         <div class="tab-content mt-4">
             <div class="tab-pane fade show active" id="createTournament">
-                <h3 class="text-white">Create Your Own Tournament</h3>
+                <legend class="h4 text-white">Create Your Own Tournament</legend>
                 <p class="text-secondary">How cute, you actually think you’ll make it to the finals?</p>
 
                 ${generateModeSelector()}
-                ${generateMapSelector()}
                 ${generateTournamentSizeSelector()}
 
                 <div class="text-center">
@@ -36,7 +35,7 @@ export const tournamentContent = createComponent({
             </div>
 
             <div class="tab-pane fade" id="joinTournament">
-                <h3 class="text-white">Join an Existing Tournament</h3>
+                <legend class="h4 text-white">Join an Existing Tournament</legend>
                 <p class="text-secondary">You want to join? Great, another victim enters the arena.</p>
 
                 <div class="mb-3">
@@ -51,7 +50,7 @@ export const tournamentContent = createComponent({
                 <h4 class="text-white text-center">Or Join a Random Tournament</h4>
                 ${generateTournamentSizeSelector("random")}
                 <div class="text-center">
-                    <button class="btn btn-warning mt-3" id="joinRandom">Find a Random Tournament</button>
+                    <button class="btn btn-warning" id="joinRandom">Find a Random Tournament</button>
                 </div>
             </div>
         </div>
@@ -120,24 +119,6 @@ function generateModeSelector() {
             <option value="online">Online - Get Destroyed by Strangers</option>
         </select>
         <small class="text-muted">Either way, you're getting eliminated first.</small>
-    </div>
-  `;
-}
-
-/**
- * Génère le sélecteur de map
- */
-function generateMapSelector() {
-  return `
-    <div class="mb-3">
-        <label for="mapSelect" class="form-label text-white">Select Your Battlefield</label>
-        <select class="form-select" id="mapSelect">
-            <option value="map1">The Pit of Futility</option>
-            <option value="map2">Asteroid Wasteland of Despair</option>
-            <option value="map3">Nebula of Certain Defeat</option>
-            <option value="map4">The Black Hole of No Return</option>
-        </select>
-        <small class="text-muted">Not that it matters. You're getting eliminated anyway.</small>
     </div>
   `;
 }
