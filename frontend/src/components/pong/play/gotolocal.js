@@ -10,7 +10,7 @@ export const gotolocal = createComponent({
   tag: "gotolocal",
 
   render: () => {
-    const username = sessionStorage.getItem("username") || "Host"; // L'hôte a déjà son pseudo
+    const username = sessionStorage.getItem("username") || "Host";
 
     return `
       <section class="p-5 flex-grow-1 d-flex flex-column align-items-center justify-content-center" style="background-color: #111111; max-height: 700px; overflow: auto;">
@@ -20,7 +20,7 @@ export const gotolocal = createComponent({
         <div class="row w-100 justify-content-center">
           <!-- Hôte -->
           <div class="col-md-5 m-2 p-3 text-center border rounded bg-dark">
-            <label class="form-label text-white">Host (You)</label>
+            <label class="form-label text-white">Host</label>
             <div id="player1Display" class="form-control text-center fw-bold bg-secondary text-white">${username}</div>
             <label class="form-label text-white mt-2">Select Side</label>
             <select class="form-select text-center" id="player1Side">

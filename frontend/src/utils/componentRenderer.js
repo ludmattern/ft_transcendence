@@ -26,4 +26,3 @@ export function renderPage(pages, pageKey, managerType) {
 	  manager.loadComponent(selector, component);
 	});
   }
-  
