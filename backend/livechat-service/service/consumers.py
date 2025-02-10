@@ -52,6 +52,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		if recipient_id is None:
 			logger.info(f"No valid recipient id for recipient: {recipient}")
+			event["type"] = "error_message"
+			event["message"] = "Recipient does not exist"
+			event["username"] = username
+			await self.channel_layer.group_send(f"user_{author_id}", event)
 			return
 
 		if str(author_id) == str(recipient_id):

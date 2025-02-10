@@ -385,7 +385,7 @@ body {
 @font-face {
   font-family: "Stellar";
   src: url("/src/assets/font/Stellar-Regular.otf") format("opentype");
-  font-weight: 400;
+  font-weight: 400;	
   font-style: normal;
 }
 @font-face {
@@ -836,6 +836,13 @@ body {
   padding-top: 1rem;
   padding-bottom: 1rem;
   padding-left: 1rem;
+}
+
+#hud-body #left-window-container #message-input-container:has(.error) input::placeholder {
+	color:red;
+	text-shadow: 0px 0px 10px #700000;
+	text-emphasis-color: black;
+	font-weight: 500;
 }
 
 #hud-body #left-window-container #bottom-notification-container {
