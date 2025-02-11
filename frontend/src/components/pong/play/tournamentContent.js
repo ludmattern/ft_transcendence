@@ -30,7 +30,7 @@ export const tournamentContent = createComponent({
                 ${generateTournamentSizeSelector()}
 
                 <div class="text-center">
-                    <button class="btn btn-danger btn-lg mt-3">Create This Mess</button>
+                    <button class="btn btn-danger mt-3">Create This Mess</button>
                 </div>
             </div>
 
