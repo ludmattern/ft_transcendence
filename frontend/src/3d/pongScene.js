@@ -143,17 +143,17 @@ const sideWallMaterial = new THREE.MeshStandardMaterial({
 });
 
 const floorCeilingMaterial = new THREE.MeshStandardMaterial({
-  color: 0x333333,
+  color: 0xC9C9FF,
   side: THREE.DoubleSide,
   transparent: true, 
-  opacity: 0.7,
+  opacity: 0.1,
 });
 
 const endWallMaterial = new THREE.MeshStandardMaterial({
-  color: 0x222222,
+  color: 0x9FC5E8,
   side: THREE.DoubleSide,
   transparent: true,
-  opacity: 0.8,
+  opacity: 0.1,
 });
 
   const tunnelWidth = 10;  
