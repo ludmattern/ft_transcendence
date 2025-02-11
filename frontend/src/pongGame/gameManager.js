@@ -3,6 +3,7 @@ import { buildGameScene } from "/src/3d/pongScene.js";
 import Store from "/src/3d/store.js";
 import { ws } from "/src/services/socketManager.js";
 import { showCountdown } from "/src/components/midScreen.js";
+import * as THREE from "https://esm.sh/three";
 
 class GameManager {
   constructor() {
@@ -153,20 +154,26 @@ class GameManager {
 
   updateGameState(gameState) {
     if (gameState.ball) {
-      const { x, y, z } = gameState.ball;  // 🔄 Ajout du z
+      const { x, y, z } = gameState.ball; 
       if (Store.meshBall) {
-        Store.meshBall.position.set(x, y, z);  // 🔄 Applique la nouvelle position 3D
+        Store.meshBall.position.set(x, y, z);  
       }
     }
-    
+    const lerpFactorPaddle = 0.05;
     if (gameState.players) {
       const p1 = gameState.players["1"];
       if (p1 && Store.player1Paddle) {
-        Store.player1Paddle.position.set(p1.x, p1.y, p1.z);  // 🔄 Ajout de la dimension Z
+        if (!Store.p1Target) Store.p1Target = new THREE.Vector3();
+        Store.p1Target.set(p1.x, p1.y, p1.z);
+        Store.player1Paddle.position.lerp(Store.p1Target, lerpFactorPaddle);
+
       }
       const p2 = gameState.players["2"];
       if (p2 && Store.player2Paddle) {
-        Store.player2Paddle.position.set(p2.x, p2.y, p2.z);  // 🔄 Ajout de la dimension Z
+        if (!Store.p2Target) Store.p2Target = new THREE.Vector3();
+        Store.p2Target.set(p2.x, p2.y, p2.z);
+        Store.player2Paddle.position.lerp(Store.p2Target, lerpFactorPaddle);
+
       }
     }
   }

@@ -50,17 +50,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             direction = event.get("direction")
             player_id = event.get("player_id")
             game.move_paddle(player_id, direction)
-            game.update()
-
-            payload = game.to_dict()
-            await self.channel_layer.group_send(
-                f"game_{game_id}",
-                {
-                    "type": "game_state",
-                    "game_id": game_id,
-                    "payload": payload
-                }
-            )
+            #game.update()
 
         elif action == "leave_game":
             if game_id in self.running_games:
@@ -113,7 +103,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     logger.info(f"Partie {game_id} terminée (game_over)")
                     break
 
-                await asyncio.sleep(0.02)
+                await asyncio.sleep(0.005)
 
         except asyncio.CancelledError:
             logger.info(f"game_loop annulée pour {game_id}")

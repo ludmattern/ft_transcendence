@@ -84,7 +84,9 @@ export function buildGameScene(gameConfig) {
 
   if (Store.pongScene) {
     Store.pongScene.clear();
-  } else {
+  } 
+  else 
+  {
     Store.pongScene = new THREE.Scene();
   }
 
@@ -157,7 +159,7 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
 
   const tunnelWidth = 10;  
   const tunnelHeight = 6;  
-  const tunnelDepth = 8;  
+  const tunnelDepth = 6;  
   
   const leftWall = new THREE.Mesh(
     new THREE.PlaneGeometry(tunnelDepth, tunnelHeight),
@@ -210,7 +212,7 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
   
 
 
-  const paddleGeometry = new THREE.BoxGeometry(1, 1, 1);
+  const paddleGeometry = new THREE.BoxGeometry(0.2, 1, 1);
   const paddleMaterial = new THREE.MeshStandardMaterial({
     color: 0x00ff00, 
     opacity: 0.2,
@@ -245,26 +247,39 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
   
 }
 
+const lerpFactor = 0.05;
 
-export function animatePong(renderer) {
+export function animatePong(renderer) 
+{
   if (!Store.pongScene || !Store.gameConfig) return;
 
   if (Store.gameConfig.mode === "local") {
     if (!cameraPlayer1 || !cameraPlayer2) return;
 
-    cameraPlayer1.position.set(
-      Store.player1Paddle.position.x - 3,
-      Store.player1Paddle.position.y ,
-      Store.player1Paddle.position.z 
+    if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
+    if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
+    
+    
+    Store.p1Focus.lerp(Store.player1Paddle.position, lerpFactor);
+    Store.p2Focus.lerp(Store.player2Paddle.position, lerpFactor);
+    
+    cameraPlayer1.position.lerp(
+      new THREE.Vector3(
+        Store.p1Focus.x - 3,
+        Store.p1Focus.y,
+        Store.p1Focus.z
+      ), lerpFactor
     );
-    cameraPlayer1.lookAt(Store.player1Paddle.position);
-
-    cameraPlayer2.position.set(
-      Store.player2Paddle.position.x + 3,
-      Store.player2Paddle.position.y ,
-      Store.player2Paddle.position.z 
+    cameraPlayer1.lookAt(Store.p1Focus);
+    
+    cameraPlayer2.position.lerp(
+      new THREE.Vector3(
+        Store.p2Focus.x + 3,
+        Store.p2Focus.y,
+        Store.p2Focus.z
+      ), lerpFactor
     );
-    cameraPlayer2.lookAt(Store.player2Paddle.position);
+    cameraPlayer2.lookAt(Store.p2Focus);
 
 
     screenMesh.visible = false;
@@ -316,6 +331,8 @@ export function animatePong(renderer) {
     screenMesh.visible = true;
     screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
 
+
+    
     renderer.setRenderTarget(null);
     renderer.render(Store.pongScene, cameraCube);
   }
