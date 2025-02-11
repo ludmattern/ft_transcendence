@@ -1,20 +1,19 @@
 import * as THREE from "https://esm.sh/three";
 import Store from './store.js';
-
+import { LineSegments } from "https://esm.sh/three";
+import { EdgesGeometry } from "https://esm.sh/three";
+import { LineBasicMaterial } from "https://esm.sh/three";
 let aspectRatio;
 
-export const renderTargetP1 = new THREE.WebGLRenderTarget(2048, 1024, {
-  minFilter: THREE.LinearFilter,
-  magFilter: THREE.LinearFilter,
+export const renderTargetP1 = new THREE.WebGLRenderTarget(4096, 2048, {
+
   format: THREE.RGBAFormat,
-  type: THREE.UnsignedByteType
 });
 
-export const renderTargetP2 = new THREE.WebGLRenderTarget(2048, 1024, {
-  minFilter: THREE.LinearFilter,
-  magFilter: THREE.LinearFilter,
+export const renderTargetP2 = new THREE.WebGLRenderTarget(4096, 2048, {
+
+
   format: THREE.RGBAFormat,
-  type: THREE.UnsignedByteType
 });
 
 export let cameraPlayer1, cameraPlayer2, screenMesh;
@@ -214,17 +213,31 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
 
   const paddleGeometry = new THREE.BoxGeometry(0.2, 1, 1);
   const paddleMaterial = new THREE.MeshStandardMaterial({
-    color: 0x00ff00, 
+    color: 0x00ff00,
     opacity: 0.2,
-    transparent: true  
+    transparent: true,
   });
+  const edgesGeometry = new EdgesGeometry(paddleGeometry); 
+  const edgesMaterial = new LineBasicMaterial({ color: 0xffffff, linewidth: 10 });
+
+  const solidPaddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
+  const wireframePaddle = new LineSegments(edgesGeometry, edgesMaterial);
+  const paddleGroup = new THREE.Group();
+
+  paddleGroup.add(solidPaddle);
+  paddleGroup.add(wireframePaddle);
   
-  Store.player1Paddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
-  Store.player1Paddle.position.set(-6, -2, 0); 
+  Store.player1Paddle = paddleGroup;
   Store.pongScene.add(Store.player1Paddle);
 
-  Store.player2Paddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
-  Store.player2Paddle.position.set(6, -2, 0); 
+  const paddleGroup2 = new THREE.Group();
+  const solidPaddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+  const wireframePaddle2 = new LineSegments(edgesGeometry, edgesMaterial);
+
+  paddleGroup2.add(solidPaddle2);
+  paddleGroup2.add(wireframePaddle2);
+
+  Store.player2Paddle = paddleGroup2;
   Store.pongScene.add(Store.player2Paddle);
 
   const meshBallGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
@@ -241,16 +254,11 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 1);
   Store.pongScene.add(ambientLight);
-  const light = new THREE.PointLight(0xffffff, 1.5);
-  light.position.set(0, 5, 0);
-  Store.pongScene.add(light);
-  
-}
 
+}
 const lerpFactor = 0.05;
 
-export function animatePong(renderer) 
-{
+export function animatePong(renderer) {
   if (!Store.pongScene || !Store.gameConfig) return;
 
   if (Store.gameConfig.mode === "local") {
@@ -259,7 +267,7 @@ export function animatePong(renderer)
     if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
     if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
     
-    
+
     Store.p1Focus.lerp(Store.player1Paddle.position, lerpFactor);
     Store.p2Focus.lerp(Store.player2Paddle.position, lerpFactor);
     
@@ -324,6 +332,8 @@ export function animatePong(renderer)
       cam = cameraPlayer2;
     }
     screenMesh.visible = false;
+
+    updateMarkers(Store.ball.position);
 
     renderer.setRenderTarget(renderTargetP1);
     renderer.render(Store.pongScene, cam);

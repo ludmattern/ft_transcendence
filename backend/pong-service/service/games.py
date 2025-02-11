@@ -9,11 +9,12 @@ class BasePongGame:
         self.max_score = 3
         self.game_over = False
 
+
         self.tunnel_width = 10
         self.tunnel_height = 6
         self.tunnel_depth = 6
-
-        self.paddle_width = 1
+        
+        self.paddle_width = 0.2
         self.paddle_height = 1
         self.paddle_depth = 1
 
@@ -28,7 +29,7 @@ class BasePongGame:
             },
             "scores": {1: 0, 2: 0}
         }
-
+        self.vmax = 3.5  
         self.last_update = time.time()
 
     def move_paddle(self, player_id, direction):
@@ -73,6 +74,13 @@ class BasePongGame:
         ball["x"] += ball["vx"] * dt
         ball["y"] += ball["vy"] * dt
         ball["z"] += ball["vz"] * dt  
+        speed = (ball["vx"] ** 2 + ball["vy"] ** 2 + ball["vz"] ** 2) ** 0.5  
+        if speed > self.vmax:
+            factor = self.vmax / speed
+            ball["vx"] *= factor
+            ball["vy"] *= factor
+            ball["vz"] *= factor
+        
         if ball["y"] >= self.tunnel_height / 2 - self.paddle_height / 2:
             ball["y"] = self.tunnel_height / 2 - self.paddle_height / 2
             ball["vy"] *= -1 
@@ -87,8 +95,9 @@ class BasePongGame:
             ball["z"] = -self.tunnel_depth / 2 + self.paddle_depth / 2
             ball["vz"] *= -1
 
+        margin_before_scoring = 0.5  
 
-        if ball["x"] <= p1["x"] + self.paddle_width / 2:
+        if ball["x"] <= p1["x"] + self.paddle_width:
             if (p1["y"] - self.paddle_height / 2 <= ball["y"] <= p1["y"] + self.paddle_height / 2) and \
             (p1["z"] - self.paddle_depth / 2 <= ball["z"] <= p1["z"] + self.paddle_depth / 2):
 
@@ -96,13 +105,13 @@ class BasePongGame:
                 impact_z = (ball["z"] - p1["z"]) / (self.paddle_depth / 2)
 
                 ball["vx"] = abs(ball["vx"]) * 1.05 
-                ball["vy"] += impact_y * 0.2  
-                ball["vz"] += impact_z * 0.2  
-            else:
+                ball["vy"] += impact_y * 0.2
+                ball["vz"] += impact_z * 0.2
+            elif ball["x"] <= p1["x"] - margin_before_scoring:  
                 self.state["scores"][2] += 1
                 self.reset_ball("right")
 
-        if ball["x"] >= p2["x"] - self.paddle_width / 2:
+        if ball["x"] >= p2["x"] - self.paddle_width:
             if (p2["y"] - self.paddle_height / 2 <= ball["y"] <= p2["y"] + self.paddle_height / 2) and \
             (p2["z"] - self.paddle_depth / 2 <= ball["z"] <= p2["z"] + self.paddle_depth / 2):
 
@@ -112,13 +121,13 @@ class BasePongGame:
                 ball["vx"] = -abs(ball["vx"]) * 1.05  
                 ball["vy"] += impact_y * 0.2  
                 ball["vz"] += impact_z * 0.2  
-            else:
+            elif ball["x"] >= p2["x"] + margin_before_scoring: 
                 self.state["scores"][1] += 1
                 self.reset_ball("left")
 
-
         if self.state["scores"][1] >= self.max_score or self.state["scores"][2] >= self.max_score:
             self.game_over = True
+
 
     def reset_ball(self, direction="right"):
         """Réinitialise la balle après un point marqué."""
