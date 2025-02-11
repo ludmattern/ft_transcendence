@@ -1,5 +1,3 @@
-
-
 import random
 import time
 
@@ -10,16 +8,28 @@ class BasePongGame:
         self.start_time = time.time()
         self.max_score = 3
         self.game_over = False
+
+        self.tunnel_width = 10
+        self.tunnel_height = 5.45
+        self.tunnel_depth = 8.6
+
         self.state = {
-            "ball": {"x": 0, "y": 0, "vx": 0.6, "vy": 0.6},
+            "ball": {
+                "x": 0, "y": 0, "z": 0,  
+                "vx": 1, "vy": 1, "vz": 1  
+            },
             "players": {
-                1: {"x": -8, "y": 0},  # Joueur 1 (gauche) ✅ Correspond à -1.5 en frontend
-                2: {"x": 8, "y": 0},  # Joueur 2 (droite) ✅ Correspond à 1.5 en frontend
+                1: {"x": -self.tunnel_width / 2 , "y": 0, "z": 0}, 
+                2: {"x": self.tunnel_width / 2 , "y": 0, "z": 0}, 
             },
             "scores": {1: 0, 2: 0}
         }
+
         self.last_update = time.time()
-        self.paddle_half_height = 0.3  # Demi-hauteur des paddles
+        self.paddle_half_height = 0.3  
+        self.paddle_width = 1  
+        self.paddle_height = 1
+        self.paddle_depth = 1 
 
 
     def move_paddle(self, player_id, direction):
@@ -27,14 +37,17 @@ class BasePongGame:
         if player_id not in self.state["players"]:
             return
 
-        step = 0.05  # Vitesse de déplacement
-        old_y = self.state["players"][player_id]["y"] 
+        step = 0.1  
+        player = self.state["players"][player_id]
 
         if direction == "up":
-            self.state["players"][player_id]["y"] = min(1 - self.paddle_half_height, self.state["players"][player_id]["y"] + step)
+            player["y"] = min(self.tunnel_height / 2 - self.paddle_half_height, player["y"] + step)
         elif direction == "down":
-            self.state["players"][player_id]["y"] = max(-1 + self.paddle_half_height, self.state["players"][player_id]["y"] - step)
-
+            player["y"] = max(-self.tunnel_height / 2 + self.paddle_half_height, player["y"] - step)
+        elif direction == "left":
+            player["z"] = max(-self.tunnel_depth / 2 + 1, player["z"] - step)  
+        elif direction == "right":
+            player["z"] = min(self.tunnel_depth / 2 - 1, player["z"] + step)  
 
     def update(self):
         """Met à jour l'état du jeu : déplacement de la balle, gestion des collisions et scoring."""
@@ -45,7 +58,6 @@ class BasePongGame:
         dt = now - self.last_update
         self.last_update = now
 
-        # Vérifier si le délai de démarrage est écoulé
         elapsed_since_start = now - self.start_time
         if elapsed_since_start < self.start_delay:
             self.state["waitingForStart"] = True
@@ -57,56 +69,71 @@ class BasePongGame:
         players = self.state["players"]
         p1, p2 = players[1], players[2]
 
-        # 1) Déplacer la balle selon sa vitesse (vx, vy)
         ball["x"] += ball["vx"] * dt
         ball["y"] += ball["vy"] * dt
+        ball["z"] += ball["vz"] * dt  
 
-        # 2) Vérifier les collisions avec les murs (haut/bas)
-        if ball["y"] >= 2:  # Mur du haut
-            ball["y"] = 2
-            ball["vy"] *= -2
-        elif ball["y"] <= -2:  # Mur du bas
-            ball["y"] = -2
-            ball["vy"] *= -2
+        if ball["y"] >= self.tunnel_height / 2 - 0.5:
+            ball["y"] = self.tunnel_height / 2 - 0.5
+            ball["vy"] *= -1 
+        elif ball["y"] <= -self.tunnel_height / 2 + 0.5:
+            ball["y"] = -self.tunnel_height / 2 + 0.5
+            ball["vy"] *= -1  
 
-        # 3) Collision avec la paddle du Joueur 1 (gauche)
-# 3) Collision avec la paddle du Joueur 1 (gauche)
-        if ball["x"] <= -8:
-            if p1["y"] - self.paddle_half_height <= ball["y"] <= p1["y"] + self.paddle_half_height:
-                impact = (ball["y"] - p1["y"]) / self.paddle_half_height  # Impact normalisé (-1 à 1)
-                ball["vx"] = abs(ball["vx"]) * 1.1  # 🚀 Augmente légèrement la vitesse
-                ball["vy"] += impact * 0.2  # 🔄 Applique un effet de spin
+        if ball["z"] >= self.tunnel_depth / 2:
+            ball["z"] = self.tunnel_depth / 2
+            ball["vz"] *= -1 
+        elif ball["z"] <= -self.tunnel_depth / 2:
+            ball["z"] = -self.tunnel_depth / 2
+            ball["vz"] *= -1  
 
+        if ball["x"] <= -self.tunnel_width / 2 + self.paddle_width / 2:
+            if (p1["y"] - self.paddle_height / 2 <= ball["y"] <= p1["y"] + self.paddle_height / 2) and \
+            (p1["z"] - self.paddle_depth / 2 <= ball["z"] <= p1["z"] + self.paddle_depth / 2):
+                
+                impact_y = (ball["y"] - p1["y"]) / (self.paddle_height / 2)  
+                impact_z = (ball["z"] - p1["z"]) / (self.paddle_depth / 2)  
+
+                ball["vx"] = abs(ball["vx"]) * 1.1  
+                ball["vy"] += impact_y * 0.2  
+                ball["vz"] += impact_z * 0.2  
             else:
                 self.state["scores"][2] += 1
                 self.reset_ball("right")
 
-        # 4) Collision avec la paddle du Joueur 2 (droite)
-        if ball["x"] >= 8:
-            if p2["y"] - self.paddle_half_height <= ball["y"] <= p2["y"] + self.paddle_half_height:
-                impact = (ball["y"] - p2["y"]) / self.paddle_half_height  # Impact normalisé (-1 à 1)
-                ball["vx"] = -abs(ball["vx"]) * 1.1  # 🚀 Augmente légèrement la vitesse
-                ball["vy"] += impact * 0.2  # 🔄 Applique un effet de spin
+        if ball["x"] >= self.tunnel_width / 2 - self.paddle_width / 2:
+            if (p2["y"] - self.paddle_height / 2 <= ball["y"] <= p2["y"] + self.paddle_height / 2) and \
+            (p2["z"] - self.paddle_depth / 2 <= ball["z"] <= p2["z"] + self.paddle_depth / 2):
 
+                impact_y = (ball["y"] - p2["y"]) / (self.paddle_height / 2)
+                impact_z = (ball["z"] - p2["z"]) / (self.paddle_depth / 2)
+
+                ball["vx"] = -abs(ball["vx"]) * 1.1  
+                ball["vy"] += impact_y * 0.2  
+                ball["vz"] += impact_z * 0.2  
             else:
                 self.state["scores"][1] += 1
                 self.reset_ball("left")
 
-        # 5) Vérifier si la partie est terminée
+
         if self.state["scores"][1] >= self.max_score or self.state["scores"][2] >= self.max_score:
             self.game_over = True
+
 
     def reset_ball(self, direction="right"):
         """Réinitialise la balle au centre après un point marqué."""
         self.state["ball"]["x"] = 0
-        self.state["ball"]["y"] = random.uniform(-0.3, 0.3)  # Position aléatoire pour éviter les répétitions
+        self.state["ball"]["y"] = random.uniform(-self.tunnel_height / 3, self.tunnel_height / 3)
+        self.state["ball"]["z"] = random.uniform(-self.tunnel_depth / 3, self.tunnel_depth / 3)  # 🔄 Nouvelle position aléatoire en Z
 
         if direction == "right":
-            self.state["ball"]["vx"] = 0.6
+            self.state["ball"]["vx"] = 1
         else:
-            self.state["ball"]["vx"] = -0.6
+            self.state["ball"]["vx"] = -1
 
-        self.state["ball"]["vy"] = random.choice([-0.2, 0.2])  # Variation aléatoire de la direction verticale
+        self.state["ball"]["vy"] = random.choice([-0.2, 0.2])
+        self.state["ball"]["vz"] = random.choice([-0.2, 0.2]) 
+
 
     def to_dict(self):
         return {

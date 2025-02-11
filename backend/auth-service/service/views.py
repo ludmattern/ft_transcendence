@@ -210,8 +210,8 @@ def logout_view(request):
 
         try:
             payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
-            username = payload.get('sub')
-            user = ManualUser.objects.get(username=username)
+            id = payload.get('sub')
+            user = ManualUser.objects.get(id=id)
 
             user.token_expiry = None
             user.save()

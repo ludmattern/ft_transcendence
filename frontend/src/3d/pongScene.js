@@ -155,9 +155,9 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
   opacity: 0.8,
 });
 
-  const tunnelWidth = 15;  
-  const tunnelHeight = 4;  
-  const tunnelDepth = 7;  
+  const tunnelWidth = 10;  
+  const tunnelHeight = 6;  
+  const tunnelDepth = 8;  
   
   const leftWall = new THREE.Mesh(
     new THREE.PlaneGeometry(tunnelDepth, tunnelHeight),
@@ -225,7 +225,7 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
   Store.player2Paddle.position.set(6, -2, 0); 
   Store.pongScene.add(Store.player2Paddle);
 
-  const meshBallGeometry = new THREE.BoxGeometry(0.25, 0.25, 0.25);
+  const meshBallGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
   const meshBallMaterial = new THREE.MeshStandardMaterial({ color: 0xffcc00 });
   Store.meshBall = new THREE.Mesh(meshBallGeometry, meshBallMaterial);
   Store.meshBall.position.set(0, 0, 0);

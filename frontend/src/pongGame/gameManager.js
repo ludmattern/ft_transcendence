@@ -40,30 +40,53 @@ class GameManager {
     if (this.moveInterval) return; // 🔄 Évite les doublons
 
     this.moveInterval = setInterval(() => {
-      if (mode === "local") {
+      if (mode === "local") 
+      {
         if (this.activeKeys["w"]) {
           ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "down", player_id: 1, game_id: this.gameId }));
         }
         if (this.activeKeys["s"]) {
           ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "up", player_id: 1, game_id: this.gameId }));
         }
+        if (this.activeKeys["a"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "left", player_id: 1, game_id: this.gameId }));
+        }
+        if (this.activeKeys["d"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "right", player_id: 1, game_id: this.gameId }));
+        }
+
         if (this.activeKeys["ArrowUp"]) {
           ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "down", player_id: 2, game_id: this.gameId }));
         }
         if (this.activeKeys["ArrowDown"]) {
           ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "up", player_id: 2, game_id: this.gameId }));
         }
+        if (this.activeKeys["ArrowRight"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "left", player_id: 2, game_id: this.gameId }));
+        }
+        if (this.activeKeys["ArrowLeft"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "right", player_id: 2, game_id: this.gameId }));
+        }
+
       } else if (mode === "matchmaking") {
         const playerId = (this.activeGame.side === "left") ? 1 : 2;
+
         if (this.activeKeys["w"] || this.activeKeys["ArrowUp"]) {
           ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "down", player_id: playerId, game_id: this.gameId }));
         }
         if (this.activeKeys["s"] || this.activeKeys["ArrowDown"]) {
           ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "up", player_id: playerId, game_id: this.gameId }));
         }
+        if (this.activeKeys["a"] || this.activeKeys["ArrowLeft"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "left", player_id: playerId, game_id: this.gameId }));
+        }
+        if (this.activeKeys["d"] || this.activeKeys["ArrowRight"]) {
+          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "right", player_id: playerId, game_id: this.gameId }));
+        }
       }
     }, 50);
-  }
+}
+
 
   stopMovement() {
     clearInterval(this.moveInterval);
@@ -129,26 +152,25 @@ class GameManager {
 
 
   updateGameState(gameState) {
-   // console.log("Updating game state:", gameState);
-
     if (gameState.ball) {
-      const { x, y } = gameState.ball;
+      const { x, y, z } = gameState.ball;  // 🔄 Ajout du z
       if (Store.meshBall) {
-        Store.meshBall.position.set(x, y, 0);
+        Store.meshBall.position.set(x, y, z);  // 🔄 Applique la nouvelle position 3D
       }
     }
     
     if (gameState.players) {
       const p1 = gameState.players["1"];
       if (p1 && Store.player1Paddle) {
-        Store.player1Paddle.position.set(p1.x, p1.y, 0);
+        Store.player1Paddle.position.set(p1.x, p1.y, p1.z);  // 🔄 Ajout de la dimension Z
       }
       const p2 = gameState.players["2"];
       if (p2 && Store.player2Paddle) {
-        Store.player2Paddle.position.set(p2.x, p2.y, 0);
+        Store.player2Paddle.position.set(p2.x, p2.y, p2.z);  // 🔄 Ajout de la dimension Z
       }
     }
   }
+  
 
   handleGameUpdate(data) {
     if (data.type === "game_state") {
