@@ -2,8 +2,8 @@
 import { createComponent } from "/src/utils/component.js";
 import { startAnimation } from "/src/components/hud/index.js";
 
-export const header = createComponent({
-  tag: "header",
+export const headerIngame = createComponent({
+  tag: "headerIngame",
 
   render: () => `
       <div class="row">
