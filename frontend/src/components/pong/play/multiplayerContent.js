@@ -1,7 +1,8 @@
 import { createComponent } from "/src/utils/component.js";
-import { gameManager } from "/src/pongGame/gameManager.js";
 import { ws } from "/src/services/socketManager.js";
-import { handleRoute } from "/src/services/router.js";
+import { playGame } from "/src/components/pong/play/utils.js";
+import componentManagers from "/src/index.js";
+import { pongTuto } from "/src/components/hud/index.js";
 
 export const multiplayerContent = createComponent({
   tag: "multiplayerContent",
@@ -65,16 +66,15 @@ export const multiplayerContent = createComponent({
     // Local Multiplayer
     const localButton = el.querySelector("#launchLocal");
     localButton.addEventListener("click", () => {
-      handleRoute("/pong/play/multiplayer/local", true);
+      playGame("duo");
     });
 
     // Online Matchmaking
     const matchButton = el.querySelector("#launchMatch");
     const leaveMatchButton = el.querySelector("#leaveMatch");
     matchButton.addEventListener("click", () => {
-      matchButton.classList.add("d-none");
-      leaveMatchButton.classList.remove("d-none");
       joinMatchmaking(); // Fonction à définir ailleurs dans votre code
+      playGame("duo");
     });
 
     leaveMatchButton.addEventListener("click", async () => {

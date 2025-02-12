@@ -16,6 +16,7 @@ export { lostForm } from "/src/components/hud/centralWindow/lostForm.js";
 export { twoFAForm } from "/src/components/hud/centralWindow/2FAForm.js";
 export { qrcode } from "/src/components/hud/centralWindow/qr-code.js";
 export { loadingScreen } from "/src/components/hud/centralWindow/loadingScreen.js";
+export { pongTuto } from "/src/components/hud/centralWindow/pongTuto.js";
 
 // General components
 export { header } from "/src/components/hud/general/header.js";

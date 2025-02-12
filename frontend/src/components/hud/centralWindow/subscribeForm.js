@@ -161,7 +161,7 @@ function getFormValues(el) {
 /**
  * Cache tous les messages d'erreur liés au formulaire
  */
-export function resetErrorMessages() {
+function resetErrorMessages() {
   const errorIds = [
     "bad-id",
     "bad-pass-size",

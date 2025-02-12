@@ -6,6 +6,7 @@ import {
 } from "/src/services/navigation.js";
 import { render } from "/src/pongGame/gameNavigation.js";
 import { emit } from "/src/services/eventEmitter.js";
+import { getInTournament } from "/src/index.js";
 
 let previousRoute = null;
 let previousPongSubRoute = null;
@@ -69,23 +70,23 @@ export async function handleRoute(route, shouldPushState = true, internal = fals
   const isRoutePublic = isAuthenticatedRoute(route);
  
   if (internal) {
-	console.log("internal route");
-	if (isAuthenticated) {
-		processInternalRoute(route, shouldPushState);
-		return;
-	} else {
-		processRoute("/login", shouldPushState);
-		return;
-	}
+    console.log("internal route");
+    if (isAuthenticated) {
+      processInternalRoute(route, shouldPushState);
+      return;
+    } else {
+      processRoute("/login", shouldPushState);
+      return;
+    }
   }
 
   if (!isRoutePublic && isAuthenticated || isRoutePublic && !isAuthenticated) {
     processRoute(route, shouldPushState);
-  } else if (isRoutePublic && isAuthenticated) {
-	processRoute("/", shouldPushState);
-  } else {
-	processRoute("/login", shouldPushState);
-  }
+    } else if (isRoutePublic && isAuthenticated) {
+      processRoute("/", shouldPushState);
+    } else {
+      processRoute("/login", shouldPushState);
+    }
 }
 
 /**
@@ -98,14 +99,21 @@ function processRoute(route, shouldPushState) {
   updatePreviousRoute(route);
 
   let finalRoute = route;
+  let inTournament = getInTournament();
 
   if (route === "/topong") {
     finalRoute = previousPongSubRoute ? `/pong/${previousPongSubRoute}` : "/pong";
   }
 
   if (shouldPushState) {
-	const cleanRoute = finalRoute.replace(/\/{2,}/g, "/").trim();
-    history.pushState(null, "", cleanRoute);
+    if (finalRoute.startsWith("/pong") && inTournament) {
+      history.pushState(null, "", "/pong/tournament");
+    }
+    else
+    {
+      const cleanRoute = finalRoute.replace(/\/{2,}/g, "/").trim();
+      history.pushState(null, "", cleanRoute);
+    }
   }
 
   emit("routeChanged", finalRoute);
@@ -118,8 +126,12 @@ function processRoute(route, shouldPushState) {
     const pilot = finalRoute.split("=")[1];
     navigateToOtherProfile(pilot);
   } else if (finalRoute.startsWith("/pong")) {
-	console.log("navigateToPong : " + finalRoute.substring(6));
-    navigateToPong(finalRoute.substring(6));
+    console.log("navigateToPong : " + finalRoute.substring(6));
+    if (inTournament) {
+      navigateToPong("tournament");
+    } else {
+      navigateToPong(finalRoute.substring(6));
+    }
   } else {
     navigateToLost();
   }

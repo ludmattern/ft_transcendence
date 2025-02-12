@@ -1,7 +1,5 @@
 import { createComponent } from "/src/utils/component.js";
-import { switchwindow } from "/src/3d/animation.js";
-import componentManagers from "/src/index.js";
-import { headerIngame } from "/src/components/hud/index.js";
+import { playGame } from "/src/components/pong/play/utils.js";
 
 export const soloContent = createComponent({
   tag: "soloContent",
@@ -69,10 +67,7 @@ export const soloContent = createComponent({
     const launchButton = document.getElementById("launch");
 
     launchButton.addEventListener("click", () => {
-      //loadSoloGame();
-      switchwindow("game");
-      componentManagers['HUD'].unloadComponent('header');
-      componentManagers['HUD'].loadComponent('#header-container', headerIngame);
+      playGame("solo");
     })
   },
 });

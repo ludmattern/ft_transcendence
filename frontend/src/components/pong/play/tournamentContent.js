@@ -1,4 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
+import { handleRoute } from "/src/services/router.js";
+import { setInTournament } from "/src/index.js";
 
 export const tournamentContent = createComponent({
   tag: "tournamentContent",
@@ -30,7 +32,7 @@ export const tournamentContent = createComponent({
                 ${generateTournamentSizeSelector()}
 
                 <div class="text-center">
-                    <button class="btn btn-danger mt-3">Create This Mess</button>
+                    <button class="btn btn-danger mt-3" id="createbutton">Create This Mess</button>
                 </div>
             </div>
 
@@ -103,6 +105,14 @@ export const tournamentContent = createComponent({
     joinRandomButton.addEventListener("click", () => {
       const tournamentSize = document.getElementById("tournamentSize-random").value;
       console.log(`Joining a random tournament with size: ${tournamentSize}`);
+    });
+
+    const createButton = el.querySelector("#createbutton");
+    createButton.addEventListener("click", () => {
+      const mode = document.getElementById("tournamentMode").value;
+      const size = document.getElementById("tournamentSize").value;
+      console.log(`Creating a tournament with mode: ${mode} and size: ${size}`);
+      handleRoute("/pong/play/tournament-creation");
     });
   }
 });

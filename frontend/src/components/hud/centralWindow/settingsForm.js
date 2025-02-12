@@ -5,7 +5,6 @@ import { validateId } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { checkPasswordConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { checkEmailConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
-import { resetErrorMessages } from '/src/components/hud/centralWindow/subscribeForm.js';
 
 
 export const settingsForm = createComponent({
@@ -20,7 +19,7 @@ export const settingsForm = createComponent({
           <!-- New Username -->
           ${createFormGroup('new-username', 'username', 'New username')}
           <!-- Old Password -->
-          ${createFormGroup('old-password', 'password', 'Old password')}
+          ${createFormGroup('old-password', 'password', 'Current password')}
           <!-- New Password -->
           ${createFormGroup('new-password', 'password', 'New Password')}
           <!-- Confirm New Password -->
@@ -29,15 +28,6 @@ export const settingsForm = createComponent({
           ${createFormGroup('new-email', 'email', 'New Email')}
           <!-- Confirm New Email -->
           ${createFormGroup('confirm-new-email', 'email', 'Confirm new Email')}
-          <!-- Language -->
-          <div class="form-group">
-            <label class="mb-3" for="language">Language</label>
-            <select id="language" name="language" class="form-control p-3" required>
-              <option value="french">French</option>
-              <option value="english">English</option>
-              <option value="german">German</option>
-            </select>
-          </div>
           <!-- Update Button -->
           <button class="btn bi bi-arrow-repeat" id="update-button">Update</button>
         </form>
@@ -89,30 +79,21 @@ export const settingsForm = createComponent({
               sessionStorage.setItem("username", formData.newUsername);
             }
             alert('Information updated successfully.');
+            resetErrorMessages();
+            emptyFields();
           } else {
-            {
-              if (data.message.includes("Username already taken")) {
-                document.getElementById("error-message-id").style.display = "block";
-              } else {
-                document.getElementById("error-message-id").style.display = "none";
-              }
-
-              if (data.message.includes("Email already in use")) {
-                document.getElementById("error-message-mail").style.display = "block";
-                document.getElementById("error-message-mail2").style.display = "none";
-              } else {
-                document.getElementById("error-message-mail").style.display = "none";
-              }
-            }
+            passwordError(data);
+            usernameError(data);
+            emailError(data);
+            emptyFormError(data);
           }
-        } catch (error) {
+        }
+        catch (error) {
           console.error('Error updating information:', error);
           alert('An unexpected error occurred.');
         }
       }
     });
-
-
     // Gestionnaire pour le lien "Delete Account"
     el.querySelector('#delete-account-link').addEventListener('click', (e) => {
       e.preventDefault();
@@ -120,6 +101,64 @@ export const settingsForm = createComponent({
     });
   },
 });
+
+function emptyFormError(data) {
+  if (data.message.includes("No changes to update")) {
+    alert('No changes to update');
+  }
+}
+
+function passwordError(data) {
+  if (data.message.includes("Please enter current password")) {
+    document.getElementById("current-pass-empty").style.display = "block";
+  } else {
+    document.getElementById("current-pass-empty").style.display = "none";
+  }
+
+  if (data.message.includes("Current password is incorrect")) {
+    document.getElementById("bad-current-pass").style.display = "block";
+  } else {
+    document.getElementById("bad-current-pass").style.display = "none";
+  }
+}
+
+function usernameError(data) {
+  if (data.message.includes("Username already taken")) {
+    document.getElementById("error-message-id").style.display = "block";
+  } else {
+    document.getElementById("error-message-id").style.display = "none";
+  }
+}
+
+function emailError(data) {
+  if (data.message.includes("Email already in use")) {
+    document.getElementById("error-message-mail").style.display = "block";
+    document.getElementById("error-message-mail2").style.display = "none";
+  } else {
+    document.getElementById("error-message-mail").style.display = "none";
+  }
+  if (data.message.includes("Email too long")) {
+    document.getElementById("error-message-mail-size").style.display = "block";
+  }
+  else {
+    document.getElementById("error-message-mail-size").style.display = "none";
+  }
+  if (data.message.includes("Emails do not match")) {
+    document.getElementById("error-message-mail2").style.display = "block";
+  }
+  else {
+    document.getElementById("error-message-mail2").style.display = "none";
+  }
+}
+
+function emptyFields() {
+  document.getElementById("new-username").value = "";
+  document.getElementById("old-password").value = "";
+  document.getElementById("new-password").value = "";
+  document.getElementById("confirm-new-password").value = "";
+  document.getElementById("new-email").value = "";
+  document.getElementById("confirm-new-email").value = "";
+}
 
 /**
  * Crée un groupe de formulaire réutilisable
@@ -136,6 +175,8 @@ function createFormGroup(id, type, label) {
       <input type="${type}" id="${id}" name="${id}" class="form-control" required />
       ${id === 'new-username' ? '<div id="error-message-id" class="text-danger mt-2" style="display: none;">Id already taken</div>' : ''}
       ${id === 'new-username' ? '<div id="bad-id" class="text-danger mt-2" style="display: none;">Id must contain between 6 and 20 char</div>' : ''}
+      ${id === 'old-password' ? '<div id="current-pass-empty" class="text-danger mt-2" style="display: none;">Please enter current password</div>' : ''}
+      ${id === 'old-password' ? '<div id="bad-current-pass" class="text-danger mt-2" style="display: none;">Current password is incorrect</div>' : ''}
       ${id === 'new-password' ? '<div id="bad-pass-size" class="text-danger mt-2" style="display: none;">Password must contain between 6 and 20 char</div>' : ''}
       ${id === 'new-password' ? '<div id="bad-pass-upper" class="text-danger mt-2" style="display: none;">Password must have at least one uppercase char</div>' : ''}
       ${id === 'new-password' ? '<div id="bad-pass-lower" class="text-danger mt-2" style="display: none;">Password must have at least one lowercase char</div>' : ''}
@@ -163,8 +204,28 @@ function collectFormData(el) {
     confirmPassword: el.querySelector('#confirm-new-password').value,
     newEmail: el.querySelector('#new-email').value,
     confirmEmail: el.querySelector('#confirm-new-email').value,
-    language: el.querySelector('#language').value,
   };
 }
 
 
+function resetErrorMessages() {
+  const errorIds = [
+    "error-message-id",
+    "bad-id",
+    "current-pass-empty",
+    "bad-current-pass",
+    "bad-pass-size",
+    "bad-pass-upper",
+    "bad-pass-lower",
+    "bad-pass-special",
+    "error-message-pass",
+    "error-message-mail-size",
+    "error-message-mail",
+    "error-message-mail2",
+  ];
+
+  errorIds.forEach((errId) => {
+    const el = document.getElementById(errId);
+    if (el) el.style.display = "none";
+  });
+}
