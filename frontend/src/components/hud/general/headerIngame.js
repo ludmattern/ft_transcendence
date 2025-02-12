@@ -9,7 +9,7 @@ export const headerIngame = createComponent({
       <div class="row">
         <div class="col-12 text-center">
           <h1 class="hud-title interactive">
-            <a id="home-link" href="/">READY</a>
+            <a>PONG</a>
           </h1>
         </div>
       </div>

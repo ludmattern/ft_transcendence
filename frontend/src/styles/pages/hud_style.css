@@ -9,6 +9,7 @@
   --content-color: #66ffff;
   --info-color: #ccffcc;
   --alert-color: #ff6666;
+  --success-color: #66ff66;
 
   --primary-hud-elements-color: #66ccff;
   --secondary-hud-elements-color: #006666;
@@ -144,6 +145,12 @@ body {
 #hud-body .btn.danger:hover {
   color: var(--alert-color);
   text-shadow: 0px 0px 20px var(--alert-color);
+  transition: all 0.2s;
+}
+
+#hud-body .btn.success:hover {
+  color: var(--success-color);
+  text-shadow: 0px 0px 20px var(--success-color);
   transition: all 0.2s;
 }
 
