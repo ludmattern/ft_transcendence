@@ -2,35 +2,49 @@ import random
 import time
 
 class BasePongGame:
-    def __init__(self, game_id):
+    def __init__(self, game_id, player1_id=None, player2_id=None):
         self.game_id = game_id
         self.start_delay = 3.0
         self.start_time = time.time()
         self.max_score = 3
         self.game_over = False
 
+        self.player1_id = player1_id if player1_id else "unknown1"
+        self.player2_id = player2_id if player2_id else "unknown2"
+
+        self.player_mapping = {
+            self.player1_id: 1,
+            self.player2_id: 2
+        }
+
+        self.user_scores = {
+            self.player1_id: 0,
+            self.player2_id: 0
+        }
 
         self.tunnel_width = 10
         self.tunnel_height = 6
         self.tunnel_depth = 6
-        
+
         self.paddle_width = 0.2
         self.paddle_height = 1
         self.paddle_depth = 1
 
         self.state = {
             "ball": {
-                "x": 0, "y": 0, "z": 0,  
-                "vx": 1.2, "vy": 1.2, "vz": 1.2  
+                "x": 0, "y": 0, "z": 0,
+                "vx": 1.2, "vy": 1.2, "vz": 1.2
             },
             "players": {
-                1: {"x": -self.tunnel_width / 2.2, "y": 0, "z": 0},  
-                2: {"x": self.tunnel_width / 2.2, "y": 0, "z": 0},  
+                1: {"x": -self.tunnel_width / 2.2, "y": 0, "z": 0},
+                2: {"x": self.tunnel_width / 2.2, "y": 0, "z": 0},
             },
             "scores": {1: 0, 2: 0}
         }
-        self.vmax = 3.5  
+
+        self.vmax = 3.5
         self.last_update = time.time()
+
 
     def move_paddle(self, player_id, direction):
         """Déplace la paddle et empêche de sortir du tunnel."""
@@ -108,7 +122,9 @@ class BasePongGame:
                 ball["vy"] += impact_y * 0.2
                 ball["vz"] += impact_z * 0.2
             elif ball["x"] <= p1["x"] - margin_before_scoring:  
-                self.state["scores"][2] += 1
+                scoring_player_id = self.player2_id  # ✅ Toujours celui qui marque
+                self.user_scores[scoring_player_id] += 1
+                self.state["scores"][self.player_mapping[scoring_player_id]] += 1
                 self.reset_ball("right")
 
         if ball["x"] >= p2["x"] - self.paddle_width:
@@ -122,10 +138,12 @@ class BasePongGame:
                 ball["vy"] += impact_y * 0.2  
                 ball["vz"] += impact_z * 0.2  
             elif ball["x"] >= p2["x"] + margin_before_scoring: 
-                self.state["scores"][1] += 1
+                scoring_player_id = self.player1_id
+                self.user_scores[scoring_player_id] += 1
+                self.state["scores"][self.player_mapping[scoring_player_id]] += 1
                 self.reset_ball("left")
 
-        if self.state["scores"][1] >= self.max_score or self.state["scores"][2] >= self.max_score:
+        if self.user_scores[self.player1_id] >= self.max_score or self.user_scores[self.player2_id] >= self.max_score:
             self.game_over = True
 
 
@@ -151,5 +169,6 @@ class BasePongGame:
             "ball": self.state["ball"],
             "players": {str(k): v for k, v in self.state["players"].items()},
             "scores": {str(k): v for k, v in self.state["scores"].items()},
+            "user_scores": self.user_scores,
             "game_over": self.game_over
         }

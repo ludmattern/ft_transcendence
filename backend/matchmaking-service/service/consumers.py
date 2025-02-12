@@ -43,7 +43,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                     })
                     logger.info(f"📡 Private match (room={room_code}) ! Notif envoyée à user_{p1}")
 
-                    # Notifier p2
                     await self.channel_layer.group_send(f"user_{p2}", {
                         "type": "private_match_found",
                         "game_id": match_info_p2["game_id"],
@@ -68,12 +67,13 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                     
                     match_info_p1 = matchmaking_manager.match_found[p1]
                     match_info_p2 = matchmaking_manager.match_found[p2]
-                    
+                        
                     await self.channel_layer.group_send(f"user_{p1}", {
                         "type": "match_found",
                         "game_id": match_info_p1["game_id"],
                         "side": match_info_p1["side"],
-                        "user_id": p1
+                        "user_id": p1,
+                        "opponent_id": match_info_p1["opponent_id"]
                     })
                     logger.info(f"📡 Match trouvé! Notif envoyée à user_{p1}")
 
@@ -81,7 +81,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                         "type": "match_found",
                         "game_id": match_info_p2["game_id"],
                         "side": match_info_p2["side"],
-                        "user_id": p2
+                        "user_id": p2,
+                        "opponent_id": match_info_p2["opponent_id"]
                     })
                     logger.info(f"📡 Match trouvé! Notif envoyée à user_{p2}")
                 else:

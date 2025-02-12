@@ -23,15 +23,15 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
 
   
 
-  export async function startMatchmakingGame(gameId, side, userId) {
+  export async function startMatchmakingGame(gameId, side, data) {
     leaveMatchmaking();
-
     const gameConfig = {
       mode: "matchmaking",
       playerCount: 2,
       gameId: gameId,
-      side: side
-  
+      side: side,
+      user_id: data.user_id,
+      opponent_id: data.opponent_id
     };
     document.getElementById("leaveMatch").style.display = "none";
     document.getElementById("launchMatch").style.display = "block"

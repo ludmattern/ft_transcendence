@@ -50,7 +50,7 @@ export function initializeWebSocket() {
 		else if (data.type === "match_found")
 		{
 			console.log("Match found! game_id =", data.game_id, "side =", data.side);
-			startMatchmakingGame(data.game_id, data.side, data.user_id);
+			startMatchmakingGame(data.game_id, data.side, data);
 		}
 		
 		console.log("Message reçu :", JSON.parse(event.data));

@@ -66,24 +66,34 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 					"channel": "private",
 					"timestamp": data.get("timestamp"),
 				}
-				# Send the event to the recipient's personal group.
 				await self.channel_layer.group_send("chat_service", event)
 				logger.info(f"Message privé envoyé à user_{recipient} depuis {author}")
 	
 			elif data.get("type") == "game_event":
-	
+				game_id = data.get("game_id", "unknown_game") 
+				player1_id = data.get("player1", "unknown1")
+				player2_id = data.get("player2", "unknown2")
+
 				if data.get("action") == "start_game":
-					game_id = data.get("game_id")
+					
+
 					await self.channel_layer.group_add(f"game_{game_id}", self.channel_name)
 					logger.info(f"👥 Client rejoint le groupe game_{game_id}")
+
+					logger.info(f"🚀 Envoi à pong_service: game_id={game_id}, player1={player1_id}, player2={player2_id}")
+
 				await self.channel_layer.group_send("pong_service", 
 				{
 					"type": "game_event",
-					"game_id": data.get("game_id"),
-					"action": data.get("action"),
+					"game_id": game_id,  
+					"action": data.get("action"), 
+					"player1": player1_id, 
+					"player2": player2_id,  
 					"direction": data.get("direction"),
 					"player_id": data.get("player_id"),
 				})
+
+
 			elif data.get("type") in ["matchmaking", "private_event"]:
 				action = data.get("action")
 				user_id = data.get("user_id", self.user_id)

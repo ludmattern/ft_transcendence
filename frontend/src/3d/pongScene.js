@@ -256,7 +256,7 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
   Store.pongScene.add(ambientLight);
 
 }
-const lerpFactor = 0.05;
+const lerpFactor = 1;
 
 export function animatePong(renderer) {
   if (!Store.pongScene || !Store.gameConfig) return;
@@ -313,27 +313,36 @@ export function animatePong(renderer) {
     let cam;
     if (Store.gameConfig.side == "left")
     {
-      cameraPlayer1.position.set(
-        Store.player1Paddle.position.x - 3,
-        Store.player1Paddle.position.y,
-        Store.player1Paddle.position.z
+      if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
+  
+      Store.p1Focus.lerp(Store.player1Paddle.position, lerpFactor);
+      cameraPlayer1.position.lerp(
+        new THREE.Vector3(
+          Store.p1Focus.x - 3,
+          Store.p1Focus.y,
+          Store.p1Focus.z
+        ), lerpFactor
       );
-      cameraPlayer1.lookAt(Store.player1Paddle.position);
+      cameraPlayer1.lookAt(Store.p1Focus);
       cam = cameraPlayer1;
     }
     else if (Store.gameConfig.side == "right")
     {
-      cameraPlayer2.position.set(
-        Store.player2Paddle.position.x + 3,
-        Store.player2Paddle.position.y,
-        Store.player2Paddle.position.z
+      if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
+  
+      Store.p2Focus.lerp(Store.player2Paddle.position, lerpFactor);
+      cameraPlayer2.position.lerp(
+        new THREE.Vector3(
+          Store.p2Focus.x + 3,
+          Store.p2Focus.y,
+          Store.p2Focus.z
+        ), lerpFactor
       );
-      cameraPlayer2.lookAt(Store.player2Paddle.position);
+      cameraPlayer2.lookAt(Store.p2Focus);
       cam = cameraPlayer2;
     }
     screenMesh.visible = false;
 
-    updateMarkers(Store.ball.position);
 
     renderer.setRenderTarget(renderTargetP1);
     renderer.render(Store.pongScene, cam);
