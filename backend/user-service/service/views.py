@@ -84,6 +84,24 @@ def register_user(request):
 
 
 @csrf_exempt
+def delete_account(request):
+    if request.method == 'POST':
+        try:
+            body = json.loads(request.body.decode('utf-8'))
+            username = body.get('username')
+
+            user = ManualUser.objects.get(username=username)
+            
+            user.delete()
+            
+            return JsonResponse({'success': True, 'message': 'User registered successfully', 'user_id': user.id})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'success': False, 'message': 'Only POST method is allowed'}, status=405)
+
+@csrf_exempt
 def update_info(request):
     if request.method == 'POST':
         try:
@@ -95,13 +113,18 @@ def update_info(request):
             confirm_password = body.get('confirmPassword')
             new_email = body.get('newEmail')
             confirm_email = body.get('confirmEmail')
-            language = body.get('language')
 
             # Validate user by current password
             user = ManualUser.objects.get(username=username)
 
+            if old_password == '':
+                return JsonResponse({'success': False, 'message': 'Please enter current password'}, status=401)
+
             if not bcrypt.checkpw(old_password.encode('utf-8'), user.password.encode('utf-8')):
-                return JsonResponse({'success': False, 'message': 'Current password is incorrect'}, status=400)
+                return JsonResponse({'success': False, 'message': 'Current password is incorrect'}, status=402)
+
+            if new_username == '' and new_email == '' and new_password == '':
+                return JsonResponse({'success': False, 'message': 'No changes to update'}, status=400)
 
             # Validate and update username
             if new_username and ManualUser.objects.filter(username=new_username).exists():
@@ -113,14 +136,14 @@ def update_info(request):
             if new_email:
                 if new_email != confirm_email:
                     return JsonResponse({'success': False, 'message': 'Emails do not match'}, status=400)
-                encrypted_email = encrypt_thing(new_email)
-                user.email = encrypted_email
                 if new_email != decrypt_thing(user.email):
                     existing_users = ManualUser.objects.all()
                     for user in existing_users:
                         decrypted_email = decrypt_thing(user.email)
                         if decrypted_email == new_email:
                             return JsonResponse({'success': False, 'message': 'Email already in use'}, status=409)
+                encrypted_email = encrypt_thing(new_email)
+                user.email = encrypted_email
 
             # Validate and update password
             if new_password:
@@ -128,9 +151,6 @@ def update_info(request):
                     return JsonResponse({'success': False, 'message': 'Passwords do not match'}, status=400)
                 hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
                 user.password = hashed_password
-
-            # Update language
-            user.language = language
 
             # Save changes
             user.save()
