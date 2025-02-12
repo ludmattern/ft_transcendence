@@ -1,7 +1,5 @@
 import { createComponent } from "/src/utils/component.js";
 import { handleRoute } from "/src/services/router.js";
-import componentManagers from "/src/index.js";
-import { headerIngame } from "/src/components/hud/index.js";
 
 export const pongTuto = (mode = "duo") => createComponent({
   tag: "pongTuto",
@@ -27,8 +25,11 @@ export const pongTuto = (mode = "duo") => createComponent({
         </div>` : ""}
         
         <label class="form-label">
-          <p>Click "Ready" when you're set to play!</p>
+          <p class="ready-question">Click "Ready" when you're set to play!</p>
+          <p class="d-none waiting-msg">Waiting for your opponent...</p>
         </label>
+
+        <div class="pong-loader d-none"></div>
 
         <div class="d-flex justify-content-center">
           <button class="btn success bi bi-check" id="ready"> Ready </button>
@@ -39,7 +40,6 @@ export const pongTuto = (mode = "duo") => createComponent({
   `,
 
   attachEvents: (el) => {
-    // Annuler la déconnexion
     el.querySelector("#close").addEventListener("click", (e) => {
       e.preventDefault();
       handleRoute("/pong/play/solo");
@@ -47,9 +47,11 @@ export const pongTuto = (mode = "duo") => createComponent({
 
     el.querySelector("#ready").addEventListener("click", () => {
       console.log("Player is ready");
-      componentManagers['HUD'].unloadComponent('pongTuto');
-      componentManagers['HUD'].unloadComponent('header');
-      componentManagers['HUD'].loadComponent('#header-container', headerIngame);
+      // componentManagers['HUD'].unloadComponent('pongTuto');
+      el.querySelector("#ready").remove();
+      el.querySelector(".ready-question").remove();
+      el.querySelector(".pong-loader").classList.remove("d-none");
+      el.querySelector(".waiting-msg").classList.remove("d-none");
     });
   },
 });
