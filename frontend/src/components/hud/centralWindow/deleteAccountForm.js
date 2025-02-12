@@ -20,17 +20,45 @@ export const deleteAccountForm = createComponent({
   `,
 
   // Ajouter les événements après le chargement
-  attachEvents: (el) => {
-    el.addEventListener("click", (e) => {
+  attachEvents: async (el) => {
+    el.addEventListener("click", async (e) => {
       if (e.target.matches("#cancel-delete")) {
         e.preventDefault();
         handleRoute(getPreviousRoute()); // Retour à la route précédente
       }
-
       if (e.target.matches("#confirm-delete")) {
+        const formData = collectFormData(el);
+        try {
+          const response = await fetch("/api/user-service/delete/", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          });
+          const data = await response.json();
+          if (data.success) {
+              alert('Deleted account successfully.');
+              sessionStorage.removeItem("username");
+              sessionStorage.removeItem("userId");
+          }
+        }
+        catch (error) {
+          alert('An unexpected error occurred.');
+        }
         e.preventDefault();
         handleRoute("/login"); // Redirection vers login
       }
     });
   },
 });
+
+
+/**
+ *
+ * @param {HTMLElement} el - Élément racine du formulaire
+ * @returns {Object} - Données collectées du formulaire
+ */
+function collectFormData(el) {
+  return {
+    username: sessionStorage.getItem('username'),
+  };
+}

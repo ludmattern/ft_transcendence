@@ -11,14 +11,11 @@ export async function isClientAuthenticated() {
 
 		if (response.status === 401) 
 		{
-		const errData = await response.json().catch(() => ({}));
-    console.log("User is not authenticated1:", errData.message);
 		return false;
 		}
 
 		const data = await response.json();
 		if (!data.success) {
-      console.log("User is not authenticated3:", errData.message);
 		return false;
 		}
 
@@ -29,7 +26,6 @@ export async function isClientAuthenticated() {
     console.log("User is authenticated!");
 		return true;
 	} catch (error) {
-    console.log("User is not authenticated2:", errData.message);
 		return false;
 	}
 }
