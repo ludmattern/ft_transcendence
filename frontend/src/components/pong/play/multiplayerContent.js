@@ -73,9 +73,8 @@ export const multiplayerContent = createComponent({
     const matchButton = el.querySelector("#launchMatch");
     const leaveMatchButton = el.querySelector("#leaveMatch");
     matchButton.addEventListener("click", () => {
-      matchButton.classList.add("d-none");
-      leaveMatchButton.classList.remove("d-none");
       joinMatchmaking(); // Fonction à définir ailleurs dans votre code
+      playGame("duo");
     });
 
     leaveMatchButton.addEventListener("click", async () => {

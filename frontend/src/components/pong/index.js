@@ -17,3 +17,6 @@ export { gotolocal } from "/src/components/pong/play/gotolocal.js";
 
 //leaderboard components
 export { leaderboard } from "/src/components/pong/leaderboard/leaderboard.js";
+
+//tournament components
+export { tournamentCreation } from "/src/components/pong/play/tournamentCreation.js";

@@ -9,7 +9,7 @@ export const headerIngame = createComponent({
       <div class="row mb-5">
         <div class="col-12 text-center">
           <h1 class="hud-title interactive">
-            <a>PONG</a>
+            <a class="nav-item">PONG</a>
           </h1>
         </div>
       </div>
@@ -17,10 +17,8 @@ export const headerIngame = createComponent({
 
 	attachEvents: (el) => {
 
-		const navItems = el.querySelectorAll(".nav-item");
-		const homeLink = el.querySelectorAll("#home-link");
+		const navItem = el.querySelectorAll(".nav-item");
 
-		startAnimation(homeLink, "light-animation");
-		startAnimation(navItems, "light-animation", 1000);
+		startAnimation(navItem, "light-animation");
 	}
 });

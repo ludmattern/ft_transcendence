@@ -27,6 +27,7 @@ import {
   homeContent,
   pongPageSkeleton,
   soloContent,
+  tournamentCreation,
   multiplayerContent,
   tournamentContent,
   lost,
@@ -219,6 +220,13 @@ export const pongPages = {
       { selector: "#pong-header-container", component: pongHeader },
       { selector: "#content-window-container", component: navBar },
       { selector: "#content-window-container", component: tournamentContent },
+    ],
+  },
+  "play/tournament-creation": {
+    components: [
+      { selector: "#pong-skeleton-container", component: pongPageSkeleton },
+      { selector: "#pong-header-container", component: pongHeader },
+      { selector: "#content-window-container", component: tournamentCreation },
     ],
   },
   leaderboard: {
