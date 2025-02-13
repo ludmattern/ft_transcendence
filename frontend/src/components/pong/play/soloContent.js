@@ -34,7 +34,7 @@ export const soloContent = createComponent({
               </div>
 
               <div class="text-center">
-                <button class="mt-3 btn btn-danger" id="launch">Proceed to Your Doom</button>
+                <button class="mt-3 btn btn-pong" id="launch">Proceed to Your Doom</button>
               </div>
             </fieldset>
           </div>

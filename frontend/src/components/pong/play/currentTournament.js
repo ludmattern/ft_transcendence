@@ -26,16 +26,17 @@ export const currentTournament = createComponent({
              style="display: flex; flex-direction: row; gap: 20px; overflow-x: auto; width: 100%; justify-content: center;">
           <!-- Le contenu est généré dynamiquement -->
         </div>
-        <button id="abandon-tournament" class="btn btn-danger mt-3">Abandon Tournament</button>
-      </section>
-    `;
-  },
-  attachLossalosnts: (el) => {
-    const username = sessionStorage.getItem("username");
-    let sampleSize = 16; // Valeur par défaut
-
+		<button id="abandon-tournament" class="btn btn-danger mt-3">Abandon Tournament</button>
+		</section>
+		`;
+	},
+	attachEvents: (el) => {
+		const username = sessionStorage.getItem("username");
+		let sampleSize = 16;
+		
     // Données d'exemple pour le bracket
     function getBracketData(size) {
+		console.log("getBracketData");
       if (size === 4) {
         return [
           {
@@ -57,10 +58,10 @@ export const currentTournament = createComponent({
           {
             round: "Quarter-finals",
             matches: [
-              { id: 1, player1: "Hitler", player2: "Qordoux", status: "completed", winner: "Hitler", score: "2-1" },
+              { id: 1, player1: "Qordoux", player2: "Hitler", status: "completed", winner: "Hitler", score: "2-1" },
               { id: 2, player1: "Charlie", player2: "Franco", status: "completed", winner: "Charlie", score: "2-0" },
               { id: 3, player1: username, player2: "Nkermani", status: "pending", winner: null, score: null },
-              { id: 4, player1: "Poutine", player2: "Jgavairo", status: "pending", winner: null, score: null }
+              { id: 4, player1: "Jgavairo", player2: "Poutine", status: "pending", winner: null, score: null }
             ]
           },
           {
@@ -124,6 +125,7 @@ export const currentTournament = createComponent({
 
     // Fonction de rendu du bracket en arbre
     function renderBracket() {
+		console.log("renderBracket");
       const bracketData = getBracketData(sampleSize);
       let html = "";
       bracketData.forEach((round, roundIndex) => {
@@ -135,8 +137,8 @@ export const currentTournament = createComponent({
               const loser = (match.player1 === winner) ? match.player2 : match.player1;
               return `<div class="match p-2 mb-2 bg-dark rounded" data-match-id="${match.id}">
                         <span class="text-white">
-                          <span class="fw-bold" style="color: green;">${winner}</span> vs 
-                          <span class="fw-bold" style="color: red;">${loser}</span>
+                          <span class="fw-bold">${winner}</span> vs 
+                          <span>${loser}</span>
                         </span>
                         <span class="badge bg-info ms-2">${match.score}</span>
                       </div>`;
@@ -166,7 +168,7 @@ export const currentTournament = createComponent({
       // Ajout des écouteurs sur les boutons "Join Game"
       const joinButtons = el.querySelectorAll(".join-match");
       joinButtons.forEach(button => {
-        button.addLossalosntListener("click", () => {
+        button.addEventListener("click", () => {
           const matchDiv = button.closest(".match");
           const matchId = matchDiv.getAttribute("data-match-id");
           alert(`Joining match ${matchId}`);
@@ -180,16 +182,16 @@ export const currentTournament = createComponent({
     // Écouteurs pour changer le nombre de joueurs via les boutons
     const sampleSizeButtons = el.querySelectorAll(".sample-size-btn");
     sampleSizeButtons.forEach(button => {
-      button.addLossalosntListener("click", () => {
+      button.addEventListener("click", () => {
         sampleSize = parseInt(button.getAttribute("data-size"));
         renderBracket();
       });
     });
 
-    const leaveTournamentButton = el.querySelector("#abandon-tournament");
-    leaveTournamentButton.addLossalosntListener("click", () => {
-      alert("Leaving tournament...");
-      handleRoute("/pong/play/tournament");
-    });
+    // const leaveTournamentButton = el.querySelector("#abandon-tournament");
+    // leaveTournamentButton.addEventListener("click", () => {
+    //   alert("Leaving tournament...");
+    //   handleRoute("/pong/play/tournament");
+    // });
   }
 });
