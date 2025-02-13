@@ -53,11 +53,9 @@ export const multiplayerContent = createComponent({
         </p>
         <label for="privateRoomCode" class="form-label">Room Code</label>
         <div class="input-group mt-2">
-          <input type="text" class="form-control" id="privateRoomCode" placeholder="Enter Room Code" aria-label="Room Code">
-          <button class="btn btn-primary mx-3" id="createPrivate" type="button">Create Room</button>
-          <button class="btn btn-success" id="joinPrivate" type="button">Join Room</button>
+          <input type="text" class="form-control" id="privateRoomCode" placeholder="Enter player username" aria-label="Room Code">
+          <button class="btn btn-primary mx-3" id="createPrivate" type="button">Invite Player</button>
         </div>
-        <button class="btn btn-secondary d-none" id="leavePrivate">Leave Room</button>
       </div>
     </section>
   `,
@@ -93,8 +91,6 @@ export const multiplayerContent = createComponent({
 
     // Private Match
     const createPrivateButton = el.querySelector("#createPrivate");
-    const joinPrivateButton = el.querySelector("#joinPrivate");
-    const leavePrivateButton = el.querySelector("#leavePrivate");
     const privateRoomCodeInput = el.querySelector("#privateRoomCode");
 
     createPrivateButton.addEventListener("click", () => {
@@ -104,8 +100,6 @@ export const multiplayerContent = createComponent({
         return;
       }
       privateRoomCodeInput.disabled = true;
-      createPrivateButton.classList.add("d-none");
-      leavePrivateButton.classList.remove("d-none");
 	  const config = {
 		gameMode : "private",
 		type: "fullScreen",
@@ -114,22 +108,6 @@ export const multiplayerContent = createComponent({
       joinRoom(roomCode);
     });
 
-    joinPrivateButton.addEventListener("click", () => {
-      const roomCode = privateRoomCodeInput.value.trim();
-      if (!roomCode) {
-        console.log("Please enter a room code.");
-        return;
-      }
-      privateRoomCodeInput.disabled = true;
-      joinRoom(roomCode);
-    });
-
-    leavePrivateButton.addEventListener("click", async () => {
-      leavePrivateButton.classList.add("d-none");
-      createPrivateButton.classList.remove("d-none");
-      privateRoomCodeInput.disabled = false;
-      leaveRoom(privateRoomCodeInput.value.trim());
-    });
   },
 });
 
