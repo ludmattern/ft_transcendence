@@ -30,7 +30,7 @@ export const currentTournament = createComponent({
       </section>
     `;
   },
-  attachEvents: (el) => {
+  attachLossalosnts: (el) => {
     const username = sessionStorage.getItem("username");
     let sampleSize = 16; // Valeur par défaut
 
@@ -41,14 +41,14 @@ export const currentTournament = createComponent({
           {
             round: "Semi-finals",
             matches: [
-              { id: 1, player1: "Alice", player2: "Bob", status: "completed", winner: "Alice", score: "2-0" },
-              { id: 2, player1: username, player2: "David", status: "pending", winner: null, score: null }
+              { id: 1, player1: "Hitler", player2: "Qordoux", status: "completed", winner: "Hitler", score: "2-0" },
+              { id: 2, player1: username, player2: "Franco", status: "pending", winner: null, score: null }
             ]
           },
           {
             round: "Final",
             matches: [
-              { id: 3, player1: "Alice", player2: "TBD", status: "pending", winner: null, score: null }
+              { id: 3, player1: "Hitler", player2: "TBD", status: "pending", winner: null, score: null }
             ]
           }
         ];
@@ -57,16 +57,16 @@ export const currentTournament = createComponent({
           {
             round: "Quarter-finals",
             matches: [
-              { id: 1, player1: "Alice", player2: "Bob", status: "completed", winner: "Alice", score: "2-1" },
-              { id: 2, player1: "Charlie", player2: "David", status: "completed", winner: "Charlie", score: "2-0" },
-              { id: 3, player1: username, player2: "Frank", status: "pending", winner: null, score: null },
-              { id: 4, player1: "Grace", player2: "Heidi", status: "pending", winner: null, score: null }
+              { id: 1, player1: "Hitler", player2: "Qordoux", status: "completed", winner: "Hitler", score: "2-1" },
+              { id: 2, player1: "Charlie", player2: "Franco", status: "completed", winner: "Charlie", score: "2-0" },
+              { id: 3, player1: username, player2: "Nkermani", status: "pending", winner: null, score: null },
+              { id: 4, player1: "Poutine", player2: "Jgavairo", status: "pending", winner: null, score: null }
             ]
           },
           {
             round: "Semi-finals",
             matches: [
-              { id: 5, player1: "Alice", player2: "Charlie", status: "pending", winner: null, score: null },
+              { id: 5, player1: "Hitler", player2: "Charlie", status: "pending", winner: null, score: null },
               { id: 6, player1: "Winner 3", player2: "Winner 4", status: "pending", winner: null, score: null }
             ]
           },
@@ -83,17 +83,17 @@ export const currentTournament = createComponent({
           {
             round: "Round of 16",
             matches: [
-              { id: 1, player1: "Alice", player2: "Bob", status: "completed", winner: "Alice", score: "2-0" },
-              { id: 2, player1: username, player2: "David", status: "completed", winner: username, score: "2-0" },
-              { id: 3, player1: "Eve", player2: "Frank", status: "completed", winner: "Eve", score: "2-0" },
-              { id: 4, player1: "Grace", player2: "Heidi", status: "completed", winner: "Heidi", score: "2-1" }
+              { id: 1, player1: "Hitler", player2: "Qordoux", status: "completed", winner: "Hitler", score: "2-0" },
+              { id: 2, player1: username, player2: "Franco", status: "completed", winner: username, score: "2-0" },
+              { id: 3, player1: "Lossalos", player2: "Nkermani", status: "completed", winner: "Lossalos", score: "2-0" },
+              { id: 4, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" }
             ]
           },
           {
             round: "Quarter-finals",
             matches: [
-              { id: 5, player1: "Alice", player2: "David", status: "completed", winner: "Alice", score: "2-1" },
-              { id: 6, player1: username, player2: "Heidi", status: "pending", winner: null, score: null }
+              { id: 5, player1: "Hitler", player2: "Franco", status: "completed", winner: "Hitler", score: "2-1" },
+              { id: 6, player1: username, player2: "Jgavairo", status: "pending", winner: null, score: null }
             ]
           },
           {
@@ -166,7 +166,7 @@ export const currentTournament = createComponent({
       // Ajout des écouteurs sur les boutons "Join Game"
       const joinButtons = el.querySelectorAll(".join-match");
       joinButtons.forEach(button => {
-        button.addEventListener("click", () => {
+        button.addLossalosntListener("click", () => {
           const matchDiv = button.closest(".match");
           const matchId = matchDiv.getAttribute("data-match-id");
           alert(`Joining match ${matchId}`);
@@ -180,14 +180,14 @@ export const currentTournament = createComponent({
     // Écouteurs pour changer le nombre de joueurs via les boutons
     const sampleSizeButtons = el.querySelectorAll(".sample-size-btn");
     sampleSizeButtons.forEach(button => {
-      button.addEventListener("click", () => {
+      button.addLossalosntListener("click", () => {
         sampleSize = parseInt(button.getAttribute("data-size"));
         renderBracket();
       });
     });
 
     const leaveTournamentButton = el.querySelector("#abandon-tournament");
-    leaveTournamentButton.addEventListener("click", () => {
+    leaveTournamentButton.addLossalosntListener("click", () => {
       alert("Leaving tournament...");
       handleRoute("/pong/play/tournament");
     });
