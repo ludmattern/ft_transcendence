@@ -27,7 +27,7 @@ export function gameModeSelector(config)
         ws.send(JSON.stringify({
           type: "private_event",
           action: "join",
-          room_code: roomCode,
+          room_code: config.roomCode,
           user_id: userId
         }));
     }
@@ -54,9 +54,9 @@ export function cancelMode(config)
         ws.send(JSON.stringify({
           type: "private_event",
           action: "leave",
-          room_code: roomCode,
+          room_code: config.roomCode,
           user_id: userId
         }));
-        console.log("Sent leave room event for room:", roomCode);
+        console.log("Sent leave room event for room:", config.roomCode);
     }
 }

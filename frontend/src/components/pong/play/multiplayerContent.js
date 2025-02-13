@@ -104,20 +104,6 @@ export const multiplayerContent = createComponent({
       playGame(config);
     });
 
-    joinPrivateButton.addEventListener("click", () => {
-      const roomCode = privateRoomCodeInput.value.trim();
-      if (!roomCode) {
-        console.log("Please enter a room code.");
-        return;
-      }
-      privateRoomCodeInput.disabled = true;
-    });
-
-    leavePrivateButton.addEventListener("click", async () => {
-      leavePrivateButton.classList.add("d-none");
-      createPrivateButton.classList.remove("d-none");
-      privateRoomCodeInput.disabled = false;
-    });
   },
 });
 
@@ -140,7 +126,7 @@ export function leaveRoom(roomCode) {
   ws.send(JSON.stringify({
     type: "private_event",
     action: "leave",
-    room_code: roomCode,
+    roomCode: roomCode,
     user_id: userId
   }));
   console.log("Sent leave room event for room:", roomCode);
