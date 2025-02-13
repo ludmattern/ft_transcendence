@@ -10,7 +10,81 @@ export const currentTournament = createComponent({
                style="color: white; background-color: #111111; max-height: 700px; overflow: auto;">
         <h1 class="mb-4">Current Tournament</h1>
         
-        <!-- Boutons de sélection du nombre de joueurs (données d'exemple) -->
+        <!-- Styles pour le bracket -->
+        <style>
+          /* Conteneur global : on se contente de la largeur ici */
+          #bracket-container {
+            width: 100%;
+          }
+          /* Bloc des titres des rounds */
+          .round-titles {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 20px;
+          }
+          .round-title {
+            min-width: 150px;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+          }
+          /* Bloc des colonnes de rounds */
+          .rounds-content {
+            display: flex;
+            align-items: stretch;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+            height: 600px; /* Ajuste selon tes besoins */
+          }
+          /* Colonne de round : contient la liste des matchs */
+          .round-column {
+            display: flex;
+            flex-direction: column;
+          }
+          /* Conteneur des matchs, répartis verticalement */
+          .matches-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+          }
+          /* Style pour chaque match */
+          .match {
+            margin-bottom: 8px;
+          }
+          /* Ligne de bracket entre colonnes */
+          .bracket-line {
+            position: relative;
+            width: 50px;
+            height: 120px;
+            margin: auto 0;
+          }
+          .bracket-line::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: white;
+          }
+          .bracket-line::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 50%;
+            height: 2px;
+            background: white;
+            transform: translateY(-50%);
+          }
+        </style>
+        
+        <!-- Boutons de sélection du nombre de joueurs -->
         <div id="tournament-controls" class="mb-4">
           <button class="btn btn-outline-light sample-size-btn" data-size="4">4 Players</button>
           <button class="btn btn-outline-light sample-size-btn" data-size="8">8 Players</button>
@@ -21,22 +95,21 @@ export const currentTournament = createComponent({
           <p class="text-secondary">The tournament is in progress.</p>
         </div>
         
-        <!-- Bracket : affichage des matchs sous forme d'arbre -->
-        <div id="bracket-container" 
-             style="display: flex; flex-direction: row; gap: 20px; overflow-x: auto; width: 100%; justify-content: center;">
-          <!-- Le contenu est généré dynamiquement -->
+        <!-- Conteneur du bracket -->
+        <div id="bracket-container">
+          <!-- Les titres et les colonnes seront insérés dynamiquement -->
         </div>
-		<button id="abandon-tournament" class="btn btn-danger mt-3">Abandon Tournament</button>
-		</section>
-		`;
-	},
-	attachEvents: (el) => {
-		const username = sessionStorage.getItem("username");
-		let sampleSize = 16;
-		
-    // Données d'exemple pour le bracket
+
+        <button id="abandon-tournament" class="btn btn-danger mt-3">Abandon Tournament</button>
+      </section>
+    `;
+  },
+  attachEvents: (el) => {
+    const username = sessionStorage.getItem("username");
+    let sampleSize = 16;
+    
+    // Données d'exemple
     function getBracketData(size) {
-		console.log("getBracketData");
       if (size === 4) {
         return [
           {
@@ -122,63 +195,89 @@ export const currentTournament = createComponent({
 
     // Vérifie si l'utilisateur a terminé son match dans le round précédent
     function hasUserCompletedInPreviousRound(bracketData, roundIndex) {
-      if (roundIndex === 0) return true; // Premier round, aucune condition préalable
+      if (roundIndex === 0) return true;
       const previousRound = bracketData[roundIndex - 1];
-      return previousRound.matches.some(match =>
-        (match.player1 === username || match.player2 === username) &&
-        match.status === "completed"
+      return previousRound.matches.some(
+        match =>
+          (match.player1 === username || match.player2 === username) &&
+          match.status === "completed"
       );
     }
 
-    // Fonction de rendu du bracket en arbre
     function renderBracket() {
-		console.log("renderBracket");
       const bracketData = getBracketData(sampleSize);
-      let html = "";
+      let titlesHtml = "";
+      let roundsHtml = "";
+
       bracketData.forEach((round, roundIndex) => {
-        html += `<div class="round-column" style="min-width: 150px;">
-          <h3 class="text-white mb-3">${round.round}</h3>
-          ${round.matches.map(match => {
+        // Création du titre pour le round
+        titlesHtml += `<div class="h4 round-title">${round.round}</div>`;
+
+        // Création de la colonne avec la liste des matchs
+        const matchesHtml = round.matches
+          .map(match => {
             if (match.status === "completed") {
               const winner = match.winner;
-              const loser = (match.player1 === winner) ? match.player2 : match.player1;
-              return `<div class="match p-2 mb-2 bg-dark rounded" data-match-id="${match.id}">
-                        <span class="text-white">
-                          <span class="fw-bold">${winner}</span> vs 
-                          <span>${loser}</span>
-                        </span>
-                        <span class="badge bg-info ms-2">${match.score}</span>
-                      </div>`;
+              const loser = match.player1 === winner ? match.player2 : match.player1;
+              return `
+                <div class="match p-2 bg-dark rounded" data-match-id="${match.id}">
+                  <span class="text-white">
+                    <span class="fw-bold">${winner}</span> vs 
+                    <span>${loser}</span>
+                  </span>
+                  <span class="badge bg-info ms-2">${match.score}</span>
+                </div>
+              `;
             } else {
-              // Pour un match pending impliquant l'utilisateur, vérifier si les matchs précédents sont terminés
               let joinButton = "";
               if (match.status === "pending" && (match.player1 === username || match.player2 === username)) {
                 if (hasUserCompletedInPreviousRound(bracketData, roundIndex)) {
                   joinButton = `<button class="btn btn-success btn-sm join-match ms-2">Join Game</button>`;
-                } else {
-                  joinButton = `<span class="text-warning ms-2">Waiting for previous match</span>`;
                 }
               }
-              return `<div class="match p-2 mb-2 bg-dark rounded" data-match-id="${match.id}">
-                        <span class="text-white">${match.player1} vs ${match.player2}</span>
-                        <span class="text-secondary ms-2">${match.status}</span>
-                        ${joinButton}
-                      </div>`;
+              return `
+                <div class="match p-2 bg-dark rounded" data-match-id="${match.id}">
+                  <span class="text-white">${match.player1} vs ${match.player2}</span>
+                  ${joinButton === "" ? `<span class="text-secondary ms-2">${match.status}</span>` : joinButton}
+                </div>
+              `;
             }
-          }).join('')}
-        </div>`;
+          })
+          .join("");
+
+        roundsHtml += `
+          <div class="round-column">
+            <div class="matches-container">
+              ${matchesHtml}
+            </div>
+          </div>
+        `;
+
+        // On ajoute une ligne de bracket entre les rounds (sauf après le dernier)
+		if (roundIndex < bracketData.length - 1) {
+			const bracketCount = Math.pow(2, (bracketData.length - 1 - roundIndex)) / 2;
+			let bracketLines = "";
+			for (let i = 0; i < bracketCount; i++) {
+			  bracketLines += `<div class="bracket-line"></div>`;
+			}
+			roundsHtml += `<div class="round-column">${bracketLines}</div>`;
+		  }		  
       });
+
       const bracketContainer = el.querySelector("#bracket-container");
       if (bracketContainer) {
-        bracketContainer.innerHTML = html;
+        bracketContainer.innerHTML = `
+          <div class="h4 round-titles">${titlesHtml}</div>
+          <div class="rounds-content">${roundsHtml}</div>
+        `;
       }
-      // Ajout des écouteurs sur les boutons "Join Game"
+
+      // Écouteurs pour les boutons "Join Game"
       const joinButtons = el.querySelectorAll(".join-match");
       joinButtons.forEach(button => {
         button.addEventListener("click", () => {
           const matchDiv = button.closest(".match");
           const matchId = matchDiv.getAttribute("data-match-id");
-          alert(`Joining match ${matchId}`);
           handleRoute(`/pong/play/match/${matchId}`);
         });
       });
@@ -186,7 +285,6 @@ export const currentTournament = createComponent({
 
     renderBracket();
 
-    // Écouteurs pour changer le nombre de joueurs via les boutons
     const sampleSizeButtons = el.querySelectorAll(".sample-size-btn");
     sampleSizeButtons.forEach(button => {
       button.addEventListener("click", () => {
@@ -194,11 +292,5 @@ export const currentTournament = createComponent({
         renderBracket();
       });
     });
-
-    // const leaveTournamentButton = el.querySelector("#abandon-tournament");
-    // leaveTournamentButton.addEventListener("click", () => {
-    //   alert("Leaving tournament...");
-    //   handleRoute("/pong/play/tournament");
-    // });
   }
 });
