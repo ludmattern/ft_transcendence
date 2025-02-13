@@ -19,9 +19,9 @@ export const currentTournament = createComponent({
           /* Bloc des titres des rounds */
           .round-titles {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 8rem;
             width: 100%;
             margin-bottom: 20px;
           }
@@ -38,7 +38,6 @@ export const currentTournament = createComponent({
             gap: 20px;
             width: 100%;
             justify-content: center;
-            height: 600px; /* Ajuste selon tes besoins */
           }
           /* Colonne de round : contient la liste des matchs */
           .round-column {
@@ -50,7 +49,7 @@ export const currentTournament = createComponent({
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-evenly;
+            justify-content: space-around;
           }
           /* Style pour chaque match */
           .match {
@@ -100,7 +99,7 @@ export const currentTournament = createComponent({
           <!-- Les titres et les colonnes seront insérés dynamiquement -->
         </div>
 
-        <button id="abandon-tournament" class="btn btn-danger mt-3">Abandon Tournament</button>
+        <button id="abandon-tournament" class="btn btn-danger mt-5">Abandon Tournament</button>
       </section>
     `;
   },
@@ -258,7 +257,7 @@ export const currentTournament = createComponent({
 			const bracketCount = Math.pow(2, (bracketData.length - 1 - roundIndex)) / 2;
 			let bracketLines = "";
 			for (let i = 0; i < bracketCount; i++) {
-			  bracketLines += `<div class="bracket-line"></div>`;
+			  bracketLines += `<div class="bracket-line" style="height: calc(3rem * ${roundIndex + 1.3});"></div>`;
 			}
 			roundsHtml += `<div class="round-column">${bracketLines}</div>`;
 		  }		  
