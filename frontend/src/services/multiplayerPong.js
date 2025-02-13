@@ -1,9 +1,6 @@
 import { gameManager } from "/src/pongGame/gameManager.js";
 import { leaveMatchmaking, leaveRoom} from "/src/components/pong/play/multiplayerContent.js";
 
-
-
-
 export async function startPrivateGame(gameId,side,userId, roomCode) {
     leaveRoom(roomCode);
     console.log(roomCode);
@@ -19,9 +16,6 @@ export async function startPrivateGame(gameId,side,userId, roomCode) {
     document.getElementById("createPrivate").style.display = "block"
     gameManager.startGame(gameConfig);
   }
-
-
-  
 
   export async function startMatchmakingGame(gameId, side, data) {
     leaveMatchmaking();

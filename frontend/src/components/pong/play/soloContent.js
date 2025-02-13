@@ -67,7 +67,12 @@ export const soloContent = createComponent({
     const launchButton = document.getElementById("launch");
 
     launchButton.addEventListener("click", () => {
-      playGame("solo");
+	const config = {
+		gameMode : "solo",
+		type: "fullScreen",
+		difficulty: difficulty.value,
+	};		
+		playGame(config);
     })
   },
 });

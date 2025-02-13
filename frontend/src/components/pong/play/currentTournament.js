@@ -87,26 +87,33 @@ export const currentTournament = createComponent({
               { id: 1, player1: "Hitler", player2: "Qordoux", status: "completed", winner: "Hitler", score: "2-0" },
               { id: 2, player1: username, player2: "Franco", status: "completed", winner: username, score: "2-0" },
               { id: 3, player1: "Lossalos", player2: "Nkermani", status: "completed", winner: "Lossalos", score: "2-0" },
-              { id: 4, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" }
+              { id: 4, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" },
+              { id: 5, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" },
+              { id: 6, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" },
+              { id: 7, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" },
+              { id: 8, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" }
             ]
           },
           {
             round: "Quarter-finals",
             matches: [
-              { id: 5, player1: "Hitler", player2: "Franco", status: "completed", winner: "Hitler", score: "2-1" },
-              { id: 6, player1: username, player2: "Jgavairo", status: "pending", winner: null, score: null }
+              { id: 9, player1: "Hitler", player2: "Franco", status: "completed", winner: "Hitler", score: "2-1" },
+              { id: 10, player1: username, player2: "Jgavairo", status: "pending", winner: null, score: null },
+              { id: 11, player1: username, player2: "Jgavairo", status: "pending", winner: null, score: null },
+              { id: 12, player1: username, player2: "Jgavairo", status: "pending", winner: null, score: null }
             ]
           },
           {
             round: "Semi-finals",
             matches: [
-              { id: 7, player1: username, player2: "TBD", status: "pending", winner: null, score: null }
+              { id: 13, player1: username, player2: "TBD", status: "pending", winner: null, score: null },
+              { id: 14, player1: username, player2: "TBD", status: "pending", winner: null, score: null }
             ]
           },
           {
             round: "Final",
             matches: [
-              { id: 8, player1: "TBD", player2: "TBD", status: "pending", winner: null, score: null }
+              { id: 15, player1: "TBD", player2: "TBD", status: "pending", winner: null, score: null }
             ]
           }
         ];

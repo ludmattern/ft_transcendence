@@ -66,7 +66,11 @@ export const multiplayerContent = createComponent({
     // Local Multiplayer
     const localButton = el.querySelector("#launchLocal");
     localButton.addEventListener("click", () => {
-      playGame("duo");
+	  const config = {
+		gameMode : "local",
+		type: "splitScreen",
+	  };
+      playGame(config);
     });
 
     // Online Matchmaking
@@ -74,7 +78,11 @@ export const multiplayerContent = createComponent({
     const leaveMatchButton = el.querySelector("#leaveMatch");
     matchButton.addEventListener("click", () => {
       joinMatchmaking(); // Fonction à définir ailleurs dans votre code
-      playGame("uno");
+	  const config = {
+		gameMode : "matchmaking",
+		type: "fullScreen",
+	  };
+      playGame(config);
     });
 
     leaveMatchButton.addEventListener("click", async () => {
@@ -98,6 +106,11 @@ export const multiplayerContent = createComponent({
       privateRoomCodeInput.disabled = true;
       createPrivateButton.classList.add("d-none");
       leavePrivateButton.classList.remove("d-none");
+	  const config = {
+		gameMode : "private",
+		type: "fullScreen",
+	  };
+      playGame(config);
       joinRoom(roomCode);
     });
 
