@@ -26,5 +26,5 @@ CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone_number);
 CREATE TABLE IF NOT EXISTS game_history (
     game_id SERIAL PRIMARY KEY,
     winner_id INT DEFAULT 0,
-    loser_id INT DEFAULT 0,
+    loser_id INT DEFAULT 0
 );
