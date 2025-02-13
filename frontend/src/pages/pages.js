@@ -31,6 +31,7 @@ import {
   tournamentJoin,
   multiplayerContent,
   tournamentContent,
+  currentTournament,
   lost,
   gotolocal,
   leaderboard,
@@ -237,6 +238,14 @@ export const pongPages = {
       { selector: "#content-window-container", component: tournamentJoin },
     ],
   },
+  "play/current-tournament": {
+    components: [
+      { selector: "#pong-skeleton-container", component: pongPageSkeleton },
+      { selector: "#pong-header-container", component: pongHeader },
+      { selector: "#content-window-container", component: currentTournament },
+    ],
+  },
+  
   leaderboard: {
     components: [
       { selector: "#pong-skeleton-container", component: pongPageSkeleton },
