@@ -51,15 +51,12 @@ export const profileForm = createComponent({
             <!-- Match History Header -->
             <div class="match-history-header d-flex fw-bold">
               <span class="col-2">Outcome</span>
-              <span class="col-2">Game Mode</span>
-              <span class="col-2">Duration</span>
-              <span class="col-2">Date</span>
               <span class="col-4">Opponents</span>
             </div>
             <!-- Match Items -->
-            ${createMatchItem('Win', '1v1', '10min', '01/01/2022', 'Opponent', 'text-success')}
-            ${createMatchItem('Loss', '2v2', '20min', '01/01/2022', 'Opponent 1, Opponent 2', 'text-danger')}
-            ${createMatchItem('Loss', '2v2', '20min', '01/01/2022', 'Opponent 1, Opponent 2', 'text-danger')}
+            ${createMatchItem('Win', 'Opponent', 'text-success')}
+            ${createMatchItem('Loss', 'Opponent', 'text-danger')}
+            ${createMatchItem('Loss', 'Opponent', 'text-danger')}
           </div>
         </div>
       </span>
@@ -67,7 +64,7 @@ export const profileForm = createComponent({
   `,
 
   // Ajouter les événements après le chargement
-  attachEvents: (el) => {
+  attachEvents: async (el) => {
     // Gestion du clic sur un lien vers un autre profil
     el.addEventListener('click', (e) => {
       if (e.target.matches('#other-profile-link')) {
@@ -77,6 +74,20 @@ export const profileForm = createComponent({
       }
     });
 
+
+    const htmldata = collectData(el);
+    const response = await fetch("/api/user-service/profile/", {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(htmldata),
+    });
+    const data = await response.json();
+    if (data.success) {
+      console.log(`Profile data fetched:`, data);
+    } else {
+      console.error('Error while fetching profile data:', data);
+    }
+
     // Exemple d'événement supplémentaire pour les statistiques
     el.querySelector('.profile-pseudo-input').addEventListener('change', (e) => {
       console.log(`Pseudo changé en : ${e.target.value}`);
@@ -84,25 +95,51 @@ export const profileForm = createComponent({
   },
 });
 
+
+/**
+ *
+ * @param {HTMLElement} el - Élément racine
+ * @returns {Object} - Données collectées
+ */
+function collectData(el) {
+  return {
+    username: sessionStorage.getItem('username'),
+  };
+}
+
 /**
  * Génère un élément d'historique de match.
  *
  * @param {string} outcome - Résultat du match (Win/Loss)
- * @param {string} mode - Mode de jeu
- * @param {string} duration - Durée du match
- * @param {string} date - Date du match
  * @param {string} opponents - Opposants
  * @param {string} outcomeClass - Classe CSS pour le résultat
  * @returns {string} - HTML du match
  */
-function createMatchItem(outcome, mode, duration, date, opponents, outcomeClass) {
+function createMatchItem(outcome, opponents, outcomeClass) {
   return `
     <div class="match-item d-flex">
       <span class="col-2 ${outcomeClass} fw-bold">${outcome}</span>
-      <span class="col-2">${mode}</span>
-      <span class="col-2">${duration}</span>
-      <span class="col-2">${date}</span>
       <span class="col-4">${opponents}</span>
+    </div>
+  `;
+}
+
+function createWinrateItem(winrate_value) {
+  return `
+  <div class="stat-item d-flex align-items-center mb-1">
+  <span class="bi bi-trophy me-2"></span>
+  <span class="stat-title">Winrate:</span>
+  <span class="stat-value ms-1">${winrate_value}%</span>
+  </div>
+  `;
+}
+
+function createRankItem(rank_value) {
+  return `
+    <div class="stat-item d-flex align-items-center">
+      <span class="bi bi-award me-2"></span>
+      <span class="stat-title">Rank:</span>
+      <span class="stat-value ms-1">${rank_value}</span>
     </div>
   `;
 }

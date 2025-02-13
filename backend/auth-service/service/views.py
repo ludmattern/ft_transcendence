@@ -289,7 +289,7 @@ def verify_2fa_view(request):
                 "iat": now,
                 "exp": exp.timestamp()
             }
-            access_token = jwt.encode(
+            access_token = jwt.encodegit@github.com:ludmattern/ft_transcendence.git(
                 access_payload,
                 settings.JWT_SECRET_KEY,
                 algorithm=settings.JWT_ALGORITHM

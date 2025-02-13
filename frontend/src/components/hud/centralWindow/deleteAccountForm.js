@@ -27,7 +27,7 @@ export const deleteAccountForm = createComponent({
         handleRoute(getPreviousRoute()); // Retour à la route précédente
       }
       if (e.target.matches("#confirm-delete")) {
-        const formData = collectFormData(el);
+        const formData = collectData(el);
         try {
           const response = await fetch("/api/user-service/delete/", {
             method: 'POST',
@@ -54,10 +54,10 @@ export const deleteAccountForm = createComponent({
 
 /**
  *
- * @param {HTMLElement} el - Élément racine du formulaire
- * @returns {Object} - Données collectées du formulaire
+ * @param {HTMLElement} el - Élément racine
+ * @returns {Object} - Données collectées
  */
-function collectFormData(el) {
+function collectData(el) {
   return {
     username: sessionStorage.getItem('username'),
   };

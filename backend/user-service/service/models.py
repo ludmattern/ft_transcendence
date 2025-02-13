@@ -21,3 +21,15 @@ class ManualUser(models.Model):
 
     def __str__(self):
         return self.username
+    
+class ManualGameHistory(models.Model):
+    game_id = models.CharField(max_length=50, unique=True, primary_key=True)
+    winner_id = models.CharField(max_length=50)
+    loser_id = models.CharField(max_length=50)
+    class Meta:
+        db_table = "game_history"
+        managed = True
+
+    def __str__(self):
+        return self.game_id
+
