@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { handleRoute } from "/src/services/router.js";
+import { gameModeSelector, cancelMode } from "/src/services/gameModeHandler.js";
 
 export const pongTuto = (config) => createComponent({
   tag: "pongTuto",
@@ -42,11 +43,13 @@ export const pongTuto = (config) => createComponent({
   attachEvents: (el) => {
     el.querySelector("#close").addEventListener("click", (e) => {
       e.preventDefault();
+      cancelMode(config);
       handleRoute("/topong");
     });
 
     el.querySelector("#ready").addEventListener("click", () => {
       console.log("Player is ready");
+      gameModeSelector(config);
       // componentManagers['HUD'].unloadComponent('pongTuto');
       el.querySelector("#ready").remove();
       el.querySelector(".ready-question").remove();
@@ -55,3 +58,6 @@ export const pongTuto = (config) => createComponent({
     });
   },
 });
+
+
+

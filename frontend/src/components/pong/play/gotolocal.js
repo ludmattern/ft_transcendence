@@ -72,13 +72,11 @@ export const gotolocal = createComponent({
     player1Side.value = savedPlayer1Side;
     player2Side.value = savedPlayer2Side;
 
-    // Mise à jour des contrôles en fonction du choix du côté
     function updateControls() {
       player1Controls.textContent = player1Side.value === "left" ? "W / S" : "↑ / ↓";
       player2Controls.textContent = player2Side.value === "left" ? "W / S" : "↑ / ↓";
     }
 
-    // Sauvegarde des changements dans sessionStorage
     player2Input.addEventListener("input", () => {
       sessionStorage.setItem("player2", player2Input.value);
       validateForm();
@@ -138,14 +136,8 @@ export const gotolocal = createComponent({
       const side2 = player2Side.value;
 
       console.log(`Starting game: ${player1} (${side1}) vs ${player2} (${side2})`);
-      
-      // Redirige vers la fenêtre de jeu avec les données nécessaires
-	  const gameConfig = {
-        mode: "local", 
-        map: "test", 
-        playerCount: 2,
-      };
-	  gameManager.startGame(gameConfig);
+    
+
       switchwindow("game");
     }
 

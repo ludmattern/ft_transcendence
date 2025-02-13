@@ -4,6 +4,7 @@ import Store from "/src/3d/store.js";
 import { ws } from "/src/services/socketManager.js";
 import { showCountdown } from "/src/components/midScreen.js";
 import * as THREE from "https://esm.sh/three";
+import componentManagers from "/src/index.js";
 
 class GameManager {
   constructor() {
@@ -109,6 +110,7 @@ class GameManager {
 
   startGame(gameConfig) {
     console.log("Starting game with config:", gameConfig);
+    componentManagers['HUD'].unloadComponent('pongTuto');
 
     if (this.activeGame) this.endGame();
 
@@ -116,7 +118,6 @@ class GameManager {
     this.gameId = this.generateGameId(gameConfig);
 
     buildGameScene(gameConfig);
-    switchwindow("game");
     setTimeout(() => {
       showCountdown();
     }, 2200);
@@ -173,10 +174,10 @@ class GameManager {
     if (gameState.ball) {
       const { x, y, z } = gameState.ball; 
       if (Store.meshBall) {
-        Store.meshBall.position.set(x, y, z);  
+        Store.meshBall.position.set(x, y, z);
       }
     }
-    const lerpFactorPaddle = 0.1;
+    const lerpFactorPaddle = 0.2;
     if (gameState.players) {
       const p1 = gameState.players["1"];
       if (p1 && Store.player1Paddle) {

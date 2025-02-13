@@ -18,14 +18,6 @@ export const renderTargetP2 = new THREE.WebGLRenderTarget(4096, 2048, {
 
 export let cameraPlayer1, cameraPlayer2, screenMesh;
 
-export let screenMaterial = new THREE.ShaderMaterial({
-  uniforms: {
-    textureP1: { value: renderTargetP1.texture },
-    textureP2: { value: renderTargetP2.texture }
-  },
-  vertexShader: ``,
-  fragmentShader: ``
-});
 
 const shaders = {
   local: {
@@ -70,6 +62,17 @@ const shaders = {
     `
   }
 };
+
+export let screenMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    textureP1: { value: renderTargetP1.texture },
+    textureP2: { value: renderTargetP2.texture }
+  },
+  vertexShader: shaders.local.vertex,
+  fragmentShader: shaders.local.fragment
+});
+
+
 
 
 
@@ -256,7 +259,7 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
   Store.pongScene.add(ambientLight);
 
 }
-const lerpFactor = 1;
+const lerpFactor = 0.1;
 
 export function animatePong(renderer) {
   if (!Store.pongScene || !Store.gameConfig) return;
@@ -266,7 +269,7 @@ export function animatePong(renderer) {
 
     if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
     if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
-    
+
 
     Store.p1Focus.lerp(Store.player1Paddle.position, lerpFactor);
     Store.p2Focus.lerp(Store.player2Paddle.position, lerpFactor);

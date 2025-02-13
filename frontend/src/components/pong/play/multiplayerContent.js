@@ -63,7 +63,6 @@ export const multiplayerContent = createComponent({
   `,
 
   attachEvents: (el) => {
-    // Local Multiplayer
     const localButton = el.querySelector("#launchLocal");
     localButton.addEventListener("click", () => {
 	  const config = {
@@ -77,7 +76,6 @@ export const multiplayerContent = createComponent({
     const matchButton = el.querySelector("#launchMatch");
     const leaveMatchButton = el.querySelector("#leaveMatch");
     matchButton.addEventListener("click", () => {
-      joinMatchmaking(); // Fonction à définir ailleurs dans votre code
 	  const config = {
 		gameMode : "matchmaking",
 		type: "fullScreen",
@@ -86,7 +84,6 @@ export const multiplayerContent = createComponent({
     });
 
     leaveMatchButton.addEventListener("click", async () => {
-      leaveMatchmaking();
       leaveMatchButton.classList.add("d-none");
       matchButton.classList.remove("d-none");
     });
@@ -111,7 +108,6 @@ export const multiplayerContent = createComponent({
 		type: "fullScreen",
 	  };
       playGame(config);
-      joinRoom(roomCode);
     });
 
     joinPrivateButton.addEventListener("click", () => {
@@ -121,28 +117,17 @@ export const multiplayerContent = createComponent({
         return;
       }
       privateRoomCodeInput.disabled = true;
-      joinRoom(roomCode);
     });
 
     leavePrivateButton.addEventListener("click", async () => {
       leavePrivateButton.classList.add("d-none");
       createPrivateButton.classList.remove("d-none");
       privateRoomCodeInput.disabled = false;
-      leaveRoom(privateRoomCodeInput.value.trim());
     });
   },
 });
 
 
-function joinMatchmaking() {
-  const userId = sessionStorage.getItem("userId");
-  ws.send(JSON.stringify({
-      type: "matchmaking",
-      action: "join",
-      user_id: userId
-  }));
-  console.log("Sent 'join matchmaking' via WebSocket");
-}
 
 export function leaveMatchmaking() {
   const userId = sessionStorage.getItem("userId");
@@ -154,16 +139,7 @@ export function leaveMatchmaking() {
   console.log("Sent 'leave matchmaking' via WebSocket");
 }
 
-function joinRoom(roomCode) {
-  const userId = sessionStorage.getItem("userId");
-  ws.send(JSON.stringify({
-    type: "private_event",
-    action: "join",
-    room_code: roomCode,
-    user_id: userId
-  }));
-  console.log("Sent join room event for room:", roomCode, "user:", userId);
-}
+
 
 export function leaveRoom(roomCode) {
   const userId = sessionStorage.getItem("userId");
