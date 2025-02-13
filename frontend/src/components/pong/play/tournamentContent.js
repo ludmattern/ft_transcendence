@@ -108,6 +108,7 @@ export const tournamentContent = createComponent({
     joinRandomButton.addEventListener("click", () => {
       const tournamentSize = document.getElementById("tournamentSize-random").value;
       console.log(`Joining a random tournament with size: ${tournamentSize}`);
+      handleRoute("/pong/play/tournament-join");
     });
 
     // Création d'un tournoi
