@@ -1,5 +1,5 @@
 import { createComponent } from "/src/utils/component.js";
-import { handleRoute, getPreviousPongPlaySubRoute } from "/src/services/router.js";
+import { handleRoute, getPreviousPongPlaySubRoute, setPreviousPongPlaySubRoute } from "/src/services/router.js";
 import { subscribe } from "/src/services/eventEmitter.js";
 import { CSS3DObject } from "https://esm.sh/three/examples/jsm/renderers/CSS3DRenderer.js";
 import Store from "/src/3d/store.js";
@@ -90,6 +90,7 @@ export const pongMenu = createComponent({
 	
 
     homeButton.addEventListener("click", () => {
+        setPreviousPongPlaySubRoute("/pong/play");
         handleRoute("/pong/home");
     });
 

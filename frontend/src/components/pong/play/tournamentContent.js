@@ -60,6 +60,7 @@ export const tournamentContent = createComponent({
   `,
 
   attachEvents: (el) => {
+    // Gestion des onglets
     const tabs = el.querySelectorAll(".nav-link");
     const tabPanes = el.querySelectorAll(".tab-pane");
     
@@ -91,6 +92,7 @@ export const tournamentContent = createComponent({
       });
     });
 
+    // Rejoindre par code
     const joinWithCodeButton = el.querySelector("#joinWithCode");
     joinWithCodeButton.addEventListener("click", () => {
       const roomCode = document.getElementById("tournamentRoomCode").value;
@@ -101,16 +103,21 @@ export const tournamentContent = createComponent({
       console.log(`Joining tournament with code: ${roomCode}`);
     });
 
+    // Rejoindre un tournoi aléatoire
     const joinRandomButton = el.querySelector("#joinRandom");
     joinRandomButton.addEventListener("click", () => {
       const tournamentSize = document.getElementById("tournamentSize-random").value;
       console.log(`Joining a random tournament with size: ${tournamentSize}`);
     });
 
+    // Création d'un tournoi
     const createButton = el.querySelector("#createbutton");
     createButton.addEventListener("click", () => {
       const mode = document.getElementById("tournamentMode").value;
       const size = document.getElementById("tournamentSize").value;
+      // Stocker les paramètres dans le sessionStorage pour que tournamentCreation puisse en tenir compte
+      sessionStorage.setItem("tournamentMode", mode);
+      sessionStorage.setItem("tournamentSize", size);
       console.log(`Creating a tournament with mode: ${mode} and size: ${size}`);
       handleRoute("/pong/play/tournament-creation");
     });
@@ -135,12 +142,14 @@ function generateModeSelector() {
 
 /**
  * Génère le sélecteur du format du tournoi (4, 8 ou 16 joueurs)
+ * @param {string} variant - Optionnel. Si fourni, le select aura un id spécifique (ex: "random" donnera "tournamentSize-random")
  */
-function generateTournamentSizeSelector() {
+function generateTournamentSizeSelector(variant) {
+  const selectId = variant ? `tournamentSize-${variant}` : "tournamentSize";
   return `
     <div class="mb-3">
-        <label for="tournamentSize" class="form-label text-white">Select the Size of Your Demise</label>
-        <select class="form-select" id="tournamentSize">
+        <label for="${selectId}" class="form-label text-white">Select the Size of Your Demise</label>
+        <select class="form-select" id="${selectId}">
             <option value="4">4 Players - A Small-Scale Humiliation</option>
             <option value="8">8 Players - Double the Disappointment</option>
             <option value="16">16 Players - A Public Execution</option>

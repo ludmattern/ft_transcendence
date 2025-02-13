@@ -30,13 +30,17 @@ const routeMappings = {
 
 const publicRoutes = new Set(["/login", "/login/2fa", "/subscribe", "/register/qr"]);
 
+export function setPreviousPongPlaySubRoute(subroute) {
+  previousPongPlaySubRoute = subroute;
+}
+
 /**
  * Vérifie si une route nécessite une authentification.
  * @param {string} route - La route à vérifier.
  * @returns {boolean} - `true` si une authentification est requise, sinon `false`.
  */
 function isAuthenticatedRoute(route) {
-  return publicRoutes.has(route)
+  return publicRoutes.has(route);
 }
 
 /**

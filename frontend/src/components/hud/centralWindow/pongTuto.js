@@ -42,7 +42,7 @@ export const pongTuto = (mode = "duo") => createComponent({
   attachEvents: (el) => {
     el.querySelector("#close").addEventListener("click", (e) => {
       e.preventDefault();
-      handleRoute("/pong/play/solo");
+      handleRoute("/topong");
     });
 
     el.querySelector("#ready").addEventListener("click", () => {
