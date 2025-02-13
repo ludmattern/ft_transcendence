@@ -104,7 +104,6 @@ export const multiplayerContent = createComponent({
       playGame(config);
     });
 
-<<<<<<< HEAD
     joinPrivateButton.addEventListener("click", () => {
       const roomCode = privateRoomCodeInput.value.trim();
       if (!roomCode) {
@@ -119,8 +118,6 @@ export const multiplayerContent = createComponent({
       createPrivateButton.classList.remove("d-none");
       privateRoomCodeInput.disabled = false;
     });
-=======
->>>>>>> 41bea23b0c48b3a0e05284a00fa9babbbe5a066d
   },
 });
 
