@@ -30,7 +30,7 @@ export const tournamentCreation = createComponent({
           <div class="w-50 mb-4">
             <div class="input-group">
               <input id="player-name" type="text" class="form-control" placeholder="Enter player name" aria-label="Player name">
-              <button id="add-player" class="btn btn-primary" type="button">Add Player</button>
+              <button id="add-player" class="btn btn-pong-blue" type="button">Add Player</button>
             </div>
           </div>
           
@@ -43,8 +43,8 @@ export const tournamentCreation = createComponent({
           </div>
           
           <!-- Bouton de création du tournoi -->
-          <button id="create-tournament" class="btn btn-success" disabled>Create Tournament</button>
-          <button id="cancel-tournament" class="btn btn-danger mt-3">Cancel</button>
+          <button id="create-tournament" class="btn btn-pong" disabled>Create Tournament</button>
+          <button id="cancel-tournament" class="btn btn-pong-danger mt-3">Cancel</button>
         </section>
       `;
     } else {
@@ -59,7 +59,7 @@ export const tournamentCreation = createComponent({
           <div class="mb-4">
             <h3 class="text-white">Room Code:</h3>
             <h2 id="room-code" class="text-warning">${roomCode}</h2>
-            <button id="copy-room-code" class="btn btn-secondary btn-sm">Copy Room Code</button>
+            <button id="copy-room-code" class="btn btn-pong btn-sm">Copy Room Code</button>
           </div>
           
           <!-- Liste des joueurs en ligne -->
@@ -74,16 +74,16 @@ export const tournamentCreation = createComponent({
           <div class="w-50 mb-4">
             <div class="input-group">
               <input id="invite-input" type="text" class="form-control" placeholder="Enter invitation message" aria-label="Invitation">
-              <button id="send-invite" class="btn btn-primary" type="button">Send Invitation</button>
+              <button id="send-invite" class="btn btn-pong-blue" type="button">Send Invitation</button>
             </div>
           </div>
           
           <!-- Bouton de création du tournoi -->
-          <button id="create-tournament" class="btn btn-success" disabled>Create Tournament</button>
-          <button id="cancel-tournament" class="btn btn-danger mt-3">Cancel</button>
+          <button id="create-tournament" class="btn btn-pong" disabled>Create Tournament</button>
+          <button id="cancel-tournament" class="btn btn-pong-danger mt-3">Cancel</button>
           
           <!-- Bouton de simulation d'arrivée de joueur (pour la démo) -->
-          <button id="simulate-join" class="btn btn-info mt-3">Simulate Player Join</button>
+          <button id="simulate-join" class="btn btn-pong mt-3">Simulate Player Join</button>
         </section>
       `;
     }
@@ -120,7 +120,7 @@ export const tournamentCreation = createComponent({
 
           if (name !== username) {
             const removeButton = document.createElement("button");
-            removeButton.className = "btn btn-danger btn-sm";
+            removeButton.className = "btn btn-pong-danger btn-sm";
             removeButton.textContent = "Remove";
             removeButton.addEventListener("click", () => {
               players.splice(index, 1);
@@ -209,7 +209,7 @@ export const tournamentCreation = createComponent({
             li.appendChild(badge);
       
             const cancelButton = document.createElement("button");
-            cancelButton.className = "btn btn-danger btn-sm ms-2";
+            cancelButton.className = "btn btn-pong-danger btn-sm ms-2";
             cancelButton.textContent = "Cancel";
             cancelButton.addEventListener("click", () => {
               onlinePlayers.splice(index, 1);
@@ -219,7 +219,7 @@ export const tournamentCreation = createComponent({
           } else {
             // Joueur confirmé : ajoute un bouton "Kick"
             const kickButton = document.createElement("button");
-            kickButton.className = "btn btn-danger btn-sm ms-2";
+            kickButton.className = "btn btn-pong-danger btn-sm ms-2";
             kickButton.textContent = "Kick";
             kickButton.addEventListener("click", () => {
               onlinePlayers.splice(index, 1);

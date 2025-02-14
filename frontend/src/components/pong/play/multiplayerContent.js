@@ -21,7 +21,7 @@ export const multiplayerContent = createComponent({
           Gather your pals for a head-to-head battle where defeat is guaranteed.
         </p>
         <label for="localDifficulty" class="form-label">How Fast Will You Crash?</label>
-        <button class="btn btn-warning mx-3" id="launchLocal">
+        <button class="btn btn-pong mx-3" id="launchLocal">
           Challenge Your Friends to a Losing Streak
         </button>
       </div>
@@ -35,10 +35,10 @@ export const multiplayerContent = createComponent({
           Step into the arena and get queued up for instant regret.
         </p>
         <label for="matchmakingDifficulty" class="form-label">Select Your Level of Despair</label>
-        <button class="btn btn-danger mx-3" id="launchMatch">
+        <button class="btn btn-pong mx-3" id="launchMatch">
           Join the Queue for Instant Humiliation
         </button>
-        <button class="btn btn-secondary d-none" id="leaveMatch">
+        <button class="btn btn-pong d-none" id="leaveMatch">
           Cancel the Queue
         </button>
       </div>
@@ -54,7 +54,7 @@ export const multiplayerContent = createComponent({
         <label for="privateRoomCode" class="form-label">Room Code</label>
         <div class="input-group mt-2">
           <input type="text" class="form-control" id="privateRoomCode" placeholder="Enter player username" aria-label="Room Code">
-          <button class="btn btn-primary mx-3" id="createPrivate" type="button">Invite Player</button>
+          <button class="btn btn-pong-blue mx-3" id="createPrivate" type="button">Invite Player</button>
         </div>
       </div>
     </section>

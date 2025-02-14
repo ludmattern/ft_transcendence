@@ -114,7 +114,6 @@ def update_info(request):
             new_email = body.get('newEmail')
             confirm_email = body.get('confirmEmail')
 
-            # Validate user by current password
             user = ManualUser.objects.get(username=username)
 
             if old_password == '':
@@ -126,13 +125,11 @@ def update_info(request):
             if new_username == '' and new_email == '' and new_password == '':
                 return JsonResponse({'success': False, 'message': 'No changes to update'}, status=400)
 
-            # Validate and update username
             if new_username and ManualUser.objects.filter(username=new_username).exists():
                 return JsonResponse({'success': False, 'message': 'Username already taken'}, status=409)
             if new_username:
                 user.username = new_username
 
-            # Validate and update email
             if new_email:
                 if new_email != confirm_email:
                     return JsonResponse({'success': False, 'message': 'Emails do not match'}, status=400)
@@ -145,14 +142,12 @@ def update_info(request):
                 encrypted_email = encrypt_thing(new_email)
                 user.email = encrypted_email
 
-            # Validate and update password
             if new_password:
                 if new_password != confirm_password:
                     return JsonResponse({'success': False, 'message': 'Passwords do not match'}, status=400)
                 hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
                 user.password = hashed_password
 
-            # Save changes
             user.save()
 
             return JsonResponse({'success': True, 'message': 'Information updated successfully'})

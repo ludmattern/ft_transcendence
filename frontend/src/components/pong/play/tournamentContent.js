@@ -32,7 +32,7 @@ export const tournamentContent = createComponent({
                 ${generateTournamentSizeSelector()}
 
                 <div class="text-center">
-                    <button class="btn btn-danger mt-3" id="createbutton">Create This Mess</button>
+                    <button class="btn btn-pong mt-3" id="createbutton">Create This Mess</button>
                 </div>
             </div>
 
@@ -44,7 +44,7 @@ export const tournamentContent = createComponent({
                     <input type="text" class="form-control" id="tournamentRoomCode" placeholder="Enter Room Code">
                 </div>
                 <div class="text-center">
-                    <button class="btn btn-primary mt-3" id="joinWithCode">Join via Room Code</button>
+                    <button class="btn btn-pong mt-3" id="joinWithCode">Join via Room Code</button>
                 </div>
                 
                 <hr class="text-secondary my-4">
@@ -52,7 +52,7 @@ export const tournamentContent = createComponent({
                 <h4 class="text-white text-center">Or Join a Random Tournament</h4>
                 ${generateTournamentSizeSelector("random")}
                 <div class="text-center">
-                    <button class="btn btn-warning" id="joinRandom">Find a Random Tournament</button>
+                    <button class="btn btn-pong" id="joinRandom">Find a Random Tournament</button>
                 </div>
             </div>
         </div>

@@ -33,7 +33,6 @@ import {
   tournamentContent,
   currentTournament,
   lost,
-  gotolocal,
   leaderboard,
 } from "/src/components/pong/index.js";
 
@@ -258,13 +257,6 @@ export const pongPages = {
       { selector: "#pong-skeleton-container", component: pongPageSkeleton },
       { selector: "#pong-header-container", component: pongHeader },
       { selector: "#content-window-container", component: lost },
-    ],
-  },
-  "play/multiplayer/local": {
-    components: [
-      { selector: "#pong-skeleton-container", component: pongPageSkeleton },
-      { selector: "#pong-header-container", component: pongHeader },
-      { selector: "#content-window-container", component: gotolocal },
     ],
   },
 };
