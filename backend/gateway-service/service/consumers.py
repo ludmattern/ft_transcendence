@@ -71,8 +71,8 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 	
 			elif data.get("type") == "game_event":
 				game_id = data.get("game_id", "unknown_game") 
-				player1_id = data.get("player1", "unknown1")
-				player2_id = data.get("player2", "unknown2")
+				player1_id = data.get("player1", "Player 1")
+				player2_id = data.get("player2", "Player 2")
 
 				if data.get("action") == "start_game":
 					
