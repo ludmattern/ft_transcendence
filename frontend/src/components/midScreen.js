@@ -3,21 +3,26 @@ import { CSS3DObject } from "https://esm.sh/three/examples/jsm/renderers/CSS3DRe
 import Store  from "/src/3d/store.js";
 
 export const midScreen = createComponent({
-tag: "midScreen",
-
-render: () => `
-	<div class="menu2" id="gameScreen">
-	<div class="row mt-3"></div>
-	<div class="wait2">
-		<img class="mid-screensaver" src="/src/assets/img/42.png" />
-	</div>
-	</div>
-`,
-
-attachEvents: (el) => {
-		initM2();
+	tag: "midScreen",
+  
+	render: () => `
+	  <div class="menu2" id="gameScreen">
+		<div class="row mt-3"></div>
+		<div class="wait2">
+		  <img class="mid-screensaver" src="/src/assets/img/42.png" />
+		  <h1 id="myCountdown" class="countdown-text"></h1>
+		  <div id="scoreContainer" style="display: none;">
+			<h2 classe="scoring" id="scoreText">0 - 0</h2>
+		  </div>
+		</div>
+	  </div>
+	`,
+  
+	attachEvents: (el) => {
+	  initM2();
 	},
-});
+  });
+  
 
 function initM2() {
 	Store.menuElement = document.getElementById("gameScreen");
@@ -34,7 +39,6 @@ function initM2() {
 	Store.menuElement.classList.add("active");
 	if (Store.menuObject) Store.scene.add(Store.menuObject);
 }
-
 export function showCountdown() {
 	if (!Store.menuElement) {
 		console.error("Store.menuElement is not defined.");
@@ -45,9 +49,14 @@ export function showCountdown() {
 	Store.menuElement.classList.add("active");
 
 	const screensaverImg = Store.menuElement.querySelector(".mid-screensaver");
-	if (screensaverImg) 
-	{
+	const scoreContainer = Store.menuElement.querySelector("#scoreContainer");
+
+	if (screensaverImg) {
 		screensaverImg.style.display = "none";
+	}
+/*  */
+	if (scoreContainer) {
+		scoreContainer.style.display = "block";
 	}
 
 	let countdownEl = Store.menuElement.querySelector("#myCountdown");
@@ -61,26 +70,40 @@ export function showCountdown() {
 		}
 	}
 
-	let count = 5;
+	let count = 3;
 	countdownEl.textContent = count;
 
 	const intervalId = setInterval(() => {
-	count--;
-	if (count > 0) {
-		countdownEl.textContent = count;
-	} else {
-		countdownEl.textContent = "GO!";
-		clearInterval(intervalId);
-		setTimeout(() => {
-		countdownEl.style.display = "none";
-		Store.menuElement.classList.remove("active");
-		setTimeout(() => {
-			countdownEl.remove();
-			if (screensaverImg) 
-				screensaverImg.style.display = "block";
-		}, 1000); 
-		}, 800);
-	}
-	}, 1000);
+		count--;
+		if (count > 0) {
+			countdownEl.textContent = count;
+		} else {
+			countdownEl.textContent = "GO!";
+			clearInterval(intervalId);
 
+			setTimeout(() => {
+				countdownEl.style.display = "none";
+				//Store.menuElement.classList.remove("active");
+
+				if (scoreContainer) {
+					scoreContainer.style.display = "block";
+				}
+
+			}, 800);
+		}
+	}, 1000);
+}
+
+export function endGameScreen() {
+	if (!Store.menuElement) return;
+
+	const screensaverImg = Store.menuElement.querySelector(".mid-screensaver");
+	const scoreContainer = Store.menuElement.querySelector("#scoreContainer");
+
+	if (scoreContainer) {
+		scoreContainer.style.display = "none";
+	}
+	if (screensaverImg) {
+		screensaverImg.style.display = "block";
+	}
 }

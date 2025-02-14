@@ -136,28 +136,49 @@ export function buildGameScene(gameConfig) {
   cameraCube = new THREE.PerspectiveCamera(25, aspectRatio, 0.01, 1000); 
   cameraCube.position.z = 7;
 
+  const vertexShader = `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const fragmentShader = `
+  varying vec2 vUv;
+  
+  void main() {
+    float gridSize = 12.0;  // Taille de la grille
+    float thickness = 0.03; // Épaisseur des lignes
+
+    float gridX = mod(vUv.x * gridSize + 0.5, 1.0);
+    float gridY = mod(vUv.y * gridSize + 0.5, 1.0);
+
+    float lineX = smoothstep(thickness, thickness * 2.0, abs(gridX - 0.5));
+    float lineY = smoothstep(thickness, thickness * 2.0, abs(gridY - 0.5));
+
+    float gridLines = 1.0 - min(lineX, lineY);
+
+    vec3 background = vec3(0.0); 
+    vec3 neonColor = vec3(0.0, 0.4, 0.6);  
+
+    vec3 color = mix(background, neonColor, gridLines);
+
+    gl_FragColor = vec4(color, 1.0);
+  }
+`;
 
 
-const sideWallMaterial = new THREE.MeshStandardMaterial({
-  color: 0x444444,
-  side: THREE.DoubleSide,
-  transparent: true, 
-  opacity: 0.5, 
+
+const neonMaterial = new THREE.ShaderMaterial({
+  vertexShader: vertexShader,
+  fragmentShader: fragmentShader,
+  transparent: true
 });
 
-const floorCeilingMaterial = new THREE.MeshStandardMaterial({
-  color: 0xC9C9FF,
-  side: THREE.DoubleSide,
-  transparent: true, 
-  opacity: 0.1,
-});
-
-const endWallMaterial = new THREE.MeshStandardMaterial({
-  color: 0x9FC5E8,
-  side: THREE.DoubleSide,
-  transparent: true,
-  opacity: 0.1,
-});
+const floorCeilingMaterial = neonMaterial;
+const sideWallMaterial = neonMaterial;
+const endWallMaterial = neonMaterial;
 
   const tunnelWidth = 10;  
   const tunnelHeight = 6;  
@@ -216,10 +237,12 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
 
   const paddleGeometry = new THREE.BoxGeometry(0.2, 1, 1);
   const paddleMaterial = new THREE.MeshStandardMaterial({
-    color: 0x00ff00,
-    opacity: 0.2,
+    color: 0x7F00FF, // Vert néon
     transparent: true,
+    opacity: 0.3, 
+
   });
+  
   const edgesGeometry = new EdgesGeometry(paddleGeometry); 
   const edgesMaterial = new LineBasicMaterial({ color: 0xffffff, linewidth: 10 });
 
@@ -244,8 +267,15 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
   Store.pongScene.add(Store.player2Paddle);
 
   const meshBallGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
-  const meshBallMaterial = new THREE.MeshStandardMaterial({ color: 0xffcc00 });
-  Store.meshBall = new THREE.Mesh(meshBallGeometry, meshBallMaterial);
+  const meshBallMaterial = new THREE.MeshStandardMaterial({
+    color: 0x5588ff, 
+    emissive: 0x5588ff, 
+    emissiveIntensity: 3, 
+    roughness: 0.2, 
+    metalness: 0.8
+  });
+  
+    Store.meshBall = new THREE.Mesh(meshBallGeometry, meshBallMaterial);
   Store.meshBall.position.set(0, 0, 0);
   Store.pongScene.add(Store.meshBall);
 
@@ -259,7 +289,7 @@ const endWallMaterial = new THREE.MeshStandardMaterial({
   Store.pongScene.add(ambientLight);
 
 }
-const lerpFactor = 0.1;
+const lerpFactor = 0.2;
 
 export function animatePong(renderer) {
   if (!Store.pongScene || !Store.gameConfig) return;
@@ -269,7 +299,6 @@ export function animatePong(renderer) {
 
     if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
     if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
-
 
     Store.p1Focus.lerp(Store.player1Paddle.position, lerpFactor);
     Store.p2Focus.lerp(Store.player2Paddle.position, lerpFactor);
@@ -353,8 +382,6 @@ export function animatePong(renderer) {
     screenMesh.visible = true;
     screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
 
-
-    
     renderer.setRenderTarget(null);
     renderer.render(Store.pongScene, cameraCube);
   }

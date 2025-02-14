@@ -2,9 +2,10 @@ import { switchwindow } from "/src/3d/animation.js";
 import { buildGameScene } from "/src/3d/pongScene.js";
 import Store from "/src/3d/store.js";
 import { ws } from "/src/services/socketManager.js";
-import { showCountdown } from "/src/components/midScreen.js";
+import {endGameScreen, showCountdown } from "/src/components/midScreen.js";
 import * as THREE from "https://esm.sh/three";
 import componentManagers from "/src/index.js";
+import { handleRoute } from "/src/services/router.js";
 
 class GameManager {
   constructor() {
@@ -118,9 +119,7 @@ class GameManager {
     this.gameId = this.generateGameId(gameConfig);
 
     buildGameScene(gameConfig);
-    setTimeout(() => {
-      showCountdown();
-    }, 2200);
+    showCountdown();
 
     if (gameConfig.mode === "local") {
       document.addEventListener("keydown", this.localKeydownHandler);
@@ -144,7 +143,7 @@ class GameManager {
 
   endGame() {
     console.log("Ending current game...");
-
+    endGameScreen();
     if (!this.activeGame) {
       return;
     }
@@ -194,6 +193,23 @@ class GameManager {
 
       }
     }
+    if (!gameState || !gameState.user_scores) return;
+
+    const players = Object.keys(gameState.user_scores);
+    const scores = Object.values(gameState.user_scores);
+
+    if (players.length >= 2) {
+        const player1 = players[0]; 
+        const player2 = players[1]; 
+
+        const score1 = scores[0]; 
+        const score2 = scores[1]; 
+
+        const scoreTextEl = document.getElementById("scoreText");
+        if (scoreTextEl) {
+            scoreTextEl.textContent = `${player1} ${score1}  -  ${score2} ${player2}`;
+        }
+    }
   }
   
 
@@ -204,7 +220,9 @@ class GameManager {
       console.log("Game over! Winner is player:", data.winner);
       console.log("Final scores:", data.final_scores);
       this.endGame();
-      switchwindow("home");
+      if (Store.pongScene)
+        Store.pongScene.clear();
+      handleRoute("/pong/play")
     }
   }
 
