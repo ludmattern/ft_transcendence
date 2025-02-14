@@ -29,7 +29,7 @@ export const tournamentJoin = createComponent({
         </div>
         
         <!-- Bouton pour quitter le tournoi -->
-        <button id="leave-tournament" class="btn btn-pong">Leave Tournament</button>
+        <button id="leave-tournament" class="btn btn-pong-danger">Leave Tournament</button>
       </section>
     `;
   },
