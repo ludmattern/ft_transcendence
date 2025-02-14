@@ -170,3 +170,12 @@ export function getPreviousPongPlaySubRoute() {
 window.addEventListener("popstate", () => {
   handleRoute(window.location.pathname, false);
 });
+
+export function notAuthenticatedThenRedirect()
+{
+  if (!isClientAuthenticated()) {
+	processRoute("/login", shouldPushState);
+	return true;
+  }
+  return false;
+}

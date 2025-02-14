@@ -45,7 +45,7 @@ export function initializeWebSocket() {
 		}
 		else  if (data.type === "private_match_found") {
 			console.log(" Private match found:", data);
-			startPrivateGame(data.game_id, data.side, data.user_id, data.roomCode);
+			startPrivateGame(data.game_id, data.side, data, data.roomCode);
 		}
 		else if (data.type === "match_found")
 		{

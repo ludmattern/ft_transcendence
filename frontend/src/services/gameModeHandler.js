@@ -23,21 +23,33 @@ export function gameModeSelector(config)
     }
     else if(config.gameMode === "private")
     {
-        const userId = sessionStorage.getItem("userId");
-        ws.send(JSON.stringify({
-          type: "private_event",
-          action: "join",
-          room_code: config.roomCode,
-          user_id: userId
-        }));
+		const userId = sessionStorage.getItem("userId");
+		console.log("private game")
+		if (config.action === "create") {
+			ws.send(JSON.stringify({
+			type: "private_event",
+			action: "join",
+			room_code: config.matchkey,
+			user_id: userId
+			}));
+			console.log("Sent join room create event for room:", config.matchkey);
+		} else if (config.action === "join") {
+			ws.send(JSON.stringify({
+				type: "private_event",
+				action: "join",
+				subaction: "accept",
+				room_code: config.matchkey,
+				user_id: userId
+				}));
+			console.log("Sent join room accept event for room:", config.matchkey);
+		}
+
     }
 }
 
-
-
 export function cancelMode(config)
 {
-    if ( config.gameMode === "matchmaking")
+    if (config.gameMode === "matchmaking")
     {
         const userId = sessionStorage.getItem("userId");
         ws.send(JSON.stringify({
@@ -47,16 +59,15 @@ export function cancelMode(config)
         }));
         console.log("Sent 'leave matchmaking' via WebSocket");
     }
-    else if ( config.gameMode === "private")
- 
+    else if (config.gameMode === "private")
     {
         const userId = sessionStorage.getItem("userId");
         ws.send(JSON.stringify({
           type: "private_event",
           action: "leave",
-          room_code: config.roomCode,
+          room_code: config.matchkey,
           user_id: userId
         }));
-        console.log("Sent leave room event for room:", config.roomCode);
+        console.log("Sent leave room event for room:", config.matchkey);
     }
 }
