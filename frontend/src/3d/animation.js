@@ -19,6 +19,8 @@ export function switchwindow(screen) {
         { x: Math.PI / 3.2, y: Math.PI / 5.5, z: -Math.PI / -12 },
         2
       );
+      Store.camera.updateMatrixWorld(true);
+
     } else if (screen === "race") {
       animateCameraToTarget(
         new THREE.Vector3(1.9765430745879866, 3.434172967891374, -0.9419868064632663),
@@ -107,6 +109,7 @@ export function switchwindow(screen) {
         Store.onScreen = true;
         document.addEventListener("mousemove", onBaseMouseMove, false);
         Store.isCameraMoving = false;
+        Store.camera.updateMatrixWorld(true);
       },
     });
   }
