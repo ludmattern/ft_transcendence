@@ -17,7 +17,7 @@ export const tournamentJoin = createComponent({
         <div class="mb-4">
           <h3 class="text-white">Room Code:</h3>
           <h2 id="room-code" class="text-warning">${roomCode}</h2>
-          <button id="copy-room-code" class="btn btn-secondary btn-sm">Copy Room Code</button>
+          <button id="copy-room-code" class="btn btn-pong btn-sm">Copy Room Code</button>
         </div>
         
         <!-- Liste des joueurs en ligne -->
@@ -29,7 +29,7 @@ export const tournamentJoin = createComponent({
         </div>
         
         <!-- Bouton pour quitter le tournoi -->
-        <button id="leave-tournament" class="btn btn-danger">Leave Tournament</button>
+        <button id="leave-tournament" class="btn btn-pong">Leave Tournament</button>
       </section>
     `;
   },

@@ -85,9 +85,9 @@ export const currentTournament = createComponent({
         
         <!-- Boutons de sélection du nombre de joueurs -->
         <div id="tournament-controls" class="mb-4">
-          <button class="btn btn-outline-light sample-size-btn" data-size="4">4 Players</button>
-          <button class="btn btn-outline-light sample-size-btn" data-size="8">8 Players</button>
-          <button class="btn btn-outline-light sample-size-btn" data-size="16">16 Players</button>
+          <button class="btn btn-pong sample-size-btn" data-size="4">4 Players</button>
+          <button class="btn btn-pong sample-size-btn" data-size="8">8 Players</button>
+          <button class="btn btn-pong sample-size-btn" data-size="16">16 Players</button>
         </div>
         
         <div id="tournament-state" class="mb-4">
@@ -99,7 +99,7 @@ export const currentTournament = createComponent({
           <!-- Les titres et les colonnes seront insérés dynamiquement -->
         </div>
 
-        <button id="abandon-tournament" class="btn btn-danger mt-5">Abandon Tournament</button>
+        <button id="abandon-tournament" class="btn btn-pong-danger mt-5">Abandon Tournament</button>
       </section>
     `;
   },
@@ -224,14 +224,14 @@ export const currentTournament = createComponent({
                     <span class="fw-bold">${winner}</span> vs 
                     <span>${loser}</span>
                   </span>
-                  <span class="badge bg-info ms-2">${match.score}</span>
+                  <span class="badge ms-2">${match.score}</span>
                 </div>
               `;
             } else {
               let joinButton = "";
               if (match.status === "pending" && (match.player1 === username || match.player2 === username)) {
                 if (hasUserCompletedInPreviousRound(bracketData, roundIndex)) {
-                  joinButton = `<button class="btn btn-success btn-sm join-match ms-2">Join Game</button>`;
+                  joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
                 }
               }
               return `
