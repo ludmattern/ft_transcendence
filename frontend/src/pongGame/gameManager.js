@@ -220,7 +220,8 @@ class GameManager {
       console.log("Game over! Winner is player:", data.winner);
       console.log("Final scores:", data.final_scores);
       this.endGame();
-      handleRoute("/pong/play")
+      if (Store.pongScene)
+        Store.pongScene.clear();
       handleRoute("/pong/play")
     }
   }

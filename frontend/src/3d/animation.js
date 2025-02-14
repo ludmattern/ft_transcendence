@@ -89,7 +89,8 @@ export function switchwindow(screen) {
           Store.screenObject1.material = screenMaterial;
           Store.menuElement.classList.remove("active");
         }
-        if (nb == 0) {
+        if (nb == 0) 
+        {
           Store.menuElement.querySelector(".mid-screensaver").display = "block";
           Store.menuElement.classList.add("active");
         }
@@ -111,6 +112,8 @@ export function switchwindow(screen) {
   }
   
   export function animateCameraBackToInitialPosition() {
+    if (Store.pongScene)
+      Store.pongScene.clear();
     animateCameraToTarget(
       new THREE.Vector3(0, 0, 1.4),
       { x: 1.3, y: -0, z: -0 },
