@@ -29,7 +29,7 @@ class BasePongGame:
         self.paddle_width = 0.2
         self.paddle_height = 1
         self.paddle_depth = 1
-
+        self.ball_reset_time =1
         self.state = {
             "ball": {
                 "x": 0, "y": 0, "z": 0,
@@ -81,6 +81,25 @@ class BasePongGame:
         else:
             self.state["waitingForStart"] = False
 
+        if self.state.get("ball_waiting", False):
+            if now - self.ball_reset_time < 1:
+                if self.state.get("ball_following_paddle", False):
+                    paddle = self.state["players"][self.scoring_player]
+                    lerp_factor = 0.1 
+
+                    self.state["ball"]["x"] += (paddle["x"] - self.state["ball"]["x"]) * lerp_factor
+                    self.state["ball"]["y"] += (paddle["y"] - self.state["ball"]["y"]) * lerp_factor
+                    self.state["ball"]["z"] += (paddle["z"] - self.state["ball"]["z"]) * lerp_factor
+                return  
+            else:
+                self.state["ball_waiting"] = False
+                self.state["ball_following_paddle"] = False 
+
+                speed_factor = 1.3
+                self.state["ball"]["vx"] = 2 * speed_factor if self.scoring_player == 2 else -2 * speed_factor
+                self.state["ball"]["vy"] = random.choice([-0.5, 0.5]) * speed_factor
+                self.state["ball"]["vz"] = random.choice([-0.5, 0.5]) * speed_factor
+        
         players = self.state["players"]
         p1, p2 = players[1], players[2]
         ball = self.state["ball"]
@@ -147,21 +166,34 @@ class BasePongGame:
             self.game_over = True
 
 
-    def reset_ball(self, direction="right"):
-        """Réinitialise la balle après un point marqué."""
-        self.state["ball"]["x"] = 0
-        self.state["ball"]["y"] = random.uniform(-self.tunnel_height / 3, self.tunnel_height / 3)
-        self.state["ball"]["z"] = random.uniform(-self.tunnel_depth / 3, self.tunnel_depth / 3)
 
-        speed_factor = 1.3
+
+
+    def reset_ball(self, direction="right"):
+        """Réinitialise la balle après un point marqué, en la plaçant devant le paddle du joueur qui a marqué.
+        Elle suit le paddle pendant 1 seconde avant de repartir.
+        """
 
         if direction == "right":
-            self.state["ball"]["vx"] = 2 * speed_factor
+            self.scoring_player = 1
+            launch_x_offset = -self.paddle_width 
         else:
-            self.state["ball"]["vx"] = -2 * speed_factor
+            self.scoring_player = 2  
+            launch_x_offset = self.paddle_width  
 
-        self.state["ball"]["vy"] = random.choice([-2,2]) * speed_factor
-        self.state["ball"]["vz"] = random.choice([-2, 2]) * speed_factor
+        paddle = self.state["players"][self.scoring_player]
+        self.state["ball"]["x"] = paddle["x"] + launch_x_offset
+        self.state["ball"]["y"] = paddle["y"]
+        self.state["ball"]["z"] = paddle["z"]
+
+        self.state["ball_waiting"] = True
+        self.state["ball_following_paddle"] = True  
+        self.ball_reset_time = time.time() 
+
+        self.state["ball"]["vx"] = 0
+        self.state["ball"]["vy"] = 0
+        self.state["ball"]["vz"] = 0
+
 
 
     def to_dict(self):
