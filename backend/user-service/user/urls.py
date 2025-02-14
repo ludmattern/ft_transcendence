@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from service.views import register_user, generate_qr_code, update_info, delete_account
+from service.profile import profile_info
 
 
 urlpatterns = [
@@ -8,4 +9,5 @@ urlpatterns = [
     path('generate-qr/<str:username>/', generate_qr_code, name='generate_qr'),
     path('update/', update_info, name='update_info'),
     path('delete/', delete_account, name='delete_account'),
+    path('profile/', profile_info, name='profile_info'),
 ]
