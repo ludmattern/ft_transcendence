@@ -11,7 +11,7 @@ export async function isClientAuthenticated() {
 
 		if (response.status === 401) 
 		{
-		return false;
+			return false;
 		}
 
 		const data = await response.json();

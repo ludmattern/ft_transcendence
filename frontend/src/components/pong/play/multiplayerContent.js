@@ -1,4 +1,5 @@
 import { createComponent } from "/src/utils/component.js";
+import { notAuthenticatedThenRedirect } from "/src/services/router.js";
 import { ws } from "/src/services/socketManager.js";
 import { playGame } from "/src/components/pong/play/utils.js";
 import componentManagers from "/src/index.js";
@@ -51,9 +52,9 @@ export const multiplayerContent = createComponent({
         <p class="text-secondary">
           Enter a room with a chosen foe or ally and share the misery.
         </p>
-        <label for="privateRoomCode" class="form-label">Room Code</label>
+        <label for="privateGameInput" class="form-label">Opponent username</label>
         <div class="input-group mt-2">
-          <input type="text" class="form-control" id="privateRoomCode" placeholder="Enter player username" aria-label="Room Code">
+          <input type="text" class="form-control" id="privateGameInput" placeholder="Enter player username" aria-label="Room Code">
           <button class="btn btn-pong-blue mx-3" id="createPrivate" type="button">Invite Player</button>
         </div>
       </div>
@@ -88,21 +89,31 @@ export const multiplayerContent = createComponent({
 
     // Private Match
     const createPrivateButton = el.querySelector("#createPrivate");
-    const privateRoomCodeInput = el.querySelector("#privateRoomCode");
+    const privateGameInput = el.querySelector("#privateGameInput");
 
-    createPrivateButton.addEventListener("click", () => {
-      const roomCode = privateRoomCodeInput.value.trim();
-      if (!roomCode) {
-        console.log("Please enter a room code.");
-        return;
-      }
-      privateRoomCodeInput.disabled = true;
+	createPrivateButton.addEventListener("click", () => {
+	  const opponentUsername = privateGameInput.value.trim();
+	  if (!opponentUsername) {
+		console.log("Please enter a username code.");
+		return;
+	  }
+	  if (notAuthenticatedThenRedirect()) return;
+	  const userId = sessionStorage.getItem("userId");
 	  const config = {
-		gameMode : "private",
+		gameMode: "private",
+		action: "create",
+		matchkey: userId,
 		type: "fullScreen",
 	  };
-      playGame(config);
-    });
+	  console.log(config);
+	  playGame(config);
+	});
+
+	privateGameInput.addEventListener("keypress", (e) => {
+	  if (e.key === "Enter") {
+		createPrivateButton.click();
+	  }
+	});
 
   },
 });
@@ -119,15 +130,3 @@ export function leaveMatchmaking() {
   console.log("Sent 'leave matchmaking' via WebSocket");
 }
 
-
-
-export function leaveRoom(roomCode) {
-  const userId = sessionStorage.getItem("userId");
-  ws.send(JSON.stringify({
-    type: "private_event",
-    action: "leave",
-    roomCode: roomCode,
-    user_id: userId
-  }));
-  console.log("Sent leave room event for room:", roomCode);
-}
