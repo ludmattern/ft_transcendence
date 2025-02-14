@@ -20,11 +20,13 @@ class PrivateManager:
             match_info_p1 = {
                 "game_id": game_id,
                 "players": [p1, p2],
+                "opponent_id": p2,
                 "side": "left"
             }
             match_info_p2 = {
                 "game_id": game_id,
                 "players": [p1, p2],
+                "opponent_id": p1,
                 "side": "right"
             }
             self.match_found[p1] = match_info_p1

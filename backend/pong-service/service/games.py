@@ -85,7 +85,7 @@ class BasePongGame:
             if now - self.ball_reset_time < 1:
                 if self.state.get("ball_following_paddle", False):
                     paddle = self.state["players"][self.scoring_player]
-                    lerp_factor = 0.1 
+                    lerp_factor = 0.1
 
                     self.state["ball"]["x"] += (paddle["x"] - self.state["ball"]["x"]) * lerp_factor
                     self.state["ball"]["y"] += (paddle["y"] - self.state["ball"]["y"]) * lerp_factor
@@ -140,7 +140,7 @@ class BasePongGame:
                 ball["vx"] = abs(ball["vx"]) * 1.1
                 ball["vy"] += impact_y * 3
                 ball["vz"] += impact_z * 3
-            elif ball["x"] <= p1["x"] - margin_before_scoring:
+            elif ball["x"] <= p1["x"] - margin_before_scoring:  
                 scoring_player_id = self.player2_id 
                 self.user_scores[scoring_player_id] += 1
                 self.state["scores"][self.player_mapping[scoring_player_id]] += 1

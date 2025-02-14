@@ -39,7 +39,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                         "game_id": match_info_p1["game_id"],
                         "side": match_info_p1["side"],
                         "roomCode": room_code,
-                        "user_id": p1
+                        "user_id": p1,
+                        "opponent_id": match_info_p1["opponent_id"]
                     })
                     logger.info(f"📡 Private match (room={room_code}) ! Notif envoyée à user_{p1}")
 
@@ -48,7 +49,8 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                         "game_id": match_info_p2["game_id"],
                         "side": match_info_p2["side"],
                         "roomCode": room_code,
-                        "user_id": p2
+                        "user_id": p2,
+                        "opponent_id": match_info_p2["opponent_id"]
                     })
 
                     logger.info(f"📡 Private match (room={room_code}) ! Notif envoyée à user_{p2}")
