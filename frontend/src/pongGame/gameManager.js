@@ -118,9 +118,7 @@ class GameManager {
     this.gameId = this.generateGameId(gameConfig);
 
     buildGameScene(gameConfig);
-    setTimeout(() => {
-      showCountdown();
-    }, 2200);
+    showCountdown();
 
     if (gameConfig.mode === "local") {
       document.addEventListener("keydown", this.localKeydownHandler);

@@ -61,7 +61,7 @@ export function showCountdown() {
 		}
 	}
 
-	let count = 5;
+	let count = 3;
 	countdownEl.textContent = count;
 
 	const intervalId = setInterval(() => {
