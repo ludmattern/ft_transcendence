@@ -6,7 +6,7 @@ class BasePongGame:
         self.game_id = game_id
         self.start_delay = 3.0
         self.start_time = time.time()
-        self.max_score = 3
+        self.max_score = 10
         self.game_over = False
 
         self.player1_id = player1_id if player1_id else "unknown1"
@@ -42,7 +42,7 @@ class BasePongGame:
             "scores": {1: 0, 2: 0}
         }
 
-        self.vmax = 3.5
+        self.vmax = 9
         self.last_update = time.time()
 
 
@@ -97,8 +97,8 @@ class BasePongGame:
 
                 speed_factor = 1.3
                 self.state["ball"]["vx"] = 2 * speed_factor if self.scoring_player == 2 else -2 * speed_factor
-                self.state["ball"]["vy"] = random.choice([-0.5, 0.5]) * speed_factor
-                self.state["ball"]["vz"] = random.choice([-0.5, 0.5]) * speed_factor
+                self.state["ball"]["vy"] = 0 * speed_factor
+                self.state["ball"]["vz"] = 0 * speed_factor
         
         players = self.state["players"]
         p1, p2 = players[1], players[2]
@@ -107,12 +107,12 @@ class BasePongGame:
         ball["x"] += ball["vx"] * dt
         ball["y"] += ball["vy"] * dt
         ball["z"] += ball["vz"] * dt  
-        #speed = (ball["vx"] ** 2 + ball["vy"] ** 2 + ball["vz"] ** 2) ** 0.5  
-       # if speed > self.vmax:
-       #     factor = self.vmax / speed
-        #    ball["vx"] *= factor
-        #    ball["vy"] *= factor
-        #    ball["vz"] *= factor
+        speed = (ball["vx"] ** 2 + ball["vy"] ** 2 + ball["vz"] ** 2) ** 0.5  
+        if speed > self.vmax:
+            factor = self.vmax / speed
+            ball["vx"] *= factor
+            ball["vy"] *= factor
+            ball["vz"] *= factor
         
         if ball["y"] >= self.tunnel_height / 2 - self.paddle_height / 2:
             ball["y"] = self.tunnel_height / 2 - self.paddle_height / 2
@@ -137,10 +137,10 @@ class BasePongGame:
                 impact_y = (ball["y"] - p1["y"]) / (self.paddle_height / 2)
                 impact_z = (ball["z"] - p1["z"]) / (self.paddle_depth / 2)
 
-                ball["vx"] = abs(ball["vx"]) * 1.05 
-                ball["vy"] += impact_y * 0.2
-                ball["vz"] += impact_z * 0.2
-            elif ball["x"] <= p1["x"] - margin_before_scoring:  
+                ball["vx"] = abs(ball["vx"]) * 1.1
+                ball["vy"] += impact_y * 3
+                ball["vz"] += impact_z * 3
+            elif ball["x"] <= p1["x"] - margin_before_scoring:
                 scoring_player_id = self.player2_id 
                 self.user_scores[scoring_player_id] += 1
                 self.state["scores"][self.player_mapping[scoring_player_id]] += 1
@@ -153,9 +153,9 @@ class BasePongGame:
                 impact_y = (ball["y"] - p2["y"]) / (self.paddle_height / 2)
                 impact_z = (ball["z"] - p2["z"]) / (self.paddle_depth / 2)
 
-                ball["vx"] = -abs(ball["vx"]) * 1.05  
-                ball["vy"] += impact_y * 0.2  
-                ball["vz"] += impact_z * 0.2  
+                ball["vx"] = -abs(ball["vx"]) * 1.1
+                ball["vy"] += impact_y * 3  
+                ball["vz"] += impact_z * 3
             elif ball["x"] >= p2["x"] + margin_before_scoring: 
                 scoring_player_id = self.player1_id
                 self.user_scores[scoring_player_id] += 1
