@@ -54,7 +54,7 @@ export function showCountdown() {
 	if (screensaverImg) {
 		screensaverImg.style.display = "none";
 	}
-
+/*  */
 	if (scoreContainer) {
 		scoreContainer.style.display = "block";
 	}

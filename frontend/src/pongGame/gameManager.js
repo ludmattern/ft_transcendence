@@ -5,6 +5,7 @@ import { ws } from "/src/services/socketManager.js";
 import {endGameScreen, showCountdown } from "/src/components/midScreen.js";
 import * as THREE from "https://esm.sh/three";
 import componentManagers from "/src/index.js";
+import { handleRoute } from "/src/services/router.js";
 
 class GameManager {
   constructor() {
@@ -219,7 +220,8 @@ class GameManager {
       console.log("Game over! Winner is player:", data.winner);
       console.log("Final scores:", data.final_scores);
       this.endGame();
-      switchwindow("home");
+      handleRoute("/pong/play")
+      handleRoute("/pong/play")
     }
   }
 
