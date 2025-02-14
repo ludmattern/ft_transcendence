@@ -36,7 +36,7 @@ export const infoPanelItem = createComponent({
 		const config = {
 			gameMode: "private",
 			action: "join",
-			matchkey: "3",
+			matchkey: "4",
 			type: "fullScreen",
 		};
 		playGame(config)

@@ -97,13 +97,13 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 			elif data.get("type") in ["matchmaking", "private_event"]:
 				action = data.get("action")
 				user_id = data.get("user_id", self.user_id)
-				room_code = data.get("room_code")  # s'il existe
-
+				room_code = data.get("room_code") 
+    
 				await self.channel_layer.group_send("matchmaking_service", {
 					"type": "matchmaking_event",
 					"action": action,
 					"user_id": user_id,
-					"room_code": room_code  # important pour distinguer le private
+					"room_code": room_code  
 				})
 				logger.info(f"🚀 matchmaking_event/private_event => service : {action} {user_id}, room={room_code}")
 		except json.JSONDecodeError:

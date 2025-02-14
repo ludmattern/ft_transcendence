@@ -72,7 +72,7 @@ class GameManager {
           ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "right", player_id: 2, game_id: this.gameId }));
         }
 
-      } else if (mode === "matchmaking") {
+      } else{
         const playerId = (this.activeGame.side === "left") ? 1 : 2;
 
         if (this.activeKeys["w"] || this.activeKeys["ArrowUp"]) {

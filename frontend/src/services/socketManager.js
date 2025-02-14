@@ -37,7 +37,9 @@ export function initializeWebSocket() {
 		const data = JSON.parse(event.data)
 		if (data.type === "game_state" || data.type === "game_over") {
 			gameManager.handleGameUpdate(data);
-			console.log(data);
+			console.log("Ball VX:", data.payload?.ball?.vx);
+
+
 			return;
 		}
 		else if (data.type === "chat_message" || data.type === "private_message" || data.type === "error_message") {

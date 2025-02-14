@@ -115,7 +115,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                    # logger.info(f"Partie {game_id} terminée (game_over)")
                     break
 
-                await asyncio.sleep(0.005)
+                await asyncio.sleep(0.01)
 
         except asyncio.CancelledError:
             logger.info(f"game_loop annulée pour {game_id}")

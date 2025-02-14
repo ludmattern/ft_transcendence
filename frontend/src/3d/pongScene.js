@@ -114,7 +114,7 @@ export function buildGameScene(gameConfig) {
     cameraPlayer2.aspect = aspectRatio;
     cameraPlayer2.updateProjectionMatrix();
 
-  } else if (gameConfig.mode === "matchmaking") {
+  } else if (gameConfig.mode === "matchmaking" || gameConfig.mode === "private") {
     aspectRatio = 2;
 
     cameraPlayer1 = new THREE.PerspectiveCamera(25, aspectRatio, 0.01, 1000);
@@ -340,7 +340,7 @@ export function animatePong(renderer) {
     renderer.setRenderTarget(null);
     renderer.render(Store.pongScene, cameraCube);
 
-  } else if (Store.gameConfig.mode === "matchmaking") {
+  } else if  (Store.gameConfig.mode === "matchmaking" || Store.gameConfig.mode === "private") {
     if (!cameraPlayer1) return;
     let cam;
     if (Store.gameConfig.side == "left")
