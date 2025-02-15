@@ -120,6 +120,12 @@ function passwordError(data) {
   } else {
     document.getElementById("bad-current-pass").style.display = "none";
   }
+
+  if (data.message.includes("Passwords do not match")) {
+    document.getElementById("error-message-pass").style.display = "block";
+  } else {
+    document.getElementById("error-message-pass").style.display = "none";
+  }
 }
 
 function usernameError(data) {

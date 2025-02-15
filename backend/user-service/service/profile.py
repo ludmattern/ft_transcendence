@@ -19,6 +19,7 @@ def profile_info(request):
             return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
     return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)
 
+
 def winrate_update(request):
     if request.method == 'POST':
         try:

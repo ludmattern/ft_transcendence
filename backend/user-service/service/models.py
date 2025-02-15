@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 import bcrypt
 import pyotp
 
@@ -33,3 +34,31 @@ class ManualGameHistory(models.Model):
     def __str__(self):
         return self.game_id
 
+User = get_user_model()
+    
+class ManualFriendsRelations(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friends_initiated")
+    friend = models.ForeignKey(User, on_delete=models.CASCADE, related_name="friends_received")
+    status = models.CharField(max_length=20, choices=[("pending", "Pending"), ("accepted", "Accepted"), ("rejected", "Rejected")], default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "friends"
+        unique_together = ("user", "friend")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.friend.username} ({self.status})"
+
+
+    
+class ManualBlockedRelations(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blocked_users")
+    blocked_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blocked_by")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "blocks"
+        unique_together = ("user", "blocked_user")
+        
+    def __str__(self):
+        return f"{self.user.username} blocked {self.blocked_user.username}"

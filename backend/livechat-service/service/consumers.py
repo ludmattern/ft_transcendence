@@ -21,7 +21,9 @@ def get_id(user_username):
         return user.id
     return None
 
-
+@database_sync_to_async
+def get_users_id():
+    return list(ManualUser.objects.values_list('id', flat=True))
 
 class ChatConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
@@ -36,11 +38,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	async def chat_message(self, event):
 		author_id = event.get("author")
 		username = await get_username(author_id)
-
 		event["username"] = username
+		users = await get_users_id()  
 
-		await self.channel_layer.group_send("gateway", event)
-		logger.info(f"Message transmis au groupe gateway depuis chat_service (General): {event}")
+		for userid in users:
+			if userid != author_id:
+				await self.channel_layer.group_send(f"user_{userid}", event)
+		logger.info(f"Message transmis aux active users depuis chat_service (General): {event}")
+
 
 	async def private_message(self, event):
 		logger.info(f"ChatConsumer.private_message received event: {event}")

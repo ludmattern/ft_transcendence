@@ -43,9 +43,20 @@ export const contextMenu = createComponent({
 });
 
 /**
+ * @param {HTMLElement} el - Élément racine du formulaire
+ * @returns {Object} - Données collectées du formulaire
+ */
+function bodyData(el, author) {
+  return {
+    username: sessionStorage.getItem('username'),
+    selecteduser: author
+  };
+}
+
+/**
  * Gestion des actions du menu contextuel.
  */
-function handleFriendAction(isFriend, author) {
+async function handleFriendAction(isFriend, author) {
   if (isFriend) {
     console.log(`Removing ${author} from friends...`);
     // Logique pour supprimer un ami
@@ -55,9 +66,20 @@ function handleFriendAction(isFriend, author) {
   }
 }
 
-function handleBlockAction(isBlocked, author) {
+async function handleBlockAction(isBlocked, author) {
   if (isBlocked) {
     console.log(`Unblocking ${author}...`);
+    const response = await fetch("/api/user-service/unblock/", {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bodyData(el, author)),
+    });
+    const data = await response.json();
+    if (data.success) {
+      console.log(`User: ${author} unblocked successfully by ${sessionStorage.getItem('username')}`);
+    } else {
+      console.log('Error updating information:', error);
+    }
     // Logique pour débloquer un utilisateur
   } else {
     console.log(`Blocking ${author}...`);
@@ -76,14 +98,14 @@ function handleProfileAction(author) {
 }
 
 function handleMessageAction(author) {
-	console.log(`Messaging ${author}...`);
-	const inputField = document.querySelector("#message-input");
-	if (inputField) {
-		// Injecte "@pseudo" dans le champ d'entrée
-		// On peut ajouter un espace à la fin pour faciliter la saisie
-		inputField.value = "@" + author + " ";
-		inputField.focus();
-	}
+  console.log(`Messaging ${author}...`);
+  const inputField = document.querySelector("#message-input");
+  if (inputField) {
+    // Injecte "@pseudo" dans le champ d'entrée
+    // On peut ajouter un espace à la fin pour faciliter la saisie
+    inputField.value = "@" + author + " ";
+    inputField.focus();
+  }
 }
 
 /**
@@ -92,9 +114,9 @@ function handleMessageAction(author) {
  * @param {MouseEvent} event - L'événement contextmenu.
  */
 export function showContextMenu(item, event) {
-	console.log("showContextMenu");
+  console.log("showContextMenu");
   event.preventDefault();
-  event.stopPropagation(); 
+  event.stopPropagation();
 
   // Supprime un menu déjà existant s'il existe
   hideContextMenu();
@@ -135,3 +157,4 @@ document.addEventListener("click", (e) => {
     hideContextMenu();
   }
 });
+

@@ -62,6 +62,7 @@ def check_auth_view(request):
 
             user.token_expiry = datetime.datetime.utcfromtimestamp(new_exp)
             user.session_token = new_token_str
+            user.status = 'online'
             user.save()
 
             response = JsonResponse({'success': True, 'id': user.id, 'username': user.username, 'message': 'Cookie renewed'})
@@ -77,13 +78,12 @@ def check_auth_view(request):
 
         return JsonResponse({'success': True, 'id': user.id, 'username': user.username, 'message': 'Cookie still valid'})
     except jwt.ExpiredSignatureError:
+        user.status = 'offline'
         return JsonResponse({'success': False, 'message': 'Token expired'}, status=401)
     except jwt.InvalidTokenError as e:
         return JsonResponse({'success': False, 'message': f'Invalid token: {e}'}, status=401)
     except Exception as e:
         return JsonResponse({'success': False, 'message': f'Unexpected error: {e}'}, status=500)
-
-
 
 
 def jwt_required(view_func):
@@ -131,7 +131,6 @@ def send_2fa_email(recipient, code):
     subject = "Your 2FA Code"
     message = f"Hello,\nHere is your 2FA code: {code}\nRegards."
     send_mail(subject, message, None, [decrypt_thing(recipient)], fail_silently=False)
-
 
 
 def send_2fa_sms(phone_number, code):
@@ -183,6 +182,7 @@ def login_view(request):
 
         user.token_expiry = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
         user.session_token = new_session_token_str
+        user.status = 'online'
         user.save()
 
         response = JsonResponse({'success': True, 'message': 'Logged in', 'id': user.id,  'username': user.username})
@@ -199,8 +199,6 @@ def login_view(request):
     return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
 
 
-
-
 @csrf_exempt
 def logout_view(request):
     if request.method == 'POST':
@@ -214,6 +212,7 @@ def logout_view(request):
             user = ManualUser.objects.get(id=id)
 
             user.token_expiry = None
+            user.status = 'offline'
             user.save()
 
             response = JsonResponse({'success': True, 'message': 'Logged out'})
