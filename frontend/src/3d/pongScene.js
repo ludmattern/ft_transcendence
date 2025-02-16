@@ -170,15 +170,15 @@ const fragmentShader = `
 	fragmentShader,
 	uniforms: {
 		uCellSize: { value: 0.1 },         // Taille manuelle (sera ignorée si uUseNumCells == 1)
-		uNumCells: { value: 10.0 },          // Nombre de cellules par axe
+		uNumCells: { value: 19.0 },          // Nombre de cellules par axe
 		uUseNumCells: { value: 1.0 },        // 1.0 = utiliser uNumCells, 0.0 = utiliser uCellSize
-		uCellAspect: { value: 1.0 },
-		uThickness: { value: 0.03 },
-		uModOffset: { value: 0.5 },
-		uGridCenter: { value: 0.5 },
-		uLineMultiplier: { value: 2.0 },
+		uCellAspect: { value: 0.26 },
+		uThickness: { value: 0.02 },
+		uModOffset: { value: 0.55 },
+		uGridCenter: { value: 0.55 },
+		uLineMultiplier: { value: 5.0 },
 		uBackgroundColor: { value: new THREE.Color(0x000000) },
-		uNeonColor: { value: new THREE.Color(0x006680) }
+		uNeonColor: { value: new THREE.Color(0x303049) }
 	}
 	});
 
@@ -230,6 +230,7 @@ const fragmentShader = `
   );
   backWall.position.set(0, 0, tunnelDepth / 2);
   backWall.rotation.y = Math.PI;
+  backWall.rotation.z = -Math.PI;
 
   //Store.pongScene.add(leftWall);
   //Store.pongScene.add(rightWall);

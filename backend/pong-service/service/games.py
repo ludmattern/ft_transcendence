@@ -161,8 +161,8 @@ class BasePongGame:
                 impact_z = (ball["z"] - p1["z"]) / (self.paddle_depth / 2)
 
                 ball["vx"] = abs(ball["vx"]) * 1.05
-                ball["vy"] += impact_y * 0.5
-                ball["vz"] += impact_z *0.5
+                ball["vy"] += impact_y * 0.75
+                ball["vz"] += impact_z *0.75
             elif ball["x"] <= p1["x"] - margin_before_scoring:  
                 scoring_player_id = self.player2_id 
                 self.user_scores[scoring_player_id] += 1
@@ -177,8 +177,8 @@ class BasePongGame:
                 impact_z = (ball["z"] - p2["z"]) / (self.paddle_depth / 2)
 
                 ball["vx"] = -abs(ball["vx"]) * 1.07
-                ball["vy"] += impact_y * 0.5
-                ball["vz"] += impact_z * 0.5
+                ball["vy"] += impact_y * 0.75
+                ball["vz"] += impact_z * 0.75
             elif ball["x"] >= p2["x"] + margin_before_scoring: 
                 scoring_player_id = self.player1_id
                 self.user_scores[scoring_player_id] += 1
