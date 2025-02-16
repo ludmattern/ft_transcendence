@@ -159,7 +159,7 @@ const fragmentShader = `
 
     float gridLines = 1.0 - min(lineX, lineY);
 
-    vec3 background = vec3(0.0); 
+    vec3 background = vec3(0.0);
     vec3 neonColor = vec3(0.0, 0.4, 0.6);  
 
     vec3 color = mix(background, neonColor, gridLines);
@@ -180,9 +180,9 @@ const floorCeilingMaterial = neonMaterial;
 const sideWallMaterial = neonMaterial;
 const endWallMaterial = neonMaterial;
 
-  const tunnelWidth = 10;  
-  const tunnelHeight = 6;  
-  const tunnelDepth = 6;  
+  const tunnelWidth = 7.5;  
+  const tunnelHeight = 1.5;  
+  const tunnelDepth = 1.5;  
   
   const leftWall = new THREE.Mesh(
     new THREE.PlaneGeometry(tunnelDepth, tunnelHeight),
@@ -233,16 +233,60 @@ const endWallMaterial = neonMaterial;
   Store.pongScene.add(backWall);
   
   
+  const plaqueMaterial = new THREE.MeshBasicMaterial({
+    color: 0x0000ff,
+    transparent: true,
+    opacity: 0.8,
+    side: THREE.DoubleSide,
+});
+
+const plaqueSize = { width: 0.75, height: 0.75};
+
+function createPlaqueWithEdges(width, height, material) {
+    const geometry = new THREE.PlaneGeometry(width, height);
+    const plaqueMesh = new THREE.Mesh(geometry, material);
+
+    const edgesGeometry = new THREE.EdgesGeometry(geometry);
+    const edgesMaterial = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 10 });
+    const edgesMesh = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+
+    const plaqueGroup = new THREE.Group();
+    plaqueGroup.add(plaqueMesh);
+    plaqueGroup.add(edgesMesh);
+
+    return plaqueGroup;
+}
+
+Store.plaqueTop = createPlaqueWithEdges(plaqueSize.width, plaqueSize.height, plaqueMaterial);
+Store.plaqueBottom = createPlaqueWithEdges(plaqueSize.width, plaqueSize.height, plaqueMaterial);
+Store.plaqueLeft = createPlaqueWithEdges(plaqueSize.width, plaqueSize.height, plaqueMaterial);
+Store.plaqueRight = createPlaqueWithEdges(plaqueSize.width, plaqueSize.height, plaqueMaterial);
+
+Store.plaqueTop.rotation.x = Math.PI / 2;
+Store.plaqueBottom.rotation.x = -Math.PI / 2;
 
 
-  const paddleGeometry = new THREE.BoxGeometry(0.2, 1, 1);
+Store.pongScene.add(Store.plaqueTop);
+Store.pongScene.add(Store.plaqueBottom);
+Store.pongScene.add(Store.plaqueLeft);
+Store.pongScene.add(Store.plaqueRight);
+
+
+
+  const paddleGeometry = new THREE.BoxGeometry(0.07, 0.33, 0.33);
   const paddleMaterial = new THREE.MeshStandardMaterial({
-    color: 0x7F00FF, // Vert néon
+    color: 0x7F00FF,
     transparent: true,
     opacity: 0.3, 
 
   });
   
+  const paddleMaterial2 = new THREE.MeshStandardMaterial({
+    color: 0xff007f,
+    transparent: true,
+    opacity: 0.3, 
+
+  });
   const edgesGeometry = new EdgesGeometry(paddleGeometry); 
   const edgesMaterial = new LineBasicMaterial({ color: 0xffffff, linewidth: 10 });
 
@@ -257,7 +301,7 @@ const endWallMaterial = neonMaterial;
   Store.pongScene.add(Store.player1Paddle);
 
   const paddleGroup2 = new THREE.Group();
-  const solidPaddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial);
+  const solidPaddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial2);
   const wireframePaddle2 = new LineSegments(edgesGeometry, edgesMaterial);
 
   paddleGroup2.add(solidPaddle2);
@@ -266,7 +310,7 @@ const endWallMaterial = neonMaterial;
   Store.player2Paddle = paddleGroup2;
   Store.pongScene.add(Store.player2Paddle);
 
-  const meshBallGeometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+  const meshBallGeometry = new THREE.SphereGeometry(0.05, 30, 15);
   const meshBallMaterial = new THREE.MeshStandardMaterial({
     color: 0x5588ff, 
     emissive: 0x5588ff, 
@@ -311,7 +355,7 @@ export function animatePong(renderer) {
       ), lerpFactor
     );
     cameraPlayer1.lookAt(Store.p1Focus);
-    
+  
     cameraPlayer2.position.lerp(
       new THREE.Vector3(
         Store.p2Focus.x + 3,
@@ -350,7 +394,7 @@ export function animatePong(renderer) {
       Store.p1Focus.lerp(Store.player1Paddle.position, lerpFactor);
       cameraPlayer1.position.lerp(
         new THREE.Vector3(
-          Store.p1Focus.x - 3,
+          Store.p1Focus.x - 0.75,
           Store.p1Focus.y,
           Store.p1Focus.z
         ), lerpFactor
@@ -365,7 +409,7 @@ export function animatePong(renderer) {
       Store.p2Focus.lerp(Store.player2Paddle.position, lerpFactor);
       cameraPlayer2.position.lerp(
         new THREE.Vector3(
-          Store.p2Focus.x + 3,
+          Store.p2Focus.x + 0.75,
           Store.p2Focus.y,
           Store.p2Focus.z
         ), lerpFactor

@@ -22,13 +22,13 @@ class BasePongGame:
             self.player2_id: 0
         }
 
-        self.tunnel_width = 10
-        self.tunnel_height = 6
-        self.tunnel_depth = 6
+        self.tunnel_width = 5
+        self.tunnel_height = 1.5
+        self.tunnel_depth = 1.5
 
-        self.paddle_width = 0.2
-        self.paddle_height = 1
-        self.paddle_depth = 1
+        self.paddle_width = 0.07
+        self.paddle_height = 0.33
+        self.paddle_depth = 0.33
         self.ball_reset_time =1
         self.state = {
             "ball": {
@@ -51,7 +51,7 @@ class BasePongGame:
         if player_id not in self.state["players"]:
             return
 
-        step = 0.15
+        step = 0.05
         player = self.state["players"][player_id]
 
         if direction == "up":
@@ -110,7 +110,6 @@ class BasePongGame:
                 direction = 1 if self.scoring_player == 1 else -1  
                 self.state["ball"]["vx"] = 2 * speed_factor * direction
 
-        
         players = self.state["players"]
         p1, p2 = players[1], players[2]
         ball = self.state["ball"]
@@ -163,8 +162,8 @@ class BasePongGame:
                 impact_z = (ball["z"] - p1["z"]) / (self.paddle_depth / 2)
 
                 ball["vx"] = abs(ball["vx"]) * 1.07
-                ball["vy"] += impact_y * 2.5
-                ball["vz"] += impact_z * 2.5
+                ball["vy"] += impact_y * 0.8
+                ball["vz"] += impact_z *0.8
             elif ball["x"] <= p1["x"] - margin_before_scoring:  
                 scoring_player_id = self.player2_id 
                 self.user_scores[scoring_player_id] += 1
@@ -179,8 +178,8 @@ class BasePongGame:
                 impact_z = (ball["z"] - p2["z"]) / (self.paddle_depth / 2)
 
                 ball["vx"] = -abs(ball["vx"]) * 1.07
-                ball["vy"] += impact_y * 2.5
-                ball["vz"] += impact_z * 2.5
+                ball["vy"] += impact_y * 0.8
+                ball["vz"] += impact_z * 0.8
             elif ball["x"] >= p2["x"] + margin_before_scoring: 
                 scoring_player_id = self.player1_id
                 self.user_scores[scoring_player_id] += 1
@@ -208,8 +207,6 @@ class BasePongGame:
         self.state["ball"]["vx"] = 0
         self.state["ball"]["vy"] = 0
         self.state["ball"]["vz"] = 0
-
-
 
 
     def to_dict(self):

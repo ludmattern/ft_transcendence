@@ -30,6 +30,12 @@ const Store = {
   initialCameraRotation: { x: 0, y: 0, z: 0 },
   currentTween: null,
 
+  plaqueTop: null,
+  plaqueBottom: null,
+  plaqueLeft: null,
+  plaqueRight: null,
+
+
   pongScene: null,
   cubePosition: { x: 0, y: 0 },
   meshBall: null,

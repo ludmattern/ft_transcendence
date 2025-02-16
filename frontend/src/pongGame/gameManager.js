@@ -191,6 +191,11 @@ class GameManager {
       const { x, y, z } = gameState.ball; 
       if (Store.meshBall) {
         Store.meshBall.position.set(x, y, z);
+
+        Store.plaqueTop.position.set(x, 6 / 2 - 0.01, z);
+        Store.plaqueBottom.position.set(x, -6 / 2 + 0.01, z);
+        Store.plaqueLeft.position.set(x, y, 6 / 2 - 0.01);
+        Store.plaqueRight.position.set(x, y,-6 / 2 + 0.01);
       }
     }
     const lerpFactorPaddle = 0.2;
