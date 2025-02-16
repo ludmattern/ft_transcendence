@@ -136,7 +136,6 @@ class BasePongGame:
             ball["vx"] *= factor
             ball["vy"] *= factor
             ball["vz"] *= factor
-            
         
         if ball["y"] >= self.tunnel_height / 2 - self.paddle_height / 2:
             ball["y"] = self.tunnel_height / 2 - self.paddle_height / 2
