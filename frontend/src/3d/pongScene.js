@@ -245,7 +245,7 @@ const fragmentShader = `
     side: THREE.DoubleSide,
   });
 
-  const plaqueSize = { width: 0.75, height: 0.75 };
+const plaqueSize = { width: 0.25, height: 0.25};
 
   function createPlaqueWithEdges(width, height, material) {
     const geometry = new THREE.PlaneGeometry(width, height);
@@ -430,14 +430,20 @@ export function animatePong(renderer) {
     Store.p2Focus.lerp(Store.player2Paddle.position, lerpFactor);
 
     cameraPlayer1.position.lerp(
-      new THREE.Vector3(Store.p1Focus.x - 3, Store.p1Focus.y, Store.p1Focus.z),
-      lerpFactor
+      new THREE.Vector3(
+        Store.p1Focus.x - 0.75,
+        Store.p1Focus.y,
+        Store.p1Focus.z
+      ), lerpFactor
     );
     cameraPlayer1.lookAt(Store.p1Focus);
 
     cameraPlayer2.position.lerp(
-      new THREE.Vector3(Store.p2Focus.x + 3, Store.p2Focus.y, Store.p2Focus.z),
-      lerpFactor
+      new THREE.Vector3(
+        Store.p2Focus.x + 0.75,
+        Store.p2Focus.y,
+        Store.p2Focus.z
+      ), lerpFactor
     );
     cameraPlayer2.lookAt(Store.p2Focus);
 
