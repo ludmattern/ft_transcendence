@@ -42,7 +42,7 @@ class BasePongGame:
             "scores": {1: 0, 2: 0}
         }
 
-        self.vmax = 5
+        self.vmax = 4
         self.last_update = time.time()
 
 
@@ -151,7 +151,7 @@ class BasePongGame:
             ball["z"] = -self.tunnel_depth / 2 + self.paddle_depth / 2
             ball["vz"] *= -1
 
-        margin_before_scoring = 0.3
+        margin_before_scoring = 0.1
 
         if ball["x"] <= p1["x"] + self.paddle_width:
             if (p1["y"] - self.paddle_height / 2 <= ball["y"] <= p1["y"] + self.paddle_height / 2) and \
