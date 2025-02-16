@@ -10,9 +10,10 @@ import { handleRoute } from "/src/services/router.js";
 class GameManager {
   constructor() {
     this.activeGame = null;
-    this.activeKeys = {}; // 🔹 Stocke les touches enfoncées
-    this.moveInterval = null; // 🔹 Intervalle pour envoyer les requêtes
-
+    this.activeKeys = {};
+    this.moveInterval = null;
+    this.username1 = null;
+    this.username2 = null;
     this.localKeydownHandler = (e) => {
       this.activeKeys[e.key] = true;
       this.startMovement("local");
@@ -121,16 +122,30 @@ class GameManager {
     buildGameScene(gameConfig);
     showCountdown();
 
-    if (gameConfig.mode === "local") {
-      document.addEventListener("keydown", this.localKeydownHandler);
-      document.addEventListener("keyup", this.localKeyupHandler);
-    } else {
-      document.addEventListener("keydown", this.matchMakingKeydownHandler);
-      document.addEventListener("keyup", this.matchMakingKeyupHandler);
-    }
     const player1 = gameConfig.side === "left" ? gameConfig.user_id : gameConfig.opponent_id;
     const player2 = gameConfig.side === "right" ? gameConfig.user_id : gameConfig.opponent_id;
 
+
+    if (gameConfig.mode === "local") {
+      document.addEventListener("keydown", this.localKeydownHandler);
+      document.addEventListener("keyup", this.localKeyupHandler);
+      this.username1 = "Player Right";
+      this.username2 =" Player Left";
+    } else {
+      document.addEventListener("keydown", this.matchMakingKeydownHandler);
+      document.addEventListener("keyup", this.matchMakingKeyupHandler);
+      Promise.all([getUsername(player1), getUsername(player2)])
+      .then(([player1Name, player2Name]) => {
+          this.username1 = player1Name;
+          this.username2 = player2Name;
+      })
+      .catch(error => {
+          console.error("Error retrieving usernames:", error);
+          this.username1 = player1;
+          this.username2 = player2;
+      });
+    }
+    
     console.log(`🟢 Sending start_game event: player1=${player1}, player2=${player2}`);    ws.send(JSON.stringify({
       type: "game_event",
       action: "start_game",
@@ -139,6 +154,8 @@ class GameManager {
       player1: player1,
       player2: player2
     }));
+
+   
   }
 
   endGame() {
@@ -199,17 +216,16 @@ class GameManager {
     const scores = Object.values(gameState.user_scores);
 
     if (players.length >= 2) {
-        const player1 = players[0]; 
-        const player2 = players[1]; 
+      const score1 = scores[0]; 
+      const score2 = scores[1]; 
+      const scoreTextEl = document.getElementById("scoreText");
 
-        const score1 = scores[0]; 
-        const score2 = scores[1]; 
-
-        const scoreTextEl = document.getElementById("scoreText");
-        if (scoreTextEl) {
-            scoreTextEl.textContent = `${player1} ${score1}  -  ${score2} ${player2}`;
-        }
-    }
+      if (scoreTextEl) {
+          scoreTextEl.textContent = `${this.username1} ${score1}  -  ${score2} ${this.username2}`;
+      }
+    } 
+  
+  
   }
   
 
@@ -241,3 +257,24 @@ class GameManager {
 }
 
 export const gameManager = new GameManager();
+
+
+async function getUsername(playerId) {
+  try {
+      const response = await fetch("/api/user-service/getUsername/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: playerId })
+      });
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.username;  
+  } catch (error) {
+      console.error("Error fetching username:", error);
+      return `${playerId}`;  
+  }
+}

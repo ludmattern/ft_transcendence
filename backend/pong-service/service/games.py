@@ -127,6 +127,17 @@ class BasePongGame:
         elif speed < 2.0:
             factor = 2.0 / speed
             ball["vx"] *= factor
+            
+        if abs(ball["vx"]) < 2:
+            ball["vx"] = 2 if ball["vx"] >= 0 else -2
+        speed = (ball["vx"] ** 2 + ball["vy"] ** 2 + ball["vz"] ** 2) ** 0.5  
+
+        if speed > self.vmax:
+            factor = self.vmax / speed
+            ball["vx"] *= factor
+            ball["vy"] *= factor
+            ball["vz"] *= factor
+            
         
         if ball["y"] >= self.tunnel_height / 2 - self.paddle_height / 2:
             ball["y"] = self.tunnel_height / 2 - self.paddle_height / 2

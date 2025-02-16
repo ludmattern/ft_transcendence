@@ -158,3 +158,24 @@ def update_info(request):
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
     else:
         return JsonResponse({'success': False, 'message': 'Only POST method is allowed'}, status=405)
+    
+@csrf_exempt
+def getUsername(request):
+    if request.method == 'POST':
+        try:
+            body = json.loads(request.body.decode('utf-8'))
+            user_id = body.get('id')
+
+            if not user_id:
+                return JsonResponse({'success': False, 'message': 'User ID is required'}, status=400)
+
+            user = ManualUser.objects.get(id=user_id)
+
+            return JsonResponse({'success': True, 'username': user.username})
+
+        except ManualUser.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+    else:
+        return JsonResponse({'success': False, 'message': 'Only POST method is allowed'}, status=405)
