@@ -4,13 +4,14 @@ RUN apt-get update && apt-get install -y gcc libpq-dev
 
 WORKDIR /app
 
-COPY requirements.txt /app/
+COPY backend/auth-service/requirements.txt /app/
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . /app/
+COPY backend/auth-service /app/
 
-COPY entrypoint.sh /entrypoint.sh
+COPY backend/auth-service/entrypoint.sh /entrypoint.sh
+COPY backend/common /app/common
 
 RUN chmod +x /entrypoint.sh
 
