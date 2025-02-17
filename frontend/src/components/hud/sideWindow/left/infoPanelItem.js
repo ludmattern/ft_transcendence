@@ -33,13 +33,13 @@ export const infoPanelItem = createComponent({
     if (acceptButton) {
       acceptButton.addEventListener("click", () => {
         console.log(`Accepted ${item.inviter}'s request.`);
-		const config = {
-			gameMode: "private",
-			action: "join",
-			matchkey: "4",
-			type: "fullScreen",
-		};
-		playGame(config)
+        const config = {
+          gameMode: "private",
+          action: "join",
+          matchkey: "4",
+          type: "fullScreen",
+        };
+        playGame(config);
         // Logique pour accepter la demande
       });
     }

@@ -1,7 +1,7 @@
 export let ws = null;
 let isWsConnected = false;
 import { gameManager } from "/src/pongGame/gameManager.js";
-import { handleIncomingMessage } from "/src/components/hud/sideWindow/left/leftSideWindow.js";
+import { handleIncomingMessage } from "/src/components/hud/sideWindow/left/tabContent.js";
 import { startMatchmakingGame , startPrivateGame} from "/src/services/multiplayerPong.js";
 
 

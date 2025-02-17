@@ -8,7 +8,9 @@ export const contextMenu = createComponent({
   render: (item, userStatus) => `
     <div id="context-menu" class="context-menu">
       <ul>
-        <li id="action-friend">${userStatus.isFriend ? "Remove Friend" : "Add Friend"}</li>
+        <li id="action-friend">${
+          userStatus.isFriend ? "Remove Friend" : "Add Friend"
+        }</li>
         <li id="action-block">${userStatus.isBlocked ? "Unblock" : "Block"}</li>
         <li id="action-invite">Invite</li>
         <li id="action-profile">Profile</li>
@@ -48,8 +50,8 @@ export const contextMenu = createComponent({
  */
 function bodyData(el, author) {
   return {
-    username: sessionStorage.getItem('username'),
-    selecteduser: author
+    username: sessionStorage.getItem("username"),
+    selecteduser: author,
   };
 }
 
@@ -70,15 +72,19 @@ async function handleBlockAction(isBlocked, author) {
   if (isBlocked) {
     console.log(`Unblocking ${author}...`);
     const response = await fetch("/api/user-service/unblock/", {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(bodyData(el, author)),
     });
     const data = await response.json();
     if (data.success) {
-      console.log(`User: ${author} unblocked successfully by ${sessionStorage.getItem('username')}`);
+      console.log(
+        `User: ${author} unblocked successfully by ${sessionStorage.getItem(
+          "username"
+        )}`
+      );
     } else {
-      console.log('Error updating information:', error);
+      console.log("Error updating information:", error);
     }
     // Logique pour débloquer un utilisateur
   } else {
@@ -157,4 +163,3 @@ document.addEventListener("click", (e) => {
     hideContextMenu();
   }
 });
-

@@ -2,27 +2,27 @@ import { createComponent } from "/src/utils/component.js";
 import { showContextMenu } from "/src/components/hud/sideWindow/left/contextMenu.js";
 
 function safeToISOString(timestamp) {
-	if (!timestamp) return "";
-  
-	let dt = new Date(timestamp);
-	if (isNaN(dt)) {
-	  const fallbackString = new Date().toDateString() + " " + timestamp;
-	  dt = new Date(fallbackString);
-	  if (isNaN(dt)) {
-		return "";
-	  }
-	}
-	return dt.toISOString();
+  if (!timestamp) return "";
+
+  let dt = new Date(timestamp);
+  if (isNaN(dt)) {
+    const fallbackString = new Date().toDateString() + " " + timestamp;
+    dt = new Date(fallbackString);
+    if (isNaN(dt)) {
+      return "";
+    }
   }
+  return dt.toISOString();
+}
 
 function formatTimestamp(timestamp) {
-   let dateObj = new Date(timestamp);
+  let dateObj = new Date(timestamp);
 
-   if (isNaN(dateObj)) {
-     const fallbackString = new Date().toDateString() + " " + timestamp;
-     dateObj = new Date(fallbackString);
-   }
-  
+  if (isNaN(dateObj)) {
+    const fallbackString = new Date().toDateString() + " " + timestamp;
+    dateObj = new Date(fallbackString);
+  }
+
   const diffMs = Date.now() - dateObj.getTime();
   return dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
@@ -39,9 +39,12 @@ export const commMessage = createComponent({
 
     return `
       <div class="message ${isUser ? "user-message" : "other-message"}" 
-           style=" ${isPrivate ? "color: #ffff59;" : "color: var(--content-color);"}"
+           style=" ${
+             isPrivate ? "color: #ffff59;" : "color: var(--content-color);"
+           }"
 		   data-rawtimestamp="${rawTimestamp}">
-        ${!isUser
+        ${
+          !isUser
             ? `<img class="profile-picture" 
                    src="${
                      item.profilePicture ||
@@ -50,9 +53,13 @@ export const commMessage = createComponent({
                    alt="${displayAuthor}'s profile picture" />`
             : ""
         }
-        <div class="message-content-wrapper" style="max-width: ${isUser ? '100%' : 'inherit'};">
+        <div class="message-content-wrapper" style="max-width: ${
+          isUser ? "100%" : "inherit"
+        };">
           <div class="message-header">
-            <span class="channel">${isPrivate ? "[Private]" : "[General]"}</span>
+            <span class="channel">${
+              isPrivate ? "[Private]" : "[General]"
+            }</span>
             <span class="author${isUser ? " me" : ""}">${displayAuthor}</span>
            <span class="timestamp">${formatTimestamp(item.timestamp)}</span>
           </div>
