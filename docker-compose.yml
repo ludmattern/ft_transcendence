@@ -1,10 +1,27 @@
+x-common-env: &common_env
+  - ./secret/.env
+
+x-common-networks: &common_networks
+  - backend_network
+  - frontend_network
+
+x-postgres-env: &postgres_env
+  POSTGRES_DB: ${POSTGRES_DB}
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  DB_HOST: postgres_db
+  DB_PORT: "5432"
+
+x-redis-env: &redis_env
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+
 services:
   postgres:
     build:
       context: ./database
     container_name: postgres_db
-    env_file:
-      - ./secret/.env
+    env_file: *common_env
     volumes:
       - postgres_data_volume:/var/lib/postgresql/data
     networks:
@@ -30,11 +47,8 @@ services:
     build:
       context: ./backend/gateway-service
     container_name: gateway_service
-    env_file:
-      - ./secret/.env
-    networks:
-      - backend_network
-      - frontend_network
+    env_file: *common_env
+    networks: *common_networks
     ports:
       - "3006:3006"
       
@@ -45,21 +59,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    env_file:
-      - ./secret/.env
-    networks:
-      - backend_network
-      - frontend_network
+    env_file: *common_env
+    networks: *common_networks
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - DB_HOST=postgres_db
-      - DB_PORT=5432
-      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
-      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
-      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
-      - FERNET_KEY=${FERNET_KEY}
+      <<: *postgres_env
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
+      TWILIO_PHONE_NUMBER: ${TWILIO_PHONE_NUMBER}
+      FERNET_KEY: ${FERNET_KEY}
     ports:
       - "3001:3001"
 
@@ -70,18 +77,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    env_file:
-      - ./secret/.env
-    networks:
-      - backend_network
-      - frontend_network
+    env_file: *common_env
+    networks: *common_networks
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - DB_HOST=postgres_db
-      - DB_PORT=5432
-      - FERNET_KEY=${FERNET_KEY}
+      <<: *postgres_env
+      FERNET_KEY: ${FERNET_KEY}
     ports:
       - "3002:3002"
 
@@ -96,20 +96,11 @@ services:
         condition: service_started
       gateway-service:
         condition: service_started
-    env_file:
-      - ./secret/.env
-    networks:
-      - backend_network
-      - frontend_network        
+    env_file: *common_env
+    networks: *common_networks
     environment:
-      - DJANGO_SETTINGS_MODULE=livechat.settings 
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - DB_HOST=postgres_db
-      - DB_PORT=5432
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      <<: [ *postgres_env, *redis_env ]
+      DJANGO_SETTINGS_MODULE: livechat.settings 
     ports:
       - "3003:3003"
       
@@ -126,14 +117,12 @@ services:
         condition: service_started
       livechat-service:
         condition: service_started
-    env_file:
-      - ./secret/.env
-    networks:
-      - backend_network
-      - frontend_network
+    env_file: *common_env
+    networks: *common_networks
+    environment:
+      <<: [ *postgres_env, *redis_env ]
     ports:
       - "3004:3004"
-
 
   matchmaking-service:
     build:
@@ -142,11 +131,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    env_file:
-      - ./secret/.env
-    networks:
-      - backend_network
-      - frontend_network
+    env_file: *common_env
+    networks: *common_networks
+    environment:
+      <<: *postgres_env
     ports:
       - "3005:3005"
 
@@ -177,7 +165,6 @@ services:
     networks:
       - frontend_network
       - backend_network
-
 
 networks:
   backend_network:
