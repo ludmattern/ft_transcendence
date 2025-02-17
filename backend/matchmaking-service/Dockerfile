@@ -10,4 +10,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
-CMD ["sh", "-c", "python manage.py migrate && daphne -b 0.0.0.0 -p 3005 service.asgi:application"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "3005", "service.asgi:application"]
