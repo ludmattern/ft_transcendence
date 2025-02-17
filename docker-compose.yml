@@ -153,7 +153,6 @@ services:
       - ./nginx/certs:/etc/nginx/certs:ro
       - ./frontend:/usr/share/nginx/html/frontend:ro
     ports:
-      - "8080:80"
       - "8443:443"
     depends_on:
       auth-service:

@@ -1,3 +1,4 @@
+# common_settings.py
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -36,6 +37,6 @@ CHANNEL_LAYERS = {
 COMMON_INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'channels',
     'service',
+    'channels',
 ]

@@ -9,6 +9,8 @@ sys.path.insert(0, os.path.join(BASE_DIR, "/app", "common"))
 
 from common_settings import *
 
+INSTALLED_APPS = COMMON_INSTALLED_APPS
+
 SECRET_KEY = secrets.token_urlsafe(64)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,7 +22,6 @@ ALLOWED_HOSTS = []
 MIGRATION_MODULES = {
     'auth': None,
     'contenttypes': None,
-
 }
 
 ROOT_URLCONF = 'pong.urls'
