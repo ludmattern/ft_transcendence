@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { playGame } from "/src/components/pong/play/utils.js";
+import { showContextMenu } from "/src/components/hud/sideWindow/left/contextMenu.js";
 
 export const infoPanelItem = createComponent({
   tag: "infoPanelItem",
@@ -12,21 +13,17 @@ export const infoPanelItem = createComponent({
 
     return `
       <div class="panel-item">
-        <span>${content}<b>${item.inviter}</b></span>
-        ${
-          item.actions
-            ? `<div class="actions">
-                 <button class="btn bi bi-check" id="accept-action">Accept</button>
-                 <button class="btn bi bi-x" id="refuse-action">Refuse</button>
-               </div>`
-            : ""
-        }
-      </div>
-    `;
+        <span>${content}<b class="author" style="cursor: pointer;">${item.inviter}</b></span>
+        ${item.actions
+          ? `<div class="actions">
+               <button class="btn bi bi-check" id="accept-action">Accept</button>
+               <button class="btn bi bi-x" id="refuse-action">Refuse</button>
+             </div>`
+          : ""}
+      </div>`;
   },
 
   attachEvents: (el, item) => {
-    // Boutons d'actions
     const acceptButton = el.querySelector("#accept-action");
     const refuseButton = el.querySelector("#refuse-action");
 
@@ -50,5 +47,13 @@ export const infoPanelItem = createComponent({
         // Logique pour refuser la demande
       });
     }
+
+	const authorElem = el.querySelector(".author");
+	if (authorElem) {
+	  authorElem.addEventListener("click", (e) => {
+		e.preventDefault();
+		showContextMenu(item, e);
+	  });
+	}
   },
 });

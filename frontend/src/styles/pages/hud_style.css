@@ -640,7 +640,7 @@ body {
 }
 
 #hud-body .panel-item {
-  padding: 10px 15px;
+  padding: 1rem;
   margin: 1rem;
   font-weight: var(--content-font-weight);
   color: var(--content-color);
