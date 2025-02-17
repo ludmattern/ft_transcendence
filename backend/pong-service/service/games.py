@@ -33,7 +33,7 @@ class BasePongGame:
         self.state = {
             "ball": {
                 "x": 0, "y": 0, "z": 0,
-                "vx": 1.5, "vy": random.uniform(-1.5, 1.5), "vz": random.uniform(-1.5, 1.5)
+                "vx": 1.5, "vy": random.uniform(-1, 1), "vz": random.uniform(-1, 1),
             },
             "players": {
                 1: {"x": -self.tunnel_width / 2.2, "y": 0, "z": 0},
@@ -41,10 +41,9 @@ class BasePongGame:
             },
             "scores": {1: 0, 2: 0}
         }
-
+        self.ball_size = 0.1 
         self.vmax = 4
         self.last_update = time.time()
-
 
     def move_paddle(self, player_id, direction):
         """Déplace la paddle et empêche de sortir du tunnel."""
@@ -66,7 +65,6 @@ class BasePongGame:
 
 
     def update(self):
-        """Met à jour l'état du jeu : déplacement de la balle, gestion des collisions et scoring."""
         if self.game_over:
             return
 
@@ -131,31 +129,36 @@ class BasePongGame:
             ball["vx"] = 1.5 if ball["vx"] >= 0 else -1.5
         speed = (ball["vx"] ** 2 + ball["vy"] ** 2 + ball["vz"] ** 2) ** 0.5  
 
+        ball = self.state["ball"]
+        ball_half_size = self.ball_size / 2  
+        
         if speed > self.vmax:
             factor = self.vmax / speed
             ball["vx"] *= factor
             ball["vy"] *= factor
             ball["vz"] *= factor
         
-        if ball["y"] >= self.tunnel_height / 2 - self.paddle_height / 2:
-            ball["y"] = self.tunnel_height / 2 - self.paddle_height / 2
-            ball["vy"] *= -1 
-        elif ball["y"] <= -self.tunnel_height / 2 + self.paddle_height / 2:
-            ball["y"] = -self.tunnel_height / 2 + self.paddle_height / 2
-            ball["vy"] *= -1  
+        if ball["y"] + ball_half_size >= self.tunnel_height / 2:
+            ball["y"] = self.tunnel_height / 2 - ball_half_size
+            ball["vy"] *= -1
+        elif ball["y"] - ball_half_size <= -self.tunnel_height / 2:
+            ball["y"] = -self.tunnel_height / 2 + ball_half_size
+            ball["vy"] *= -1
 
-        if ball["z"] >= self.tunnel_depth / 2 - self.paddle_depth / 2:
-            ball["z"] = self.tunnel_depth / 2 - self.paddle_depth / 2
-            ball["vz"] *= -1 
-        elif ball["z"] <= -self.tunnel_depth / 2 + self.paddle_depth / 2:
-            ball["z"] = -self.tunnel_depth / 2 + self.paddle_depth / 2
+        if ball["z"] + ball_half_size >= self.tunnel_depth / 2:
+            ball["z"] = self.tunnel_depth / 2 - ball_half_size
+            ball["vz"] *= -1
+        elif ball["z"] - ball_half_size <= -self.tunnel_depth / 2:
+            ball["z"] = -self.tunnel_depth / 2 + ball_half_size
             ball["vz"] *= -1
 
         margin_before_scoring = 0.1
 
         if ball["x"] <= p1["x"] + self.paddle_width:
-            if (p1["y"] - self.paddle_height / 2 <= ball["y"] <= p1["y"] + self.paddle_height / 2) and \
-            (p1["z"] - self.paddle_depth / 2 <= ball["z"] <= p1["z"] + self.paddle_depth / 2):
+            if (p1["y"] - self.paddle_height / 2 <= ball["y"] + ball_half_size and 
+                p1["y"] + self.paddle_height / 2 >= ball["y"] - ball_half_size) and \
+               (p1["z"] - self.paddle_depth / 2 <= ball["z"] + ball_half_size and 
+                p1["z"] + self.paddle_depth / 2 >= ball["z"] - ball_half_size):
 
                 impact_y = (ball["y"] - p1["y"]) / (self.paddle_height / 2)
                 impact_z = (ball["z"] - p1["z"]) / (self.paddle_depth / 2)
@@ -170,8 +173,10 @@ class BasePongGame:
                 self.reset_ball("right")
 
         if ball["x"] >= p2["x"] - self.paddle_width:
-            if (p2["y"] - self.paddle_height / 2 <= ball["y"] <= p2["y"] + self.paddle_height / 2) and \
-            (p2["z"] - self.paddle_depth / 2 <= ball["z"] <= p2["z"] + self.paddle_depth / 2):
+            if (p2["y"] - self.paddle_height / 2 <= ball["y"] + ball_half_size and 
+                p2["y"] + self.paddle_height / 2 >= ball["y"] - ball_half_size) and \
+               (p2["z"] - self.paddle_depth / 2 <= ball["z"] + ball_half_size and 
+                p2["z"] + self.paddle_depth / 2 >= ball["z"] - ball_half_size):
 
                 impact_y = (ball["y"] - p2["y"]) / (self.paddle_height / 2)
                 impact_z = (ball["z"] - p2["z"]) / (self.paddle_depth / 2)
@@ -206,7 +211,6 @@ class BasePongGame:
         self.state["ball"]["vx"] = 0
         self.state["ball"]["vy"] = 0
         self.state["ball"]["vz"] = 0
-
 
     def to_dict(self):
         return {
