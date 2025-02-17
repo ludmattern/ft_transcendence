@@ -641,10 +641,11 @@ body {
 
 #hud-body .panel-item {
   padding: 10px 15px;
-  border-bottom: 1px dotted var(--secondary-hud-elements-color);
+  margin: 1rem;
   font-weight: var(--content-font-weight);
   color: var(--content-color);
   overflow-wrap: break-word;
+  background-color: #99ffff24;
 }
 
 #hud-body .l-side-window .btn:hover {
