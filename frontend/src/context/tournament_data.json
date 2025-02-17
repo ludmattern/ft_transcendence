@@ -1,0 +1,50 @@
+{
+  "tournamentId": null,
+  "players": [
+    { "playerId": null, "status": null },
+    { "playerId": null, "status": null },
+    { "playerId": null, "status": null },
+    { "playerId": null, "status": null },
+    { "playerId": null, "status": null },
+    { "playerId": null, "status": null },
+    { "playerId": null, "status": null },
+    { "playerId": null, "status": null }
+  ],
+  "rounds": [
+    {
+      "round": 16,
+      "matches": [
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null },
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null },
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null },
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null },
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null },
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null },
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null },
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null }
+      ]
+    },
+    {
+      "round": 4,
+      "matches": [
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null },
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null },
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null },
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null }
+      ]
+    },
+    {
+      "round": 2,
+      "matches": [
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null },
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null }
+      ]
+    },
+    {
+      "round": 1,
+      "matches": [
+        { "gameId": null, "playerId1": null, "playerId2": null, "status": null, "winner": null, "score": null }
+      ]
+    }
+  ]
+}
