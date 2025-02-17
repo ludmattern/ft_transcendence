@@ -1,5 +1,6 @@
 // contextMenu.js
 import { createComponent } from "/src/utils/component.js";
+import { waitForElement } from "/src/components/hud/utils/utils.js";
 
 export const contextMenu = createComponent({
   tag: "contextMenu",
@@ -101,14 +102,35 @@ function handleProfileAction(author) {
 }
 
 function handleMessageAction(author) {
-  console.log(`Messaging ${author}...`);
-  const inputField = document.querySelector("#message-input");
-  if (inputField) {
-    inputField.value = "@" + author + " ";
-    inputField.focus();
+	console.log(`Messaging ${author}...`);
+  
+	// Vérifie si l'onglet actif n'est pas "comm"
+	const activeTab = document.querySelector(".nav-link.active");
+	if (activeTab && activeTab.dataset.tab !== "comm") {
+	  // Simule un clic sur l'onglet "comm"
+	  const commTab = document.querySelector('.nav-link[data-tab="comm"]');
+	  if (commTab) {
+		commTab.click();
+	  }
+	  // Attend que le champ de saisie dans le conteneur "#l-tab-content-container" soit présent
+	  waitForElement("#l-tab-content-container #message-input")
+		.then((inputField) => {
+		  inputField.value = "@" + author + " ";
+		  inputField.focus();
+		})
+		.catch((error) => {
+		  console.error(error);
+		});
+	} else {
+	  // Si on est déjà dans l'onglet "comm"
+	  const inputField = document.querySelector("#l-tab-content-container #message-input");
+	  if (inputField) {
+		inputField.value = "@" + author + " ";
+		inputField.focus();
+	  }
+	}
   }
-}
-
+   
 /**
  * Affiche le menu contextuel à la position du clic droit.
  * @param {Object} item - L'objet associé au message.
