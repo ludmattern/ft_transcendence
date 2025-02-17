@@ -21,6 +21,8 @@ class BasePongGame:
             self.player1_id: 0,
             self.player2_id: 0
         }
+        
+        self.ball_hit_paddle = False
 
         self.tunnel_width = 5
         self.tunnel_height = 1.5
@@ -72,6 +74,8 @@ class BasePongGame:
         dt = now - self.last_update
         self.last_update = now
 
+        self.ball_hit_paddle = False
+        
         elapsed_since_start = now - self.start_time
         if elapsed_since_start < self.start_delay:
             self.state["waitingForStart"] = True
@@ -160,6 +164,7 @@ class BasePongGame:
                (p1["z"] - self.paddle_depth / 2 <= ball["z"] + ball_half_size and 
                 p1["z"] + self.paddle_depth / 2 >= ball["z"] - ball_half_size):
 
+                self.ball_hit_paddle = True
                 impact_y = (ball["y"] - p1["y"]) / (self.paddle_height / 2)
                 impact_z = (ball["z"] - p1["z"]) / (self.paddle_depth / 2)
 
@@ -177,6 +182,8 @@ class BasePongGame:
                 p2["y"] + self.paddle_height / 2 >= ball["y"] - ball_half_size) and \
                (p2["z"] - self.paddle_depth / 2 <= ball["z"] + ball_half_size and 
                 p2["z"] + self.paddle_depth / 2 >= ball["z"] - ball_half_size):
+                   
+                self.ball_hit_paddle = True
 
                 impact_y = (ball["y"] - p2["y"]) / (self.paddle_height / 2)
                 impact_z = (ball["z"] - p2["z"]) / (self.paddle_depth / 2)
@@ -218,5 +225,6 @@ class BasePongGame:
             "players": {str(k): v for k, v in self.state["players"].items()},
             "scores": {str(k): v for k, v in self.state["scores"].items()},
             "user_scores": self.user_scores,
-            "game_over": self.game_over
+            "game_over": self.game_over,
+            "ball_hit_paddle": self.ball_hit_paddle 
         }

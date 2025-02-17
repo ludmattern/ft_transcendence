@@ -188,7 +188,7 @@ class GameManager {
 
   updateGameState(gameState) {
     if (gameState.ball) {
-      const { x, y, z } = gameState.ball; 
+      const { x, y, z, vx } = gameState.ball; 
       if (Store.meshBall) {
         Store.meshBall.position.set(x, y, z);
 
@@ -196,23 +196,24 @@ class GameManager {
         Store.plaqueBottom.position.set(x, -1.5 / 2 + 0.01, z);
         Store.plaqueLeft.position.set(x, y, 1.5 / 2 - 0.01);
         Store.plaqueRight.position.set(x, y,-1.5 / 2 + 0.01);
+        
       }
     }
-    const lerpFactorPaddle = 0.2;
+    if (gameState.ball_hit_paddle) 
+    {
+      triggerBallColorChange();
+    }
     if (gameState.players) {
       const p1 = gameState.players["1"];
-      if (p1 && Store.player1Paddle) {
-        if (!Store.p1Target) Store.p1Target = new THREE.Vector3();
-        Store.p1Target.set(p1.x, p1.y, p1.z);
-        Store.player1Paddle.position.lerp(Store.p1Target, lerpFactorPaddle);
-
-      }
       const p2 = gameState.players["2"];
-      if (p2 && Store.player2Paddle) {
-        if (!Store.p2Target) Store.p2Target = new THREE.Vector3();
-        Store.p2Target.set(p2.x, p2.y, p2.z);
-        Store.player2Paddle.position.lerp(Store.p2Target, lerpFactorPaddle);
 
+      if (p1) {
+          if (!Store.p1Target) Store.p1Target = new THREE.Vector3();
+          Store.p1Target.set(p1.x, p1.y, p1.z); 
+      }
+      if (p2) {
+          if (!Store.p2Target) Store.p2Target = new THREE.Vector3();
+          Store.p2Target.set(p2.x, p2.y, p2.z);
       }
     }
     if (!gameState || !gameState.user_scores) return;
@@ -282,4 +283,28 @@ async function getUsername(playerId) {
       console.error("Error fetching username:", error);
       return `${playerId}`;  
   }
+}
+
+
+function triggerBallColorChange() {
+  if (!Store.meshBall) return;
+
+  const originalColor = new THREE.Color(0x5588ff); 
+  const hitColor = new THREE.Color(0xff0000);  
+
+  let elapsed = 0;
+  const duration = 1;  
+  const interval = 30; 
+
+  Store.meshBall.material.emissive.set(hitColor);
+
+  const fadeBack = setInterval(() => {
+      elapsed += interval / 1000;
+      const t = Math.min(elapsed / duration, 1);
+      Store.meshBall.material.emissive.lerpColors(hitColor, originalColor, t);
+
+      if (t >= 1) {
+          clearInterval(fadeBack);
+      }
+  }, interval);
 }

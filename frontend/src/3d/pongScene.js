@@ -415,7 +415,8 @@ const plaqueSize = { width: 0.25, height: 0.25};
  */ 
 }
 
-const lerpFactor = 0.2;
+const lerpFactor = 0.15;
+const lerpFactorCam = 0.15;
 
 
 export function animatePong(renderer) {
@@ -427,25 +428,22 @@ export function animatePong(renderer) {
     if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
     if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
 
-    Store.p1Focus.lerp(Store.player1Paddle.position, lerpFactor);
-    Store.p2Focus.lerp(Store.player2Paddle.position, lerpFactor);
+    if (Store.player1Paddle && Store.p1Target) {
+        Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
+        Store.p1Focus.lerp(Store.p1Target, lerpFactor);
+    }
+    if (Store.player2Paddle && Store.p2Target) {
+        Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
+        Store.p2Focus.lerp(Store.p2Target, lerpFactor);
+    }
 
-    cameraPlayer1.position.lerp(
-      new THREE.Vector3(
-        Store.p1Focus.x - 0.75,
-        Store.p1Focus.y,
-        Store.p1Focus.z
-      ), lerpFactor
-    );
+    const offsetP1 = new THREE.Vector3(-0.75, 0, 0);
+    const offsetP2 = new THREE.Vector3(0.75, 0, 0);
+
+    cameraPlayer1.position.lerp(Store.p1Focus.clone().add(offsetP1), lerpFactorCam);
     cameraPlayer1.lookAt(Store.p1Focus);
 
-    cameraPlayer2.position.lerp(
-      new THREE.Vector3(
-        Store.p2Focus.x + 0.75,
-        Store.p2Focus.y,
-        Store.p2Focus.z
-      ), lerpFactor
-    );
+    cameraPlayer2.position.lerp(Store.p2Focus.clone().add(offsetP2), lerpFactorCam);
     cameraPlayer2.lookAt(Store.p2Focus);
 
     screenMesh.visible = false;
@@ -472,33 +470,29 @@ export function animatePong(renderer) {
     if (Store.gameConfig.side == "left") {
       if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
 
-      Store.p1Focus.lerp(Store.player1Paddle.position, lerpFactor);
-      cameraPlayer1.position.lerp(
-        new THREE.Vector3(
-          Store.p1Focus.x - 0.75,
-          Store.p1Focus.y,
-          Store.p1Focus.z
-        ),
-        lerpFactor
-      );
+      if (Store.player1Paddle && Store.p1Target) {
+          Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
+          Store.p1Focus.lerp(Store.p1Target, lerpFactor);
+      const offsetP1 = new THREE.Vector3(-0.75, 0, 0);
+      cameraPlayer1.position.lerp(Store.p1Focus.clone().add(offsetP1), lerpFactorCam);
       cameraPlayer1.lookAt(Store.p1Focus);
       cam = cameraPlayer1;
+      }
     } else if (Store.gameConfig.side == "right") {
       if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
 
-      Store.p2Focus.lerp(Store.player2Paddle.position, lerpFactor);
-      cameraPlayer2.position.lerp(
-        new THREE.Vector3(
-          Store.p2Focus.x + 0.75,
-          Store.p2Focus.y,
-          Store.p2Focus.z
-        ),
-        lerpFactor
-      );
+      if (Store.player2Paddle && Store.p2Target) {
+          Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
+          Store.p2Focus.lerp(Store.p2Target, lerpFactor);
+      const offsetP2 = new THREE.Vector3(0.75, 0, 0);
+      cameraPlayer2.position.lerp(Store.p2Focus.clone().add(offsetP2), lerpFactorCam);
       cameraPlayer2.lookAt(Store.p2Focus);
       cam = cameraPlayer2;
+      }
     }
     screenMesh.visible = false;
+
+    
 
     renderer.setRenderTarget(renderTargetP1);
     renderer.render(Store.pongScene, cam);
