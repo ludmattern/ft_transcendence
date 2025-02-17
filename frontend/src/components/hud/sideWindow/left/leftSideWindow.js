@@ -1,13 +1,10 @@
 // src/components/hud/leftSideWindow.js
 
 import { createComponent } from "/src/utils/component.js";
-import { startAnimation } from "/src/components/hud/index.js"; // si besoin, sinon ajuste l'import
-import { loadTabContent } from "./tabContent.js";
-import {
-  createNotificationMessage,
-  removePrivateNotifications,
-} from "./notifications.js";
-import { createNavItem } from "./navigation.js";
+import { startAnimation } from "/src/components/hud/index.js";
+import { loadTabContent } from "/src/components/hud/sideWindow/left/tabContent.js";
+import { createNotificationMessage, removePrivateNotifications } from "/src/components/hud/sideWindow/left/notifications.js";
+import { createNavItem } from "/src/components/hud/sideWindow/left/navigation.js";
 
 export const leftSideWindow = createComponent({
   tag: "leftSideWindow",

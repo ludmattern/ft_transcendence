@@ -71,8 +71,4 @@ export function removePrivateNotifications() {
   notificationBuffer = notificationBuffer.filter(({ message }) => {
     return !(message && message.includes("private message"));
   });
-  console.log(
-    "Buffer après suppression des private messages:",
-    notificationBuffer
-  );
 }

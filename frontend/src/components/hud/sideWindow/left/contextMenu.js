@@ -78,10 +78,7 @@ async function handleBlockAction(isBlocked, author) {
     });
     const data = await response.json();
     if (data.success) {
-      console.log(
-        `User: ${author} unblocked successfully by ${sessionStorage.getItem(
-          "username"
-        )}`
+      console.log(`User: ${author} unblocked successfully by ${sessionStorage.getItem("username")}`
       );
     } else {
       console.log("Error updating information:", error);
@@ -107,8 +104,6 @@ function handleMessageAction(author) {
   console.log(`Messaging ${author}...`);
   const inputField = document.querySelector("#message-input");
   if (inputField) {
-    // Injecte "@pseudo" dans le champ d'entrée
-    // On peut ajouter un espace à la fin pour faciliter la saisie
     inputField.value = "@" + author + " ";
     inputField.focus();
   }
@@ -124,26 +119,21 @@ export function showContextMenu(item, event) {
   event.preventDefault();
   event.stopPropagation();
 
-  // Supprime un menu déjà existant s'il existe
   hideContextMenu();
 
-  // Exemple d'objet userStatus (à adapter selon votre logique)
   const userStatus = {
     isFriend: false,
     isBlocked: false,
   };
 
-  // Générer le HTML du menu et l'insérer dans le body
   const menuHTML = contextMenu.render(item, userStatus);
   document.body.insertAdjacentHTML("beforeend", menuHTML);
   const menuElement = document.getElementById("context-menu");
 
-  // Positionner le menu à la position du clic
   menuElement.style.left = event.pageX + "px";
   menuElement.style.top = event.pageY + "px";
   menuElement.style.display = "block";
 
-  // Attacher les événements aux boutons
   contextMenu.attachEvents(menuElement, item, userStatus);
 }
 
@@ -157,7 +147,6 @@ export function hideContextMenu() {
   }
 }
 
-// Cacher le menu lorsqu'on clique ailleurs
 document.addEventListener("click", (e) => {
   if (!e.target.closest(".context-menu")) {
     hideContextMenu();

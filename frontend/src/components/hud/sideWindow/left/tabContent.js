@@ -1,7 +1,7 @@
 // src/components/hud/tabContent.js
 
 import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
-import { setupChatInput, removeChatInput } from "./chat.js";
+import { setupChatInput, removeChatInput } from "/src/components/hud/sideWindow/left/chat.js";
 
 /**
  * Charge dynamiquement le contenu de l'onglet spécifié.
@@ -14,60 +14,37 @@ export function loadTabContent(tabName, container) {
 
   if (tabName === "info") {
     let tabData = sessionStorage.getItem("infoTabData");
-    console.log(
-      "🔄 Chargement du contenu de l'onglet 'info' depuis le sessionStorage..."
-    );
 
     if (tabData) {
-      console.log("📦 Tentative de parsing des données de l'onglet 'info'...");
       try {
         const parsedData = JSON.parse(tabData);
         if (!parsedData.info)
-          throw new Error("❌ Données corrompues ou incomplètes !");
-        console.log(
-          "✅ Données valides trouvées en sessionStorage. Affichage..."
-        );
+          throw new Error("Données corrompues ou incomplètes !");
         renderInfoTab(parsedData.info, container);
       } catch (err) {
-        console.warn(
-          "⚠ SessionStorage corrompu, rechargement depuis le serveur...",
-          err
-        );
+        console.warn("SessionStorage corrompu, rechargement depuis le serveur...", err);
         fetchAndStoreInfoData(container);
       }
     } else {
-      console.log(
-        "🌐 Aucune donnée trouvée en sessionStorage, récupération depuis le serveur..."
-      );
       fetchAndStoreInfoData(container);
     }
 
     removeChatInput();
   } else if (tabName === "comm") {
-    console.log("🔄 Chargement du contenu de l'onglet 'comm'...");
-
     let tabItems = [];
     const storedHistory = sessionStorage.getItem("chatHistory");
 
     if (storedHistory) {
       try {
         tabItems = JSON.parse(storedHistory);
-        console.log(
-          `📖 ${tabItems.length} messages chargés depuis le sessionStorage.`
-        );
       } catch (err) {
-        console.warn(
-          "⚠ Erreur lors de la récupération de 'chatHistory', réinitialisation...",
-          err
-        );
-        sessionStorage.removeItem("chatHistory"); // Nettoyer les données corrompues
-        tabItems = []; // Éviter une erreur plus tard
+        console.warn("Erreur lors de la récupération de 'chatHistory', réinitialisation...", err);
+        sessionStorage.removeItem("chatHistory");
+        tabItems = [];
       }
     }
 
     const userId = sessionStorage.getItem("userId")?.toString() || "unknown";
-    const username =
-      sessionStorage.getItem("username")?.toString() || "unknown";
 
     tabItems.forEach((item) => {
       renderCommMessage(item, container, userId);
@@ -78,8 +55,6 @@ export function loadTabContent(tabName, container) {
 }
 
 function fetchAndStoreInfoData(container) {
-  console.log("🌍 Récupération des données 'info' depuis le serveur...");
-
   fetch("/src/context/tabsContent.json")
     .then((response) => {
       if (!response.ok)
@@ -87,22 +62,15 @@ function fetchAndStoreInfoData(container) {
       return response.json();
     })
     .then((data) => {
-      console.log("✅ Données récupérées avec succès. Mise en cache...");
       sessionStorage.setItem("infoTabData", JSON.stringify(data));
       renderInfoTab(data.info || [], container);
     })
     .catch((error) => {
-      console.error(
-        "❌ Erreur lors de la récupération des données 'info':",
-        error
-      );
+      console.error( "Erreur lors de la récupération des données 'info':", error);
     });
 }
 
 function renderInfoTab(tabItems, container) {
-  console.log(
-    `📄 Affichage de ${tabItems.length} éléments dans l'onglet 'info'...`
-  );
   tabItems.forEach((item) => {
     const panelItem = infoPanelItem.render(item);
     container.insertAdjacentHTML("beforeend", panelItem);
