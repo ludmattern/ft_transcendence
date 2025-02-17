@@ -9,9 +9,8 @@ export const contextMenu = createComponent({
   render: (item, userStatus) => `
     <div id="context-menu" class="context-menu">
       <ul>
-        <li id="action-friend">${
-          userStatus.isFriend ? "Remove Friend" : "Add Friend"
-        }</li>
+        <li id="action-friend">${userStatus.isFriend ? "Remove Friend" : "Add Friend"
+    }</li>
         <li id="action-block">${userStatus.isBlocked ? "Unblock" : "Block"}</li>
         <li id="action-invite">Invite</li>
         <li id="action-profile">Profile</li>
@@ -59,19 +58,45 @@ function bodyData(el, author) {
 /**
  * Gestion des actions du menu contextuel.
  */
+
 async function handleFriendAction(isFriend, author) {
   if (isFriend) {
     console.log(`Removing ${author} from friends...`);
     // Logique pour supprimer un ami
+    const response = await fetch("/api/user-service/remove-friend/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bodyData(el, author)),
+    });
+    const data = await response.json();
+    if (data.success) {
+      console.log(`User: ${author} removed from friends successfully by ${sessionStorage.getItem("username")}`
+      );
+    } else {
+      console.log("Error removing friend, information:", error);
+    }
   } else {
-    console.log(`Adding ${author} as a friend...`);
+    console.log(`Sending a friend request to ${author} ...`);
     // Logique pour ajouter un ami
+    const response = await fetch("/api/user-service/send-friend-request/", {
+      method: "POST", 
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bodyData(el, author)),
+    });
+    const data = await response.json();
+    if (data.success) {
+      console.log(`User: ${sessionStorage.getItem("username")} sent a friend request to ${author}`
+      );
+    } else {
+      console.log("Error sending a friend request, information:", error);
+    }
   }
 }
 
 async function handleBlockAction(isBlocked, author) {
   if (isBlocked) {
     console.log(`Unblocking ${author}...`);
+    // Logique pour débloquer un utilisateur
     const response = await fetch("/api/user-service/unblock/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -84,16 +109,27 @@ async function handleBlockAction(isBlocked, author) {
     } else {
       console.log("Error updating information:", error);
     }
-    // Logique pour débloquer un utilisateur
   } else {
     console.log(`Blocking ${author}...`);
     // Logique pour bloquer un utilisateur
+    const response = await fetch("/api/user-service/block/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bodyData(el, author)),
+    });
+    const data = await response.json();
+    if (data.success) {
+      console.log(`User: ${author} blocked  successfully by ${sessionStorage.getItem("username")}`
+      );
+    } else {
+      console.log("Error updating information:", error);
+    }
   }
 }
 
 function handleInviteAction(author) {
   console.log(`Inviting ${author} to a game...`);
-  // Logique pour envoyer une invitation
+  // Logique pour envoyer une invitation pour une partie privee
 }
 
 function handleProfileAction(author) {
@@ -102,35 +138,35 @@ function handleProfileAction(author) {
 }
 
 function handleMessageAction(author) {
-	console.log(`Messaging ${author}...`);
-  
-	// Vérifie si l'onglet actif n'est pas "comm"
-	const activeTab = document.querySelector(".nav-link.active");
-	if (activeTab && activeTab.dataset.tab !== "comm") {
-	  // Simule un clic sur l'onglet "comm"
-	  const commTab = document.querySelector('.nav-link[data-tab="comm"]');
-	  if (commTab) {
-		commTab.click();
-	  }
-	  // Attend que le champ de saisie dans le conteneur "#l-tab-content-container" soit présent
-	  waitForElement("#l-tab-content-container #message-input")
-		.then((inputField) => {
-		  inputField.value = "@" + author + " ";
-		  inputField.focus();
-		})
-		.catch((error) => {
-		  console.error(error);
-		});
-	} else {
-	  // Si on est déjà dans l'onglet "comm"
-	  const inputField = document.querySelector("#l-tab-content-container #message-input");
-	  if (inputField) {
-		inputField.value = "@" + author + " ";
-		inputField.focus();
-	  }
-	}
+  console.log(`Messaging ${author}...`);
+
+  // Vérifie si l'onglet actif n'est pas "comm"
+  const activeTab = document.querySelector(".nav-link.active");
+  if (activeTab && activeTab.dataset.tab !== "comm") {
+    // Simule un clic sur l'onglet "comm"
+    const commTab = document.querySelector('.nav-link[data-tab="comm"]');
+    if (commTab) {
+      commTab.click();
+    }
+    // Attend que le champ de saisie dans le conteneur "#l-tab-content-container" soit présent
+    waitForElement("#l-tab-content-container #message-input")
+      .then((inputField) => {
+        inputField.value = "@" + author + " ";
+        inputField.focus();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  } else {
+    // Si on est déjà dans l'onglet "comm"
+    const inputField = document.querySelector("#l-tab-content-container #message-input");
+    if (inputField) {
+      inputField.value = "@" + author + " ";
+      inputField.focus();
+    }
   }
-   
+}
+
 /**
  * Affiche le menu contextuel à la position du clic droit.
  * @param {Object} item - L'objet associé au message.
