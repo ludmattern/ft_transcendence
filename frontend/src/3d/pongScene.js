@@ -335,9 +335,9 @@ const plaqueSize = { width: 0.25, height: 0.25};
 
   const meshBallGeometry = new THREE.SphereGeometry(0.05, 30, 15);
   const meshBallMaterial = new THREE.MeshStandardMaterial({
-    color: 0x5588ff,
-    emissive: 0x5588ff,
-    emissiveIntensity: 3,
+    color: 0x5588f1,
+    emissive: 0x5588f1,
+    emissiveIntensity: 2,
     roughness: 0.2,
     metalness: 0.8,
   });
@@ -467,8 +467,10 @@ export function animatePong(renderer) {
   ) {
     if (!cameraPlayer1) return;
     let cam;
+    if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
+    if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
+
     if (Store.gameConfig.side == "left") {
-      if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
 
       if (Store.player1Paddle && Store.p1Target) {
           Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
@@ -478,8 +480,10 @@ export function animatePong(renderer) {
       cameraPlayer1.lookAt(Store.p1Focus);
       cam = cameraPlayer1;
       }
+      if (Store.player2Paddle && Store.p2Target) {
+        Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
+      }
     } else if (Store.gameConfig.side == "right") {
-      if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
 
       if (Store.player2Paddle && Store.p2Target) {
           Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
@@ -488,6 +492,9 @@ export function animatePong(renderer) {
       cameraPlayer2.position.lerp(Store.p2Focus.clone().add(offsetP2), lerpFactorCam);
       cameraPlayer2.lookAt(Store.p2Focus);
       cam = cameraPlayer2;
+      }
+      if (Store.player1Paddle && Store.p1Target) {
+        Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
       }
     }
     screenMesh.visible = false;

@@ -23,6 +23,7 @@ class BasePongGame:
         }
         
         self.ball_hit_paddle = False
+        self.ball_hit_wall = False
 
         self.tunnel_width = 5
         self.tunnel_height = 1.5
@@ -75,7 +76,8 @@ class BasePongGame:
         self.last_update = now
 
         self.ball_hit_paddle = False
-        
+        self.ball_hit_wall = False
+
         elapsed_since_start = now - self.start_time
         if elapsed_since_start < self.start_delay:
             self.state["waitingForStart"] = True
@@ -145,16 +147,22 @@ class BasePongGame:
         if ball["y"] + ball_half_size >= self.tunnel_height / 2:
             ball["y"] = self.tunnel_height / 2 - ball_half_size
             ball["vy"] *= -1
+            self.ball_hit_wall = True
+
         elif ball["y"] - ball_half_size <= -self.tunnel_height / 2:
             ball["y"] = -self.tunnel_height / 2 + ball_half_size
             ball["vy"] *= -1
+            self.ball_hit_wall = True
 
         if ball["z"] + ball_half_size >= self.tunnel_depth / 2:
             ball["z"] = self.tunnel_depth / 2 - ball_half_size
             ball["vz"] *= -1
+            self.ball_hit_wall = True
+
         elif ball["z"] - ball_half_size <= -self.tunnel_depth / 2:
             ball["z"] = -self.tunnel_depth / 2 + ball_half_size
             ball["vz"] *= -1
+            self.ball_hit_wall = True
 
         margin_before_scoring = 0.1
 
@@ -226,5 +234,7 @@ class BasePongGame:
             "scores": {str(k): v for k, v in self.state["scores"].items()},
             "user_scores": self.user_scores,
             "game_over": self.game_over,
-            "ball_hit_paddle": self.ball_hit_paddle 
+            "ball_hit_paddle": self.ball_hit_paddle,
+            "ball_hit_wall": self.ball_hit_wall
+
         }

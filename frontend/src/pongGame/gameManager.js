@@ -146,7 +146,7 @@ class GameManager {
       });
     }
     
-    console.log(`🟢 Sending start_game event: player1=${player1}, player2=${player2}`);    ws.send(JSON.stringify({
+    console.log(` Sending start_game event: player1=${player1}, player2=${player2}`);    ws.send(JSON.stringify({
       type: "game_event",
       action: "start_game",
       game_id: this.gameId,
@@ -200,6 +200,14 @@ class GameManager {
       }
     }
     if (gameState.ball_hit_paddle) 
+    {
+      if (gameState.ball.vx < 0) {
+        triggerPaddleColorChange(Store.player2Paddle, new THREE.Color(0xff007f)); 
+      } else {
+        triggerPaddleColorChange(Store.player1Paddle, new THREE.Color(0x7f00ff)); 
+      }
+    }
+    if (gameState.ball_hit_wall)
     {
       triggerBallColorChange();
     }
@@ -288,12 +296,12 @@ async function getUsername(playerId) {
 
 function triggerBallColorChange() {
   if (!Store.meshBall) return;
-
-  const originalColor = new THREE.Color(0x5588ff); 
-  const hitColor = new THREE.Color(0xff0000);  
+  
+  const originalColor = new THREE.Color(0x5588f1); 
+  const hitColor = new THREE.Color(0xffffff);  
 
   let elapsed = 0;
-  const duration = 1;  
+  const duration = 0.15;  
   const interval = 30; 
 
   Store.meshBall.material.emissive.set(hitColor);
@@ -306,5 +314,28 @@ function triggerBallColorChange() {
       if (t >= 1) {
           clearInterval(fadeBack);
       }
+  }, interval);
+}
+
+
+function triggerPaddleColorChange(paddle, originalColor) {
+  if (!paddle) return;
+
+  const hitColor = new THREE.Color(0xffffff); 
+  let elapsed = 0;
+  const duration = 0.15; 
+  const interval = 30; 
+
+  paddle.children[0].material.color = new THREE.Color(hitColor);
+
+  const fadeBack = setInterval(() => {
+    elapsed += interval / 1000;
+    const t = Math.min(elapsed / duration, 1);
+
+    paddle.children[0].material.color.lerpColors(hitColor, originalColor, t);
+
+    if (t >= 1) {
+      clearInterval(fadeBack);
+    }
   }, interval);
 }
