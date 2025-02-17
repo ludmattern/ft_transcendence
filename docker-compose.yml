@@ -45,7 +45,8 @@ services:
 
   gateway-service:
     build:
-      context: ./backend/gateway-service
+      context: .
+      dockerfile: backend/gateway-service/Dockerfile
     container_name: gateway_service
     env_file: *common_env
     networks: *common_networks
@@ -54,7 +55,8 @@ services:
       
   auth-service:
     build:
-      context: ./backend/auth-service
+      context: .
+      dockerfile: backend/auth-service/Dockerfile
     container_name: auth_service
     depends_on:
       postgres:
@@ -72,7 +74,8 @@ services:
 
   user-service:
     build:
-      context: ./backend/user-service
+      context: .
+      dockerfile: backend/user-service/Dockerfile
     container_name: user_service
     depends_on:
       postgres:
@@ -87,7 +90,8 @@ services:
 
   livechat-service:
     build:
-      context: ./backend/livechat-service
+      context: .
+      dockerfile: backend/livechat-service/Dockerfile
     container_name: livechat_service
     depends_on:
       postgres:
@@ -106,7 +110,8 @@ services:
       
   pong-service:
     build:
-      context: ./backend/pong-service
+      context: .
+      dockerfile: backend/pong-service/Dockerfile
     container_name: pong_service
     depends_on:
       postgres:
@@ -126,7 +131,8 @@ services:
 
   matchmaking-service:
     build:
-      context: ./backend/matchmaking-service
+      context: .
+      dockerfile: backend/matchmaking-service/Dockerfile
     container_name: matchmaking_service
     depends_on:
       postgres:
@@ -147,7 +153,6 @@ services:
       - ./nginx/certs:/etc/nginx/certs:ro
       - ./frontend:/usr/share/nginx/html/frontend:ro
     ports:
-      - "8080:80"
       - "8443:443"
     depends_on:
       auth-service:

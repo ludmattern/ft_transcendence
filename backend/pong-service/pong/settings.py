@@ -1,5 +1,15 @@
+#pong-service
+
 import os
+import sys
 import secrets
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(BASE_DIR, "/app", "common"))
+
+from common_settings import *
+
+INSTALLED_APPS = COMMON_INSTALLED_APPS
 
 SECRET_KEY = secrets.token_urlsafe(64)
 
@@ -9,50 +19,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-INSTALLED_APPS = [
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'service',
-    'channels',
-]
-
 MIGRATION_MODULES = {
     'auth': None,
     'contenttypes': None,
-
 }
 
 ROOT_URLCONF = 'pong.urls'
 
 ASGI_APPLICATION = 'pong.asgi.application'
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("redis", 6379)],
-            "capacity": 100000,
-        },
-    },
-}
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'postgres'),
-        'USER': os.getenv('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': os.getenv('DB_HOST', 'postgres_db'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-    }
-}
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
-STATIC_URL = '/static/'
