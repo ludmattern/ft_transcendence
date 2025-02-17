@@ -19,7 +19,6 @@ INSTALLED_APPS = [
 MIGRATION_MODULES = {
     'auth': None,
     'contenttypes': None,
-
 }
 
 ROOT_URLCONF = 'matchmaking.urls'

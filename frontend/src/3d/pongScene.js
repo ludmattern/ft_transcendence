@@ -354,7 +354,7 @@ const plaqueSize = { width: 0.25, height: 0.25};
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 1);
   Store.pongScene.add(ambientLight);
-
+/*
   const guiParams = {
 	// Pour le mode manuel ou par nombre de cellules
 	cellSize: 0.1,       
@@ -412,7 +412,7 @@ const plaqueSize = { width: 0.25, height: 0.25};
 	neonMaterial.uniforms.uNeonColor.value.set(value);
   });
   
-  
+ */ 
 }
 
 const lerpFactor = 0.2;
