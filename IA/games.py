@@ -1,8 +1,6 @@
 import random
 import time
-import logging
 
-logger = logging.getLogger(__name__)
 class BasePongGame:
     def __init__(self, game_id, player1_id=None, player2_id=None):
         self.game_id = game_id
@@ -58,8 +56,6 @@ class BasePongGame:
         step = 0.05
         player = self.state["players"][player_id]
 
-        logger.info(f"here player1_id={player_id}")
-
         if direction == "up":
             player["y"] = min(self.tunnel_height / 2 - self.paddle_height / 2, player["y"] + step)
         elif direction == "down":
@@ -68,8 +64,7 @@ class BasePongGame:
             player["z"] = max(-self.tunnel_depth / 2 + self.paddle_depth / 2, player["z"] - step)  
         elif direction == "right":
             player["z"] = min(self.tunnel_depth / 2 - self.paddle_depth / 2, player["z"] + step)  
-        else:
-            return
+
 
 
     def update(self):
@@ -241,5 +236,4 @@ class BasePongGame:
             "game_over": self.game_over,
             "ball_hit_paddle": self.ball_hit_paddle,
             "ball_hit_wall": self.ball_hit_wall
-
         }

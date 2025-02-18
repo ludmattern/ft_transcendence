@@ -125,7 +125,6 @@ class GameManager {
     const player1 = gameConfig.side === "left" ? gameConfig.user_id : gameConfig.opponent_id;
     const player2 = gameConfig.side === "right" ? gameConfig.user_id : gameConfig.opponent_id;
 
-
     if (gameConfig.mode === "local") {
       document.addEventListener("keydown", this.localKeydownHandler);
       document.addEventListener("keyup", this.localKeyupHandler);
@@ -263,6 +262,9 @@ class GameManager {
       }
       if (gameConfig.mode === "matchmaking") {
         return `matchmaking_${Date.now()}`;
+      }
+      if (gameConfig.mode === "solo") {
+        return `solo_${Date.now()}`;
       }
       return `game_${Date.now()}`;
     }

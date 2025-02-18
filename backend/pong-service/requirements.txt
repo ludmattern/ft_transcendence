@@ -3,3 +3,14 @@ psycopg2==2.9.7
 channels
 channels-redis
 daphne
+
+gymnasium==1.0.0
+matplotlib==3.10.0
+pandas
+stable-baselines3==2.5.0
+numpy==2.2.3
+cloudpickle==3.1.1
+
+torch==2.6.0+cpu
+torchvision==0.21.0+cpu
+torchaudio==2.6.0+cpu

@@ -6,7 +6,8 @@ WORKDIR /app
 
 COPY backend/pong-service/requirements.txt /app/
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+RUN pip install --no-cache-dir "numpy==2.2.3" "cloudpickle==3.1.1"
 
 COPY backend/pong-service/ /app/
 COPY backend/common /app/common

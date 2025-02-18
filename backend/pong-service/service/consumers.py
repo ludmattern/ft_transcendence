@@ -2,8 +2,47 @@ import asyncio
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .game_manager import game_manager
-
+import time
+import numpy as np
 logger = logging.getLogger(__name__)
+from stable_baselines3 import PPO
+
+
+MODEL_PATH = "/app/service/aiModels/pong3d_agent.zip"
+model = PPO.load(MODEL_PATH)
+
+
+def get_obs(game):
+    """
+    Construit l'observation sous forme (1, 10) avec np.float32.
+    """
+    ball = game.state["ball"]
+    p1 = game.state["players"][1]
+    p2 = game.state["players"][2]
+
+    arr = np.array([
+        ball["x"], ball["y"], ball["z"],
+        ball["vx"], ball["vy"], ball["vz"],
+        p1["y"], p1["z"],
+        p2["y"], p2["z"]
+    ], dtype=np.float32)
+
+    return arr.reshape(1, -1)  # => Toujours (1, 10)
+
+def action_to_direction(action):
+    """
+    Convertit l'action (0..4) en 'up','down','left','right' ou None (stay).
+    """
+    if action == 1:
+        return "up"
+    elif action == 2:
+        return "down"
+    elif action == 3:
+        return "left"
+    elif action == 4:
+        return "right"
+    else:
+        return None
 
 class PongGroupConsumer(AsyncWebsocketConsumer):
 
@@ -30,13 +69,14 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         #logger.info(f"Client ajouté au groupe game_{game_id}")
 
         game = game_manager.get_or_create_game(game_id, player1_id, player2_id)
-        logger.info(f"🎮 Game récupérée: {game_id}, Player1={game.player1_id}, Player2={game.player2_id}")
+        #logger.info(f"🎮 Game récupérée: {game_id}, Player1={game.player1_id}, Player2={game.player2_id}")
 
         if action == "start_game":
             if game_id not in self.running_games:
-                task = asyncio.create_task(self.game_loop(game_id))
-                self.running_games[game_id] = task
-               # logger.info(f" Boucle de jeu démarrée pour game_id={game_id}")
+                 self.running_games[game_id] = {
+                    "task": asyncio.create_task(self.game_loop(game_id)),
+                    "bot_last_action": None  # 🟢 Stocke la dernière action
+                }
 
             payload = game.to_dict()
             await self.channel_layer.group_send(
@@ -69,12 +109,31 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
         pass
 
+
+    async def _bot_action(self, game, game_id):
+        """
+        Fait agir l'IA pour player2 si c'est un match solo.
+        """
+        obs = get_obs(game) 
+
+        action, _states = model.predict(obs, deterministic=True)
+        direction = action_to_direction(action)
+
+        if direction:
+            logger.info(f"🎮 dir: {direction}, {game.player2_id}")
+            self.running_games[game_id]["bot_last_action"] = direction
+
+
+            
     async def game_loop(self, game_id):
         """
         Boucle régulière de mise à jour. Tourne tant que la partie n'est pas finie.
         """
-        #logger.info(f" game_loop démarrée pour {game_id}")
+
         try:
+            is_solo_mode = game_id.startswith("solo_")  # ou "solo" in game_id
+            ai_interval = 1.0   # IA agit toutes les 1s
+            last_ai_time = time.time()
             while True:
                 game = game_manager.get_game(game_id)
                 if not game:
@@ -82,6 +141,18 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     break
 
                 game.update()
+                
+                if is_solo_mode:
+                    now = time.time()
+
+                    if now - last_ai_time >= ai_interval:
+                        await self._bot_action(game, game_id)
+                        last_ai_time = now
+
+                    bot_last_action = self.running_games[game_id]["bot_last_action"]
+                    if bot_last_action:
+                        game.move_paddle(1, bot_last_action)
+                
                 payload = game.to_dict()
 
                 await self.channel_layer.group_send(
