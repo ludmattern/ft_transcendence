@@ -7,4 +7,4 @@ COPY --chown=appuser:appuser backend/livechat-service/ /app/
 
 EXPOSE 3003
 
-CMD ["daphne", "-b", "0.0.0.0", "-p", "3003", "livechat.asgi:application"]
+CMD ["daphne", "-e", "ssl:3003:privateKey=/etc/nginx/certs/selfsigned.key:certKey=/etc/nginx/certs/selfsigned.crt", "livechat.asgi:application"]

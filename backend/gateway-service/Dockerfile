@@ -7,4 +7,4 @@ COPY --chown=appuser:appuser backend/gateway-service/ /app/
 
 EXPOSE 3006
 
-CMD ["daphne", "-b", "0.0.0.0", "-p", "3006", "gateway.asgi:application"]
+CMD ["daphne", "-e", "ssl:3006:privateKey=/etc/nginx/certs/selfsigned.key:certKey=/etc/nginx/certs/selfsigned.crt", "gateway.asgi:application"]

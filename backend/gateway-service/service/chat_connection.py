@@ -4,15 +4,26 @@ import asyncio
 import logging
 import websockets
 import threading
+import ssl
 
 logger = logging.getLogger(__name__)
 
+
+
+
 async def connect_dummy_chat():
-    ws_url = "ws://livechat_service:3003/ws/chat/"  
+    ws_url = "wss://livechat_service:3003/ws/chat/"  
     while True:
         try:
+
+
+            ssl_context = ssl.create_default_context()
+            ssl_context.load_verify_locations("/etc/nginx/certs/selfsigned.crt")  # 🔥 Charge le certificat auto-signé
+            ssl_context.check_hostname = False
+            ssl_context.verify_mode = ssl.CERT_NONE
             logger.info("Tentative de connexion au ChatConsumer via %s", ws_url)
-            async with websockets.connect(ws_url) as websocket:
+            async with websockets.connect(ws_url, ssl=ssl_context) as websocket:
+            # async with websockets.connect(ws_url) as websocket:
                 logger.info("Connexion dummy établie au ChatConsumer.")
                 while True:
                     message = await websocket.recv()

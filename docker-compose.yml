@@ -41,6 +41,8 @@ services:
     command: ["echo", "Base image built"]
     networks:
       - backend_network
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:rw
 
   postgres:
     build:
@@ -113,6 +115,8 @@ services:
       FERNET_KEY: ${FERNET_KEY}
     ports:
       - "3002:3002"
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:rw
 
   livechat-service:
     <<: *service_defaults

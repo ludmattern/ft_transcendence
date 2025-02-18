@@ -3,15 +3,21 @@ import asyncio
 import logging
 import websockets
 import threading
+import ssl
 
 logger = logging.getLogger(__name__)
 
 async def connect_dummy_pong():
-    ws_url = "ws://pong_service:3004/ws/pong/"
+    ws_url = "wss://pong_service:3004/ws/pong/"
     while True:
         try:
+            ssl_context = ssl.create_default_context()
+            ssl_context.load_verify_locations("/etc/nginx/certs/selfsigned.crt")  # 🔥 Charge le certificat auto-signé
+            ssl_context.check_hostname = False
+            ssl_context.verify_mode = ssl.CERT_NONE
+            
             logger.info("Tentative de connexion au PongGroupConsumer via %s", ws_url)
-            async with websockets.connect(ws_url) as websocket:
+            async with websockets.connect(ws_url, ssl=ssl_context) as websocket:
                 logger.info("Connexion dummy établie au PongGroupConsumer.")
                 while True:
                     message = await websocket.recv()
