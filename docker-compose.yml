@@ -171,7 +171,7 @@ services:
     container_name: nginx_proxy
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/etc/nginx/certs:ro
+      - ./nginx/certs:/etc/nginx/certs:rw
       - ./frontend:/usr/share/nginx/html/frontend:ro
     ports:
       - "8443:443"

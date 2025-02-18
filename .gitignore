@@ -1,3 +1,4 @@
 # .gitignore
 secret/.env
 *.env
+nginx/certs/*
