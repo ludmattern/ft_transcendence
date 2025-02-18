@@ -11,6 +11,14 @@ export function gameModeSelector(config)
 
           gameManager.startGame(gameConfig);
     }
+    else if (config.gameMode === "solo")
+    {
+        const gameConfig = {
+          mode: "solo", 
+          side: "right"       
+        };
+        gameManager.startGame(gameConfig);
+    }
     else if ( config.gameMode === "matchmaking")
     {
         const userId = sessionStorage.getItem("userId");

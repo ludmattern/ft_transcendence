@@ -102,7 +102,7 @@ export function buildGameScene(gameConfig) {
     cameraPlayer2.updateProjectionMatrix();
   } else if (
     gameConfig.mode === "matchmaking" ||
-    gameConfig.mode === "private"
+    gameConfig.mode === "private" || gameConfig.mode === "solo"
   ) {
     aspectRatio = 2;
 
@@ -463,7 +463,7 @@ export function animatePong(renderer) {
     renderer.render(Store.pongScene, cameraCube);
   } else if (
     Store.gameConfig.mode === "matchmaking" ||
-    Store.gameConfig.mode === "private"
+    Store.gameConfig.mode === "private" ||Store.gameConfig.mode === "solo"
   ) {
     if (!cameraPlayer1) return;
     let cam;

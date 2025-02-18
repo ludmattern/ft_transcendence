@@ -45,9 +45,7 @@ const Store = {
   cameraRotationEvent: 0,
   listeners: [],
   gameConfig: null,
-  lastBallVX: null,
-  lastScoreP1:null,
-  lastScoreP2:null,
+
 
   material: new THREE.MeshStandardMaterial({
     emissive: new THREE.Color(0x050505),
