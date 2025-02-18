@@ -23,6 +23,8 @@ x-depends-base: &depends_base
   base:
     condition: service_started
 
+
+
 x-service-defaults: &service_defaults
   env_file: *common_env
   networks: *common_networks
@@ -93,6 +95,8 @@ services:
       FERNET_KEY: ${FERNET_KEY}
     ports:
       - "3001:3001"
+    volumes:
+      - ./nginx/certs:/etc/nginx/certs:rw
 
   user-service:
     <<: *service_defaults
@@ -169,6 +173,7 @@ services:
     build:
       context: ./nginx
     container_name: nginx_proxy
+    restart: always
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/certs:/etc/nginx/certs:rw

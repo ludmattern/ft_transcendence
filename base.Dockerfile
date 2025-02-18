@@ -9,7 +9,7 @@ RUN apk add --no-cache gcc musl-dev postgresql-dev && \
 
 WORKDIR /app
 
-USER appuser
+#USER appuser
 
 COPY --chown=appuser:appuser backend/common/ /app/common
 RUN pip install --no-cache-dir -r /app/common/requirements_common.txt
