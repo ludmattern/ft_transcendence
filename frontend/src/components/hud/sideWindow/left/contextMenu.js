@@ -48,10 +48,10 @@ export const contextMenu = createComponent({
  * @param {HTMLElement} el - Élément racine du formulaire
  * @returns {Object} - Données collectées du formulaire
  */
-function bodyData(el, author) {
+function bodyData(author) {
   return {
-    username: sessionStorage.getItem("username"),
-    selecteduser: author,
+    userId: sessionStorage.getItem("userId"),
+    selectedUserId: author,
   };
 }
 
@@ -66,14 +66,14 @@ async function handleFriendAction(isFriend, author) {
     const response = await fetch("/api/user-service/remove-friend/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bodyData(el, author)),
+      body: JSON.stringify(bodyData(author)),
     });
     const data = await response.json();
-    if (data.success) {
+    if (data.message === "Friend removed") {
       console.log(`User: ${author} removed from friends successfully by ${sessionStorage.getItem("username")}`
       );
     } else {
-      console.log("Error removing friend, information:", error);
+      console.log("Error removing friend, information");
     }
   } else {
     console.log(`Sending a friend request to ${author} ...`);
@@ -81,14 +81,14 @@ async function handleFriendAction(isFriend, author) {
     const response = await fetch("/api/user-service/send-friend-request/", {
       method: "POST", 
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bodyData(el, author)),
+      body: JSON.stringify(bodyData(author)),
     });
     const data = await response.json();
-    if (data.success) {
+    if (data.message === "Friend request sent") {
       console.log(`User: ${sessionStorage.getItem("username")} sent a friend request to ${author}`
       );
     } else {
-      console.log("Error sending a friend request, information:", error);
+      console.log("Error sending a friend request, information");
     }
   }
 }
@@ -100,14 +100,14 @@ async function handleBlockAction(isBlocked, author) {
     const response = await fetch("/api/user-service/unblock/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bodyData(el, author)),
+      body: JSON.stringify(bodyData(author)),
     });
     const data = await response.json();
     if (data.success) {
       console.log(`User: ${author} unblocked successfully by ${sessionStorage.getItem("username")}`
       );
     } else {
-      console.log("Error updating information:", error);
+      console.log("Error updating information:");
     }
   } else {
     console.log(`Blocking ${author}...`);
@@ -115,14 +115,14 @@ async function handleBlockAction(isBlocked, author) {
     const response = await fetch("/api/user-service/block/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bodyData(el, author)),
+      body: JSON.stringify(bodyData(author)),
     });
     const data = await response.json();
     if (data.success) {
       console.log(`User: ${author} blocked  successfully by ${sessionStorage.getItem("username")}`
       );
     } else {
-      console.log("Error updating information:", error);
+      console.log("Error updating information");
     }
   }
 }
