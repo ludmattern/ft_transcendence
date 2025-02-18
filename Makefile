@@ -7,6 +7,7 @@ down:
 	docker compose -f docker-compose.yml down
 	docker volume ls -q | xargs -r docker volume rm -f
 	docker system prune -a --volumes
+	rm -rf nginx/certs
 
 down-v:
 	docker compose --env-file ./secret/.env -f docker-compose.yml down -v
