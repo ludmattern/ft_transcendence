@@ -80,19 +80,16 @@ async function fetchAndStoreInfoData(container) {
   // 
   const userId = sessionStorage.getItem("userId");
 
-  if (!userId) {
-    console.error("Error: User ID not found in sessionStorage.");
-  }
-
   const response = await fetch(`/api/user-service/info-getter/${encodeURIComponent(userId)}/`, {
     method: "GET",
     credentials: "include",
   });
 
   const data = await response.json();
-  if (data) {
+  if (data.info) {
+    console.log("Information received from the server:", data);
     sessionStorage.setItem("infoTabData", JSON.stringify(data));
-    renderInfoTab(data.notifications || [], container);
+    renderInfoTab(data.info || [], container);
   } else {
     console.log("Error getting information");
   }

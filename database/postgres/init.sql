@@ -34,23 +34,24 @@ CREATE TABLE IF NOT EXISTS game_history (
 );
 
 CREATE TABLE IF NOT EXISTS friends (
-    user_id INT DEFAULT 0,
-    friend_id INT DEFAULT 0,
+    id SERIAL PRIMARY KEY,  -- Django requires a primary key
+    user_id INT NOT NULL,
+    friend_id INT NOT NULL,
     status VARCHAR(20) DEFAULT 'pending',  -- 'pending', 'accepted', 'rejected'
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, friend_id),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (user_id, friend_id) -- Ensures no duplicate friendships
 );
 
-
 CREATE TABLE IF NOT EXISTS blocks (
-    user_id INT DEFAULT 0,
-    blocked_user_id INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, blocked_user_id),
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    blocked_user_id INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (blocked_user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (blocked_user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (user_id, blocked_user_id) -- Ensures no duplicate blocks
 );
 
 CREATE TABLE IF NOT EXISTS tournaments (
@@ -58,32 +59,34 @@ CREATE TABLE IF NOT EXISTS tournaments (
     serial_key VARCHAR(255) NOT NULL UNIQUE, -- Unique identifier for the tournament
     rounds INT DEFAULT 0,
     name VARCHAR(255) DEFAULT 'TOURNAMENT_DEFAULT_NAME',
-    organizer_id INT DEFAULT 0,
+    organizer_id INT NOT NULL,
     status VARCHAR(50) DEFAULT 'upcoming', -- 'upcoming', 'ongoing', 'completed'
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (organizer_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS tournament_participants (
+    id SERIAL PRIMARY KEY,
     tournament_id INT NOT NULL,
     user_id INT NOT NULL,
-    status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'accepted', 'rejected', 'still flying', 'eliminated'
-    PRIMARY KEY (tournament_id, user_id),
+    status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'accepted', 'rejected', 'eliminated'
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (tournament_id) REFERENCES tournaments(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (tournament_id, user_id) -- Ensures no duplicate entries
 );
 
 CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,
-    sender_id INT DEFAULT 0,
-    receiver_id INT DEFAULT 0,
-    type VARCHAR(50) DEFAULT 'private game',  -- 'private_game', 'tournament_invite', 'tournament_turn'
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    type VARCHAR(50) DEFAULT 'private_game',  -- 'private_game', 'tournament_invite', 'tournament_turn'
     status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'accepted', 'rejected', 'expired'
     tournament_id INT DEFAULT NULL, -- Used for tournament-related notifications
     game_id INT DEFAULT NULL, -- Used for game invitations
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (tournament_id) REFERENCES tournaments(id) ON DELETE CASCADE,

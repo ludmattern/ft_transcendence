@@ -1,5 +1,7 @@
 KEEP IN MIND HOW TO HANDLE user's status (offline,online,ingame)
 
+CHECK HTTPS only for Backend too.
+
 Check requirements for each dockerfile and give version for each of those which doesn't 
 
 NEED TO SETUP tournament-service in order to start making back views/consumers for infoPanel purposes.
