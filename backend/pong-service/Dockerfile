@@ -1,19 +1,10 @@
-FROM python:3.11-alpine
+FROM myapp-base
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
-RUN apk update && \
-    apk add --no-cache gcc musl-dev postgresql-dev
-
-WORKDIR /app
-
-COPY backend/pong-service/requirements.txt /app/
-
+COPY --chown=appuser:appuser backend/pong-service/requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY backend/pong-service/ /app/
-COPY backend/common /app/common
+COPY --chown=appuser:appuser backend/pong-service/ /app/
+COPY --chown=appuser:appuser backend/common /app/common
 
 EXPOSE 3004
 

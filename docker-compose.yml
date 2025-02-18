@@ -17,6 +17,14 @@ x-redis-env: &redis_env
   REDIS_PORT: "6379"
 
 services:
+  base:
+    build:
+      context: .
+      dockerfile: base.Dockerfile
+    container_name: base_image
+    image: myapp-base
+    command: ["echo", "Base image built"]
+
   postgres:
     build:
       context: ./database
@@ -48,6 +56,9 @@ services:
       context: .
       dockerfile: backend/gateway-service/Dockerfile
     container_name: gateway_service
+    depends_on:
+      base:
+        condition: service_started
     env_file: *common_env
     networks: *common_networks
     ports:
@@ -59,6 +70,8 @@ services:
       dockerfile: backend/auth-service/Dockerfile
     container_name: auth_service
     depends_on:
+      base:
+        condition: service_started
       postgres:
         condition: service_healthy
     env_file: *common_env
@@ -78,6 +91,8 @@ services:
       dockerfile: backend/user-service/Dockerfile
     container_name: user_service
     depends_on:
+      base:
+        condition: service_started
       postgres:
         condition: service_healthy
     env_file: *common_env
@@ -94,6 +109,8 @@ services:
       dockerfile: backend/livechat-service/Dockerfile
     container_name: livechat_service
     depends_on:
+      base:
+        condition: service_started
       postgres:
         condition: service_healthy
       redis:
@@ -114,6 +131,8 @@ services:
       dockerfile: backend/pong-service/Dockerfile
     container_name: pong_service
     depends_on:
+      base:
+        condition: service_started
       postgres:
         condition: service_healthy
       redis:
@@ -135,6 +154,8 @@ services:
       dockerfile: backend/matchmaking-service/Dockerfile
     container_name: matchmaking_service
     depends_on:
+      base:
+        condition: service_started
       postgres:
         condition: service_healthy
     env_file: *common_env
