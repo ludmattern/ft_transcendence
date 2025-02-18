@@ -1,5 +1,6 @@
 # common_settings.py
 import os
+import secrets
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEBUG = True
@@ -10,7 +11,8 @@ USE_I18N = True
 USE_TZ = True
 STATIC_URL = '/static/'
 
-# Configuration de la base de données commune (pour les services PostgreSQL)
+SECRET_KEY = secrets.token_urlsafe(64)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -22,7 +24,6 @@ DATABASES = {
     }
 }
 
-# Configuration commune de Channels (pour les services qui en ont besoin)
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -33,10 +34,8 @@ CHANNEL_LAYERS = {
     },
 }
 
-# Applications communes pour les services utilisant Channels
 COMMON_INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'service',
-    'channels',
 ]
