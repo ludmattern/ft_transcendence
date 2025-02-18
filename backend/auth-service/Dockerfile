@@ -1,6 +1,10 @@
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
-RUN apt-get update && apt-get install -y gcc libpq-dev
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+RUN apk update && \
+    apk add --no-cache gcc musl-dev postgresql-dev
 
 WORKDIR /app
 
@@ -14,6 +18,8 @@ COPY backend/auth-service/entrypoint.sh /entrypoint.sh
 COPY backend/common /app/common
 
 RUN chmod +x /entrypoint.sh
+
+EXPOSE 3001
 
 ENTRYPOINT ["/entrypoint.sh"]
 

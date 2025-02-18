@@ -3,7 +3,6 @@ FROM python:3.11-alpine
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# Installer les dépendances système nécessaires
 RUN apk update && \
     apk add --no-cache gcc musl-dev postgresql-dev
 
