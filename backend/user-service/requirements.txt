@@ -1,6 +1,4 @@
 -r common/requirements_common.txt
-pyotp==2.9.0
+-r common/requirements_security.txt
 qrcode==8.0
 Pillow==11.1.0
-bcrypt==4.2.1
-cryptography==44.0.1
