@@ -1,3 +1,2 @@
--r common/requirements_common.txt
 -r common/requirements_channels.txt
 websockets==15.0

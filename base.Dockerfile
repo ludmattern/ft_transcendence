@@ -12,3 +12,4 @@ WORKDIR /app
 USER appuser
 
 COPY --chown=appuser:appuser backend/common/ /app/common
+RUN pip install --no-cache-dir -r /app/common/requirements_common.txt
