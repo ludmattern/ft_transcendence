@@ -1,15 +1,10 @@
-FROM python:3.11-slim
+FROM myapp-base
 
-RUN apt-get update && apt-get install -y gcc libpq-dev
-
-WORKDIR /app
-
-COPY backend/livechat-service/requirements.txt /app/
-
+COPY --chown=appuser:appuser backend/livechat-service/requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY backend/livechat-service/ /app/
+COPY --chown=appuser:appuser backend/livechat-service/ /app/
 
-COPY backend/common /app/common
+EXPOSE 3003
 
 CMD ["daphne", "-b", "0.0.0.0", "-p", "3003", "livechat.asgi:application"]

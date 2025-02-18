@@ -1,12 +1,8 @@
-Django>=4.2
-psycopg2==2.9.7
-channels
-channels-redis
-daphne
+-r common/requirements_channels.txt
 
 gymnasium==1.0.0
 matplotlib==3.10.0
-pandas
+pandas==2.2.3
 stable-baselines3==2.5.0
 numpy==2.2.3
 cloudpickle==3.1.1

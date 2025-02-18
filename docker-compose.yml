@@ -16,7 +16,30 @@ x-redis-env: &redis_env
   REDIS_HOST: redis
   REDIS_PORT: "6379"
 
+x-build-defaults: &build_defaults
+  context: .
+
+x-depends-base: &depends_base
+  base:
+    condition: service_started
+
+x-service-defaults: &service_defaults
+  env_file: *common_env
+  networks: *common_networks
+  depends_on:
+    <<: *depends_base
+
 services:
+  base:
+    build:
+      context: .
+      dockerfile: base.Dockerfile
+    container_name: base_image
+    image: myapp-base
+    command: ["echo", "Base image built"]
+    networks:
+      - backend_network
+
   postgres:
     build:
       context: ./database
@@ -44,25 +67,24 @@ services:
       - "6380:6379"
 
   gateway-service:
+    <<: *service_defaults
     build:
-      context: .
+      <<: *build_defaults
       dockerfile: backend/gateway-service/Dockerfile
     container_name: gateway_service
-    env_file: *common_env
-    networks: *common_networks
     ports:
       - "3006:3006"
       
   auth-service:
+    <<: *service_defaults
     build:
-      context: .
+      <<: *build_defaults
       dockerfile: backend/auth-service/Dockerfile
     container_name: auth_service
     depends_on:
+      <<: *depends_base
       postgres:
         condition: service_healthy
-    env_file: *common_env
-    networks: *common_networks
     environment:
       <<: *postgres_env
       TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID}
@@ -73,15 +95,15 @@ services:
       - "3001:3001"
 
   user-service:
+    <<: *service_defaults
     build:
-      context: .
+      <<: *build_defaults
       dockerfile: backend/user-service/Dockerfile
     container_name: user_service
     depends_on:
+      <<: *depends_base
       postgres:
         condition: service_healthy
-    env_file: *common_env
-    networks: *common_networks
     environment:
       <<: *postgres_env
       FERNET_KEY: ${FERNET_KEY}
@@ -89,31 +111,32 @@ services:
       - "3002:3002"
 
   livechat-service:
+    <<: *service_defaults
     build:
-      context: .
+      <<: *build_defaults
       dockerfile: backend/livechat-service/Dockerfile
     container_name: livechat_service
     depends_on:
+      <<: *depends_base
       postgres:
         condition: service_healthy
       redis:
         condition: service_started
       gateway-service:
         condition: service_started
-    env_file: *common_env
-    networks: *common_networks
     environment:
       <<: [ *postgres_env, *redis_env ]
-      DJANGO_SETTINGS_MODULE: livechat.settings 
     ports:
       - "3003:3003"
       
   pong-service:
+    <<: *service_defaults
     build:
-      context: .
+      <<: *build_defaults
       dockerfile: backend/pong-service/Dockerfile
     container_name: pong_service
     depends_on:
+      <<: *depends_base
       postgres:
         condition: service_healthy
       redis:
@@ -122,23 +145,21 @@ services:
         condition: service_started
       livechat-service:
         condition: service_started
-    env_file: *common_env
-    networks: *common_networks
     environment:
       <<: [ *postgres_env, *redis_env ]
     ports:
       - "3004:3004"
 
   matchmaking-service:
+    <<: *service_defaults
     build:
-      context: .
+      <<: *build_defaults
       dockerfile: backend/matchmaking-service/Dockerfile
     container_name: matchmaking_service
     depends_on:
+      <<: *depends_base
       postgres:
         condition: service_healthy
-    env_file: *common_env
-    networks: *common_networks
     environment:
       <<: *postgres_env
     ports:
@@ -180,6 +201,5 @@ networks:
 volumes:
   postgres_data_volume:
     name: postgres_data_volume
-
   redis_data:
     name: redis_data_volume
