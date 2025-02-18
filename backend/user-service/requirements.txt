@@ -1,5 +1,4 @@
-Django==5.1.6
-psycopg2==2.9.10
+-r common/requirements_common.txt
 pyotp==2.9.0
 qrcode==8.0
 Pillow==11.1.0

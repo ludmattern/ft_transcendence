@@ -5,7 +5,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=appuser:appuser backend/user-service/ /app/
 COPY --chown=appuser:appuser backend/user-service/entrypoint.sh /entrypoint.sh
-COPY --chown=appuser:appuser backend/common/ /app/common/
 
 RUN chmod +x /entrypoint.sh
 

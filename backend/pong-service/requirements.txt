@@ -1,5 +1,2 @@
-Django==5.1.6
-psycopg2==2.9.10
-channels==4.2.0
-channels_redis==4.2.1
-daphne==4.1.2
+-r common/requirements_common.txt
+-r common/requirements_channels.txt

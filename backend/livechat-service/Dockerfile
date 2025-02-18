@@ -4,7 +4,6 @@ COPY --chown=appuser:appuser backend/livechat-service/requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=appuser:appuser backend/livechat-service/ /app/
-COPY --chown=appuser:appuser backend/common /app/common
 
 EXPOSE 3003
 
