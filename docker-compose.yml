@@ -173,6 +173,21 @@ services:
     ports:
       - "3005:3005"
 
+  tournament-service:
+    <<: *service_defaults
+    build:
+      <<: *build_defaults
+      dockerfile: backend/tournament-service/Dockerfile
+    container_name: tournament_service
+    depends_on:
+      <<: *depends_base
+      postgres:
+        condition: service_healthy
+    environment:
+      <<: *postgres_env
+    ports:
+      - "3007:3007"
+
   nginx:
     build:
       context: ./nginx

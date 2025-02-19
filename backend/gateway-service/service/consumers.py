@@ -27,7 +27,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		try:
 			data = json.loads(text_data)
 			message_type = data.get("type")
-
 			author = data.get("author")
 
 			# Check for the initialization message.
