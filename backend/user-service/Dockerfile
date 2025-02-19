@@ -1,6 +1,5 @@
 FROM myapp-base
 
-
 RUN apk add --no-cache openssl
 COPY --chown=appuser:appuser backend/user-service/requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
@@ -13,5 +12,5 @@ RUN chmod +x /entrypoint.sh
 EXPOSE 3002
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["daphne", "-e", "ssl:3002:privateKey=/etc/nginx/certs/selfsigned.key:certKey=/etc/nginx/certs/selfsigned.crt", "user.asgi:application"]
+CMD ["daphne", "-e", "ssl:3002:privateKey=/data/certs/selfsigned.key:certKey=/data/certs/selfsigned.crt", "user.asgi:application"]
 
