@@ -54,7 +54,7 @@ def check_auth_view(request):
             new_exp = now + settings.JWT_EXP_DELTA_SECONDS
             new_payload = {**payload, "exp": new_exp}
             new_token = jwt.encode(
-                new_payload,
+                {"sub": str(user.id), "iat": now, "exp": (now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)).timestamp()},
                 settings.JWT_SECRET_KEY,
                 algorithm=settings.JWT_ALGORITHM
             )
@@ -112,7 +112,7 @@ def jwt_required(view_func):
 @jwt_required
 def protected_view(request):
     payload = getattr(request, 'jwt_payload', {})
-    user_id = int(payload.get('sub'))  # Convert 'sub' to an integer
+    user_id = int(payload.get('sub')) 
 
     try:
         user = ManualUser.objects.get(id=user_id)
@@ -161,6 +161,26 @@ def login_view(request):
 
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             return JsonResponse({'success': False, 'message': 'Invalid credentials'}, status=401)
+        
+        if user.is_2fa_enabled:
+            if user.twofa_method == "email":
+                code = generate_2fa_code()
+                hashed_code = bcrypt.hashpw(code.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                user.temp_2fa_code = hashed_code
+                user.save()
+                send_2fa_email(user.email, code)
+            elif user.twofa_method == "sms":
+                code = generate_2fa_code()
+                hashed_code = bcrypt.hashpw(code.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                user.temp_2fa_code = hashed_code
+                user.save()
+                send_2fa_sms(user.phone_number, code)
+
+            return JsonResponse({
+                'success': True,
+                'message': '2FA required',
+                'twofa_method': user.twofa_method
+            }, status=200)
 
         now = datetime.datetime.utcnow()
         cookie_token = request.COOKIES.get('access_token')
@@ -260,12 +280,17 @@ def verify_2fa_view(request):
                     "exp": exp.timestamp()
                 }
                 access_token = jwt.encode(
-                    access_payload,
+                    {"sub": str(user.id), "iat": now, "exp": (now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)).timestamp()},
                     settings.JWT_SECRET_KEY,
                     algorithm=settings.JWT_ALGORITHM
                 )
                 access_token_str = (access_token if isinstance(access_token, str)
                                 else access_token.decode('utf-8'))
+                
+                user.token_expiry = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+                user.session_token = access_token_str
+                user.status = 'online'
+                user.save()
                 response = JsonResponse({'success': True, 'message': '2FA verified'})
                 response.set_cookie(
                     key='access_token',
@@ -289,12 +314,18 @@ def verify_2fa_view(request):
                 "exp": exp.timestamp()
             }
             access_token = jwt.encode(
-                access_payload,
+                {"sub": str(user.id), "iat": now, "exp": (now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)).timestamp()},
                 settings.JWT_SECRET_KEY,
                 algorithm=settings.JWT_ALGORITHM
             )
             access_token_str = (access_token if isinstance(access_token, str)
                                 else access_token.decode('utf-8'))
+            
+            user.token_expiry = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+            user.session_token = access_token_str
+            user.status = 'online'
+            user.save()       
+                 
             response = JsonResponse({'success': True, 'message': '2FA verified'})
             response.set_cookie(
                 key='access_token',

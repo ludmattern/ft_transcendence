@@ -162,10 +162,37 @@ export const tournamentCreation = createComponent({
       createTournamentButton.addEventListener("click", () => {
         console.log("Local tournament created with players:", players);
         alert("Tournament created with players: " + players.join(", "));
-        // Optionnel : réinitialiser la liste en conservant l'utilisateur
         players = [username];
-        updateLocalUI();
-      });
+        const organizerId = sessionStorage.getItem("userId");
+        
+
+        fetch("/api/tournament-service/create-local-tournament/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            name: "My Local Tournament",
+            organizer_id: organizerId,
+            players: playersList
+          })
+        })
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error("HTTP error " + res.status);
+            }
+            return res.json();
+          })
+          .then((data) => {
+            console.log("Tournoi local créé :", data);
+            alert("Tournoi enregistré côté serveur ! Serial_key : " + data.serial_key);
+          })
+          .catch((error) => {
+            console.error(error);
+            alert("Erreur lors de la création du tournoi.");
+          });
+            updateLocalUI();
+          });
     } else {
       // --- Gestion du mode online ---
       const roomCodeElement = el.querySelector("#room-code");

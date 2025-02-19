@@ -44,15 +44,17 @@ export const loginForm = createComponent({
       const password = el.querySelector("#password").value;
 
         const data = await loginUser(pilotId, password);
+        console.log(data);
         if (data.twofa_method) 
         {
           sessionStorage.setItem("pending2FA_user", pilotId);
           sessionStorage.setItem("pending2FA_method", data.twofa_method);
-
+          console.log("here work")
           handleRoute("/login/2fa");
         } 
         else if (data.success)
         {
+          console.log("here SUCCESS")
           handleRoute("/");
         }
     

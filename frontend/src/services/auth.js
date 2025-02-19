@@ -8,13 +8,16 @@ export async function isClientAuthenticated() {
 		method: "GET",
 		credentials: "include"
 		});
+		const data = await response.json();
+    console.log(data);
 
 		if (response.status === 401) 
 		{
 			return false;
 		}
 
-		const data = await response.json();
+		//const data = await response.json();
+    //console.log(data);
 		if (!data.success) {
 		return false;
 		}
@@ -83,7 +86,7 @@ export async function registerUser(id, password, email, is2FAEnabled, twoFAMetho
         phone_number: is2FAEnabled && twoFAMethod === "sms" ? phoneNumber : null
       }),
     });
-
+    console.log(response);
     const data = await response.json();
     if (data.success) {
       return true;
@@ -118,5 +121,6 @@ export async function verifyTwoFACode(username, twofaCode) {
   });
 
   const data = await response.json();
+  console.log(data);
   return data;
 }

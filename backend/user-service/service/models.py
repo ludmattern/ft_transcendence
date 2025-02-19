@@ -24,7 +24,7 @@ class ManualUser(models.Model):
 
 
 class ManualGameHistory(models.Model):
-    id = models.AutoField(primary_key=True)  # Changed from `game_id` to standard `id`
+    id = models.AutoField(primary_key=True)
     winner = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="games_won")
     loser = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="games_lost")
     winner_score = models.IntegerField(default=0)
