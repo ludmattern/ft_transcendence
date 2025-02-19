@@ -8,16 +8,13 @@ export async function isClientAuthenticated() {
 		method: "GET",
 		credentials: "include"
 		});
-		const data = await response.json();
-    console.log(data);
 
 		if (response.status === 401) 
 		{
 			return false;
 		}
 
-		//const data = await response.json();
-    //console.log(data);
+		const data = await response.json();
 		if (!data.success) {
 		return false;
 		}
