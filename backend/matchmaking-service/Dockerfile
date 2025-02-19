@@ -1,9 +1,8 @@
 FROM myapp-base
 
-COPY --chown=appuser:appuser backend/matchmaking-service/requirements.txt /app/
 COPY --chown=appuser:appuser backend/matchmaking-service/ /app/
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
 EXPOSE 3005
 

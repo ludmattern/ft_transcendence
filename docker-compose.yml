@@ -1,3 +1,7 @@
+##################################################################
+#                     Déclarations communes                      #
+##################################################################
+
 x-common-env: &common_env
   - ./secret/.env
 
@@ -19,10 +23,12 @@ x-redis-env: &redis_env
 x-build-defaults: &build_defaults
   context: .
 
+# Dépendance de base avec conditions pour depends_on
 x-depends-base: &depends_base
   base:
     condition: service_started
 
+# Configuration de base des services
 x-service-defaults: &service_defaults
   env_file: *common_env
   networks: *common_networks
@@ -30,6 +36,10 @@ x-service-defaults: &service_defaults
     <<: *depends_base
   volumes:
     - certif_data:/data/certs
+
+##################################################################
+#                   Définition des services                      #
+##################################################################
 
 services:
   certif-issuer:
@@ -41,6 +51,7 @@ services:
       - backend_network
     volumes:
       - certif_data:/data/certs
+
   base:
     build:
       context: .
@@ -49,6 +60,13 @@ services:
     image: myapp-base
     networks:
       - backend_network
+    depends_on:
+      certif-issuer:
+        condition: service_started
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_healthy
 
   postgres:
     build:
@@ -84,23 +102,22 @@ services:
     container_name: gateway_service
     ports:
       - "3006:3006"
-      
+
   auth-service:
     <<: *service_defaults
     build:
       <<: *build_defaults
       dockerfile: backend/auth-service/Dockerfile
     container_name: auth_service
-    depends_on:
-      <<: *depends_base
-      postgres:
-        condition: service_healthy
     environment:
       <<: *postgres_env
-      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID}
-      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
-      TWILIO_PHONE_NUMBER: ${TWILIO_PHONE_NUMBER}
-      FERNET_KEY: ${FERNET_KEY}
+    secrets:
+      - fernet_key
+      - smtp_host_user
+      - smtp_host_password
+      - twilio_account_sid
+      - twilio_auth_token
+      - twilio_phone_number
     ports:
       - "3001:3001"
 
@@ -110,13 +127,10 @@ services:
       <<: *build_defaults
       dockerfile: backend/user-service/Dockerfile
     container_name: user_service
-    depends_on:
-      <<: *depends_base
-      postgres:
-        condition: service_healthy
     environment:
       <<: *postgres_env
-      FERNET_KEY: ${FERNET_KEY}
+    secrets:
+      - fernet_key
     ports:
       - "3002:3002"
 
@@ -126,35 +140,17 @@ services:
       <<: *build_defaults
       dockerfile: backend/livechat-service/Dockerfile
     container_name: livechat_service
-    depends_on:
-      <<: *depends_base
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
-      gateway-service:
-        condition: service_started
     environment:
       <<: [ *postgres_env, *redis_env ]
     ports:
       - "3003:3003"
-      
+
   pong-service:
     <<: *service_defaults
     build:
       <<: *build_defaults
       dockerfile: backend/pong-service/Dockerfile
     container_name: pong_service
-    depends_on:
-      <<: *depends_base
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
-      gateway-service:
-        condition: service_started
-      livechat-service:
-        condition: service_started
     environment:
       <<: [ *postgres_env, *redis_env ]
     ports:
@@ -166,10 +162,6 @@ services:
       <<: *build_defaults
       dockerfile: backend/matchmaking-service/Dockerfile
     container_name: matchmaking_service
-    depends_on:
-      <<: *depends_base
-      postgres:
-        condition: service_healthy
     environment:
       <<: *postgres_env
     ports:
@@ -181,10 +173,6 @@ services:
       <<: *build_defaults
       dockerfile: backend/tournament-service/Dockerfile
     container_name: tournament_service
-    depends_on:
-      <<: *depends_base
-      postgres:
-        condition: service_healthy
     environment:
       <<: *postgres_env
     ports:
@@ -201,22 +189,13 @@ services:
       - ./frontend:/usr/share/nginx/html/frontend:ro
     ports:
       - "8443:443"
-    depends_on:
-      auth-service:
-        condition: service_started
-      user-service:
-        condition: service_started
-      livechat-service:
-        condition: service_started
-      pong-service:
-        condition: service_started
-      matchmaking-service:
-        condition: service_started
-      gateway-service:
-        condition: service_started
     networks:
       - frontend_network
       - backend_network
+
+##################################################################
+#                 Réseaux et volumes et secrets                  #
+##################################################################
 
 networks:
   backend_network:
@@ -231,3 +210,17 @@ volumes:
     name: redis_data
   certif_data:
     name: certif_data_volume
+
+secrets:
+  fernet_key:
+    file: ./secret/fernet_key.txt
+  smtp_host_user:
+    file: ./secret/smtp_host_user.txt
+  smtp_host_password:
+    file: ./secret/smtp_host_password.txt
+  twilio_account_sid:
+    file: ./secret/twilio_account_sid.txt
+  twilio_auth_token:
+    file: ./secret/twilio_auth_token.txt
+  twilio_phone_number:
+    file: ./secret/twilio_phone_number.txt

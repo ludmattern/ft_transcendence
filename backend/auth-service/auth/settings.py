@@ -5,17 +5,15 @@ from common.common_settings import *
 
 sys.path.insert(0, os.path.join(BASE_DIR, "/app", "common"))
 
-from cryptography.fernet import Fernet
-
 INSTALLED_APPS = [
-    'service',
+	'service',
 ]
 
 ROOT_URLCONF = 'auth.urls'
 
 WSGI_APPLICATION = 'auth.wsgi.application'
 
-JWT_SECRET_KEY = secrets.token_urlsafe(64)
+JWT_SECRET_KEY = secrets.token_urlsafe(64)	
 JWT_ALGORITHM = "HS256"
 JWT_EXP_DELTA_SECONDS = 3000
 
@@ -25,13 +23,21 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'sendertran115@gmail.com'
-EMAIL_HOST_PASSWORD = 'rgph iima ghns xhwy'
+
+try:
+	with open('/run/secrets/fernet_key', 'r') as f:
+		FERNET_KEY = f.read().strip()
+	with open('/run/secrets/smtp_host_user', 'r') as f:
+		EMAIL_HOST_USER = f.read().strip()
+	with open('/run/secrets/smtp_host_password', 'r') as f:
+		EMAIL_HOST_PASSWORD = f.read().strip()
+	with open('/run/secrets/twilio_account_sid', 'r') as f:
+		TWILIO_ACCOUNT_SID = f.read().strip()
+	with open('/run/secrets/twilio_auth_token', 'r') as f:
+		TWILIO_AUTH_TOKEN = f.read().strip()
+	with open('/run/secrets/twilio_phone_number', 'r') as f:
+		TWILIO_PHONE_NUMBER = f.read().strip()
+except Exception:
+	print("Error reading Fernet key from file")
+
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
-
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
-TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER')
-
-FERNET_KEY = os.getenv('FERNET_KEY')
