@@ -47,7 +47,6 @@ services:
       dockerfile: base.Dockerfile
     container_name: base_image
     image: myapp-base
-    command: ["echo", "Base image built"]
     networks:
       - backend_network
 
