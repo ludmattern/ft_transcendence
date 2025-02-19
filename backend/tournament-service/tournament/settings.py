@@ -10,5 +10,5 @@ MIGRATION_MODULES = {
     'contenttypes': None,
 }
 
-ROOT_URLCONF = 'matchmaking.urls'
+ROOT_URLCONF = 'tournament.urls'
 ASGI_APPLICATION = 'service.asgi.application'
