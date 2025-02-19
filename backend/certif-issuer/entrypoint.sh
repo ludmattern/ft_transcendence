@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CERT_DIR=/etc/nginx/certs
+CERT_DIR=/data/certs
 
 if [ ! -f "${CERT_DIR}/selfsigned.crt" ]; then
     echo "Génération du certificat auto-signé..."

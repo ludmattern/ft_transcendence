@@ -13,4 +13,4 @@ EXPOSE 3001
 #RUN chmod 644 /etc/nginx/certs/selfsigned.crt && chmod 600 /etc/nginx/certs/selfsigned.key
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["daphne", "-e", "ssl:3001:privateKey=/etc/nginx/certs/selfsigned.key:certKey=/etc/nginx/certs/selfsigned.crt", "auth.asgi:application"]
+CMD ["daphne", "-e", "ssl:3001:privateKey=/data/certs/selfsigned.key:certKey=/data/certs/selfsigned.crt", "auth.asgi:application"]

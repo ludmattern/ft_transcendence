@@ -7,4 +7,4 @@ COPY --chown=appuser:appuser backend/matchmaking-service/ /app/
 
 EXPOSE 3005
 
-CMD ["daphne", "-e", "ssl:3005:privateKey=/etc/nginx/certs/selfsigned.key:certKey=/etc/nginx/certs/selfsigned.crt", "service.asgi:application"]
+CMD ["daphne", "-e", "ssl:3005:privateKey=/data/certs/selfsigned.key:certKey=/data/certs/selfsigned.crt", "service.asgi:application"]

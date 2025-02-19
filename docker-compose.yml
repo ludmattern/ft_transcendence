@@ -23,15 +23,24 @@ x-depends-base: &depends_base
   base:
     condition: service_started
 
-
-
 x-service-defaults: &service_defaults
   env_file: *common_env
   networks: *common_networks
   depends_on:
     <<: *depends_base
+  volumes:
+    - certif_data:/data/certs
 
 services:
+  certif-issuer:
+    build:
+      context: .
+      dockerfile: backend/certif-issuer/Dockerfile
+    container_name: certif_issuer
+    networks:
+      - backend_network
+    volumes:
+      - certif_data:/data/certs
   base:
     build:
       context: .
@@ -41,8 +50,6 @@ services:
     command: ["echo", "Base image built"]
     networks:
       - backend_network
-    volumes:
-      - ./nginx/certs:/etc/nginx/certs:rw
 
   postgres:
     build:
@@ -97,8 +104,6 @@ services:
       FERNET_KEY: ${FERNET_KEY}
     ports:
       - "3001:3001"
-    volumes:
-      - ./nginx/certs:/etc/nginx/certs:rw
 
   user-service:
     <<: *service_defaults
@@ -115,8 +120,6 @@ services:
       FERNET_KEY: ${FERNET_KEY}
     ports:
       - "3002:3002"
-    volumes:
-      - ./nginx/certs:/etc/nginx/certs:rw
 
   livechat-service:
     <<: *service_defaults
@@ -194,8 +197,8 @@ services:
     container_name: nginx_proxy
     restart: always
     volumes:
+      - certif_data:/etc/nginx/certs:rw
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/etc/nginx/certs:rw
       - ./frontend:/usr/share/nginx/html/frontend:ro
     ports:
       - "8443:443"
@@ -226,4 +229,6 @@ volumes:
   postgres_data_volume:
     name: postgres_data_volume
   redis_data:
-    name: redis_data_volume
+    name: redis_data
+  certif_data:
+    name: certif_data_volume

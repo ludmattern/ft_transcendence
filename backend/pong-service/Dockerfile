@@ -8,6 +8,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 3004
 
-CMD ["daphne", "-e", "ssl:3004:privateKey=/etc/nginx/certs/selfsigned.key:certKey=/etc/nginx/certs/selfsigned.crt", "pong.asgi:application"]
+CMD ["daphne", "-e", "ssl:3004:privateKey=/data/certs/selfsigned.key:certKey=/data/certs/selfsigned.crt", "pong.asgi:application"]
 
 
