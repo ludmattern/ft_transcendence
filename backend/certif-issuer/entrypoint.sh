@@ -9,6 +9,8 @@ if [ ! -f "${CERT_DIR}/selfsigned.crt" ]; then
         -keyout "${CERT_DIR}/selfsigned.key" \
         -out "${CERT_DIR}/selfsigned.crt" \
         -subj "/C=FR/ST=RHONE/L=LYON/O=transcendence/CN=localhost"
+	chmod 644 "${CERT_DIR}/selfsigned.key"
+    chmod 644 "${CERT_DIR}/selfsigned.crt"
 fi
 
 exec "$@"

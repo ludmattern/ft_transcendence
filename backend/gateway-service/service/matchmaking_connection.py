@@ -11,7 +11,7 @@ async def connect_dummy_matchmaking():
     while True:
         try:
             ssl_context = ssl.create_default_context()
-            ssl_context.load_verify_locations("/etc/nginx/certs/selfsigned.crt")
+            ssl_context.load_verify_locations("/data/certs/selfsigned.crt")
             ssl_context.check_hostname = False
             ssl_context.verify_mode = ssl.CERT_NONE
             
