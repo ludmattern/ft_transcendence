@@ -23,12 +23,10 @@ x-redis-env: &redis_env
 x-build-defaults: &build_defaults
   context: .
 
-# Dépendance de base avec conditions pour depends_on
 x-depends-base: &depends_base
   base:
     condition: service_started
 
-# Configuration de base des services
 x-service-defaults: &service_defaults
   env_file: *common_env
   networks: *common_networks
@@ -38,7 +36,7 @@ x-service-defaults: &service_defaults
     - certif_data:/data/certs
 
 ##################################################################
-#                   Définition des services                      #
+#                    Définition des services                     #
 ##################################################################
 
 services:

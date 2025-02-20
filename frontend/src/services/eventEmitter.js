@@ -11,6 +11,6 @@ export function subscribe(event, callback) {
 
 export function emit(event, data) {
   if (eventListeners[event]) {
-    eventListeners[event].forEach(callback => callback(data));
+    eventListeners[event].forEach((callback) => callback(data));
   }
 }
