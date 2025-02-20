@@ -1,9 +1,9 @@
-from django.db import models
+
 from django.db import models
 import pyotp
 
 class ManualUser(models.Model):
-    id = models.CharField(max_length=50, unique=True, primary_key=True)
+    id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True)
     password = models.CharField(max_length=255)
@@ -15,8 +15,6 @@ class ManualUser(models.Model):
     token_expiry = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    session_token = models.CharField(max_length=255, null=True, default=None)
-
 
     class Meta:
         db_table = "users"
@@ -25,37 +23,55 @@ class ManualUser(models.Model):
     def __str__(self):
         return self.username
 
-
-
-
-class Tournament(models.Model):
+class ManualTournament(models.Model):
+    id = models.AutoField(primary_key=True)
     serial_key = models.CharField(max_length=255, unique=True)
     rounds = models.IntegerField(default=0)
     name = models.CharField(max_length=255, default='TOURNAMENT_DEFAULT_NAME')
-    organizer = models.ForeignKey(ManualUser, on_delete=models.CASCADE)
-    status = models.CharField(max_length=50, default='upcoming')  
+    organizer = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name='organized_tournaments')
+    status = models.CharField(
+        max_length=50,
+        choices=[
+            ('upcoming', 'Upcoming'),
+            ('ongoing', 'Ongoing'),
+            ('completed', 'Completed')
+        ],
+        default='upcoming'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        db_table = "tournaments"
+        managed = True
+
     def __str__(self):
-        return f"{self.name} ({self.serial_key})"
+        return self.name
 
 
-class TournamentParticipant(models.Model):
-    tournament = models.ForeignKey(
-        Tournament,
-        related_name="participants",
-        on_delete=models.CASCADE
+class ManualTournamentParticipants(models.Model):
+    id = models.AutoField(primary_key=True)  # ✅ Added primary key
+    tournament = models.ForeignKey(ManualTournament, on_delete=models.CASCADE, related_name='participants')
+    user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name='tournaments')
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending', 'Pending'),
+            ('accepted', 'Accepted'),
+            ('rejected', 'Rejected'),
+            ('still flying', 'Still Flying'),
+            ('eliminated', 'Eliminated')
+        ],
+        default='pending'
     )
-    user = models.ForeignKey(
-        ManualUser,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-    name = models.CharField(max_length=255)
-
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = "tournament_participants"
+        managed = True
+        constraints = [
+            models.UniqueConstraint(fields=["tournament", "user"], name="unique_tournament_participant")
+        ]
+
     def __str__(self):
-        return f"{self.name} - {self.tournament.serial_key}"
+        return f"{self.user.username} in {self.tournament.name} ({self.status})"
