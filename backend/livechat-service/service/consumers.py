@@ -3,6 +3,9 @@ import logging
 from .models import ManualUser
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.db.models import Q
+from .models import ManualUser, ManualFriendsRelations
 
 logger = logging.getLogger(__name__)
 
@@ -16,14 +19,14 @@ def get_username(user_id):
 
 @database_sync_to_async
 def get_id(user_username):
-    user = ManualUser.objects.filter(username=user_username).first()
-    if user:
-        return user.id
-    return None
+	user = ManualUser.objects.filter(username=user_username).first()
+	if user:
+		return user.id
+	return None
 
 @database_sync_to_async
 def get_users_id():
-    return list(ManualUser.objects.values_list('id', flat=True))
+	return list(ManualUser.objects.values_list('id', flat=True))
 
 class ChatConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
@@ -72,5 +75,36 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_send(f"user_{recipient_id}", event)
 		await self.channel_layer.group_send(f"user_{author_id}", event)
 		logger.info(f"Message transmitted to groups user_{recipient_id} and user_{author_id}: {event}")
+  
+  
+	async def info_message(self, event):
+		"""Send a friend request."""
+		logger.info(f"ChatConsumer.send_friend_request received event: {event}")
 
-		
+		sub_type = event.get("sub_type")
+		author_id = event.get("author")
+		recipient = event.get("recipient")
+		recipient_id = await get_id(recipient)
+
+		if(sub_type == "send_friend_request"):
+			if not author_id or not recipient_id:
+				await self.send_json({"error": "Missing userId or selectedUserId"})
+				return
+
+			if str(author_id) == str(recipient_id):
+				await self.send_json({"error": "You cannot send a friend request to yourself"})
+				return
+
+			user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+			friend = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
+
+			exists = await database_sync_to_async(ManualFriendsRelations.objects.filter(user=user, friend=friend).exists)()
+
+			if exists:
+				await self.send_json({"message": "Friend request already sent"})
+				return
+
+			await database_sync_to_async(ManualFriendsRelations.objects.create)(user=user, friend=friend, status="pending")
+
+			await self.channel_layer.group_send(f"user_{recipient_id}", event)
+			await self.channel_layer.group_send(f"user_{author_id}", event)
