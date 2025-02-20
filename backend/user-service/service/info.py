@@ -60,7 +60,6 @@ def info_getter(request, user_id):
         for invite in tournament_invites
     ]
 
-    # ✅ Merge all data into JSON format
     response_data = {
         "success": True,
         "info": friend_request_data + tournament_invite_data

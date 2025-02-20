@@ -1,6 +1,7 @@
 // contextMenu.js
 import { createComponent } from "/src/utils/component.js";
 import { waitForElement } from "/src/components/hud/utils/utils.js";
+import { ws } from "/src/services/socketManager.js";
 
 export const contextMenu = createComponent({
   tag: "contextMenu",
@@ -71,7 +72,7 @@ async function handleFriendAction(isFriend, author) {
 	// Common payload structure
 	const payload = {
 	type: "info_message",
-	action: action,
+	action,
 	author: sessionStorage.getItem("userId"),
 	recipient: author,
 	timestamp: new Date().toISOString(),
@@ -159,17 +160,20 @@ function handleMessageAction(author) {
  * @param {Object} item - L'objet associé au message.
  * @param {MouseEvent} event - L'événement contextmenu.
  */
-export function showContextMenu(item, event) {
+export async function showContextMenu(item, event) {
   console.log("showContextMenu");
   event.preventDefault();
   event.stopPropagation();
 
   hideContextMenu();
 
+  const isFriend = await isUserFriend(sessionStorage.getItem("userId"), item.author);
+
   const userStatus = {
-    isFriend: isUserFriend(sessionStorage.getItem("userId"), item.author),
+    isFriend: isFriend,
     isBlocked: false,
   };
+
 
   const menuHTML = contextMenu.render(item, userStatus);
   document.body.insertAdjacentHTML("beforeend", menuHTML);
@@ -198,11 +202,12 @@ document.addEventListener("click", (e) => {
   }
 });
 
-export async function isUserFriend(userId, otherUserUsername) {
+export async function isUserFriend(userId, otherUserId) {
+	console.log(`Checking if ${userId} is friends with ${otherUserId}...`);
 	const response = await fetch("/api/user-service/is-friend/", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ userId: userId, otherUserUsername: otherUserUsername }),
+		body: JSON.stringify({ userId: userId, otherUserId: otherUserId }),
 	});
 	const data = await response.json();
 	if (data.success) {

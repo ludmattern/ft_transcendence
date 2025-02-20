@@ -6,6 +6,7 @@ import {
   startMatchmakingGame,
   startPrivateGame,
 } from "/src/services/multiplayerPong.js";
+import { createNotificationMessage } from "/src/components/hud/sideWindow/left/notifications.js";
 
 export function initializeWebSocket() {
   if (ws) {
@@ -57,7 +58,19 @@ export function initializeWebSocket() {
     } else if (data.type === "match_found") {
       console.log("Match found! game_id =", data.game_id, "side =", data.side);
       startMatchmakingGame(data.game_id, data.side, data);
-    }
+    } else if (data.type === "info_message") {
+		if (data.action === "send_friend_request") {
+			if (data.author === sessionStorage.getItem("userId")) {
+				console.log(`Friend request sent to ${data.recipient} by ${data.author}`);
+			} else {
+				console.log(`Friend request received from ${data.author} to ${data.recipient}`);
+				createNotificationMessage(`Friend request received from ${data.author}!`);
+			}
+			console.log(`Friend request sent to ${data.recipient} by ${data.author}`);
+		}
+	} else {
+	  console.log("Message reçu :", data);
+	}
 
     console.log("Message reçu :", JSON.parse(event.data));
   };

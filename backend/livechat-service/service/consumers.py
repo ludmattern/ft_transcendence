@@ -81,30 +81,35 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		"""Send a friend request."""
 		logger.info(f"ChatConsumer.send_friend_request received event: {event}")
 
-		sub_type = event.get("sub_type")
+		action = event.get("action")
 		author_id = event.get("author")
-		recipient = event.get("recipient")
-		recipient_id = await get_id(recipient)
+		recipient_id = event.get("recipient")
 
-		if(sub_type == "send_friend_request"):
+		if(str(action) == "send_friend_request"):
 			if not author_id or not recipient_id:
-				await self.send_json({"error": "Missing userId or selectedUserId"})
+				await self.channel_layer.group_send(f"user_{author_id}", {"error": "Missing userId or selectedUserId"})
 				return
 
 			if str(author_id) == str(recipient_id):
-				await self.send_json({"error": "You cannot send a friend request to yourself"})
+				await self.channel_layer.group_send(f"user_{author_id}", {"error": "You cannot send a friend request to yourself"})
 				return
-
+			logger.info(f"Author: {author_id}, Recipient: {recipient_id}")
 			user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+			logger.info(f"User: {user}")
 			friend = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
+			logger.info(f"Friend: {friend}")
 
+			if user.id > friend.id:
+				user, friend = friend, user
 			exists = await database_sync_to_async(ManualFriendsRelations.objects.filter(user=user, friend=friend).exists)()
+			logger.info(f"Friend request exists: {exists}")
 
 			if exists:
-				await self.send_json({"message": "Friend request already sent"})
+				logger.info("Friend request already sent")
+				await self.channel_layer.group_send(f"user_{author_id}", {"message": "Friend request already sent"})
 				return
 
 			await database_sync_to_async(ManualFriendsRelations.objects.create)(user=user, friend=friend, status="pending")
-
+			logger.info("Friend request written to database")
 			await self.channel_layer.group_send(f"user_{recipient_id}", event)
 			await self.channel_layer.group_send(f"user_{author_id}", event)

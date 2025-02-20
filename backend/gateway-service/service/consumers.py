@@ -75,10 +75,10 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				if not recipient:
 					await self.send(json.dumps({"error": "Recipient is required for friend requests"}))
 					return
-
+				logger.info(f"data: {data}")
 				event = {
 					"type": "info_message",
-					"action:": data.get("action"),
+					"action": data.get("action"),
 					"author": author,
 					"recipient": recipient,
 					"timestamp": data.get("timestamp"),
@@ -136,7 +136,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (Private): {event}")
 
-	async def send_friend_request(self, event):
+	async def info_message(self, event):
 		"""This method handles friend request sending events delivered to this consumer."""
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (Friend Request): {event}")
