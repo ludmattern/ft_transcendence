@@ -1,33 +1,33 @@
-import { initializeWebSocket, closeWebSocket } from "/src/services/socketManager.js";
-
+import {
+  initializeWebSocket,
+  closeWebSocket,
+} from "/src/services/socketManager.js";
 
 export async function isClientAuthenticated() {
-
   try {
-		const response = await fetch("/api/auth-service/check-auth/", {
-		method: "GET",
-		credentials: "include"
-		});
+    const response = await fetch("/api/auth-service/check-auth/", {
+      method: "GET",
+      credentials: "include",
+    });
 
-		if (response.status === 401) 
-		{
-			return false;
-		}
+    if (response.status === 401) {
+      return false;
+    }
 
-		const data = await response.json();
-		if (!data.success) {
-		return false;
-		}
+    const data = await response.json();
+    if (!data.success) {
+      return false;
+    }
 
-		sessionStorage.setItem("userId", data.id);
-		sessionStorage.setItem("username", data.username);
-		
-		initializeWebSocket(); 
+    sessionStorage.setItem("userId", data.id);
+    sessionStorage.setItem("username", data.username);
+
+    initializeWebSocket();
     console.log("User is authenticated!");
-		return true;
-	} catch (error) {
-		return false;
-	}
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 export async function logoutUser() {
@@ -54,22 +54,26 @@ export async function loginUser(username, password) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
-    credentials: "include"
+    credentials: "include",
   });
 
   const data = await response.json();
 
-  if (data.success)
-  {
+  if (data.success) {
     return data;
-  }
-  else
-  {
-	return (data.message);
+  } else {
+    return data.message;
   }
 }
 
-export async function registerUser(id, password, email, is2FAEnabled, twoFAMethod, phoneNumber) {
+export async function registerUser(
+  id,
+  password,
+  email,
+  is2FAEnabled,
+  twoFAMethod,
+  phoneNumber
+) {
   try {
     const response = await fetch("/api/user-service/register/", {
       method: "POST",
@@ -80,7 +84,8 @@ export async function registerUser(id, password, email, is2FAEnabled, twoFAMetho
         password: password,
         is_2fa_enabled: is2FAEnabled,
         twofa_method: is2FAEnabled ? twoFAMethod : null,
-        phone_number: is2FAEnabled && twoFAMethod === "sms" ? phoneNumber : null
+        phone_number:
+          is2FAEnabled && twoFAMethod === "sms" ? phoneNumber : null,
       }),
     });
     console.log(response);
@@ -114,7 +119,7 @@ export async function verifyTwoFACode(username, twofaCode) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, twofa_code: twofaCode }),
-    credentials: "include"
+    credentials: "include",
   });
 
   const data = await response.json();
