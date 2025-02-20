@@ -1,23 +1,96 @@
 import json
-import logging
+import random
+import string
 from channels.generic.websocket import AsyncWebsocketConsumer
-
+from asgiref.sync import sync_to_async
+from .models import ManualTournament, ManualUser, ManualTournamentParticipants
+import logging
 
 logger = logging.getLogger(__name__)
 
 class TournamentConsumer(AsyncWebsocketConsumer):
-
     async def connect(self):
+        self.room_group_name = "tournament"
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
-        await self.channel_layer.group_add("tournament_service", self.channel_name)
-        logger.info(f"🔗 Connecté au groupe 'tournament_service' (channel={self.channel_name})")
+        logger.info(f"🔗 Connecté au groupe 'local_tournament' (channel={self.channel_name})")
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard("tournament_service", self.channel_name)
-        logger.info("🔴 Déconnecté du groupe 'tournament_service'")
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        logger.info(f"🔌 Déconnecté du groupe 'local_tournament' (channel={self.channel_name})")
 
-    async def tournament_event(self, event):
 
-        logger.info(f"[TournamentConsumer] Reçu un tournament_service: {event}")
+    async def create_local_tournament(self, data):
+        organizer_id = data.get("organizer_id")
+        players = data.get("players", [])
+
+        if not organizer_id:
+            await self.send(json.dumps({"error": "Organizer ID is required"}))
+            logger.error("Organizer ID is missing in the request data.")
+            return
+
+        if len(players) not in [4, 8, 16]:
+            await self.send(json.dumps({"error": "Invalid tournament size"}))
+            logger.error(f"Invalid tournament size: {len(players)} players provided. Expected 4, 8 ou 16.")
+            return
         
-        
+        try:
+            organizer = await sync_to_async(ManualUser.objects.get)(id=organizer_id)
+            if organizer.in_tournament:
+                error_msg = f"L'utilisateur {organizer.id} est déjà dans un tournoi actif."
+                logger.warning(error_msg)
+                await self.send(json.dumps({"error": error_msg}))
+                #TODO Gerer la reponse cote front
+                return
+        except ManualUser.DoesNotExist:
+            await self.send(json.dumps({"error": "Organizer not found"}))
+            return
+
+        serial_key = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        logger.info(f"🔑 Génération de serial_key: {serial_key}")
+
+        tournament = await sync_to_async(ManualTournament.objects.create)(
+            serial_key=serial_key,
+            name="Local Tournament",
+            organizer_id=organizer_id,
+            rounds=len(players) // 2,
+            status="ongoing",
+            mode="local"
+        )
+        logger.info(f"🏆 Tournament créé: ID={tournament.id}, serial_key={serial_key}, organizer_id={organizer_id}")
+
+        for username in players:
+            user, created = await sync_to_async(ManualUser.objects.get_or_create)(
+                username=username,
+                defaults={
+                    "email": f"{username.lower()}@local.fake",
+                    "password": "fakepassword"
+                }
+            )
+            if created:
+                logger.info(f"👤 Utilisateur créé: username={user.username}, email={user.email}")
+            else:
+                logger.info(f"👤 Utilisateur récupéré: username={user.username}")
+            if user.id == int(organizer_id):
+                user.in_tournament = True
+                await sync_to_async(user.save)()
+                participant = await sync_to_async(ManualTournamentParticipants.objects.create)(
+                tournament=tournament,
+                user=user,
+                status="accepted"
+            )
+            logger.info(f"✅ Participant ajouté: TournamentID={tournament.id}, User={user.username}, status=accepted")
+
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                "type": "tournament_created",
+                "serial_key": serial_key,
+                "players": players
+            }
+        )
+
+    async def tournament_created(self, event):
+        #TODO notif 
+        #ici app systeme de notif pour prevenir les joueurs que le tournois a commencer 
+        logger.info(f" Notif a tout les client ")

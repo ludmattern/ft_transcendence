@@ -61,6 +61,7 @@ CREATE TABLE IF NOT EXISTS tournaments (
     name VARCHAR(255) DEFAULT 'TOURNAMENT_DEFAULT_NAME',
     organizer_id INT NOT NULL,
     status VARCHAR(50) DEFAULT 'upcoming', -- 'upcoming', 'ongoing', 'completed'
+    mode VARCHAR(10) DEFAULT 'local',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (organizer_id) REFERENCES users(id) ON DELETE CASCADE

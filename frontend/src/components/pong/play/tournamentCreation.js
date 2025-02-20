@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { handleRoute } from "/src/services/router.js";
+import { createTournament } from "/src/services/tournamentHandler.js";
 
 // Fonction utilitaire pour générer un room code alphanumérique à 6 caractères
 function generateRoomCode() {
@@ -144,6 +145,10 @@ export const tournamentCreation = createComponent({
       addPlayerButton.addEventListener("click", () => {
         const name = playerNameInput.value.trim();
         if (!name) return;
+        if (players.includes(name)) {
+          alert("THis players is already insinde this tournament");
+          return;
+        }
         if (players.length >= tournamentSize) {
           alert(`You can only add up to ${tournamentSize} players.`);
           return;
@@ -152,6 +157,7 @@ export const tournamentCreation = createComponent({
         playerNameInput.value = "";
         updateLocalUI();
       });
+      
 
       playerNameInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") {
@@ -159,39 +165,24 @@ export const tournamentCreation = createComponent({
         }
       });
 
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
       createTournamentButton.addEventListener("click", () => {
         console.log("Local tournament created with players:", players);
-        alert("Tournament created with players: " + players.join(", "));
+        const shuffledPlayers = shuffleArray([...players]);
+        createTournament(shuffledPlayers);
+        handleRoute("/pong/play/current-tournament");
         players = [username];
-        const organizerId = sessionStorage.getItem("userId");
-        
+        alert("Tournament created with players: " + players.join(", "));
 
-        fetch("/api/tournament-service/create-local-tournament/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            name: "My Local Tournament",
-            organizer_id: organizerId,
-            players: playersList
-          })
-        })
-          .then((res) => {
-            if (!res.ok) {
-              throw new Error("HTTP error " + res.status);
-            }
-            return res.json();
-          })
-          .then((data) => {
-            console.log("Tournoi local créé :", data);
-            alert("Tournoi enregistré côté serveur ! Serial_key : " + data.serial_key);
-          })
-          .catch((error) => {
-            console.error(error);
-            alert("Erreur lors de la création du tournoi.");
-          });
-            updateLocalUI();
+
+
           });
     } else {
       // --- Gestion du mode online ---
@@ -264,6 +255,7 @@ export const tournamentCreation = createComponent({
       updateOnlinePlayersUI();
 
       createTournamentButton.addEventListener("click", () => {
+
         console.log("Online tournament created with room code:", roomCode);
         console.log("Players:", onlinePlayers);
         alert("Tournament created with room code: " + roomCode);

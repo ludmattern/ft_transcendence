@@ -48,7 +48,17 @@ export function gameModeSelector(config) {
         })
       );
       console.log("Sent join room accept event for room:", config.matchkey);
+    
     }
+  }
+  else if (config.gameMode === "local-tournament") {
+    const gameConfig = {
+      mode: "local",
+      subMode:"local-tournament",
+      player1: config.player1,
+      player2:config.player2,
+    };
+    gameManager.startGame(gameConfig);
   }
 }
 

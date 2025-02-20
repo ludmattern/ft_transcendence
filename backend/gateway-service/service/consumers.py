@@ -29,7 +29,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 			message_type = data.get("type")
 			author = data.get("author")
 
-			# Check for the initialization message.
 			if message_type == "init":
 				self.user_id = data.get("userId")
 				self.username = data.get("username")
@@ -39,7 +38,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 			
 
 			if message_type == "chat_message":
-				# For general messages, simply forward to the chat_service.
 				event = {
 					"type": "chat_message",
 					"message": data.get("message"),
@@ -51,7 +49,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				logger.info(f"Message général relayé à 'chat_service' depuis {author}")
 
 			elif message_type == "private_message":
-				# For private messages, the payload must include a recipient (username).
 				recipient = data.get("recipient")
 				if not recipient:
 					await self.send(json.dumps({"error": "Recipient is required for private messages"}))
@@ -67,7 +64,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				}
 				await self.channel_layer.group_send("chat_service", event)
 				logger.info(f"Message privé envoyé à user_{recipient} depuis {author}")
-	
+
 			elif data.get("type") == "game_event":
 				game_id = data.get("game_id", "unknown_game") 
 				player1_id = data.get("player1", "Player 1")
@@ -105,6 +102,21 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 					"room_code": room_code  
 				})
 				logger.info(f"🚀 matchmaking_event/private_event => service : {action} {user_id}, room={room_code}")
+
+			elif data.get("type") == "tournament":
+				logger.info("🚀 tournament event")
+				await self.channel_layer.group_send(
+					"tournament", 
+					{
+						"type": "create_local_tournament", 
+						"action": data.get("action"),
+						"organizer_id": data.get("organizer_id"),
+						"players": data.get("players"),
+					}
+				)
+
+    
+    
 		except json.JSONDecodeError:
 			await self.send(json.dumps({"error": "Format JSON invalide"}))
 
@@ -139,3 +151,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 	async def private_match_found(self, event):
 		await self.send(json.dumps(event))
 		logger.info(f"🔔 Private match_found envoyé au client {event['user_id']} : game_id={event['game_id']}, side={event['side']}")
+
+	async def tournament_creation(self, event):
+		await self.send(json.dumps(event))
+		logger.info(f"tournament_creation")

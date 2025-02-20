@@ -11,3 +11,6 @@ MIGRATION_MODULES = {
 }
 
 ASGI_APPLICATION = 'service.asgi.application'
+
+ROOT_URLCONF = 'tournament.urls'
+WSGI_APPLICATION = 'service.wsgi.application'

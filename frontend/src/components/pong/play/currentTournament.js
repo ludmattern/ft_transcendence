@@ -1,5 +1,6 @@
 import { createComponent } from "/src/utils/component.js";
 import { handleRoute } from "/src/services/router.js";
+import { playGame } from "/src/components/pong/play/utils.js";
 
 export const currentTournament = createComponent({
   tag: "currentTournament",
@@ -83,12 +84,6 @@ export const currentTournament = createComponent({
           }
         </style>
         
-        <!-- Boutons de sélection du nombre de joueurs -->
-        <div id="tournament-controls" class="mb-4">
-          <button class="btn btn-pong sample-size-btn" data-size="4">4 Players</button>
-          <button class="btn btn-pong sample-size-btn" data-size="8">8 Players</button>
-          <button class="btn btn-pong sample-size-btn" data-size="16">16 Players</button>
-        </div>
         
         <div id="tournament-state" class="mb-4">
           <p class="text-secondary">The tournament is in progress.</p>
@@ -105,94 +100,22 @@ export const currentTournament = createComponent({
   },
   attachEvents: (el) => {
     const username = sessionStorage.getItem("username");
-    let sampleSize = 16;
     
-    // Données d'exemple
-    function getBracketData(size) {
-      if (size === 4) {
-        return [
-          {
-            round: "Semi-finals",
-            matches: [
-              { id: 1, player1: "Hitler", player2: "Qordoux", status: "completed", winner: "Hitler", score: "2-0" },
-              { id: 2, player1: username, player2: "Franco", status: "pending", winner: null, score: null }
-            ]
-          },
-          {
-            round: "Final",
-            matches: [
-              { id: 3, player1: "Hitler", player2: "TBD", status: "pending", winner: null, score: null }
-            ]
-          }
-        ];
-      } else if (size === 8) {
-        return [
-          {
-            round: "Quarter-finals",
-            matches: [
-              { id: 1, player1: "Qordoux", player2: "Hitler", status: "completed", winner: "Hitler", score: "2-1" },
-              { id: 2, player1: "Charlie", player2: "Franco", status: "completed", winner: "Charlie", score: "2-0" },
-              { id: 3, player1: username, player2: "Nkermani", status: "pending", winner: null, score: null },
-              { id: 4, player1: "Jgavairo", player2: "Poutine", status: "pending", winner: null, score: null }
-            ]
-          },
-          {
-            round: "Semi-finals",
-            matches: [
-              { id: 5, player1: "Hitler", player2: "Charlie", status: "pending", winner: null, score: null },
-              { id: 6, player1: "Winner 3", player2: "Winner 4", status: "pending", winner: null, score: null }
-            ]
-          },
-          {
-            round: "Final",
-            matches: [
-              { id: 7, player1: "TBD", player2: "TBD", status: "pending", winner: null, score: null }
-            ]
-          }
-        ];
-      } else {
-        // 16 players
-        return [
-          {
-            round: "Round of 16",
-            matches: [
-              { id: 1, player1: "Hitler", player2: "Qordoux", status: "completed", winner: "Hitler", score: "2-0" },
-              { id: 2, player1: username, player2: "Franco", status: "completed", winner: username, score: "2-0" },
-              { id: 3, player1: "Lossalos", player2: "Nkermani", status: "completed", winner: "Lossalos", score: "2-0" },
-              { id: 4, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" },
-              { id: 5, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" },
-              { id: 6, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" },
-              { id: 7, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" },
-              { id: 8, player1: "Poutine", player2: "Jgavairo", status: "completed", winner: "Jgavairo", score: "2-1" }
-            ]
-          },
-          {
-            round: "Quarter-finals",
-            matches: [
-              { id: 9, player1: "Hitler", player2: "Franco", status: "completed", winner: "Hitler", score: "2-1" },
-              { id: 10, player1: username, player2: "Jgavairo", status: "pending", winner: null, score: null },
-              { id: 11, player1: username, player2: "Jgavairo", status: "pending", winner: null, score: null },
-              { id: 12, player1: username, player2: "Jgavairo", status: "pending", winner: null, score: null }
-            ]
-          },
-          {
-            round: "Semi-finals",
-            matches: [
-              { id: 13, player1: username, player2: "TBD", status: "pending", winner: null, score: null },
-              { id: 14, player1: username, player2: "TBD", status: "pending", winner: null, score: null }
-            ]
-          },
-          {
-            round: "Final",
-            matches: [
-              { id: 15, player1: "TBD", player2: "TBD", status: "pending", winner: null, score: null }
-            ]
-          }
-        ];
+    async function getBracketData() {
+      try {
+        const userId = sessionStorage.getItem("userId");
+        const response = await fetch(`/api/tournament-service/get_current_tournament/?user_id=${userId}`);        
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        return data.rounds;
+      } catch (error) {
+        console.error("Erreur lors de la récupération du bracket :", error);
+        return [];
       }
     }
 
-    // Vérifie si l'utilisateur a terminé son match dans le round précédent
     function hasUserCompletedInPreviousRound(bracketData, roundIndex) {
       if (roundIndex === 0) return true;
       const previousRound = bracketData[roundIndex - 1];
@@ -203,46 +126,38 @@ export const currentTournament = createComponent({
       );
     }
 
-    function renderBracket() {
-      const bracketData = getBracketData(sampleSize);
+    async function renderBracket() {
+      const bracketData =  await getBracketData();
       let titlesHtml = "";
       let roundsHtml = "";
+      let mode = bracketData.mode;
 
       bracketData.forEach((round, roundIndex) => {
-        // Création du titre pour le round
         titlesHtml += `<div class="h4 round-title">${round.round}</div>`;
 
-        // Création de la colonne avec la liste des matchs
-        const matchesHtml = round.matches
-          .map(match => {
-            if (match.status === "completed") {
-              const winner = match.winner;
-              const loser = match.player1 === winner ? match.player2 : match.player1;
-              return `
-                <div class="match p-2 bg-dark rounded" data-match-id="${match.id}">
-                  <span class="text-white">
-                    <span class="fw-bold">${winner}</span> vs 
-                    <span>${loser}</span>
-                  </span>
-                  <span class="badge ms-2">${match.score}</span>
-                </div>
-              `;
-            } else {
-              let joinButton = "";
-              if (match.status === "pending" && (match.player1 === username || match.player2 === username)) {
-                if (hasUserCompletedInPreviousRound(bracketData, roundIndex)) {
-                  joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
-                }
+        const matchesHtml = round.matches.map(match => {
+          let joinButton = "";
+          if (match.status === "pending" &&  match.player1 !== "TBD" &&match.player2 !== "TBD") 
+          {
+            if (mode === "online") 
+            {
+              if ((match.player1 === username || match.player2 === username) &&
+                  hasUserCompletedInPreviousRound(bracketData, roundIndex)) 
+              {
+              joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
               }
-              return `
-                <div class="match p-2 bg-dark rounded" data-match-id="${match.id}">
-                  <span class="text-white">${match.player1} vs ${match.player2}</span>
-                  ${joinButton === "" ? `<span class="text-secondary ms-2">${match.status}</span>` : joinButton}
-                </div>
-              `;
+            } else { 
+              joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
             }
-          })
-          .join("");
+          }
+          
+          return `
+            <div class="match p-2 bg-dark rounded" data-match-id="${match.id}">
+              <span class="text-white">${match.player1} vs ${match.player2}</span>
+              ${joinButton === "" ? `<span class="text-secondary ms-2">${match.status}</span>` : joinButton}
+            </div>
+          `;
+        }).join("");
 
         roundsHtml += `
           <div class="round-column">
@@ -252,7 +167,6 @@ export const currentTournament = createComponent({
           </div>
         `;
 
-        // On ajoute une ligne de bracket entre les rounds (sauf après le dernier)
 		if (roundIndex < bracketData.length - 1) {
 			const bracketCount = Math.pow(2, (bracketData.length - 1 - roundIndex)) / 2;
 			let bracketLines = "";
@@ -277,19 +191,17 @@ export const currentTournament = createComponent({
         button.addEventListener("click", () => {
           const matchDiv = button.closest(".match");
           const matchId = matchDiv.getAttribute("data-match-id");
-          handleRoute(`/pong/play/match/${matchId}`);
-        });
+          const config = {
+            gameMode : "local-tournament",
+            player1: "abou",
+            player2:"bakar",
+            type: "splitScreen",
+            };
+              playGame(config);        
+            });
       });
     }
 
     renderBracket();
-
-    const sampleSizeButtons = el.querySelectorAll(".sample-size-btn");
-    sampleSizeButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        sampleSize = parseInt(button.getAttribute("data-size"));
-        renderBracket();
-      });
-    });
-  }
+  ;}
 });

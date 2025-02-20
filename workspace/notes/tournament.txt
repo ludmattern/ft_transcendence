@@ -12,9 +12,9 @@ Creer un tournoi avec les pseudo  (en fonction du format 4-8-16).
 Une fois rempli, on peut creer le tournoi --> Create tournament cote backend avec une view.
 
  --> Type == local
- --> Format == '4' / '8' /'16
- --> Player_list == {host, guest1, guest2, guest3} par exemple.
- --> Shuffle la liste. --> Remplir la DB avec celle-ci --> Tournament-participants
+ --> Format == '4' / '8' /'16 OK
+ --> Player_list == {host, guest1, guest2, guest3} par exemple. OK
+ --> Shuffle la liste. --> Remplir la DB avec celle-ci --> Tournament-participants OK
  --> Creation de toutes les sessions de jeux. (Tournament-service? utilisation de matchmaking-service)
 
  --> Remplir les tables de la DB

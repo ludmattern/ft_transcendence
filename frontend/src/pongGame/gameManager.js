@@ -130,6 +130,11 @@ class GameManager {
       document.addEventListener("keyup", this.localKeyupHandler);
       this.username1 = "Player Right";
       this.username2 =" Player Left";
+      if (gameConfig.subMode === "local-tournament")
+      {
+        this.username1 = gameConfig.player1;
+        this.username2 = gameConfig.player2;
+      }
     } else {
       document.addEventListener("keydown", this.matchMakingKeydownHandler);
       document.addEventListener("keyup", this.matchMakingKeyupHandler);
