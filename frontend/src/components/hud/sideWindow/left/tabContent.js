@@ -13,21 +13,23 @@ export function loadTabContent(tabName, container) {
   container.innerHTML = "";
 
   if (tabName === "info") {
-    let tabData = sessionStorage.getItem("infoTabData");
+    let infoTabData = sessionStorage.getItem("infoTabData");
+	console.log("Info tab loading");
 
-    if (tabData) {
+    if (infoTabData) {
       try {
-        const parsedData = JSON.parse(tabData);
+        const parsedData = JSON.parse(infoTabData);
         if (!parsedData.info)
           throw new Error("Données corrompues ou incomplètes !");
         renderInfoTab(parsedData.info, container);
+		console.log("Info tab loaded");
       } catch (err) {
         console.warn("SessionStorage corrompu, rechargement depuis le serveur...", err);
         fetchAndStoreInfoData(container);
       }
     } else {
       fetchAndStoreInfoData(container);
-	  console.log("Info tab loaded");
+	  console.log("Info tab loaded from server");
     }
 
     removeChatInput();
