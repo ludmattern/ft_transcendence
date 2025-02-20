@@ -54,7 +54,7 @@ def check_auth_view(request):
             new_exp = now + settings.JWT_EXP_DELTA_SECONDS
             new_payload = {**payload, "exp": new_exp}
             new_token = jwt.encode(
-                {"sub": str(user.id), "iat": now, "exp": (now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)).timestamp()},
+                new_payload,
                 settings.JWT_SECRET_KEY,
                 algorithm=settings.JWT_ALGORITHM
             )
@@ -62,7 +62,6 @@ def check_auth_view(request):
 
             user.token_expiry = datetime.datetime.utcfromtimestamp(new_exp)
             user.session_token = new_token_str
-            user.status = 'online'
             user.save()
 
             response = JsonResponse({'success': True, 'id': user.id, 'username': user.username, 'message': 'Cookie renewed'})
@@ -78,7 +77,6 @@ def check_auth_view(request):
 
         return JsonResponse({'success': True, 'id': user.id, 'username': user.username, 'message': 'Cookie still valid'})
     except jwt.ExpiredSignatureError:
-        user.status = 'offline'
         return JsonResponse({'success': False, 'message': 'Token expired'}, status=401)
     except jwt.InvalidTokenError as e:
         return JsonResponse({'success': False, 'message': f'Invalid token: {e}'}, status=401)
