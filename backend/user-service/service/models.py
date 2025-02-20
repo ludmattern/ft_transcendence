@@ -55,7 +55,7 @@ class ManualFriendsRelations(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.friend.username} ({self.status})"
 
-z
+
 class ManualBlockedRelations(models.Model):
     id = models.AutoField(primary_key=True)  # ✅ Added primary key
     user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="blocked_users")
