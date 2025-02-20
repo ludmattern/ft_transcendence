@@ -27,6 +27,7 @@ export function loadTabContent(tabName, container) {
       }
     } else {
       fetchAndStoreInfoData(container);
+	  console.log("Info tab loaded");
     }
 
     removeChatInput();
@@ -54,30 +55,7 @@ export function loadTabContent(tabName, container) {
   }
 }
 
-function bodyData() {
-  return {
-    username: sessionStorage.getItem("username"),
-  };
-}
-
 async function fetchAndStoreInfoData(container) {
-  // fetch("/src/context/tabsContent.json")
-  // .then((response) => {
-  //   if (!response.ok)
-  //     throw new Error(`HTTP error! Status: ${response.status}`);
-  //   return response.json();
-  // })
-  // .then((data) => {
-  //   sessionStorage.setItem("infoTabData", JSON.stringify(data));
-  //   renderInfoTab(data.info || [], container);
-  // })
-  // .catch((error) => {
-  //   console.error("Erreur lors de la récupération des données 'info':", error);
-  // });
-
-  //
-  // get all informations from the server
-  // 
   const userId = sessionStorage.getItem("userId");
 
   const response = await fetch(`/api/user-service/info-getter/${encodeURIComponent(userId)}/`, {
