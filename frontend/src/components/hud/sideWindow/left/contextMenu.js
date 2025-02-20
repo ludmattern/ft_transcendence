@@ -62,10 +62,10 @@ function bodyData(author) {
 async function handleFriendAction(isFriend, author) {
 	let action;
 	if (isFriend) {
-		action = "remove";
+		action = "remove_friend";
 		console.log(`Removing ${author} from friends...`);
 	} else {
-		action = "add";
+		action = "send_friend_request";
 		console.log(`Adding ${author} to friends...`);
 	}
 	// Common payload structure
