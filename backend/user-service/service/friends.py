@@ -149,6 +149,7 @@ def remove_friend(request):
 
 def is_friend(request):
     """Check if two users are friends."""
+    logger.info("Checking if two users are friends")
     if request.method == "POST":
         try:
             body = json.loads(request.body)

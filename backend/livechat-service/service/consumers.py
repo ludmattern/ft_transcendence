@@ -87,12 +87,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		if(str(action) == "send_friend_request"):
 			if not author_id or not recipient_id:
-				await self.channel_layer.group_send(f"user_{author_id}", {"error": "Missing userId or selectedUserId"})
+				await self.channel_layer.group_send(f"user_{author_id}",
+					{	
+						"type": "error_message",
+						"error": "Author or recipient not provided"
+					})
 				return
 
 			if str(author_id) == str(recipient_id):
-				await self.channel_layer.group_send(f"user_{author_id}", {"error": "You cannot send a friend request to yourself"})
+				await self.channel_layer.group_send(f"user_{author_id}",
+					{	
+						"type": "error_message",
+						"error": "You can't send a friend request to yourself"
+					})
 				return
+
 			logger.info(f"Author: {author_id}, Recipient: {recipient_id}")
 			user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
 			logger.info(f"User: {user}")
@@ -106,7 +115,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			if exists:
 				logger.info("Friend request already sent")
-				await self.channel_layer.group_send(f"user_{author_id}", {"message": "Friend request already sent"})
+				await self.channel_layer.group_send(f"user_{author_id}",
+					{	
+						"type": "error_message",
+						"error": "Friend request already sent"
+					})
 				return
 
 			await database_sync_to_async(ManualFriendsRelations.objects.create)(user=user, friend=friend, status="pending")
