@@ -39,7 +39,7 @@ function processNotificationBuffer() {
  * @param {string} message - Le contenu HTML ou texte de la notification.
  * @param {number} [duration=2500] - La durée en millisecondes avant de lancer le collapse (par défaut 30s).
  */
-export function createNotificationMessage(message, duration = 2500) {
+export function createNotificationMessage(message, duration = 2500, error = false) {
   const container = document.getElementById("bottom-notification-container");
   if (!container) {
     console.error("Le container de notification n'a pas été trouvé.");
@@ -53,6 +53,7 @@ export function createNotificationMessage(message, duration = 2500) {
 
   const notification = document.createElement("div");
   notification.classList.add("notification-message");
+  if ( error ) notification.classList.add("error");
   notification.innerHTML = message;
   container.appendChild(notification);
 

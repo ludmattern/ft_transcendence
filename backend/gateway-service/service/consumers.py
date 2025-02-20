@@ -2,6 +2,7 @@ import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+
 logger = logging.getLogger(__name__)
 
 class GatewayConsumer(AsyncWebsocketConsumer):
@@ -64,6 +65,23 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				}
 				await self.channel_layer.group_send("chat_service", event)
 				logger.info(f"Message privé envoyé à user_{recipient} depuis {author}")
+	
+			elif message_type == "info_message":
+				# For friend requests, the payload must include a recipient (username).
+				recipient = data.get("recipient")
+				if not recipient:
+					await self.send(json.dumps({"error": "Recipient is required for friend requests"}))
+					return
+				logger.info(f"data: {data}")
+				event = {
+					"type": "info_message",
+					"action": data.get("action"),
+					"author": author,
+					"recipient": recipient,
+					"timestamp": data.get("timestamp"),
+				}
+				await self.channel_layer.group_send("chat_service", event)
+				logger.info(f"New notification send")
 
 			elif data.get("type") == "game_event":
 				game_id = data.get("game_id", "unknown_game") 
@@ -94,7 +112,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				action = data.get("action")
 				user_id = data.get("user_id", self.user_id)
 				room_code = data.get("room_code") 
-    
+	
 				await self.channel_layer.group_send("matchmaking_service", {
 					"type": "matchmaking_event",
 					"action": action,
@@ -124,11 +142,18 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		"""Reçoit un message (provenant du chat-service) et le renvoie au client."""
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (General): {event}")
-  
+
 	async def private_message(self, event):
 		"""This method handles private_message events delivered to this consumer."""
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (Private): {event}")
+
+	async def info_message(self, event):
+		"""This method handles friend request sending events delivered to this consumer."""
+		await self.send(json.dumps(event))
+		logger.info(f"Message transmis au client WebSocket (Friend Request): {event}")
+  
+  
 
 	async def error_message(self, event):
 		"""This method handles error_message events delivered to this consumer."""
@@ -147,7 +172,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 	async def match_found(self, event):
 		await self.send(json.dumps(event))
 		logger.info(f"🎯 Match trouvé! Envoyé au client {event['user_id']}")
-  
+
 	async def private_match_found(self, event):
 		await self.send(json.dumps(event))
 		logger.info(f"🔔 Private match_found envoyé au client {event['user_id']} : game_id={event['game_id']}, side={event['side']}")

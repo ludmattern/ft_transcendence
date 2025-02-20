@@ -146,3 +146,27 @@ def remove_friend(request):
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+def is_friend(request):
+    """Check if two users are friends."""
+    logger.info("Checking if two users are friends")
+    if request.method == "POST":
+        try:
+            body = json.loads(request.body)
+            user = ManualUser.objects.filter(id=body.get("userId")).first()
+            friend = ManualUser.objects.filter(id=body.get("otherUserId")).first()
+
+            if not user or not friend:
+                return JsonResponse({"success": False, "error": "User or friend not found"}, status=404)
+
+            is_friend = ManualFriendsRelations.objects.filter(
+                Q(user=user, friend=friend, status="accepted") |
+                Q(user=friend, friend=user, status="accepted")
+            ).exists()
+
+            return JsonResponse({"success": True, "is_friend": is_friend}, status=200)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False,"error": "Invalid JSON data"}, status=400)
+
+    return JsonResponse({"success": False,"error": "Invalid request method"}, status=405)
