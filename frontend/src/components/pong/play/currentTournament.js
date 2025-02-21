@@ -140,7 +140,24 @@ export const currentTournament = createComponent({
 
         const matchesHtml = round.matches.map(match => {
           let joinButton = "";
-          if (match.status === "pending" && match.player1 !== "TBD" && match.player2 !== "TBD") {
+          if (match.status === "completed") {
+            let displayHtml = "";
+            if (match.winner) {
+              if (match.winner === match.player1) {
+                displayHtml = `<span class="text-success fw-bold">${match.player1}</span> vs <span class="text-danger">${match.player2}</span>`;
+              } else {
+                displayHtml = `<span class="text-danger">${match.player1}</span> vs <span class="text-success fw-bold">${match.player2}</span>`;
+              }
+            } else {
+              displayHtml = `${match.player1} vs ${match.player2}`;
+            }
+            return `
+              <div class="match p-2 bg-dark rounded" data-match-id="${match.id}" data-player1="${match.player1}" data-player2="${match.player2}">
+                <span class="text-white">${displayHtml}</span>
+                <span class="badge ms-2">${match.score}</span>
+              </div>
+            `;
+          } else if (match.status === "pending" && match.player1 !== "TBD" && match.player2 !== "TBD") {
             if (mode === "online") {
               if ((match.player1 === username || match.player2 === username) &&
                   hasUserCompletedInPreviousRound(bracketData, roundIndex)) {
