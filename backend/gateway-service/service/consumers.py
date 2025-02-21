@@ -63,6 +63,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 					"message": data.get("message"),
 					"author": author,
 					"recipient": recipient,
+					"recipient_id": data.get("recipient_id"),
 					"channel": "private",
 					"timestamp": data.get("timestamp"),
 				}
@@ -140,8 +141,8 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		"""This method handles friend request sending events delivered to this consumer."""
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (Friend Request): {event}")
-  
-  
+
+
 
 	async def error_message(self, event):
 		"""This method handles error_message events delivered to this consumer."""

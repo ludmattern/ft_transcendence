@@ -3,7 +3,7 @@ let isWsConnected = false;
 import { gameManager } from "/src/pongGame/gameManager.js";
 import { handleIncomingMessage } from "/src/components/hud/sideWindow/left/tabContent.js";
 import { startMatchmakingGame, startPrivateGame } from "/src/services/multiplayerPong.js";
-import { createNotificationMessage } from "/src/components/hud/sideWindow/left/notifications.js";
+import { createNotificationMessage, updateAndCompareInfoData } from "/src/components/hud/sideWindow/left/notifications.js";
 
 export function initializeWebSocket() {
   if (ws) {
@@ -99,46 +99,3 @@ export function closeWebSocket() {
   }
 }
 
-async function updateAndCompareInfoData() {
-	const userId = sessionStorage.getItem("userId");
-  
-	try {
-	  const response = await fetch(`/api/user-service/info-getter/${encodeURIComponent(userId)}/`, {
-		method: "GET",
-		credentials: "include",
-	  });
-	  const result = await response.json();
-  
-	  if (result.info) {
-		let localInfo = [];
-		const localInfoStr = sessionStorage.getItem("infoTabData");
-		if (localInfoStr) {
-		  try {
-			const parsedInfo = JSON.parse(localInfoStr);
-			localInfo = Array.isArray(parsedInfo) ? parsedInfo : [];
-		  } catch (err) {
-			localInfo = [];
-		  }
-		}
-  
-		const serverInfo = Array.isArray(result.info) ? result.info : [];
-  
-		const newMessages = serverInfo.filter(newMsg => 
-		  !localInfo.some(localMsg => localMsg.id === newMsg.id)
-		);
-  
-		if (newMessages.length > 0) {
-		  console.log("Nouveaux messages :", newMessages);
-		} else {
-		  console.log("Aucun nouveau message.");
-		}
-  
-		sessionStorage.setItem("infoTabData", JSON.stringify(serverInfo));
-	  } else {
-		console.log("Erreur lors de la récupération des informations depuis le serveur.");
-	  }
-	} catch (error) {
-	  console.error("Erreur lors de la mise à jour des informations :", error);
-	}
-  }
-  

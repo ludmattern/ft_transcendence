@@ -10,8 +10,9 @@ export const contextMenu = createComponent({
   render: (item, userStatus) => `
     <div id="context-menu" class="context-menu">
       <ul>
-        <li id="action-friend">${userStatus.isFriend ? "Remove Friend" : "Add Friend"
-    }</li>
+        <li id="action-friend">${
+          userStatus.isFriend ? "Remove Friend" : "Add Friend"
+        }</li>
         <li id="action-block">Block</li>
         <li id="action-invite">Invite</li>
         <li id="action-profile">Profile</li>
@@ -61,24 +62,24 @@ function bodyData(author) {
  */
 
 async function handleFriendAction(isFriend, author) {
-	let action;
-	if (isFriend) {
-		action = "remove_friend";
-		console.log(`Removing ${author} from friends...`);
-	} else {
-		action = "send_friend_request";
-		console.log(`Adding ${author} to friends...`);
-	}
-	// Common payload structure
-	const payload = {
-	type: "info_message",
-	action,
-	author: sessionStorage.getItem("userId"),
-	recipient: author,
-	timestamp: new Date().toISOString(),
-	};
+  let action;
+  if (isFriend) {
+    action = "remove_friend";
+    console.log(`Removing ${author} from friends...`);
+  } else {
+    action = "send_friend_request";
+    console.log(`Adding ${author} to friends...`);
+  }
+  // Common payload structure
+  const payload = {
+    type: "info_message",
+    action,
+    author: sessionStorage.getItem("userId"),
+    recipient: author,
+    timestamp: new Date().toISOString(),
+  };
 
-	ws.send(JSON.stringify(payload));
+  ws.send(JSON.stringify(payload));
 }
 
 async function handleBlockAction(isBlocked, author) {
@@ -92,7 +93,10 @@ async function handleBlockAction(isBlocked, author) {
     });
     const data = await response.json();
     if (data.success) {
-      console.log(`User: ${author} unblocked successfully by ${sessionStorage.getItem("username")}`
+      console.log(
+        `User: ${author} unblocked successfully by ${sessionStorage.getItem(
+          "username"
+        )}`
       );
     } else {
       console.log("Error updating information:");
@@ -107,7 +111,10 @@ async function handleBlockAction(isBlocked, author) {
     });
     const data = await response.json();
     if (data.success) {
-      console.log(`User: ${author} blocked  successfully by ${sessionStorage.getItem("username")}`
+      console.log(
+        `User: ${author} blocked  successfully by ${sessionStorage.getItem(
+          "username"
+        )}`
       );
     } else {
       console.log("Error updating information");
@@ -147,7 +154,9 @@ function handleMessageAction(author) {
       });
   } else {
     // Si on est déjà dans l'onglet "comm"
-    const inputField = document.querySelector("#l-tab-content-container #message-input");
+    const inputField = document.querySelector(
+      "#l-tab-content-container #message-input"
+    );
     if (inputField) {
       inputField.value = "@" + author + " ";
       inputField.focus();
@@ -161,19 +170,25 @@ function handleMessageAction(author) {
  * @param {MouseEvent} event - L'événement contextmenu.
  */
 export async function showContextMenu(item, event) {
-  console.log("showContextMenu");
+  console.log("showContextMenu", item, event);
   event.preventDefault();
   event.stopPropagation();
 
   hideContextMenu();
 
-  const isFriend = await isUserFriend(sessionStorage.getItem("userId"), item.author);
+  if (item.author === "USER") {
+    item.author = item.recipient_id;
+	item.username = item.recipient;
+  }
+  const isFriend = await isUserFriend(
+    sessionStorage.getItem("userId"),
+    item.author
+  );
 
   const userStatus = {
     isFriend: isFriend,
     isBlocked: false,
   };
-
 
   const menuHTML = contextMenu.render(item, userStatus);
   document.body.insertAdjacentHTML("beforeend", menuHTML);
@@ -203,17 +218,17 @@ document.addEventListener("click", (e) => {
 });
 
 export async function isUserFriend(userId, otherUserId) {
-	console.log(`Checking if ${userId} is friends with ${otherUserId}...`);
-	const response = await fetch("/api/user-service/is-friend/", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ userId: userId, otherUserId: otherUserId }),
-	});
-	const data = await response.json();
-	if (data.success) {
-		return data.is_friend;
-	} else {
-		console.log("Error getting friend status");
-		return false;
-	}
+  console.log(`Checking if ${userId} is friends with ${otherUserId}...`);
+  const response = await fetch("/api/user-service/is-friend/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId: userId, otherUserId: otherUserId }),
+  });
+  const data = await response.json();
+  if (data.success) {
+    return data.is_friend;
+  } else {
+    console.log("Error getting friend status");
+    return false;
+  }
 }

@@ -2,6 +2,8 @@
 
 import { commMessage, infoPanelItem } from "/src/components/hud/index.js";
 import { setupChatInput, removeChatInput } from "/src/components/hud/sideWindow/left/chat.js";
+import { createNotificationMessage } from "/src/components/hud/sideWindow/left/notifications.js";
+
 
 /**
  * Charge dynamiquement le contenu de l'onglet spécifié.
