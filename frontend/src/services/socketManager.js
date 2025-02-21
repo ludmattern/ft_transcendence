@@ -113,24 +113,32 @@ async function updateAndCompareInfoData() {
 		let localInfo = [];
 		const localInfoStr = sessionStorage.getItem("infoTabData");
 		if (localInfoStr) {
-		  localInfo = JSON.parse(localInfoStr);
+		  try {
+			const parsedInfo = JSON.parse(localInfoStr);
+			localInfo = Array.isArray(parsedInfo) ? parsedInfo : [];
+		  } catch (err) {
+			localInfo = [];
+		  }
 		}
   
-		const newMessages = result.info.filter(newMsg => 
+		const serverInfo = Array.isArray(result.info) ? result.info : [];
+  
+		const newMessages = serverInfo.filter(newMsg => 
 		  !localInfo.some(localMsg => localMsg.id === newMsg.id)
 		);
-		
+  
 		if (newMessages.length > 0) {
 		  console.log("Nouveaux messages :", newMessages);
 		} else {
 		  console.log("Aucun nouveau message.");
 		}
   
-		sessionStorage.setItem("infoTabData", JSON.stringify(result.info));
+		sessionStorage.setItem("infoTabData", JSON.stringify(serverInfo));
 	  } else {
 		console.log("Erreur lors de la récupération des informations depuis le serveur.");
 	  }
 	} catch (error) {
 	  console.error("Erreur lors de la mise à jour des informations :", error);
 	}
-}
+  }
+  
