@@ -57,7 +57,7 @@ export function loadTabContent(tabName, container) {
   }
 }
 
-async function fetchAndStoreInfoData(container) {
+export async function fetchAndStoreInfoData(container) {
   const userId = sessionStorage.getItem("userId");
 
   const response = await fetch(`/api/user-service/info-getter/${encodeURIComponent(userId)}/`, {

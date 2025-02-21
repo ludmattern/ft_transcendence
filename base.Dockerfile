@@ -4,15 +4,19 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 	PYTHONUNBUFFERED=1 \
 	PATH="/home/appuser/.local/bin:${PATH}"
 
-RUN apk add --no-cache gcc musl-dev postgresql-dev && \
-	adduser -D appuser && mkdir -p /data/certs && \
-	chown -R appuser:appuser /data/certs
+RUN apk add --no-cache gcc musl-dev postgresql-dev openssl && \
+	adduser -D appuser
 
 WORKDIR /app
+
+#USER appuser
 
 COPY --chown=appuser:appuser backend/common/ /app/common
 RUN pip install --no-cache-dir -r /app/common/requirements_common.txt
 
-USER appuser
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-CMD [ "echo", "Base image built" ]
+RUN pip install --no-cache-dir -r /app/common/requirements_common.txt
+
+ENTRYPOINT ["/entrypoint.sh"]
