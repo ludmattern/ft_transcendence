@@ -30,6 +30,8 @@ def info_getter(request, user_id):
         .select_related("user")  # Optimized query
         .values("user__id", "user__username")  # Fetch user ID & username
     )
+    
+    logger.info(f"Friend requests: {friend_requests}")
 
     friend_request_data = [
         {
@@ -40,6 +42,8 @@ def info_getter(request, user_id):
         }
         for fr in friend_requests
     ]
+    
+    logger.info(f"Friend request data: {friend_request_data}")
 
     tournament_invites = (
         ManualNotifications.objects
@@ -47,6 +51,8 @@ def info_getter(request, user_id):
         .select_related("sender")  # Optimized query
         .values("sender__id", "sender__username")  # Fetch sender ID & username
     )
+
+    logger.info(f"Tournament invites: {tournament_invites}")
 
     tournament_invite_data = [
         {
@@ -58,9 +64,13 @@ def info_getter(request, user_id):
         for invite in tournament_invites
     ]
 
+    logger.info(f"Tournament invite data: {tournament_invite_data}")
+
     response_data = {
         "success": True,
         "info": friend_request_data + tournament_invite_data
     }
+
+    logger.info(f"Response data: {json.dumps(response_data, indent=4)}")
 
     return JsonResponse(response_data, safe=False, json_dumps_params={'indent': 4})

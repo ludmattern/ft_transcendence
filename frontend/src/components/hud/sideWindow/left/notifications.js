@@ -73,3 +73,50 @@ export function removePrivateNotifications() {
     return !(message && message.includes("private message"));
   });
 }
+
+export async function updateAndCompareInfoData() {
+	const userId = sessionStorage.getItem("userId");
+  
+	try {
+	  console.log("GET info getter with userId", userId);
+	  const response = await fetch(`/api/user-service/info-getter/${encodeURIComponent(userId)}/`, {
+		method: "GET",
+		credentials: "include",
+	  });
+	  const result = await response.json();
+  
+	  if (result.info) {
+		let localInfo = [];
+		const localInfoStr = sessionStorage.getItem("infoTabData");
+		if (localInfoStr) {
+		  try {
+			const parsedInfo = JSON.parse(localInfoStr);
+			localInfo = Array.isArray(parsedInfo) ? parsedInfo : [];
+		  } catch (err) {
+			localInfo = [];
+		  }
+		}
+  
+		const serverInfo = Array.isArray(result.info) ? result.info : [];
+		console.log("Informations locales :", localInfo);
+		console.log("Informations serveur :", serverInfo);
+  
+		const newMessages = serverInfo.filter(newMsg => 
+		  !localInfo.some(localMsg => localMsg.id === newMsg.id)
+		);
+  
+		if (newMessages.length > 0) {
+		  console.log("Nouveaux messages :", newMessages);
+		} else {
+		  console.log("Aucun nouveau message.");
+		}
+  
+		sessionStorage.setItem("infoTabData", JSON.stringify(serverInfo));
+	  } else {
+		console.log("Erreur lors de la récupération des informations depuis le serveur.");
+	  }
+	} catch (error) {
+	  console.error("Erreur lors de la mise à jour des informations :", error);
+	}
+  }
+  

@@ -66,6 +66,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			await self.channel_layer.group_send(f"user_{author_id}", event)
 			return
 
+		event["recipient_id"] = recipient_id
+
 		if str(author_id) == str(recipient_id):
 			logger.info(f"Skipping message sending because author_id ({author_id}) equals recipient_id ({recipient_id})")
 			return
@@ -75,8 +77,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_send(f"user_{recipient_id}", event)
 		await self.channel_layer.group_send(f"user_{author_id}", event)
 		logger.info(f"Message transmitted to groups user_{recipient_id} and user_{author_id}: {event}")
-  
-  
+
+
 	async def info_message(self, event):
 		"""Send a friend request."""
 		logger.info(f"ChatConsumer.send_friend_request received event: {event}")
