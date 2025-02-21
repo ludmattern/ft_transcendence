@@ -1,3 +1,4 @@
 -r common/requirements_common.txt
 -r common/requirements_channels.txt
 pyotp==2.9.0
+-r common/requirements_security.txt

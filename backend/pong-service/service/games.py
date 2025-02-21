@@ -8,7 +8,7 @@ class BasePongGame:
         self.game_id = game_id
         self.start_delay = 3.0
         self.start_time = time.time()
-        self.max_score = 10
+        self.max_score = 3
         self.game_over = False
 
         self.player1_id = player1_id if player1_id else "unknown1"

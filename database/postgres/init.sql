@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     total_losses INT DEFAULT 0,
     total_games INT DEFAULT 0,
     is_2fa_enabled BOOLEAN DEFAULT FALSE,
+    is_dummy BOOLEAN DEFAULT FALSE,
     twofa_method VARCHAR(50) DEFAULT NULL,
     phone_number VARCHAR(255) DEFAULT NULL,
     temp_2fa_code VARCHAR(255) DEFAULT NULL,
@@ -92,4 +93,18 @@ CREATE TABLE IF NOT EXISTS notifications (
     FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (tournament_id) REFERENCES tournaments(id) ON DELETE CASCADE,
     FOREIGN KEY (game_id) REFERENCES game_history(game_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS service_tournamentmatch (
+    id SERIAL PRIMARY KEY,
+    tournament_id INT NOT NULL,
+    round_number INT NOT NULL,
+    match_order INT NOT NULL,
+    player1 VARCHAR(50),
+    player2 VARCHAR(50),
+    status VARCHAR(20) DEFAULT 'pending',
+    winner VARCHAR(50),
+    score VARCHAR(20),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (tournament_id) REFERENCES tournaments(id) ON DELETE CASCADE
 );

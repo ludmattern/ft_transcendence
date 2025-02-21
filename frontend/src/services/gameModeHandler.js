@@ -57,6 +57,7 @@ export function gameModeSelector(config) {
       subMode:"local-tournament",
       player1: config.player1,
       player2:config.player2,
+      tournament_id: config.tournament_id,
     };
     gameManager.startGame(gameConfig);
   }

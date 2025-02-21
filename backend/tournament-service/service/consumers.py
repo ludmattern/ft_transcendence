@@ -3,10 +3,21 @@ import random
 import string
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
-from .models import ManualTournament, ManualUser, ManualTournamentParticipants
+from .models import ManualTournament, ManualUser, ManualTournamentParticipants, TournamentMatch
 import logging
+from cryptography.fernet import Fernet
+from django.conf import settings
+import math
 
 logger = logging.getLogger(__name__)
+
+cipher = Fernet(settings.FERNET_KEY)
+
+
+def encrypt_thing(args):
+    """Encrypts the args."""
+    return cipher.encrypt(args.encode('utf-8')).decode('utf-8')
+
 
 class TournamentConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -40,7 +51,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 error_msg = f"L'utilisateur {organizer.id} est déjà dans un tournoi actif."
                 logger.warning(error_msg)
                 await self.send(json.dumps({"error": error_msg}))
-                #TODO Gerer la reponse cote front
                 return
         except ManualUser.DoesNotExist:
             await self.send(json.dumps({"error": "Organizer not found"}))
@@ -53,34 +63,71 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             serial_key=serial_key,
             name="Local Tournament",
             organizer_id=organizer_id,
-            rounds=len(players) // 2,
+            rounds=len(players) // 2, 
             status="ongoing",
             mode="local"
         )
         logger.info(f"🏆 Tournament créé: ID={tournament.id}, serial_key={serial_key}, organizer_id={organizer_id}")
 
+        # Création des participants
         for username in players:
             user, created = await sync_to_async(ManualUser.objects.get_or_create)(
                 username=username,
                 defaults={
-                    "email": f"{username.lower()}@local.fake",
-                    "password": "fakepassword"
+                    "email": encrypt_thing(f"{username.lower()}@local.fake"),
+                    "password": "fakepassword",
+                    "is_dummy": True
                 }
             )
             if created:
-                logger.info(f"👤 Utilisateur créé: username={user.username}, email={user.email}")
+                logger.info(f"👤 Utilisateur créé: username={user.username}")
             else:
                 logger.info(f"👤 Utilisateur récupéré: username={user.username}")
-            if user.id == int(organizer_id):
-                user.in_tournament = True
-                await sync_to_async(user.save)()
-                participant = await sync_to_async(ManualTournamentParticipants.objects.create)(
+            user.in_tournament = True
+            await sync_to_async(user.save)()
+            participant = await sync_to_async(ManualTournamentParticipants.objects.create)(
                 tournament=tournament,
                 user=user,
                 status="accepted"
             )
             logger.info(f"✅ Participant ajouté: TournamentID={tournament.id}, User={user.username}, status=accepted")
 
+        
+        n = len(players)
+        rounds_count = int(math.log2(n))  # Nombre de rounds (ex: 2 pour 4 joueurs, 3 pour 8, etc.)
+
+        # Round 1 : les joueurs sont en ordre dans le tableau players
+        for i in range(0, n, 2):
+            match_order = (i // 2) + 1
+            player1 = players[i]
+            player2 = players[i+1]
+            await sync_to_async(TournamentMatch.objects.create)(
+                tournament=tournament,
+                round_number=1,
+                match_order=match_order,
+                player1=player1,
+                player2=player2,
+                status="pending"
+            )
+            logger.info(f"🏅 Round 1, Match {match_order} créé: {player1} vs {player2}")
+
+        # Rounds suivants : initialisation avec "TBD"
+        previous_matches = n // 2
+        for round_number in range(2, rounds_count + 1):
+            num_matches = previous_matches // 2
+            for match_order in range(1, num_matches + 1):
+                await sync_to_async(TournamentMatch.objects.create)(
+                    tournament=tournament,
+                    round_number=round_number,
+                    match_order=match_order,
+                    player1="TBD",
+                    player2="TBD",
+                    status="pending"
+                )
+                logger.info(f"🏅 Round {round_number}, Match {match_order} créé: TBD vs TBD")
+            previous_matches = num_matches
+
+        # Envoi d'une notification aux clients via le channel layer
         await self.channel_layer.group_send(
             self.room_group_name,
             {

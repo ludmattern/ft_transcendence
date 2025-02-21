@@ -72,7 +72,8 @@ def register_user(request):
                 password=hashed_password,
                 is_2fa_enabled=is_2fa_enabled,
                 twofa_method=twofa_method,
-                phone_number=encrypted_phone
+                phone_number=encrypted_phone,
+                is_dummy=False
             ) 
             
             return JsonResponse({'success': True, 'message': 'User registered successfully', 'user_id': user.id})

@@ -122,8 +122,8 @@ class GameManager {
     buildGameScene(gameConfig);
     showCountdown();
 
-    const player1 = gameConfig.side === "left" ? gameConfig.user_id : gameConfig.opponent_id;
-    const player2 = gameConfig.side === "right" ? gameConfig.user_id : gameConfig.opponent_id;
+    let player1 = gameConfig.side === "left" ? gameConfig.user_id : gameConfig.opponent_id;
+    let player2 = gameConfig.side === "right" ? gameConfig.user_id : gameConfig.opponent_id;
 
     if (gameConfig.mode === "local") {
       document.addEventListener("keydown", this.localKeydownHandler);
@@ -149,8 +149,13 @@ class GameManager {
           this.username2 = player2;
       });
     }
-    
-    console.log(` Sending start_game event: player1=${player1}, player2=${player2}`);    ws.send(JSON.stringify({
+    if (gameConfig.subMode === "local-tournament")
+      {
+        player1 = gameConfig.player1;
+        player2 = gameConfig.player2;
+      }
+    console.log(` Sending start_game event: player1=${player1}, player2=${player2}`);    
+    ws.send(JSON.stringify({
       type: "game_event",
       action: "start_game",
       game_id: this.gameId,
@@ -270,6 +275,9 @@ class GameManager {
       }
       if (gameConfig.mode === "solo") {
         return `solo_${Date.now()}`;
+      }
+      if (gameConfig.subMode === "local-tournament") {
+        return `tournLocal_${gameConfig.player1}_vs_tournLocal_${gameConfig.player2}_id_${gameConfig.tournament_id}`;
       }
       return `game_${Date.now()}`;
     }

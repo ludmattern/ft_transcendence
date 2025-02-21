@@ -100,16 +100,17 @@ export const currentTournament = createComponent({
   },
   attachEvents: (el) => {
     const username = sessionStorage.getItem("username");
-    
+    const userId = sessionStorage.getItem("userId");
+
     async function getBracketData() {
       try {
-        const userId = sessionStorage.getItem("userId");
-        const response = await fetch(`/api/tournament-service/get_current_tournament/?user_id=${userId}`);        
+        console.log("User ID récupéré depuis sessionStorage:", userId);
+        const response = await fetch(`/api/tournament-service/get_current_tournament/?user_id=${userId}`);
         if (!response.ok) {
           throw new Error(`Erreur HTTP ${response.status}`);
         }
         const data = await response.json();
-        return data.rounds;
+        return data;
       } catch (error) {
         console.error("Erreur lors de la récupération du bracket :", error);
         return [];
@@ -127,24 +128,23 @@ export const currentTournament = createComponent({
     }
 
     async function renderBracket() {
-      const bracketData =  await getBracketData();
+      const data =  await getBracketData();
+
+      let bracketData = data.rounds;
       let titlesHtml = "";
       let roundsHtml = "";
       let mode = bracketData.mode;
-
+      let tournament_id = data.tournament_id;
       bracketData.forEach((round, roundIndex) => {
         titlesHtml += `<div class="h4 round-title">${round.round}</div>`;
 
         const matchesHtml = round.matches.map(match => {
           let joinButton = "";
-          if (match.status === "pending" &&  match.player1 !== "TBD" &&match.player2 !== "TBD") 
-          {
-            if (mode === "online") 
-            {
+          if (match.status === "pending" && match.player1 !== "TBD" && match.player2 !== "TBD") {
+            if (mode === "online") {
               if ((match.player1 === username || match.player2 === username) &&
-                  hasUserCompletedInPreviousRound(bracketData, roundIndex)) 
-              {
-              joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
+                  hasUserCompletedInPreviousRound(bracketData, roundIndex)) {
+                joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
               }
             } else { 
               joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
@@ -152,12 +152,13 @@ export const currentTournament = createComponent({
           }
           
           return `
-            <div class="match p-2 bg-dark rounded" data-match-id="${match.id}">
+            <div class="match p-2 bg-dark rounded" data-match-id="${match.id}" data-player1="${match.player1}" data-player2="${match.player2}">
               <span class="text-white">${match.player1} vs ${match.player2}</span>
               ${joinButton === "" ? `<span class="text-secondary ms-2">${match.status}</span>` : joinButton}
             </div>
           `;
         }).join("");
+        
 
         roundsHtml += `
           <div class="round-column">
@@ -191,12 +192,18 @@ export const currentTournament = createComponent({
         button.addEventListener("click", () => {
           const matchDiv = button.closest(".match");
           const matchId = matchDiv.getAttribute("data-match-id");
+          const player1 = matchDiv.getAttribute("data-player1");
+          const player2 = matchDiv.getAttribute("data-player2");
+          
           const config = {
-            gameMode : "local-tournament",
-            player1: "abou",
-            player2:"bakar",
+            gameMode: "local-tournament",
+            player1: player1,
+            player2: player2,
             type: "splitScreen",
-            };
+            matchId: matchId,
+            tournament_id: tournament_id
+          };
+          console.log(config)
               playGame(config);        
             });
       });

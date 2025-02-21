@@ -173,6 +173,8 @@ services:
     container_name: tournament_service
     environment:
       <<: *postgres_env
+    secrets:
+      - fernet_key
     ports:
       - "3007:3007"
 
