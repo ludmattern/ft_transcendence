@@ -176,7 +176,10 @@ export async function showContextMenu(item, event) {
 
   hideContextMenu();
 
-  if (item.author === "USER") {
+  if (!item.author) {
+	item.author = item.inviter_id;
+	item.username = item.inviter;
+  } else if (item.author === "USER") {
     item.author = item.recipient_id;
 	item.username = item.recipient;
   }

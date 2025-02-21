@@ -2,7 +2,7 @@ export let ws = null;
 let isWsConnected = false;
 import { gameManager } from "/src/pongGame/gameManager.js";
 import { handleIncomingMessage } from "/src/components/hud/sideWindow/left/tabContent.js";
-import { startMatchmakingGame, startPrivateGame } from "/src/services/multiplayerPong.js";
+import { startMatchmakingGame, startPrivateGame} from "/src/services/multiplayerPong.js";
 import { createNotificationMessage, updateAndCompareInfoData } from "/src/components/hud/sideWindow/left/notifications.js";
 
 export function initializeWebSocket() {
@@ -37,47 +37,47 @@ export function initializeWebSocket() {
   };
 
   ws.onmessage = async (event) => {
-	const data = JSON.parse(event.data);
-  
-	if (data.type === "game_state" || data.type === "game_over") {
-	  gameManager.handleGameUpdate(data);
-	  console.log(data);
-	  return;
-	} else if (data.type === "error_message") {
-	  if (data.error) {
-		createNotificationMessage(data.error, 2500, true);
-	  } else {
-		handleIncomingMessage(data);
-	  }
-	} else if (data.type === "chat_message" || data.type === "private_message") {
-	  handleIncomingMessage(data);
-	} else if (data.type === "private_match_found") {
-	  console.log("Private match found:", data);
-	  startPrivateGame(data.game_id, data.side, data, data.roomCode);
-	} else if (data.type === "match_found") {
-	  console.log("Match found! game_id =", data.game_id, "side =", data.side);
-	  startMatchmakingGame(data.game_id, data.side, data);
-	} else if (data.type === "info_message") {
-	  console.log("Info message reçu :", data);
-  
-	  await updateAndCompareInfoData();
-  
-	  if (data.action === "send_friend_request") {
-		const isSender = data.author === sessionStorage.getItem("userId");
-		if (isSender) {
-		  console.log(`Friend request sent to ${data.recipient} by ${data.author}`);
-		} else {
-		  console.log(`Friend request received from ${data.author} to ${data.recipient}`);
-		  createNotificationMessage(`Friend request received from ${data.author}!`);
-		}
-	  }
-	} else {
-	  console.log("Message reçu :", data);
-	}
-  
-	console.log("Message complet reçu :", data);
+    const data = JSON.parse(event.data);
+
+    if (data.type === "game_state" || data.type === "game_over") {
+      gameManager.handleGameUpdate(data);
+      return;
+    } else if (data.type === "error_message") {
+      if (data.error) {
+        createNotificationMessage(data.error, 2500, true);
+      } else {
+        handleIncomingMessage(data);
+      }
+    } else if (data.type === "chat_message" || data.type === "private_message") {
+      handleIncomingMessage(data);
+    } else if (data.type === "private_match_found") {
+      console.log("Private match found:", data);
+      startPrivateGame(data.game_id, data.side, data, data.roomCode);
+    } else if (data.type === "match_found") {
+      startMatchmakingGame(data.game_id, data.side, data);
+    } else if (data.type === "info_message") {
+      await updateAndCompareInfoData();
+
+      if (data.action === "send_friend_request") {
+        const isSender = data.author === sessionStorage.getItem("userId");
+        if (isSender) {
+          console.log(
+            `Friend request sent to ${data.recipient} by ${data.author}`
+          );
+        } else {
+          console.log(
+            `Friend request received from ${data.author} to ${data.recipient}`
+          );
+          createNotificationMessage(
+            `Friend request received from ${data.author}!`
+          );
+        }
+      }
+    }
+
+    console.log("Message complet reçu :", data);
   };
-  
+
   ws.onerror = (error) => {
     console.error(" Erreur WebSocket :", error);
     isWsConnected = false;
@@ -98,4 +98,3 @@ export function closeWebSocket() {
     isWsConnected = false;
   }
 }
-

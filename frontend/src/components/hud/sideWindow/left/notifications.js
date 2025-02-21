@@ -78,6 +78,7 @@ export async function updateAndCompareInfoData() {
 	const userId = sessionStorage.getItem("userId");
   
 	try {
+	  console.log("GET info getter with userId", userId);
 	  const response = await fetch(`/api/user-service/info-getter/${encodeURIComponent(userId)}/`, {
 		method: "GET",
 		credentials: "include",
