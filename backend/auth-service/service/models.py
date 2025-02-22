@@ -15,6 +15,7 @@ class ManualUser(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     session_token = models.CharField(max_length=255, null=True, default=None)
+    is_dummy = models.BooleanField(default=False)
 
 
     class Meta:

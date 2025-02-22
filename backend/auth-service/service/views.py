@@ -156,7 +156,40 @@ def login_view(request):
             user = ManualUser.objects.get(username=username)
         except ManualUser.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'User not found'}, status=404)
+        if user.is_dummy:
+        # Bypass des vérifications pour un compte dummy
+            now = datetime.datetime.utcnow()
+            new_session_token = jwt.encode(
+                {
+                    "sub": str(user.id),
+                    "iat": now,
+                    "exp": (now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)).timestamp()
+                },
+                settings.JWT_SECRET_KEY,
+                algorithm=settings.JWT_ALGORITHM
+            )
+            new_session_token_str = (
+                new_session_token
+                if isinstance(new_session_token, str)
+                else new_session_token.decode("utf-8")
+            )
+            user.token_expiry = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+            user.session_token = new_session_token_str
+            user.status = "online"
+            user.save()
 
+            response = JsonResponse(
+                {"success": True, "message": "Logged in (dummy)", "id": user.id, "username": user.username}
+            )
+            response.set_cookie(
+                key="access_token",
+                value=new_session_token_str,
+                httponly=True,
+                secure=True,
+                samesite="Strict",
+                max_age=settings.JWT_EXP_DELTA_SECONDS,
+            )
+            return response
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             return JsonResponse({'success': False, 'message': 'Invalid credentials'}, status=401)
         
