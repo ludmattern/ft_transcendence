@@ -47,6 +47,12 @@ export function setPreviousPongPlaySubRoute(subroute) {
 	previousPongPlaySubRoute = subroute;
 }
 
+export function resetPreviousRoutes() {
+	previousRoute = null;
+	previousPongSubRoute = null;
+	previousPongPlaySubRoute = null;
+}
+
 /**
  * Vérifie si une route nécessite une authentification.
  * @param {string} route - La route à vérifier.

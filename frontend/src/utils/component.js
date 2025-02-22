@@ -56,6 +56,7 @@ export default class ComponentManager {
 	}
 
 	cleanupComponents(requiredComponents) {
+		console.log('requiredcomponent', requiredComponents);
 		Object.keys(this.mountedComponents).forEach((tag) => {
 			if (!requiredComponents.includes(tag)) {
 				this.unloadComponent(tag);

@@ -5,7 +5,7 @@ import { ws } from '/src/services/socketManager.js';
 import { endGameScreen, showCountdown } from '/src/components/midScreen.js';
 import * as THREE from 'https://esm.sh/three';
 import componentManagers from '/src/index.js';
-import { handleRoute } from '/src/services/router.js';
+import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.js';
 
 class GameManager {
 	constructor() {
@@ -246,7 +246,9 @@ class GameManager {
 			console.log('Final scores:', data.final_scores);
 			this.endGame();
 			if (Store.pongScene) Store.pongScene.clear();
-			handleRoute('/pong/play');
+			const previousPongPlaySubRoute = getPreviousPongPlaySubRoute();
+			console.log(previousPongPlaySubRoute);
+			handleRoute(previousPongPlaySubRoute);
 		}
 	}
 

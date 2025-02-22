@@ -5,6 +5,10 @@ import { headerIngame } from '/src/components/hud/index.js';
 
 export function playGame(options) {
 	switchwindow('game');
+	if(options.gameMode === 'local-tournament')
+	{
+		componentManagers['Pong'].unloadComponent('currentTournament');
+	}
 	componentManagers['HUD'].unloadComponent('header');
 	componentManagers['HUD'].loadComponent('#header-container', headerIngame);
 	setTimeout(() => {

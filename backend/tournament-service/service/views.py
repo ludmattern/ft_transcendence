@@ -104,9 +104,43 @@ def update_match_result(request):
             next_match.save()
             logger.info(f"Prochain match (round {next_round}, match {next_match_order}) mis à jour avec le gagnant {winner_id}")
         except TournamentMatch.DoesNotExist:
-            logger.info("final")
-        
+            logger.info("Final match reached: no next match found, finishing tournament.")
+            tournament = ManualTournament.objects.get(id=tournament_id)
+            tournament.status = "completed"
+            tournament.save()
+            organizer = tournament.organizer
+            organizer.in_tournament = False
+            organizer.save()
+           # TournamentMatch.objects.filter(tournament=tournament).delete()        
+            
         return JsonResponse({"success": True, "message": "Match updated"})
     except Exception as e:
         logger.exception("Error updating match result:")
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+@csrf_exempt
+def abandon_local_tournament(request):
+   
+    
+    if request.method != "POST":
+        return JsonResponse({"error": "POST method required"}, status=405)
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        tournament_id = body.get("tournament_id")
+        if not tournament_id:
+            return JsonResponse({"error": "tournament_id is required"}, status=400)
+        tournament = ManualTournament.objects.get(id=tournament_id)
+        organizer = tournament.organizer
+        
+        organizer.in_tournament = False
+        organizer.save()
+        tournament.delete()
+        
+        logger.info(f"Tournoi {tournament_id} abandonné. L'organisateur {organizer.id} a été réinitialisé.")
+        return JsonResponse({"success": True, "message": "Tournament abandoned and organizer updated"})
+    except ManualTournament.DoesNotExist:
+        return JsonResponse({"error": "Tournament not found"}, status=404)
+    except Exception as e:
+        logger.exception("Error abandoning tournament:")
         return JsonResponse({"error": str(e)}, status=500)

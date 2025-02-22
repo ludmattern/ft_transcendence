@@ -1,6 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { createTournament } from '/src/services/tournamentHandler.js';
+import { setPreviousPongPlaySubRoute } from '/src/services/router.js';
 
 // Fonction utilitaire pour générer un room code alphanumérique à 6 caractères
 function generateRoomCode() {
@@ -178,6 +179,8 @@ export const tournamentCreation = createComponent({
 				createTournament(players);
 				handleRoute('/pong/play/current-tournament');
 				alert('Tournament created with players: ' + players.join(', '));
+
+
 
 				players = [username];
 			});

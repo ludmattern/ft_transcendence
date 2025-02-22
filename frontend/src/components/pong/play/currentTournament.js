@@ -123,6 +123,7 @@ export const currentTournament = createComponent({
 			return previousRound.matches.some((match) => (match.player1 === username || match.player2 === username) && match.status === 'completed');
 		}
 
+    
 		async function renderBracket() {
 			const data = await getBracketData();
 
@@ -198,8 +199,25 @@ export const currentTournament = createComponent({
           <div class="rounds-content">${roundsHtml}</div>
         `;
 			}
+      const abandonTournamentButton = document.getElementById("abandon-tournament");
+      abandonTournamentButton.addEventListener("click", async () => {
+        try {
+          const response = await fetch("/api/tournament-service/abandon_local_tournament/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ tournament_id: tournament_id })
+          });
+          const result = await response.json();
+          console.log("Tournament abandoned:", result);
+          
+          handleRoute("/pong/play/tournament");
+        } catch (error) {
+          console.error("Error abandoning tournament:", error);
+        }
+      });
 
-			// Écouteurs pour les boutons "Join Game"
 			const joinButtons = el.querySelectorAll('.join-match');
 			joinButtons.forEach((button) => {
 				button.addEventListener('click', () => {
@@ -221,7 +239,7 @@ export const currentTournament = createComponent({
 				});
 			});
 		}
-
+    
 		renderBracket();
 	},
 });
