@@ -1,11 +1,11 @@
-import { createComponent } from "/src/utils/component.js";
-import { handleRoute } from "/src/services/router.js";
+import { createComponent } from '/src/utils/component.js';
+import { handleRoute } from '/src/services/router.js';
 
 export const lost = createComponent({
-  tag: "lost",
+	tag: 'lost',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
     <section class="col-12 d-flex flex-column align-items-center justify-content-center text-center p-5"
              style="background-color: #111111; color: white;">
       
@@ -23,11 +23,11 @@ export const lost = createComponent({
     </section>
   `,
 
-  attachEvents: (el) => {
-    const returnHomeButton = el.querySelector("#return-home");
+	attachEvents: (el) => {
+		const returnHomeButton = el.querySelector('#return-home');
 
-    returnHomeButton.addEventListener("click", () => {
-      handleRoute("/pong/play");
-    });
-  }
+		returnHomeButton.addEventListener('click', () => {
+			handleRoute('/pong/play');
+		});
+	},
 });

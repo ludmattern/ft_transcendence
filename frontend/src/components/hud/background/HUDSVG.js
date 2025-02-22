@@ -1,10 +1,10 @@
-import { createComponent } from "/src/utils/component.js";
-import { startAnimation } from "/src/components/hud/index.js";
+import { createComponent } from '/src/utils/component.js';
+import { startAnimation } from '/src/components/hud/index.js';
 
 export const hudSVG = createComponent({
-  tag: "hudSVG",
+	tag: 'hudSVG',
 
-  render: () => `
+	render: () => `
     <span class="hud-svg-container">
       <span class="hud-svg">
         ${renderSVGHeader()}
@@ -16,14 +16,14 @@ export const hudSVG = createComponent({
   `,
 
 	attachEvents: (el) => {
-		const svgElements = el.querySelectorAll(".svg-element");
+		const svgElements = el.querySelectorAll('.svg-element');
 
-		startAnimation(svgElements, "flicker-animation");
-	}
+		startAnimation(svgElements, 'flicker-animation');
+	},
 });
 
 function renderSVGHeader() {
-  return `
+	return `
     <svg 
       class="svg-element hud-svg-header" 
       xmlns="http://www.w3.org/2000/svg" 
@@ -40,7 +40,7 @@ function renderSVGHeader() {
 }
 
 function renderSVGHeaderBackground() {
-  return `
+	return `
     <svg 
       class="svg-element hud-svg-header background-svg" 
       xmlns="http://www.w3.org/2000/svg" 
@@ -57,7 +57,7 @@ function renderSVGHeaderBackground() {
 }
 
 function renderSVGFooter() {
-  return `
+	return `
     <svg 
       class="svg-element hud-svg-footer" 
       xmlns="http://www.w3.org/2000/svg" 
@@ -74,7 +74,7 @@ function renderSVGFooter() {
 }
 
 function renderSVGFooterBackground() {
-  return `
+	return `
     <svg 
       class="svg-element hud-svg-footer background-svg" 
       xmlns="http://www.w3.org/2000/svg" 

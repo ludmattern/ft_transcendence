@@ -1,12 +1,12 @@
-import { createComponent } from "/src/utils/component.js";
-import { handleRoute } from "/src/services/router.js";
-import { registerUser } from "/src/services/auth.js";
+import { createComponent } from '/src/utils/component.js';
+import { handleRoute } from '/src/services/router.js';
+import { registerUser } from '/src/services/auth.js';
 
 export const subscribeForm = createComponent({
-  tag: "subscribeForm",
+	tag: 'subscribeForm',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
     <div id="subscribe-form" class="form-container">
       <h5>PILOT IDENTIFICATION - REGISTER</h5>
       <span class="background-central-span">
@@ -81,103 +81,89 @@ export const subscribeForm = createComponent({
     </div>
   `,
 
-  attachEvents: async (el) => {
-    el.querySelector("#login-link").addEventListener("click", (e) => {
-      e.preventDefault();
-      handleRoute("/login");
-    });
-  
-    const enable2FA = document.getElementById("enable-2fa");
-    const twoFAOptions = document.getElementById("2fa-options");
-    const twoFAMethodSelect = document.getElementById("2fa-method");
-    const phoneGroup = document.getElementById("phone-group");
+	attachEvents: async (el) => {
+		el.querySelector('#login-link').addEventListener('click', (e) => {
+			e.preventDefault();
+			handleRoute('/login');
+		});
 
-    enable2FA.addEventListener("change", () => {
-      twoFAOptions.style.display = enable2FA.checked ? "block" : "none";
-      phoneGroup.style.display = "none";
-    });
+		const enable2FA = document.getElementById('enable-2fa');
+		const twoFAOptions = document.getElementById('2fa-options');
+		const twoFAMethodSelect = document.getElementById('2fa-method');
+		const phoneGroup = document.getElementById('phone-group');
 
-    twoFAMethodSelect.addEventListener("change", () => {
-      phoneGroup.style.display = twoFAMethodSelect.value === "sms" ? "block" : "none";
-    });
+		enable2FA.addEventListener('change', () => {
+			twoFAOptions.style.display = enable2FA.checked ? 'block' : 'none';
+			phoneGroup.style.display = 'none';
+		});
 
-    el.querySelector("form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-  
-      const { id, password, confirmPassword, mail, confirmMail, phoneNumber } = getFormValues(el);
+		twoFAMethodSelect.addEventListener('change', () => {
+			phoneGroup.style.display = twoFAMethodSelect.value === 'sms' ? 'block' : 'none';
+		});
 
-      const is2FAEnabled = enable2FA.checked;
-      const twoFAMethod = is2FAEnabled ? twoFAMethodSelect.value : null;  
-      resetErrorMessages();
-  
-      let canRegister = true;
+		el.querySelector('form').addEventListener('submit', async (e) => {
+			e.preventDefault();
 
-      if (!validateId(id)) canRegister = false;
-      if (canRegister && !validateMail(mail)) canRegister = false;
-      if (canRegister && !validatePassword(password)) canRegister = false;
-      if (canRegister && !checkPasswordConfirmation(password, confirmPassword)) canRegister = false;
-      if (canRegister && !checkEmailConfirmation(mail, confirmMail)) canRegister = false;
-      if (is2FAEnabled && twoFAMethod === "sms" && !phoneNumber) {
-        if (!validatePhoneNumber(phoneNumber)) {
-          canRegister = false;
-        }
-      }
-      if (canRegister) {
-        try {
-          const check_register = await registerUser(id, password, mail, is2FAEnabled, twoFAMethod, phoneNumber);
-          if (check_register && twoFAMethod === "authenticator-app") 
-          {
-            sessionStorage.setItem("registered_user", id);
-            handleRoute("/register/qr");
-          }
-          else if (check_register)
-          {
-            handleRoute("/login");
-          }
-        } catch (err) {
-          console.error("register failed:", err.message);
-          alert("register failed! Please try again.");
-        }
-      }
-    });
-  },
-})
+			const { id, password, confirmPassword, mail, confirmMail, phoneNumber } = getFormValues(el);
 
-  /**
+			const is2FAEnabled = enable2FA.checked;
+			const twoFAMethod = is2FAEnabled ? twoFAMethodSelect.value : null;
+			resetErrorMessages();
+
+			let canRegister = true;
+
+			if (!validateId(id)) canRegister = false;
+			if (canRegister && !validateMail(mail)) canRegister = false;
+			if (canRegister && !validatePassword(password)) canRegister = false;
+			if (canRegister && !checkPasswordConfirmation(password, confirmPassword)) canRegister = false;
+			if (canRegister && !checkEmailConfirmation(mail, confirmMail)) canRegister = false;
+			if (is2FAEnabled && twoFAMethod === 'sms' && !phoneNumber) {
+				if (!validatePhoneNumber(phoneNumber)) {
+					canRegister = false;
+				}
+			}
+			if (canRegister) {
+				try {
+					const check_register = await registerUser(id, password, mail, is2FAEnabled, twoFAMethod, phoneNumber);
+					if (check_register && twoFAMethod === 'authenticator-app') {
+						sessionStorage.setItem('registered_user', id);
+						handleRoute('/register/qr');
+					} else if (check_register) {
+						handleRoute('/login');
+					}
+				} catch (err) {
+					console.error('register failed:', err.message);
+					alert('register failed! Please try again.');
+				}
+			}
+		});
+	},
+});
+
+/**
  * Récupère les valeurs du formulaire
  */
 function getFormValues(el) {
-  return {
-    id: el.querySelector("#new-pilot-id").value,
-    password: el.querySelector("#new-password").value,
-    confirmPassword: el.querySelector("#confirm-password").value,
-    mail: el.querySelector("#email").value,
-    confirmMail: el.querySelector("#confirm-email").value,
-    phoneNumber: el.querySelector("#phone-number").value || null,
-
-  };
+	return {
+		id: el.querySelector('#new-pilot-id').value,
+		password: el.querySelector('#new-password').value,
+		confirmPassword: el.querySelector('#confirm-password').value,
+		mail: el.querySelector('#email').value,
+		confirmMail: el.querySelector('#confirm-email').value,
+		phoneNumber: el.querySelector('#phone-number').value || null,
+	};
 }
 
 /**
  * Cache tous les messages d'erreur liés au formulaire
  */
 function resetErrorMessages() {
-  const errorIds = [
-    "bad-id",
-    "bad-pass-size",
-    "bad-pass-upper",
-    "bad-pass-lower",
-    "bad-pass-special",
-    "error-message-mail-size",
-    "error-message-mail",
-    "error-message-mail2",
-    "error-message-pass",
-  ];
+	const errorIds = ['bad-id', 'bad-pass-size', 'bad-pass-upper', 'bad-pass-lower', 'bad-pass-special', 'error-message-mail-size', 'error-message-mail', 'error-message-mail2', 'error-message-pass'];
 
-  errorIds.forEach((errId) => {
-    const el = document.getElementById(errId);
-    if (el) el.style.display = "none";
-  });
+	errorIds.forEach((errId) => {
+		const el = document.getElementById(errId);
+		if (el) el.style.display = 'none';
+	});
 }
 
 /**
@@ -186,11 +172,11 @@ function resetErrorMessages() {
  */
 
 export function validateId(id) {
-  if (id.length < 6 || id.length > 20) {
-    document.getElementById("bad-id").style.display = "block";
-    return false;
-  }
-  return true;
+	if (id.length < 6 || id.length > 20) {
+		document.getElementById('bad-id').style.display = 'block';
+		return false;
+	}
+	return true;
 }
 
 /**
@@ -198,66 +184,64 @@ export function validateId(id) {
  * @returns {boolean} true si valide, false sinon
  */
 export function validatePassword(password) {
-  let isValid = true;
+	let isValid = true;
 
-  if (password.length < 6 || password.length > 20) {
-    document.getElementById("bad-pass-size").style.display = "block";
-    isValid = false;
-  }
+	if (password.length < 6 || password.length > 20) {
+		document.getElementById('bad-pass-size').style.display = 'block';
+		isValid = false;
+	}
 
-  const regexLower = /[a-z]/;
-  if (!regexLower.test(password)) {
-    document.getElementById("bad-pass-lower").style.display = "block";
-    isValid = false;
-  }
+	const regexLower = /[a-z]/;
+	if (!regexLower.test(password)) {
+		document.getElementById('bad-pass-lower').style.display = 'block';
+		isValid = false;
+	}
 
-  const regexUpper = /[A-Z]/;
-  if (!regexUpper.test(password)) {
-    document.getElementById("bad-pass-upper").style.display = "block";
-    isValid = false;
-  }
+	const regexUpper = /[A-Z]/;
+	if (!regexUpper.test(password)) {
+		document.getElementById('bad-pass-upper').style.display = 'block';
+		isValid = false;
+	}
 
-  const regexSpecial = /[@$!%*?&#^]/;
-  if (!regexSpecial.test(password)) {
-    document.getElementById("bad-pass-special").style.display = "block";
-    isValid = false;
-  }
-  return isValid;
+	const regexSpecial = /[@$!%*?&#^]/;
+	if (!regexSpecial.test(password)) {
+		document.getElementById('bad-pass-special').style.display = 'block';
+		isValid = false;
+	}
+	return isValid;
 }
-
 
 export function checkPasswordConfirmation(password, confirmPassword) {
-  if (password !== confirmPassword) {
-    document.getElementById("error-message-pass").style.display = "block";
-    return false;
-  }
-  return true;
+	if (password !== confirmPassword) {
+		document.getElementById('error-message-pass').style.display = 'block';
+		return false;
+	}
+	return true;
 }
 
-
 export function checkEmailConfirmation(mail, confirmMail) {
-  if (mail !== confirmMail) {
-    document.getElementById("error-message-mail2").style.display = "block";
-    document.getElementById("error-message-mail").style.display = "none";
-    return false;
-  }
-  return true;
+	if (mail !== confirmMail) {
+		document.getElementById('error-message-mail2').style.display = 'block';
+		document.getElementById('error-message-mail').style.display = 'none';
+		return false;
+	}
+	return true;
 }
 
 export function validatePhoneNumber(phoneNumber) {
-  const phoneRegex = /^\d{10}$/;
-  if (!phoneRegex.test(phoneNumber)) {
-    document.getElementById("error-message-phone").style.display = "block";
-    return false;
-  }
-  document.getElementById("error-message-phone").style.display = "none";
-  return true;
+	const phoneRegex = /^\d{10}$/;
+	if (!phoneRegex.test(phoneNumber)) {
+		document.getElementById('error-message-phone').style.display = 'block';
+		return false;
+	}
+	document.getElementById('error-message-phone').style.display = 'none';
+	return true;
 }
 
 export function validateMail(mail) {
-  if (mail && mail.length <= 50) {
-      return true; 
-  }
-  document.getElementById("error-message-mail-size").style.display = "block";
-  return false;
+	if (mail && mail.length <= 50) {
+		return true;
+	}
+	document.getElementById('error-message-mail-size').style.display = 'block';
+	return false;
 }

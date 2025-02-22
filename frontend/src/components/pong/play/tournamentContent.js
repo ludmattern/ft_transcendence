@@ -1,11 +1,11 @@
-import { createComponent } from "/src/utils/component.js";
-import { handleRoute } from "/src/services/router.js";
-import { setInTournament } from "/src/index.js";
+import { createComponent } from '/src/utils/component.js';
+import { handleRoute } from '/src/services/router.js';
+import { setInTournament } from '/src/index.js';
 
 export const tournamentContent = createComponent({
-  tag: "tournamentContent",
+	tag: 'tournamentContent',
 
-  render: () => `
+	render: () => `
     <section class="p-5 flex-grow-1" style="background-color: #111111; max-height: 700px; overflow: auto;">
         <h2 class="text-white text-center">Oh, You Want to Join a Tournament?</h2>
         <p class="text-secondary text-center">That’s adorable. Let’s see how long you last.</p>
@@ -50,7 +50,7 @@ export const tournamentContent = createComponent({
                 <hr class="text-secondary my-4">
                 
                 <h4 class="text-white text-center">Or Join a Random Tournament</h4>
-                ${generateTournamentSizeSelector("random")}
+                ${generateTournamentSizeSelector('random')}
                 <div class="text-center">
                     <button class="btn btn-pong" id="joinRandom">Find a Random Tournament</button>
                 </div>
@@ -59,77 +59,77 @@ export const tournamentContent = createComponent({
     </section>
   `,
 
-  attachEvents: (el) => {
-    // Gestion des onglets
-    const tabs = el.querySelectorAll(".nav-link");
-    const tabPanes = el.querySelectorAll(".tab-pane");
-    
-    const savedTabId = sessionStorage.getItem("activeTournamentTab");
-    if (savedTabId) {
-      tabs.forEach(tab => tab.classList.remove("active"));
-      tabPanes.forEach(pane => pane.classList.remove("show", "active"));
+	attachEvents: (el) => {
+		// Gestion des onglets
+		const tabs = el.querySelectorAll('.nav-link');
+		const tabPanes = el.querySelectorAll('.tab-pane');
 
-      const activeTab = el.querySelector(`[href="#${savedTabId}"]`);
-      const activePane = el.querySelector(`#${savedTabId}`);
-      if (activeTab && activePane) {
-        activeTab.classList.add("active");
-        activePane.classList.add("show", "active");
-      }
-    }
+		const savedTabId = sessionStorage.getItem('activeTournamentTab');
+		if (savedTabId) {
+			tabs.forEach((tab) => tab.classList.remove('active'));
+			tabPanes.forEach((pane) => pane.classList.remove('show', 'active'));
 
-    tabs.forEach(tab => {
-      tab.addEventListener("click", (e) => {
-        e.preventDefault();
-        const target = tab.getAttribute("href").substring(1);
+			const activeTab = el.querySelector(`[href="#${savedTabId}"]`);
+			const activePane = el.querySelector(`#${savedTabId}`);
+			if (activeTab && activePane) {
+				activeTab.classList.add('active');
+				activePane.classList.add('show', 'active');
+			}
+		}
 
-        tabs.forEach(t => t.classList.remove("active"));
-        tabPanes.forEach(pane => pane.classList.remove("show", "active"));
+		tabs.forEach((tab) => {
+			tab.addEventListener('click', (e) => {
+				e.preventDefault();
+				const target = tab.getAttribute('href').substring(1);
 
-        tab.classList.add("active");
-        el.querySelector(`#${target}`).classList.add("show", "active");
+				tabs.forEach((t) => t.classList.remove('active'));
+				tabPanes.forEach((pane) => pane.classList.remove('show', 'active'));
 
-        sessionStorage.setItem("activeTournamentTab", target);
-      });
-    });
+				tab.classList.add('active');
+				el.querySelector(`#${target}`).classList.add('show', 'active');
 
-    // Rejoindre par code
-    const joinWithCodeButton = el.querySelector("#joinWithCode");
-    joinWithCodeButton.addEventListener("click", () => {
-      const roomCode = document.getElementById("tournamentRoomCode").value;
-      if (!roomCode) {
-        console.log("Enter a valid room code");
-        return;
-      }
-      console.log(`Joining tournament with code: ${roomCode}`);
-    });
+				sessionStorage.setItem('activeTournamentTab', target);
+			});
+		});
 
-    // Rejoindre un tournoi aléatoire
-    const joinRandomButton = el.querySelector("#joinRandom");
-    joinRandomButton.addEventListener("click", () => {
-      const tournamentSize = document.getElementById("tournamentSize-random").value;
-      console.log(`Joining a random tournament with size: ${tournamentSize}`);
-      handleRoute("/pong/play/tournament-join");
-    });
+		// Rejoindre par code
+		const joinWithCodeButton = el.querySelector('#joinWithCode');
+		joinWithCodeButton.addEventListener('click', () => {
+			const roomCode = document.getElementById('tournamentRoomCode').value;
+			if (!roomCode) {
+				console.log('Enter a valid room code');
+				return;
+			}
+			console.log(`Joining tournament with code: ${roomCode}`);
+		});
 
-    // Création d'un tournoi
-    const createButton = el.querySelector("#createbutton");
-    createButton.addEventListener("click", () => {
-      const mode = document.getElementById("tournamentMode").value;
-      const size = document.getElementById("tournamentSize").value;
-      // Stocker les paramètres dans le sessionStorage pour que tournamentCreation puisse en tenir compte
-      sessionStorage.setItem("tournamentMode", mode);
-      sessionStorage.setItem("tournamentSize", size);
-      console.log(`Creating a tournament with mode: ${mode} and size: ${size}`);
-      handleRoute("/pong/play/tournament-creation");
-    });
-  }
+		// Rejoindre un tournoi aléatoire
+		const joinRandomButton = el.querySelector('#joinRandom');
+		joinRandomButton.addEventListener('click', () => {
+			const tournamentSize = document.getElementById('tournamentSize-random').value;
+			console.log(`Joining a random tournament with size: ${tournamentSize}`);
+			handleRoute('/pong/play/tournament-join');
+		});
+
+		// Création d'un tournoi
+		const createButton = el.querySelector('#createbutton');
+		createButton.addEventListener('click', () => {
+			const mode = document.getElementById('tournamentMode').value;
+			const size = document.getElementById('tournamentSize').value;
+			// Stocker les paramètres dans le sessionStorage pour que tournamentCreation puisse en tenir compte
+			sessionStorage.setItem('tournamentMode', mode);
+			sessionStorage.setItem('tournamentSize', size);
+			console.log(`Creating a tournament with mode: ${mode} and size: ${size}`);
+			handleRoute('/pong/play/tournament-creation');
+		});
+	},
 });
 
 /**
  * Sélecteur du type de tournoi (Local ou Online)
  */
 function generateModeSelector() {
-  return `
+	return `
     <div class="mb-3">
         <label for="tournamentMode" class="form-label text-white">Select Your Method of Humiliation</label>
         <select class="form-select" id="tournamentMode">
@@ -146,8 +146,8 @@ function generateModeSelector() {
  * @param {string} variant - Optionnel. Si fourni, le select aura un id spécifique (ex: "random" donnera "tournamentSize-random")
  */
 function generateTournamentSizeSelector(variant) {
-  const selectId = variant ? `tournamentSize-${variant}` : "tournamentSize";
-  return `
+	const selectId = variant ? `tournamentSize-${variant}` : 'tournamentSize';
+	return `
     <div class="mb-3">
         <label for="${selectId}" class="form-label text-white">Select the Size of Your Demise</label>
         <select class="form-select" id="${selectId}">

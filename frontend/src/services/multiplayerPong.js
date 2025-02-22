@@ -1,29 +1,29 @@
-import { gameManager } from "/src/pongGame/gameManager.js";
-import { leaveMatchmaking } from "/src/components/pong/play/multiplayerContent.js";
+import { gameManager } from '/src/pongGame/gameManager.js';
+import { leaveMatchmaking } from '/src/components/pong/play/multiplayerContent.js';
 
 export async function startPrivateGame(gameId, side, data, roomCode) {
-  console.log(roomCode);
-  const gameConfig = {
-    mode: "private",
-    gameId: gameId,
-    side: side,
-    user_id: data.user_id,
-    opponent_id: data.opponent_id,
-  };
-  console.log(gameConfig);
-  gameManager.startGame(gameConfig);
+	console.log(roomCode);
+	const gameConfig = {
+		mode: 'private',
+		gameId: gameId,
+		side: side,
+		user_id: data.user_id,
+		opponent_id: data.opponent_id,
+	};
+	console.log(gameConfig);
+	gameManager.startGame(gameConfig);
 }
 
 export async function startMatchmakingGame(gameId, side, data) {
-  leaveMatchmaking();
-  const gameConfig = {
-    mode: "matchmaking",
-    gameId: gameId,
-    side: side,
-    user_id: data.user_id,
-    opponent_id: data.opponent_id,
-  };
-  document.getElementById("leaveMatch").style.display = "none";
-  document.getElementById("launchMatch").style.display = "block";
-  gameManager.startGame(gameConfig);
+	leaveMatchmaking();
+	const gameConfig = {
+		mode: 'matchmaking',
+		gameId: gameId,
+		side: side,
+		user_id: data.user_id,
+		opponent_id: data.opponent_id,
+	};
+	document.getElementById('leaveMatch').style.display = 'none';
+	document.getElementById('launchMatch').style.display = 'block';
+	gameManager.startGame(gameConfig);
 }

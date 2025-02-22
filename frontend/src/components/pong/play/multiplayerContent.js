@@ -1,14 +1,14 @@
-import { createComponent } from "/src/utils/component.js";
-import { notAuthenticatedThenRedirect } from "/src/services/router.js";
-import { ws } from "/src/services/socketManager.js";
-import { playGame } from "/src/components/pong/play/utils.js";
-import componentManagers from "/src/index.js";
-import { pongTuto } from "/src/components/hud/index.js";
+import { createComponent } from '/src/utils/component.js';
+import { notAuthenticatedThenRedirect } from '/src/services/router.js';
+import { ws } from '/src/services/socketManager.js';
+import { playGame } from '/src/components/pong/play/utils.js';
+import componentManagers from '/src/index.js';
+import { pongTuto } from '/src/components/hud/index.js';
 
 export const multiplayerContent = createComponent({
-  tag: "multiplayerContent",
+	tag: 'multiplayerContent',
 
-  render: () => `
+	render: () => `
     <section class="p-5 flex-grow-1" style="background-color: #111111; max-height: 700px; overflow: auto;">
       <h2 class="text-white text-center">Ready to Embrace Multiplayer Mayhem?</h2>
       <p class="text-secondary text-center">
@@ -61,72 +61,70 @@ export const multiplayerContent = createComponent({
     </section>
   `,
 
-  attachEvents: (el) => {
-    const localButton = el.querySelector("#launchLocal");
-    localButton.addEventListener("click", () => {
-	  const config = {
-		gameMode : "local",
-		type: "splitScreen",
-	  };
-      playGame(config);
-    });
+	attachEvents: (el) => {
+		const localButton = el.querySelector('#launchLocal');
+		localButton.addEventListener('click', () => {
+			const config = {
+				gameMode: 'local',
+				type: 'splitScreen',
+			};
+			playGame(config);
+		});
 
-    // Online Matchmaking
-    const matchButton = el.querySelector("#launchMatch");
-    const leaveMatchButton = el.querySelector("#leaveMatch");
-    matchButton.addEventListener("click", () => {
-	  const config = {
-		gameMode : "matchmaking",
-		type: "fullScreen",
-	  };
-      playGame(config);
-    });
+		// Online Matchmaking
+		const matchButton = el.querySelector('#launchMatch');
+		const leaveMatchButton = el.querySelector('#leaveMatch');
+		matchButton.addEventListener('click', () => {
+			const config = {
+				gameMode: 'matchmaking',
+				type: 'fullScreen',
+			};
+			playGame(config);
+		});
 
-    leaveMatchButton.addEventListener("click", async () => {
-      leaveMatchButton.classList.add("d-none");
-      matchButton.classList.remove("d-none");
-    });
+		leaveMatchButton.addEventListener('click', async () => {
+			leaveMatchButton.classList.add('d-none');
+			matchButton.classList.remove('d-none');
+		});
 
-    // Private Match
-    const createPrivateButton = el.querySelector("#createPrivate");
-    const privateGameInput = el.querySelector("#privateGameInput");
+		// Private Match
+		const createPrivateButton = el.querySelector('#createPrivate');
+		const privateGameInput = el.querySelector('#privateGameInput');
 
-	createPrivateButton.addEventListener("click", () => {
-	  const opponentUsername = privateGameInput.value.trim();
-	  if (!opponentUsername) {
-		console.log("Please enter a username code.");
-		return;
-	  }
-	  if (notAuthenticatedThenRedirect()) return;
-	  const userId = sessionStorage.getItem("userId");
-	  const config = {
-		gameMode: "private",
-		action: "create",
-		matchkey: userId,
-		type: "fullScreen",
-	  };
-	  console.log(config);
-	  playGame(config);
-	});
+		createPrivateButton.addEventListener('click', () => {
+			const opponentUsername = privateGameInput.value.trim();
+			if (!opponentUsername) {
+				console.log('Please enter a username code.');
+				return;
+			}
+			if (notAuthenticatedThenRedirect()) return;
+			const userId = sessionStorage.getItem('userId');
+			const config = {
+				gameMode: 'private',
+				action: 'create',
+				matchkey: userId,
+				type: 'fullScreen',
+			};
+			console.log(config);
+			playGame(config);
+		});
 
-	privateGameInput.addEventListener("keypress", (e) => {
-	  if (e.key === "Enter") {
-		createPrivateButton.click();
-	  }
-	});
-
-  },
+		privateGameInput.addEventListener('keypress', (e) => {
+			if (e.key === 'Enter') {
+				createPrivateButton.click();
+			}
+		});
+	},
 });
 
-
-
 export function leaveMatchmaking() {
-  const userId = sessionStorage.getItem("userId");
-  ws.send(JSON.stringify({
-    type: "matchmaking",
-    action: "leave",
-    user_id: userId
-  }));
-  console.log("Sent 'leave matchmaking' via WebSocket");
+	const userId = sessionStorage.getItem('userId');
+	ws.send(
+		JSON.stringify({
+			type: 'matchmaking',
+			action: 'leave',
+			user_id: userId,
+		})
+	);
+	console.log("Sent 'leave matchmaking' via WebSocket");
 }
-

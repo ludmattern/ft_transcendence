@@ -5,14 +5,14 @@
  * This allows for centralized management of module paths.
  */
 export const modules = {
-  leftsidewindow: "/src/pages/hud/leftsidewindow.js", // Path to the sidewindow module
-  rightsidewindow: "/src/pages/hud/rightsidewindow.js", // Path to the sidewindow module
-  pongmenu: "/src/pages/pong/pongmenu.js",
-  subscribeForm: "/src/pages/hud/subscribeForm.js",
-  loginForm: "/src/pages/hud/loginForm.js",
-  settingsForm: "/src/pages/hud/settingsForm.js",
-  socialForm: "/src/pages/hud/socialForm.js",
-  footer: "/src/pages/hud/footer.js",
+	leftsidewindow: '/src/pages/hud/leftsidewindow.js', // Path to the sidewindow module
+	rightsidewindow: '/src/pages/hud/rightsidewindow.js', // Path to the sidewindow module
+	pongmenu: '/src/pages/pong/pongmenu.js',
+	subscribeForm: '/src/pages/hud/subscribeForm.js',
+	loginForm: '/src/pages/hud/loginForm.js',
+	settingsForm: '/src/pages/hud/settingsForm.js',
+	socialForm: '/src/pages/hud/socialForm.js',
+	footer: '/src/pages/hud/footer.js',
 };
 
 /**
@@ -23,20 +23,20 @@ export const modules = {
  * @param {Function} callback - A callback function to execute once the module has been successfully loaded.
  */
 export function loadComponent(target, component, moduleName, callback) {
-  // Replace the target content or the placeholder with the provided component
-  replacePlaceholderOrContent(target, component, () => {
-    if (component) {
-      console.debug(`${component.name} component has been rendered`);
-    }
+	// Replace the target content or the placeholder with the provided component
+	replacePlaceholderOrContent(target, component, () => {
+		if (component) {
+			console.debug(`${component.name} component has been rendered`);
+		}
 
-    // Dynamically load the associated JavaScript module
-    loadComponentScript(moduleName, () => {
-      console.debug(`${moduleName}.js loaded and initialized`);
+		// Dynamically load the associated JavaScript module
+		loadComponentScript(moduleName, () => {
+			console.debug(`${moduleName}.js loaded and initialized`);
 
-      // Call the callback function if provided
-      if (callback) callback();
-    });
-  });
+			// Call the callback function if provided
+			if (callback) callback();
+		});
+	});
 }
 
 /**
@@ -46,47 +46,47 @@ export function loadComponent(target, component, moduleName, callback) {
  * @param {Function} callback - A callback function to execute after the replacement is done.
  */
 export function replacePlaceholderOrContent(target, component, callback) {
-  const targetElement = document.querySelector(target);
+	const targetElement = document.querySelector(target);
 
-  // Check if the target element exists
-  if (targetElement) {
-    console.debug(`Processing ${target}`);
+	// Check if the target element exists
+	if (targetElement) {
+		console.debug(`Processing ${target}`);
 
-    // If component is null, clear the content and exit
-    if (!component) {
-      console.debug(`Clearing content of ${target} as component is null`);
-      targetElement.innerHTML = ""; // Clear the existing content
-      if (callback && typeof callback === "function") {
-        console.debug("Calling the callback after clearing the target");
-        callback();
-      }
-      return;
-    }
+		// If component is null, clear the content and exit
+		if (!component) {
+			console.debug(`Clearing content of ${target} as component is null`);
+			targetElement.innerHTML = ''; // Clear the existing content
+			if (callback && typeof callback === 'function') {
+				console.debug('Calling the callback after clearing the target');
+				callback();
+			}
+			return;
+		}
 
-    // Check if the target is a placeholder (custom tag without children)
-    const isPlaceholder = targetElement.tagName.includes("-");
+		// Check if the target is a placeholder (custom tag without children)
+		const isPlaceholder = targetElement.tagName.includes('-');
 
-    if (isPlaceholder) {
-      // Completely replace the placeholder
-      console.debug(`${target} is a placeholder. Replacing it entirely.`);
-      const newElement = component();
-      targetElement.replaceWith(newElement);
-    } else {
-      // Update the content of the target element
-      console.debug(`${target} is not a placeholder. Updating its content.`);
-      targetElement.innerHTML = ""; // Clear the existing content
-      const newElement = component();
-      targetElement.appendChild(newElement);
-    }
+		if (isPlaceholder) {
+			// Completely replace the placeholder
+			console.debug(`${target} is a placeholder. Replacing it entirely.`);
+			const newElement = component();
+			targetElement.replaceWith(newElement);
+		} else {
+			// Update the content of the target element
+			console.debug(`${target} is not a placeholder. Updating its content.`);
+			targetElement.innerHTML = ''; // Clear the existing content
+			const newElement = component();
+			targetElement.appendChild(newElement);
+		}
 
-    // If a callback is provided, execute it
-    if (callback && typeof callback === "function") {
-      console.debug("Calling the callback after processing the target");
-      callback();
-    }
-  } else {
-    console.error(`No element found with selector: ${target}`);
-  }
+		// If a callback is provided, execute it
+		if (callback && typeof callback === 'function') {
+			console.debug('Calling the callback after processing the target');
+			callback();
+		}
+	} else {
+		console.error(`No element found with selector: ${target}`);
+	}
 }
 
 /**
@@ -95,27 +95,27 @@ export function replacePlaceholderOrContent(target, component, callback) {
  * @param {Function} callback - A callback function to execute once the module has been successfully loaded.
  */
 export function loadComponentScript(moduleName, callback) {
-  // Get the file path of the module from the modules object
-  if (moduleName === "") {
-    return;
-  }
-  const modulePath = modules[moduleName];
+	// Get the file path of the module from the modules object
+	if (moduleName === '') {
+		return;
+	}
+	const modulePath = modules[moduleName];
 
-  // If the module is not found, log an error and return
-  if (!modulePath) {
-    console.error(`Module '${moduleName}' not found.`);
-    return;
-  }
+	// If the module is not found, log an error and return
+	if (!modulePath) {
+		console.error(`Module '${moduleName}' not found.`);
+		return;
+	}
 
-  // Dynamically import the module
-  import(modulePath)
-    .then((module) => {
-      console.debug(`${moduleName} loaded successfully`);
+	// Dynamically import the module
+	import(modulePath)
+		.then((module) => {
+			console.debug(`${moduleName} loaded successfully`);
 
-      // Execute the callback function if provided
-      if (callback) callback(module);
-    })
-    .catch((error) => {
-      console.error(`Error loading ${moduleName}:`, error);
-    });
+			// Execute the callback function if provided
+			if (callback) callback(module);
+		})
+		.catch((error) => {
+			console.error(`Error loading ${moduleName}:`, error);
+		});
 }

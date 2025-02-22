@@ -1,22 +1,22 @@
-import { createComponent } from "/src/utils/component.js";
-import { handleRoute } from "/src/services/router.js";
-import { subscribe } from "/src/services/eventEmitter.js";
-import { startAnimation } from "/src/components/hud/index.js";
+import { createComponent } from '/src/utils/component.js';
+import { handleRoute } from '/src/services/router.js';
+import { subscribe } from '/src/services/eventEmitter.js';
+import { startAnimation } from '/src/components/hud/index.js';
 
 const navigationLinks = {
-	"home-link": "/",
-	"profile-link": "/profile",
-	"pong-link": "/pong",
-	"race-link": "/race",
-	"social-link": "/social",
-	"settings-link": "/settings",
-	"logout-link": "/logout",
+	'home-link': '/',
+	'profile-link': '/profile',
+	'pong-link': '/pong',
+	'race-link': '/race',
+	'social-link': '/social',
+	'settings-link': '/settings',
+	'logout-link': '/logout',
 };
 
 export const header = createComponent({
-  tag: "header",
+	tag: 'header',
 
-  render: () => `
+	render: () => `
       <div class="row">
         <div class="col-12 text-center">
           <h1 class="hud-title interactive">
@@ -29,8 +29,8 @@ export const header = createComponent({
           <ul class="nav">
             <!-- Menu gauche -->
             <span class="left-menu">
-              ${createNavItem("profile", "profile-link")}
-              ${createNavItem("social", "social-link")}
+              ${createNavItem('profile', 'profile-link')}
+              ${createNavItem('social', 'social-link')}
             </span>
             <!-- Jeux (Menu central) -->
             <li class="nav-item first-game">
@@ -45,8 +45,8 @@ export const header = createComponent({
             </li>
             <!-- Menu droit -->
             <span class="right-menu">
-              ${createNavItem("settings", "settings-link")}
-              ${createNavItem("logout", "logout-link")}
+              ${createNavItem('settings', 'settings-link')}
+              ${createNavItem('logout', 'logout-link')}
             </span>
           </ul>
         </nav>
@@ -55,29 +55,29 @@ export const header = createComponent({
 
 	attachEvents: (el) => {
 		Object.entries(navigationLinks).forEach(([linkId, route]) => {
-		const linkElement = el.querySelector(`#${linkId}`);
-		if (linkElement) {
-			linkElement.addEventListener("click", (e) => {
-			e.preventDefault();
-			if (route !== "/pong") {
-				handleRoute(route);
-			} else {
-				handleRoute("/topong");
+			const linkElement = el.querySelector(`#${linkId}`);
+			if (linkElement) {
+				linkElement.addEventListener('click', (e) => {
+					e.preventDefault();
+					if (route !== '/pong') {
+						handleRoute(route);
+					} else {
+						handleRoute('/topong');
+					}
+				});
 			}
-			});
-		}
 		});
 
 		updateActiveLink(el, window.location.pathname);
 
-		subscribe("routeChanged", (route) => updateActiveLink(el, route));
+		subscribe('routeChanged', (route) => updateActiveLink(el, route));
 
-		const navItems = el.querySelectorAll(".nav-item");
-		const homeLink = el.querySelectorAll("#home-link");
+		const navItems = el.querySelectorAll('.nav-item');
+		const homeLink = el.querySelectorAll('#home-link');
 
-		startAnimation(homeLink, "light-animation");
-		startAnimation(navItems, "light-animation", 1000);
-	}
+		startAnimation(homeLink, 'light-animation');
+		startAnimation(navItems, 'light-animation', 1000);
+	},
 });
 
 /**
@@ -87,8 +87,8 @@ export const header = createComponent({
  * @param {string} id - L'ID de l'élément <a>
  * @returns {string} - HTML du menu de navigation
  */
-function createNavItem(text, id = "") {
-  return `
+function createNavItem(text, id = '') {
+	return `
     <li class="nav-item">
       <span class="nav-link text-white">
         <a href="/${text}" id="${id}">${text}</a>
@@ -104,25 +104,25 @@ function createNavItem(text, id = "") {
  * @param {string} route - La route actuelle
  */
 export function updateActiveLink(el, route) {
-    let currentPath = route || window.location.pathname; // Fallback si pas de route
+	let currentPath = route || window.location.pathname; // Fallback si pas de route
 
-    // Extraire uniquement la première section après le "/"
-    const firstSegment = currentPath.split("/")[1] || ""; // Évite les erreurs si vide
+	// Extraire uniquement la première section après le "/"
+	const firstSegment = currentPath.split('/')[1] || ''; // Évite les erreurs si vide
 
-    // Trouver l'ID du lien correspondant
-    const activeLinkId = Object.keys(navigationLinks).find((key) => {
-        const path = navigationLinks[key].replace("/", ""); // Supprime le premier "/"
-        return firstSegment === path;
-    });
+	// Trouver l'ID du lien correspondant
+	const activeLinkId = Object.keys(navigationLinks).find((key) => {
+		const path = navigationLinks[key].replace('/', ''); // Supprime le premier "/"
+		return firstSegment === path;
+	});
 
-    // Réinitialiser l'état de tous les liens
-    el.querySelectorAll("a").forEach((link) => link.classList.remove("active"));
+	// Réinitialiser l'état de tous les liens
+	el.querySelectorAll('a').forEach((link) => link.classList.remove('active'));
 
-    // Activer le lien correspondant
-    if (activeLinkId && activeLinkId !== "home-link") {
-        const activeLink = el.querySelector(`#${activeLinkId}`);
-        if (activeLink) {
-            activeLink.classList.add("active");
-        }
-    }
+	// Activer le lien correspondant
+	if (activeLinkId && activeLinkId !== 'home-link') {
+		const activeLink = el.querySelector(`#${activeLinkId}`);
+		if (activeLink) {
+			activeLink.classList.add('active');
+		}
+	}
 }

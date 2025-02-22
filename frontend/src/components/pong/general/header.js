@@ -1,10 +1,10 @@
-import { createComponent } from "/src/utils/component.js";
-import { subscribe } from "/src/services/eventEmitter.js";
+import { createComponent } from '/src/utils/component.js';
+import { subscribe } from '/src/services/eventEmitter.js';
 
 export const header = createComponent({
-  tag: "header",
+	tag: 'header',
 
-  render: () => `
+	render: () => `
     <div class="col-2 text-center">
         <h1 class="bi bi-rocket fs-5 m-0">TRANSCENDENCE</h1>
     </div>
@@ -17,21 +17,21 @@ export const header = createComponent({
     </div>
   `,
 
-  attachEvents: (el) => {
-    function updatePath(route) {
-      const pathElement = el.querySelector("#shipctrl-path");
+	attachEvents: (el) => {
+		function updatePath(route) {
+			const pathElement = el.querySelector('#shipctrl-path');
 
-      if (!route) {
-        route = window.location.pathname;
-      }
+			if (!route) {
+				route = window.location.pathname;
+			}
 
-      if (route.startsWith("/pong")) {
-        pathElement.textContent = `shipctrl:///appData/useless${route}.shp`;
-      }
-    }
+			if (route.startsWith('/pong')) {
+				pathElement.textContent = `shipctrl:///appData/useless${route}.shp`;
+			}
+		}
 
-    updatePath(window.location.pathname);
+		updatePath(window.location.pathname);
 
-    subscribe("routeChanged", updatePath);
-  }
+		subscribe('routeChanged', updatePath);
+	},
 });

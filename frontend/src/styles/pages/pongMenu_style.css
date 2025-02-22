@@ -4,7 +4,7 @@
 	transition: all 0.15s;
 }
 
-#pong-screen-container #main-container{
+#pong-screen-container #main-container {
 	display: flex;
 	flex-direction: column;
 	transition: all 0.15s;
@@ -16,7 +16,7 @@
 
 #pong-screen-container header {
 	border-bottom: 1px solid #b5cfc500;
-	border-left: 1px solid #b5cfc642;;
+	border-left: 1px solid #b5cfc642;
 	border-right: 1px solid #b5cfc642;
 	border-top: 1px solid #b5cfc642;
 	transition: all 0.15s;
@@ -31,7 +31,7 @@
 #pong-screen-container .btn,
 #pong-screen-container .form-select,
 #pong-screen-container .nav-link,
-	#pong-screen-container .form-control {
+#pong-screen-container .form-control {
 	border-radius: 0px;
 }
 
@@ -41,8 +41,8 @@
 }
 
 #pong-screen-container #content-window-container .nav-link.active {
-    background-color: transparent;
-    border-bottom: 1px solid #111111;
+	background-color: transparent;
+	border-bottom: 1px solid #111111;
 	opacity: 1;
 }
 
@@ -55,7 +55,7 @@
 }
 
 #pong-screen-container header:has(.nav-item.active) + #pong-menu-container {
-	background-color: #111111;;
+	background-color: #111111;
 	transition: all 0.15s;
 }
 #pong-screen-container header .wrapper .nav-item {
@@ -80,7 +80,7 @@
 }
 
 #pong-screen-container header .wrapper .nav-item::after {
-	content: "";
+	content: '';
 	position: relative;
 	border-top: 8px solid #ffffff00;
 	display: block;
@@ -90,7 +90,7 @@
 }
 
 #pong-screen-container header .wrapper .nav-item.active::after {
-	content: "";
+	content: '';
 	position: relative;
 	border-top: 8px solid #090909 !important;
 	display: block;
@@ -133,7 +133,7 @@
 #pong-screen-container header .wrapper button .icon-border::after,
 #pong-screen-container header .wrapper button .icon-border .corner-top-right,
 #pong-screen-container header .wrapper button .icon-border .corner-bottom-left {
-	content: "";
+	content: '';
 	position: absolute;
 	width: 7px; /* Longueur des coins horizontaux */
 	height: 7px; /* Longueur des coins verticaux */
@@ -205,7 +205,7 @@
 }
 
 #pong-screen-container .separator::after {
-	content: "";
+	content: '';
 	display: block;
 	position: fixed;
 	width: 1px;
@@ -225,22 +225,20 @@
 	opacity: 1;
 }
 
-
 #pong-screen-container #content-window-container aside li::after {
-    content: "";
-    display: block;
-    width: 16px;
-    height: 28px;
-    position: absolute;
-    left: 311px;
-    background-color: #111111;
-    transform: rotate(53deg);
-    pointer-events: none;
-    border-left: 1px solid;
+	content: '';
+	display: block;
+	width: 16px;
+	height: 28px;
+	position: absolute;
+	left: 311px;
+	background-color: #111111;
+	transform: rotate(53deg);
+	pointer-events: none;
+	border-left: 1px solid;
 }
 
-#pong-screen-container #pong-header-container #shipctrl-path
-{
+#pong-screen-container #pong-header-container #shipctrl-path {
 	min-width: 480px;
 }
 
@@ -249,40 +247,40 @@
 }
 
 #pong-screen-container .btn-pong:hover {
-    color: #fff;
-    background-color: #1c3c38;
+	color: #fff;
+	background-color: #1c3c38;
 	opacity: 1;
 }
 
 #pong-screen-container .btn-pong {
-    color: #fff;
-    background-color: #1c3c38;
+	color: #fff;
+	background-color: #1c3c38;
 	opacity: 0.8;
 	transition: all 0.15s;
 }
 
 #pong-screen-container .btn-pong-danger:hover {
-    color: #fff;
-    background-color: #991b1b;
+	color: #fff;
+	background-color: #991b1b;
 	opacity: 1;
 }
 
 #pong-screen-container .btn-pong-danger {
-    color: #fff;
-    background-color: #991b1b;
+	color: #fff;
+	background-color: #991b1b;
 	opacity: 0.8;
 	transition: all 0.15s;
 }
 
 #pong-screen-container .btn-pong-blue:hover {
-    color: #fff;
-    background-color: #40416c;;
+	color: #fff;
+	background-color: #40416c;
 	opacity: 1;
 }
 
 #pong-screen-container .btn-pong-blue {
-    color: #fff;
-    background-color: #40416c;
+	color: #fff;
+	background-color: #40416c;
 	opacity: 0.8;
 	transition: all 0.15s;
 }

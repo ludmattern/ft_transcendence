@@ -1,10 +1,10 @@
 :root {
-  --backcol: #000000;
+	--backcol: #000000;
 }
 
 body {
-  background-color: rgb(0, 0, 0);
-  overflow: hidden;
+	background-color: rgb(0, 0, 0);
+	overflow: hidden;
 }
 
 .hidden {
@@ -14,152 +14,149 @@ body {
 
 [data-component] {
 	display: contents;
-  }  
+}
 
 #app .menu2 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  margin: 0;
-  padding: 0;
-  height: 900px;
-  width: 1800px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	margin: 0;
+	padding: 0;
+	height: 900px;
+	width: 1800px;
 }
 
 #app .menu2 .row.mt-3,
 #app .wait2 {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	transition: opacity 0.5s ease, visibility 0.5s ease;
 }
-
-
 
 #scoreContainer {
-  position: absolute;
-  top: 5%;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+	position: absolute;
+	top: 5%;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 
-  left: 51%;
-  transform: translateX(-50%); 
-  text-align: center;
-  color: white; 
-  font-weight: bold;
+	left: 51%;
+	transform: translateX(-50%);
+	text-align: center;
+	color: white;
+	font-weight: bold;
 }
 
-
 #scoreText {
-  font-size: 2rem;
+	font-size: 2rem;
 }
 
 .countdown-text {
-    text-transform: uppercase;
-    text-align: center;
-    font-size: 8em;
-    font-weight: bold;
-    color: #0ff;
-    text-shadow: 0 0 1px #0ff, 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;
-    
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+	text-transform: uppercase;
+	text-align: center;
+	font-size: 8em;
+	font-weight: bold;
+	color: #0ff;
+	text-shadow: 0 0 1px #0ff, 0 0 5px #0ff, 0 0 10px #0ff, 0 0 20px #0ff;
+
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
 
 #app .menu2.active .row.mt-3 {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
 }
 
 #app .menu2.active .wait2 {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
 }
 
 #app .menu2 .row.mt-3 {
-  opacity: 1;
+	opacity: 1;
 
-  visibility: visible;
-  pointer-events: auto;
+	visibility: visible;
+	pointer-events: auto;
 }
 
 #app .menu2 .wait2 {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
 }
 
 @keyframes anime-dvd {
-  15% {
-    top: 71%;
-    left: 45%;
-  }
-  30% {
-    top: 40%;
-    left: 80%;
-  }
+	15% {
+		top: 71%;
+		left: 45%;
+	}
+	30% {
+		top: 40%;
+		left: 80%;
+	}
 
-  45% {
-    top: 0%;
-    left: 50%;
-  }
+	45% {
+		top: 0%;
+		left: 50%;
+	}
 
-  60% {
-    top: 60%;
-    left: 0%;
-  }
+	60% {
+		top: 60%;
+		left: 0%;
+	}
 
-  75% {
-    top: 71%;
-    left: 30%;
-  }
+	75% {
+		top: 71%;
+		left: 30%;
+	}
 
-  90% {
-    top: 40%;
-    left: 80%;
-  }
+	90% {
+		top: 40%;
+		left: 80%;
+	}
 
-  100% {
-    top: 10%;
-    left: 0;
-  }
+	100% {
+		top: 10%;
+		left: 0;
+	}
 }
 
 #app .mid-screensaver {
-  position: relative;
+	position: relative;
 
-  top: 0;
-  left: 0;
-  filter: invert(1);
-  animation: anime-dvd 20s forwards infinite alternate-reverse linear;
+	top: 0;
+	left: 0;
+	filter: invert(1);
+	animation: anime-dvd 20s forwards infinite alternate-reverse linear;
 }
 
 #app .menu3 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  backdrop-filter: blur(4px);
-  margin: 0;
-  padding: 0;
-  height: 950px;
-  width: 1150px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+	backdrop-filter: blur(4px);
+	margin: 0;
+	padding: 0;
+	height: 950px;
+	width: 1150px;
 }
 
 .load {
-  margin: 0;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	margin: 0;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(0, 0, 0);
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 #cssRendererScene {
@@ -167,83 +164,83 @@ body {
 }
 
 .progress-container {
-  width: 300px;
-  height: 20px;
-  background: #111;
-  border: 2px solid #0ff;
-  border-radius: 10px;
-  overflow: hidden;
-  position: absolute;
-  top: 30%;
-  left: 50.2%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+	width: 300px;
+	height: 20px;
+	background: #111;
+	border: 2px solid #0ff;
+	border-radius: 10px;
+	overflow: hidden;
+	position: absolute;
+	top: 30%;
+	left: 50.2%;
+	transform: translate(-50%, -50%);
+	box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
 }
 
 #progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #00f, #0ff, #00f);
-  animation: pulse-neon 2s infinite;
-  box-shadow: 0 0 10px #0ff, 0 0 20px #00f inset;
-  transition: width 0.3s ease;
+	height: 100%;
+	background: linear-gradient(90deg, #00f, #0ff, #00f);
+	animation: pulse-neon 2s infinite;
+	box-shadow: 0 0 10px #0ff, 0 0 20px #00f inset;
+	transition: width 0.3s ease;
 }
 
 #app .menu1 {
-  height: 1050px !important;
-  width: 1350px !important;
+	height: 1050px !important;
+	width: 1350px !important;
 }
 
 #app .ctourn {
-  transform: scale(1.2);
-  margin-top: 100px;
+	transform: scale(1.2);
+	margin-top: 100px;
 }
 #app .mb-3.tourn {
-  width: 700px;
+	width: 700px;
 }
 
 #app .table {
-  border-color: #0ff;
-  width: 100% !important;
+	border-color: #0ff;
+	width: 100% !important;
 }
 @keyframes neon-flicker {
-  0% {
-    opacity: 0.8;
-    box-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
-  }
-  100% {
-    opacity: 1;
-    box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
-  }
+	0% {
+		opacity: 0.8;
+		box-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
+	}
+	100% {
+		opacity: 1;
+		box-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+	}
 }
 
 #app .col-3 {
-  height: 936px;
-  width: 361px;
+	height: 936px;
+	width: 361px;
 }
 
 #app .topcontent {
-  display: flex;
-  justify-content: space-evenly;
-  width: 950px !important;
+	display: flex;
+	justify-content: space-evenly;
+	width: 950px !important;
 }
 
 #app .table {
-  width: 800px;
+	width: 800px;
 }
 
 #app .leadbtn {
-  color: #000 !important;
-  font-size: 1.4em !important;
+	color: #000 !important;
+	font-size: 1.4em !important;
 }
 #app .matchm {
-  margin-top: 200px;
+	margin-top: 200px;
 }
 #waitingRoom,
 #waitingRoomMatchmaking {
-  transform: scale(1.4);
+	transform: scale(1.4);
 }
 
 .wireframe {
-  width: 100%;
-  height: 100%;
+	width: 100%;
+	height: 100%;
 }

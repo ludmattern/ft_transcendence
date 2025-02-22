@@ -1,11 +1,10 @@
-
-import { createComponent } from "/src/utils/component.js";
-import { startAnimation } from "/src/components/hud/index.js";
+import { createComponent } from '/src/utils/component.js';
+import { startAnimation } from '/src/components/hud/index.js';
 
 export const headerIngame = createComponent({
-  tag: "headerIngame",
+	tag: 'headerIngame',
 
-  render: () => `
+	render: () => `
       <div class="row mb-5">
         <div class="col-12 text-center">
           <h1 class="hud-title interactive">
@@ -16,9 +15,8 @@ export const headerIngame = createComponent({
   `,
 
 	attachEvents: (el) => {
+		const navItem = el.querySelectorAll('.nav-item');
 
-		const navItem = el.querySelectorAll(".nav-item");
-
-		startAnimation(navItem, "light-animation");
-	}
+		startAnimation(navItem, 'light-animation');
+	},
 });

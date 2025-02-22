@@ -1,9 +1,9 @@
-import { createComponent } from "/src/utils/component.js";
+import { createComponent } from '/src/utils/component.js';
 
 export const HelmetSVG = createComponent({
-  tag: "HelmetSVG",
+	tag: 'HelmetSVG',
 
-  render: () => `
+	render: () => `
     <span class="helmet-svg">
       ${createTopLeftSVG()}
       ${createTopRightSVG()}
@@ -15,7 +15,7 @@ export const HelmetSVG = createComponent({
 });
 
 function createTopLeftSVG() {
-  return `
+	return `
   <svg class="svg-element svg-top-left" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100.82 255.17">
     <defs>
       <linearGradient id="tlg1" x1="45.6" y1="2.45" x2="45.6" y2="275.34" gradientUnits="userSpaceOnUse">
@@ -55,7 +55,7 @@ function createTopLeftSVG() {
 }
 
 function createTopRightSVG() {
-  return `
+	return `
   <svg
     class="svg-element svg-top-right"
     xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +99,7 @@ function createTopRightSVG() {
 }
 
 function createBottomLeftSVG() {
-  return `
+	return `
   <svg
     class="svg-element svg-bottom-left"
     xmlns="http://www.w3.org/2000/svg"
@@ -178,7 +178,7 @@ function createBottomLeftSVG() {
 }
 
 function createBottomRightSVG() {
-  return `
+	return `
   <svg
     class="svg-element svg-bottom-right"
     xmlns="http://www.w3.org/2000/svg"
@@ -257,7 +257,7 @@ function createBottomRightSVG() {
 }
 
 function createBottomCenterSVG() {
-  return `
+	return `
   <svg
     class="svg-element svg-bottom-center"
     xmlns="http://www.w3.org/2000/svg"

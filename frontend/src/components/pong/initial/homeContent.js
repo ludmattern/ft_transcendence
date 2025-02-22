@@ -1,10 +1,10 @@
-import { createComponent } from "/src/utils/component.js";
+import { createComponent } from '/src/utils/component.js';
 
 export const homeContent = createComponent({
-  tag: "homeContent",
+	tag: 'homeContent',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
 	<section class="p-5 flex-grow-1" style="background-color: #111111; max-height: 700px; overflow: auto;">
 		<h2>Welcome to pong</h2>
 		<p>You're only authorised to play this game in supraliminal navigation mode.</p>

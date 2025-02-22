@@ -1,356 +1,338 @@
-import { switchwindow } from "/src/3d/animation.js";
-import { buildGameScene } from "/src/3d/pongScene.js";
-import Store from "/src/3d/store.js";
-import { ws } from "/src/services/socketManager.js";
-import {endGameScreen, showCountdown } from "/src/components/midScreen.js";
-import * as THREE from "https://esm.sh/three";
-import componentManagers from "/src/index.js";
-import { handleRoute } from "/src/services/router.js";
+import { switchwindow } from '/src/3d/animation.js';
+import { buildGameScene } from '/src/3d/pongScene.js';
+import Store from '/src/3d/store.js';
+import { ws } from '/src/services/socketManager.js';
+import { endGameScreen, showCountdown } from '/src/components/midScreen.js';
+import * as THREE from 'https://esm.sh/three';
+import componentManagers from '/src/index.js';
+import { handleRoute } from '/src/services/router.js';
 
 class GameManager {
-  constructor() {
-    this.activeGame = null;
-    this.activeKeys = {};
-    this.moveInterval = null;
-    this.username1 = null;
-    this.username2 = null;
-    this.localKeydownHandler = (e) => {
-      this.activeKeys[e.key] = true;
-      this.startMovement("local");
-    };
+	constructor() {
+		this.activeGame = null;
+		this.activeKeys = {};
+		this.moveInterval = null;
+		this.username1 = null;
+		this.username2 = null;
+		this.localKeydownHandler = (e) => {
+			this.activeKeys[e.key] = true;
+			this.startMovement('local');
+		};
 
-    this.localKeyupHandler = (e) => {
-      delete this.activeKeys[e.key];
-      if (Object.keys(this.activeKeys).length === 0) {
-        this.stopMovement();
-      }
-    };
+		this.localKeyupHandler = (e) => {
+			delete this.activeKeys[e.key];
+			if (Object.keys(this.activeKeys).length === 0) {
+				this.stopMovement();
+			}
+		};
 
-    this.matchMakingKeydownHandler = (e) => {
-      if (!this.activeGame) return;
-      this.activeKeys[e.key] = true;
-      this.startMovement("matchmaking");
-    };
+		this.matchMakingKeydownHandler = (e) => {
+			if (!this.activeGame) return;
+			this.activeKeys[e.key] = true;
+			this.startMovement('matchmaking');
+		};
 
-    this.matchMakingKeyupHandler = (e) => {
-      delete this.activeKeys[e.key];
-      if (Object.keys(this.activeKeys).length === 0) {
-        this.stopMovement();
-      }
-    };
-  }
+		this.matchMakingKeyupHandler = (e) => {
+			delete this.activeKeys[e.key];
+			if (Object.keys(this.activeKeys).length === 0) {
+				this.stopMovement();
+			}
+		};
+	}
 
-  startMovement(mode) {
-    if (this.moveInterval) return; 
+	startMovement(mode) {
+		if (this.moveInterval) return;
 
-    this.moveInterval = setInterval(() => {
+		this.moveInterval = setInterval(() => {
+			if (mode === 'local') {
+				if (this.activeKeys['w']) {
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', player_id: 1, game_id: this.gameId }));
+				}
+				if (this.activeKeys['s']) {
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up', player_id: 1, game_id: this.gameId }));
+				}
+				if (this.activeKeys['a']) {
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left', player_id: 1, game_id: this.gameId }));
+				}
+				if (this.activeKeys['d']) {
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', player_id: 1, game_id: this.gameId }));
+				}
 
-      if (mode === "local") 
-      {
-        if (this.activeKeys["w"]) {
-          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "down", player_id: 1, game_id: this.gameId }));
-        }
-        if (this.activeKeys["s"]) {
-          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "up", player_id: 1, game_id: this.gameId }));
-        }
-        if (this.activeKeys["a"]) {
-          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "left", player_id: 1, game_id: this.gameId }));
-        }
-        if (this.activeKeys["d"]) {
-          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "right", player_id: 1, game_id: this.gameId }));
-        }
+				if (this.activeKeys['ArrowUp']) {
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', player_id: 2, game_id: this.gameId }));
+				}
+				if (this.activeKeys['ArrowDown']) {
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up', player_id: 2, game_id: this.gameId }));
+				}
+				if (this.activeKeys['ArrowRight']) {
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left', player_id: 2, game_id: this.gameId }));
+				}
+				if (this.activeKeys['ArrowLeft']) {
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', player_id: 2, game_id: this.gameId }));
+				}
+			} else {
+				const playerId = this.activeGame.side === 'left' ? 1 : 2;
 
-        if (this.activeKeys["ArrowUp"]) {
-          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "down", player_id: 2, game_id: this.gameId }));
-        }
-        if (this.activeKeys["ArrowDown"]) {
-          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "up", player_id: 2, game_id: this.gameId }));
-        }
-        if (this.activeKeys["ArrowRight"]) {
-          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "left", player_id: 2, game_id: this.gameId }));
-        }
-        if (this.activeKeys["ArrowLeft"]) {
-          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "right", player_id: 2, game_id: this.gameId }));
-        }
+				if (this.activeKeys['w'] || this.activeKeys['ArrowUp']) {
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', player_id: playerId, game_id: this.gameId }));
+				}
+				if (this.activeKeys['s'] || this.activeKeys['ArrowDown']) {
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up', player_id: playerId, game_id: this.gameId }));
+				}
+				if (playerId == 1) {
+					if (this.activeKeys['a'] || this.activeKeys['ArrowLeft']) {
+						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left', player_id: playerId, game_id: this.gameId }));
+					}
+					if (this.activeKeys['d'] || this.activeKeys['ArrowRight']) {
+						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', player_id: playerId, game_id: this.gameId }));
+					}
+				} else {
+					if (this.activeKeys['d'] || this.activeKeys['ArrowRight']) {
+						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left', player_id: playerId, game_id: this.gameId }));
+					}
+					if (this.activeKeys['a'] || this.activeKeys['ArrowLeft']) {
+						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', player_id: playerId, game_id: this.gameId }));
+					}
+				}
+			}
+		}, 40);
+	}
 
-      } else{
-        const playerId = (this.activeGame.side === "left") ? 1 : 2;
+	stopMovement() {
+		clearInterval(this.moveInterval);
+		this.moveInterval = null;
+	}
 
-        if (this.activeKeys["w"] || this.activeKeys["ArrowUp"]) {
-          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "down", player_id: playerId, game_id: this.gameId }));
-        }
-        if (this.activeKeys["s"] || this.activeKeys["ArrowDown"]) {
-          ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "up", player_id: playerId, game_id: this.gameId }));
-        }
-        if( playerId == 1)
-        {
-          if (this.activeKeys["a"] || this.activeKeys["ArrowLeft"]) {
-            ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "left", player_id: playerId, game_id: this.gameId }));
-          }
-          if (this.activeKeys["d"] || this.activeKeys["ArrowRight"]) {
-            ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "right", player_id: playerId, game_id: this.gameId }));
-          }
-        }
-        else
-        {
-          if (this.activeKeys["d"] || this.activeKeys["ArrowRight"]) {
-            ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "left", player_id: playerId, game_id: this.gameId }));
-          }
-          if (this.activeKeys["a"] || this.activeKeys["ArrowLeft"]) {
-            ws.send(JSON.stringify({ type: "game_event", action: "move", direction: "right", player_id: playerId, game_id: this.gameId }));
-          }
-        }
-      }
-    }, 40);
-}
+	startGame(gameConfig) {
+		console.log('Starting game with config:', gameConfig);
+		componentManagers['HUD'].unloadComponent('pongTuto');
 
+		if (this.activeGame) this.endGame();
 
-  stopMovement() {
-    clearInterval(this.moveInterval);
-    this.moveInterval = null;
-  }
+		this.activeGame = gameConfig;
+		this.gameId = this.generateGameId(gameConfig);
 
-  startGame(gameConfig) {
-    console.log("Starting game with config:", gameConfig);
-    componentManagers['HUD'].unloadComponent('pongTuto');
+		buildGameScene(gameConfig);
+		showCountdown();
 
-    if (this.activeGame) this.endGame();
+		let player1 = gameConfig.side === 'left' ? gameConfig.user_id : gameConfig.opponent_id;
+		let player2 = gameConfig.side === 'right' ? gameConfig.user_id : gameConfig.opponent_id;
 
-    this.activeGame = gameConfig;
-    this.gameId = this.generateGameId(gameConfig);
+		if (gameConfig.mode === 'local') {
+			document.addEventListener('keydown', this.localKeydownHandler);
+			document.addEventListener('keyup', this.localKeyupHandler);
+			this.username1 = 'Player Right';
+			this.username2 = ' Player Left';
+			if (gameConfig.subMode === 'local-tournament') {
+				this.username1 = gameConfig.player1;
+				this.username2 = gameConfig.player2;
+			}
+		} else {
+			document.addEventListener('keydown', this.matchMakingKeydownHandler);
+			document.addEventListener('keyup', this.matchMakingKeyupHandler);
+			Promise.all([getUsername(player1), getUsername(player2)])
+				.then(([player1Name, player2Name]) => {
+					this.username1 = player1Name;
+					this.username2 = player2Name;
+				})
+				.catch((error) => {
+					console.error('Error retrieving usernames:', error);
+					this.username1 = player1;
+					this.username2 = player2;
+				});
+		}
+		if (gameConfig.subMode === 'local-tournament') {
+			player1 = gameConfig.player1;
+			player2 = gameConfig.player2;
+		}
+		console.log(` Sending start_game event: player1=${player1}, player2=${player2}`);
+		ws.send(
+			JSON.stringify({
+				type: 'game_event',
+				action: 'start_game',
+				game_id: this.gameId,
+				mode: gameConfig.mode,
+				player1: player1,
+				player2: player2,
+			})
+		);
+	}
 
-    buildGameScene(gameConfig);
-    showCountdown();
+	endGame() {
+		console.log('Ending current game...');
+		endGameScreen();
+		if (!this.activeGame) {
+			return;
+		}
 
-    let player1 = gameConfig.side === "left" ? gameConfig.user_id : gameConfig.opponent_id;
-    let player2 = gameConfig.side === "right" ? gameConfig.user_id : gameConfig.opponent_id;
+		if (this.activeGame.mode === 'local') {
+			document.removeEventListener('keydown', this.localKeydownHandler);
+			document.removeEventListener('keyup', this.localKeyupHandler);
+		} else {
+			document.removeEventListener('keydown', this.matchMakingKeydownHandler);
+			document.removeEventListener('keyup', this.matchMakingKeyupHandler);
+		}
 
-    if (gameConfig.mode === "local") {
-      document.addEventListener("keydown", this.localKeydownHandler);
-      document.addEventListener("keyup", this.localKeyupHandler);
-      this.username1 = "Player Right";
-      this.username2 =" Player Left";
-      if (gameConfig.subMode === "local-tournament")
-      {
-        this.username1 = gameConfig.player1;
-        this.username2 = gameConfig.player2;
-      }
-    } else {
-      document.addEventListener("keydown", this.matchMakingKeydownHandler);
-      document.addEventListener("keyup", this.matchMakingKeyupHandler);
-      Promise.all([getUsername(player1), getUsername(player2)])
-      .then(([player1Name, player2Name]) => {
-          this.username1 = player1Name;
-          this.username2 = player2Name;
-      })
-      .catch(error => {
-          console.error("Error retrieving usernames:", error);
-          this.username1 = player1;
-          this.username2 = player2;
-      });
-    }
-    if (gameConfig.subMode === "local-tournament")
-      {
-        player1 = gameConfig.player1;
-        player2 = gameConfig.player2;
-      }
-    console.log(` Sending start_game event: player1=${player1}, player2=${player2}`);    
-    ws.send(JSON.stringify({
-      type: "game_event",
-      action: "start_game",
-      game_id: this.gameId,
-      mode: gameConfig.mode,
-      player1: player1,
-      player2: player2
-    }));
+		this.stopMovement();
 
-   
-  }
+		ws.send(
+			JSON.stringify({
+				type: 'game_event',
+				action: 'leave_game',
+				game_id: this.gameId,
+			})
+		);
 
-  endGame() {
-    console.log("Ending current game...");
-    endGameScreen();
-    if (!this.activeGame) {
-      return;
-    }
+		this.activeGame = null;
+		this.gameId = null;
+	}
 
-    if (this.activeGame.mode === "local") {
-      document.removeEventListener("keydown", this.localKeydownHandler);
-      document.removeEventListener("keyup", this.localKeyupHandler);
-    } else {
-      document.removeEventListener("keydown", this.matchMakingKeydownHandler);
-      document.removeEventListener("keyup", this.matchMakingKeyupHandler);
-    }
+	updateGameState(gameState) {
+		if (gameState.ball) {
+			const { x, y, z, vx } = gameState.ball;
+			if (Store.meshBall) {
+				Store.meshBall.position.set(x, y, z);
 
-    this.stopMovement();
+				Store.plaqueTop.position.set(x, 1.5 / 2 - 0.01, z);
+				Store.plaqueBottom.position.set(x, -1.5 / 2 + 0.01, z);
+				Store.plaqueLeft.position.set(x, y, 1.5 / 2 - 0.01);
+				Store.plaqueRight.position.set(x, y, -1.5 / 2 + 0.01);
+			}
+		}
+		if (gameState.ball_hit_paddle) {
+			if (gameState.ball.vx < 0) {
+				triggerPaddleColorChange(Store.player2Paddle, new THREE.Color(0xff007f));
+			} else {
+				triggerPaddleColorChange(Store.player1Paddle, new THREE.Color(0x7f00ff));
+			}
+		}
+		if (gameState.ball_hit_wall) {
+			triggerBallColorChange();
+		}
+		if (gameState.players) {
+			const p1 = gameState.players['1'];
+			const p2 = gameState.players['2'];
 
-    ws.send(JSON.stringify({
-      type: "game_event",
-      action: "leave_game",
-      game_id: this.gameId,
-    }));
+			if (p1) {
+				if (!Store.p1Target) Store.p1Target = new THREE.Vector3();
+				Store.p1Target.set(p1.x, p1.y, p1.z);
+			}
+			if (p2) {
+				if (!Store.p2Target) Store.p2Target = new THREE.Vector3();
+				Store.p2Target.set(p2.x, p2.y, p2.z);
+			}
+		}
+		if (!gameState || !gameState.user_scores) return;
 
-    this.activeGame = null;
-    this.gameId = null;
-  }
+		const players = Object.keys(gameState.user_scores);
+		const scores = Object.values(gameState.user_scores);
 
+		if (players.length >= 2) {
+			const score1 = scores[0];
+			const score2 = scores[1];
+			const scoreTextEl = document.getElementById('scoreText');
 
-  updateGameState(gameState) {
-    if (gameState.ball) {
-      const { x, y, z, vx } = gameState.ball; 
-      if (Store.meshBall) {
-        Store.meshBall.position.set(x, y, z);
+			if (scoreTextEl) {
+				scoreTextEl.textContent = `${this.username1} ${score1}  -  ${score2} ${this.username2}`;
+			}
+		}
+	}
 
-        Store.plaqueTop.position.set(x, 1.5 / 2 - 0.01, z);
-        Store.plaqueBottom.position.set(x, -1.5 / 2 + 0.01, z);
-        Store.plaqueLeft.position.set(x, y, 1.5 / 2 - 0.01);
-        Store.plaqueRight.position.set(x, y,-1.5 / 2 + 0.01);
-        
-      }
-    }
-    if (gameState.ball_hit_paddle) 
-    {
-      if (gameState.ball.vx < 0) {
-        triggerPaddleColorChange(Store.player2Paddle, new THREE.Color(0xff007f)); 
-      } else {
-        triggerPaddleColorChange(Store.player1Paddle, new THREE.Color(0x7f00ff)); 
-      }
-    }
-    if (gameState.ball_hit_wall)
-    {
-      triggerBallColorChange();
-    }
-    if (gameState.players) {
-      const p1 = gameState.players["1"];
-      const p2 = gameState.players["2"];
+	handleGameUpdate(data) {
+		if (data.type === 'game_state') {
+			this.updateGameState(data.payload);
+		} else if (data.type === 'game_over') {
+			console.log('Game over! Winner is player:', data.winner);
+			console.log('Final scores:', data.final_scores);
+			this.endGame();
+			if (Store.pongScene) Store.pongScene.clear();
+			handleRoute('/pong/play');
+		}
+	}
 
-      if (p1) {
-          if (!Store.p1Target) Store.p1Target = new THREE.Vector3();
-          Store.p1Target.set(p1.x, p1.y, p1.z); 
-      }
-      if (p2) {
-          if (!Store.p2Target) Store.p2Target = new THREE.Vector3();
-          Store.p2Target.set(p2.x, p2.y, p2.z);
-      }
-    }
-    if (!gameState || !gameState.user_scores) return;
-
-    const players = Object.keys(gameState.user_scores);
-    const scores = Object.values(gameState.user_scores);
-
-    if (players.length >= 2) {
-      const score1 = scores[0]; 
-      const score2 = scores[1]; 
-      const scoreTextEl = document.getElementById("scoreText");
-
-      if (scoreTextEl) {
-          scoreTextEl.textContent = `${this.username1} ${score1}  -  ${score2} ${this.username2}`;
-      }
-    } 
-  
-  
-  }
-  
-
-  handleGameUpdate(data) {
-    if (data.type === "game_state") {
-      this.updateGameState(data.payload);
-    } else if (data.type === "game_over") {
-      console.log("Game over! Winner is player:", data.winner);
-      console.log("Final scores:", data.final_scores);
-      this.endGame();
-      if (Store.pongScene)
-        Store.pongScene.clear();
-      handleRoute("/pong/play")
-    }
-  }
-
-  generateGameId(gameConfig) {
-    if (!gameConfig.gameId) {
-      if (gameConfig.mode === "private") {
-        return `private_${Date.now()}`;
-      }
-      if (gameConfig.mode === "matchmaking") {
-        return `matchmaking_${Date.now()}`;
-      }
-      if (gameConfig.mode === "solo") {
-        return `solo_${Date.now()}`;
-      }
-      if (gameConfig.subMode === "local-tournament") {
-        return `tournLocal_${gameConfig.player1}_vs_tournLocal_${gameConfig.player2}_id_${gameConfig.tournament_id}`;
-      }
-      return `game_${Date.now()}`;
-    }
-    return gameConfig.gameId;
-  }
+	generateGameId(gameConfig) {
+		if (!gameConfig.gameId) {
+			if (gameConfig.mode === 'private') {
+				return `private_${Date.now()}`;
+			}
+			if (gameConfig.mode === 'matchmaking') {
+				return `matchmaking_${Date.now()}`;
+			}
+			if (gameConfig.mode === 'solo') {
+				return `solo_${Date.now()}`;
+			}
+			if (gameConfig.subMode === 'local-tournament') {
+				return `tournLocal_${gameConfig.player1}_vs_tournLocal_${gameConfig.player2}_id_${gameConfig.tournament_id}`;
+			}
+			return `game_${Date.now()}`;
+		}
+		return gameConfig.gameId;
+	}
 }
 
 export const gameManager = new GameManager();
 
-
 async function getUsername(playerId) {
-  try {
-      const response = await fetch("/api/user-service/getUsername/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: playerId })
-      });
+	try {
+		const response = await fetch('/api/user-service/getUsername/', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ id: playerId }),
+		});
 
-      if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
 
-      const data = await response.json();
-      return data.username;  
-  } catch (error) {
-      console.error("Error fetching username:", error);
-      return `${playerId}`;  
-  }
+		const data = await response.json();
+		return data.username;
+	} catch (error) {
+		console.error('Error fetching username:', error);
+		return `${playerId}`;
+	}
 }
-
 
 function triggerBallColorChange() {
-  if (!Store.meshBall) return;
-  
-  const originalColor = new THREE.Color(0x5588f1); 
-  const hitColor = new THREE.Color(0xffffff);  
+	if (!Store.meshBall) return;
 
-  let elapsed = 0;
-  const duration = 0.15;  
-  const interval = 30; 
+	const originalColor = new THREE.Color(0x5588f1);
+	const hitColor = new THREE.Color(0xffffff);
 
-  Store.meshBall.material.emissive.set(hitColor);
+	let elapsed = 0;
+	const duration = 0.15;
+	const interval = 30;
 
-  const fadeBack = setInterval(() => {
-      elapsed += interval / 1000;
-      const t = Math.min(elapsed / duration, 1);
-      Store.meshBall.material.emissive.lerpColors(hitColor, originalColor, t);
+	Store.meshBall.material.emissive.set(hitColor);
 
-      if (t >= 1) {
-          clearInterval(fadeBack);
-      }
-  }, interval);
+	const fadeBack = setInterval(() => {
+		elapsed += interval / 1000;
+		const t = Math.min(elapsed / duration, 1);
+		Store.meshBall.material.emissive.lerpColors(hitColor, originalColor, t);
+
+		if (t >= 1) {
+			clearInterval(fadeBack);
+		}
+	}, interval);
 }
 
-
 function triggerPaddleColorChange(paddle, originalColor) {
-  if (!paddle) return;
+	if (!paddle) return;
 
-  const hitColor = new THREE.Color(0xffffff); 
-  let elapsed = 0;
-  const duration = 0.15; 
-  const interval = 30; 
+	const hitColor = new THREE.Color(0xffffff);
+	let elapsed = 0;
+	const duration = 0.15;
+	const interval = 30;
 
-  paddle.children[0].material.color = new THREE.Color(hitColor);
+	paddle.children[0].material.color = new THREE.Color(hitColor);
 
-  const fadeBack = setInterval(() => {
-    elapsed += interval / 1000;
-    const t = Math.min(elapsed / duration, 1);
+	const fadeBack = setInterval(() => {
+		elapsed += interval / 1000;
+		const t = Math.min(elapsed / duration, 1);
 
-    paddle.children[0].material.color.lerpColors(hitColor, originalColor, t);
+		paddle.children[0].material.color.lerpColors(hitColor, originalColor, t);
 
-    if (t >= 1) {
-      clearInterval(fadeBack);
-    }
-  }, interval);
+		if (t >= 1) {
+			clearInterval(fadeBack);
+		}
+	}, interval);
 }

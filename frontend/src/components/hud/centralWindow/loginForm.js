@@ -1,11 +1,11 @@
-import { createComponent } from "/src/utils/component.js";
-import { handleRoute } from "/src/services/router.js";
-import { loginUser } from "/src/services/auth.js";
+import { createComponent } from '/src/utils/component.js';
+import { handleRoute } from '/src/services/router.js';
+import { loginUser } from '/src/services/auth.js';
 
 export const loginForm = createComponent({
-  tag: "loginForm",
+	tag: 'loginForm',
 
-  render: () => `
+	render: () => `
     <div id="login-form" class="form-container flex-column justify-content-around text-center active">
       <h5>PILOT IDENTIFICATION - LOG IN</h5>
       <span class="background-central-span">
@@ -31,41 +31,37 @@ export const loginForm = createComponent({
     </div>
   `,
 
-  attachEvents: (el) => {
-    el.querySelector("#enlist-link").addEventListener("click", (e) => {
-      e.preventDefault();
-      handleRoute("/subscribe");
-    });
+	attachEvents: (el) => {
+		el.querySelector('#enlist-link').addEventListener('click', (e) => {
+			e.preventDefault();
+			handleRoute('/subscribe');
+		});
 
-    el.querySelector("form").addEventListener("submit", async (e) => {
-      e.preventDefault(); 
+		el.querySelector('form').addEventListener('submit', async (e) => {
+			e.preventDefault();
 
-      const pilotId = el.querySelector("#pilot-id").value;
-      const password = el.querySelector("#password").value;
+			const pilotId = el.querySelector('#pilot-id').value;
+			const password = el.querySelector('#password').value;
 
-        const data = await loginUser(pilotId, password);
-        console.log(data);
-        if (data.twofa_method) 
-        {
-          sessionStorage.setItem("pending2FA_user", pilotId);
-          sessionStorage.setItem("pending2FA_method", data.twofa_method);
-          console.log("here work")
-          handleRoute("/login/2fa");
-        } 
-        else if (data.success)
-        {
-          console.log("here SUCCESS")
-          handleRoute("/");
-        }
-    
-        if (data === "User is already connected.") {
-          document.getElementById("error-message-co").classList.remove("d-none");   
-          document.getElementById("error-message").classList.add("d-none"); 
- 
-        } else if (data === "Invalid credentials" || data === "User not found") {
-          document.getElementById("error-message-co").classList.add("d-none"); 
-          document.getElementById("error-message").classList.remove("d-none"); 
-        }
-    });
-  },
+			const data = await loginUser(pilotId, password);
+			console.log(data);
+			if (data.twofa_method) {
+				sessionStorage.setItem('pending2FA_user', pilotId);
+				sessionStorage.setItem('pending2FA_method', data.twofa_method);
+				console.log('here work');
+				handleRoute('/login/2fa');
+			} else if (data.success) {
+				console.log('here SUCCESS');
+				handleRoute('/');
+			}
+
+			if (data === 'User is already connected.') {
+				document.getElementById('error-message-co').classList.remove('d-none');
+				document.getElementById('error-message').classList.add('d-none');
+			} else if (data === 'Invalid credentials' || data === 'User not found') {
+				document.getElementById('error-message-co').classList.add('d-none');
+				document.getElementById('error-message').classList.remove('d-none');
+			}
+		});
+	},
 });

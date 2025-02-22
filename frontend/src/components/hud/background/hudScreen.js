@@ -1,18 +1,18 @@
-import { createComponent } from "/src/utils/component.js";
-import { startAnimation } from "/src/components/hud/index.js";
+import { createComponent } from '/src/utils/component.js';
+import { startAnimation } from '/src/components/hud/index.js';
 
 export const hudScreenEffect = createComponent({
-tag: "hudScreenEffect",
+	tag: 'hudScreenEffect',
 
-render: () => `
+	render: () => `
 	<div class="hud_screen-effect">
 		<div class="hud_screen-effect"></div>
 	</div>
 `,
 
-attachEvents: (el) => {
-	const element = el.querySelectorAll('.hud_screen-effect');
+	attachEvents: (el) => {
+		const element = el.querySelectorAll('.hud_screen-effect');
 
-	startAnimation(element, "light-animation");
-}
+		startAnimation(element, 'light-animation');
+	},
 });
