@@ -36,6 +36,7 @@ export async function logoutUser() {
 
 		if (response.ok) {
 			closeWebSocket();
+			sessionStorage.clear();
 
 			console.log('Logout successful!');
 		} else {

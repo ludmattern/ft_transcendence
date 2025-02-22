@@ -39,8 +39,8 @@ def info_getter(request, user_id):
 	friend_request_data = [
 		{
 			"type": "friend_request",
-			"inviter_id": fr["user__id"], 
-			"inviter": fr["user__username"], 
+			"inviter_id": fr["initiator__id"], 
+			"inviter": fr["initiator__username"], 
 			"actions": True,
 		}
 		for fr in friend_requests
