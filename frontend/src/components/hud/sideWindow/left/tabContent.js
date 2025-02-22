@@ -20,11 +20,10 @@ export function loadTabContent(tabName, container) {
 		if (infoTabData) {
 			try {
 				const parsedData = JSON.parse(infoTabData);
-				// Vérifier que parsedData existe et qu'il contient bien la clé "info"
-				if (!parsedData || !('info' in parsedData)) {
+				if (!parsedData) {
 					throw new Error('Données corrompues ou incomplètes !');
 				}
-				renderInfoTab(parsedData.info, container);
+				renderInfoTab(parsedData, container);
 				console.log('Info tab loaded from sessionStorage');
 				console.log(parsedData);
 			} catch (err) {
@@ -72,18 +71,19 @@ export async function fetchAndStoreInfoData(container) {
 	const data = await response.json();
 	if (data.info) {
 		console.log('Information received from the server:', data);
-		sessionStorage.setItem('infoTabData', JSON.stringify(data));
-		renderInfoTab(data.info || [], container);
+		sessionStorage.setItem('infoTabData', JSON.stringify(data.info));
+		renderInfoTab(data.info, container);
 	} else {
 		console.log('Error getting information');
 	}
 }
 
+
 function renderInfoTab(tabItems, container) {
 	tabItems.forEach((item) => {
 		const panelItem = infoPanelItem.render(item);
 		container.insertAdjacentHTML('beforeend', panelItem);
-		infoPanelItem.attachEvents(container.lastElementChild, item);
+		infoPanelItem.attachEvents(container.lastElementChild, item);	
 	});
 }
 
@@ -104,9 +104,9 @@ function renderCommMessage(item, container, currentUserId) {
 
 	const extendedItem = {
 		...item,
-		isUser, // true si c'est notre message
-		author: displayAuthor, // "USER" ou "User 123..."
-		channel: displayChannel, // "General" ou "Private"
+		isUser,
+		author: displayAuthor,
+		channel: displayChannel,
 		timestamp: item.timestamp,
 		username: item.username,
 	};

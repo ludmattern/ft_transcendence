@@ -139,4 +139,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			)
 			await self.channel_layer.group_send(f"user_{recipient_id}", event)
 			await self.channel_layer.group_send(f"user_{author_id}", event)
-			logger.info(f"Friend request sent from {author_id} to {recipient_id}")
+			logger.info(f"Friend request sent from {author_id} to {recipient_id} : {event}")

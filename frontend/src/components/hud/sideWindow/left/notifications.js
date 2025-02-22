@@ -75,6 +75,7 @@ export function removePrivateNotifications() {
 }
 
 export async function updateAndCompareInfoData() {
+	console.log('Mise à jour des informations...');
 	const userId = sessionStorage.getItem('userId');
 
 	try {
@@ -85,6 +86,7 @@ export async function updateAndCompareInfoData() {
 		});
 		const result = await response.json();
 
+		console.log('Info getter result:', result);
 		if (result.info) {
 			let localInfo = [];
 			const localInfoStr = sessionStorage.getItem('infoTabData');

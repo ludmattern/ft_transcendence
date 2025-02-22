@@ -29,7 +29,6 @@ def get_friends(request):
 
 	return JsonResponse({"error": "Invalid request method"}, status=405)
 
-
 # SEND FRIEND REQUEST (Optimized)
 @csrf_exempt
 def send_friend_request(request):
@@ -75,8 +74,6 @@ def send_friend_request(request):
 
 	return JsonResponse({"error": "Invalid request method"}, status=405)
 
-
-
 # ACCEPT FRIEND REQUEST (Optimized)
 @csrf_exempt
 def accept_friend_request(request):
@@ -103,7 +100,6 @@ def accept_friend_request(request):
 
 	return JsonResponse({"error": "Invalid request method"}, status=405)
 
-
 # REJECT FRIEND REQUEST (Optimized)
 @csrf_exempt
 def reject_friend_request(request):
@@ -129,7 +125,6 @@ def reject_friend_request(request):
 			return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
 	return JsonResponse({"error": "Invalid request method"}, status=405)
-
 
 # REMOVE FRIEND (Both Sides)
 @csrf_exempt

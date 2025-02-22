@@ -58,7 +58,6 @@ function bodyData(author) {
 /**
  * Gestion des actions du menu contextuel.
  */
-
 async function handleFriendAction(isFriend, author) {
 	let action;
 	if (isFriend) {
@@ -68,7 +67,6 @@ async function handleFriendAction(isFriend, author) {
 		action = 'send_friend_request';
 		console.log(`Adding ${author} to friends...`);
 	}
-	// Common payload structure
 	const payload = {
 		type: 'info_message',
 		action,
@@ -84,7 +82,6 @@ async function handleFriendAction(isFriend, author) {
 async function handleBlockAction(isBlocked, author) {
 	if (isBlocked) {
 		console.log(`Unblocking ${author}...`);
-		// Logique pour débloquer un utilisateur
 		const response = await fetch('/api/user-service/unblock/', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -98,7 +95,6 @@ async function handleBlockAction(isBlocked, author) {
 		}
 	} else {
 		console.log(`Blocking ${author}...`);
-		// Logique pour bloquer un utilisateur
 		const response = await fetch('/api/user-service/block/', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -115,26 +111,21 @@ async function handleBlockAction(isBlocked, author) {
 
 function handleInviteAction(author) {
 	console.log(`Inviting ${author} to a game...`);
-	// Logique pour envoyer une invitation pour une partie privee
 }
 
 function handleProfileAction(author) {
 	console.log(`Viewing profile of ${author}...`);
-	// Logique pour afficher le profil de l'utilisateur
 }
 
 function handleMessageAction(author) {
 	console.log(`Messaging ${author}...`);
 
-	// Vérifie si l'onglet actif n'est pas "comm"
 	const activeTab = document.querySelector('.nav-link.active');
 	if (activeTab && activeTab.dataset.tab !== 'comm') {
-		// Simule un clic sur l'onglet "comm"
 		const commTab = document.querySelector('.nav-link[data-tab="comm"]');
 		if (commTab) {
 			commTab.click();
 		}
-		// Attend que le champ de saisie dans le conteneur "#l-tab-content-container" soit présent
 		waitForElement('#l-tab-content-container #message-input')
 			.then((inputField) => {
 				inputField.value = '@' + author + ' ';
@@ -144,7 +135,6 @@ function handleMessageAction(author) {
 				console.error(error);
 			});
 	} else {
-		// Si on est déjà dans l'onglet "comm"
 		const inputField = document.querySelector('#l-tab-content-container #message-input');
 		if (inputField) {
 			inputField.value = '@' + author + ' ';

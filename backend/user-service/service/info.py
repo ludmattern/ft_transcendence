@@ -3,6 +3,7 @@ import logging
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from .models import (
 	ManualUser, ManualBlockedRelations, ManualFriendsRelations, 
 	ManualTournamentParticipants, ManualNotifications
@@ -18,7 +19,7 @@ def info_getter(request, user_id):
 		return JsonResponse({"success": False, "error": "Invalid request method"}, status=405)
 
 	try:
-		user = ManualUser.objects.get(pk=user_id)  # Fetch user by ID
+		user = ManualUser.objects.get(pk=user_id) 
 		logger.info(f"User found: {user.username}")
 	except ObjectDoesNotExist:
 		logger.warning(f"User with ID {user_id} not found")
@@ -26,10 +27,11 @@ def info_getter(request, user_id):
 
 	friend_requests = (
 		ManualFriendsRelations.objects
-		.filter(friend=user, status="pending")
-		.exclude(initiator=user)  # Exclut les demandes que l'utilisateur a initiées
-		.select_related("user")   # Optimized query
-		.values("user__id", "user__username")  # Récupère l'ID et le username de l'initiateur
+		.filter(status="pending")
+		.filter(Q(user=user) | Q(friend=user))
+		.exclude(initiator=user)
+		.select_related("initiator")
+		.values("initiator__id", "initiator__username")
 	)
 	
 	logger.info(f"Friend requests: {friend_requests}")
@@ -37,8 +39,8 @@ def info_getter(request, user_id):
 	friend_request_data = [
 		{
 			"type": "friend_request",
-			"inviter_id": fr["user__id"],  # Fetch inviter's user ID
-			"inviter": fr["user__username"],  # Fetch inviter's username
+			"inviter_id": fr["user__id"], 
+			"inviter": fr["user__username"], 
 			"actions": True,
 		}
 		for fr in friend_requests
@@ -49,8 +51,8 @@ def info_getter(request, user_id):
 	tournament_invites = (
 		ManualNotifications.objects
 		.filter(receiver=user, type="tournament_invite")
-		.select_related("sender")  # Optimized query
-		.values("sender__id", "sender__username")  # Fetch sender ID & username
+		.select_related("sender") 
+		.values("sender__id", "sender__username") 
 	)
 
 	logger.info(f"Tournament invites: {tournament_invites}")
@@ -58,8 +60,8 @@ def info_getter(request, user_id):
 	tournament_invite_data = [
 		{
 			"type": "tournament_invite",
-			"inviter_id": invite["sender__id"],  # Fetch inviter's user ID
-			"inviter": invite["sender__username"],  # Fetch inviter's username
+			"inviter_id": invite["sender__id"], 
+			"inviter": invite["sender__username"], 
 			"actions": False,
 		}
 		for invite in tournament_invites
