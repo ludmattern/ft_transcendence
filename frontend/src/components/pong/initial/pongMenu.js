@@ -1,14 +1,14 @@
-import { createComponent } from "/src/utils/component.js";
-import { handleRoute, getPreviousPongPlaySubRoute, setPreviousPongPlaySubRoute } from "/src/services/router.js";
-import { subscribe } from "/src/services/eventEmitter.js";
-import { CSS3DObject } from "https://esm.sh/three/examples/jsm/renderers/CSS3DRenderer.js";
-import Store from "/src/3d/store.js";
+import { createComponent } from '/src/utils/component.js';
+import { handleRoute, getPreviousPongPlaySubRoute, setPreviousPongPlaySubRoute } from '/src/services/router.js';
+import { subscribe } from '/src/services/eventEmitter.js';
+import { CSS3DObject } from 'https://esm.sh/three/examples/jsm/renderers/CSS3DRenderer.js';
+import Store from '/src/3d/store.js';
 
 export const pongMenu = createComponent({
-  tag: "pongMenu",
+	tag: 'pongMenu',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
     <div class="container-fluid" id="main-container">
       <!-- Header Section -->
       <header class="row align-items-center px-4">
@@ -65,95 +65,91 @@ export const pongMenu = createComponent({
       </footer>
   `,
 
-  attachEvents: (el) => {
-    initM1();
-    updateDateTime();
-    setInterval(updateDateTime, 20000);
+	attachEvents: (el) => {
+		initM1();
+		updateDateTime();
+		setInterval(updateDateTime, 20000);
 
-    const homeButton = el.querySelector("#homeButton");
-    const playButton = el.querySelector("#play-tab");
-    const leaderboardButton = el.querySelector("#leaderboard-tab");
+		const homeButton = el.querySelector('#homeButton');
+		const playButton = el.querySelector('#play-tab');
+		const leaderboardButton = el.querySelector('#leaderboard-tab');
 
-	function updateActiveTab(el, route) {
-		if (!route.startsWith("/pong")) return;
-	
-		el.querySelectorAll("#mainTabs .nav-item").forEach((navItem) => {
-			navItem.classList.remove("active");
-		});
-	
-		if (route.startsWith("/pong/play")) {
-			playButton.parentElement.classList.add("active");
-		} else if (route.startsWith("/pong/leaderboard")) {
-			leaderboardButton.parentElement.classList.add("active");
+		function updateActiveTab(el, route) {
+			if (!route.startsWith('/pong')) return;
+
+			el.querySelectorAll('#mainTabs .nav-item').forEach((navItem) => {
+				navItem.classList.remove('active');
+			});
+
+			if (route.startsWith('/pong/play')) {
+				playButton.parentElement.classList.add('active');
+			} else if (route.startsWith('/pong/leaderboard')) {
+				leaderboardButton.parentElement.classList.add('active');
+			}
 		}
-	}
-	
 
-    homeButton.addEventListener("click", () => {
-        setPreviousPongPlaySubRoute("/pong/play");
-        handleRoute("/pong/home");
-    });
+		homeButton.addEventListener('click', () => {
+			setPreviousPongPlaySubRoute('/pong/play');
+			handleRoute('/pong/home');
+		});
 
-    playButton.addEventListener("click", () => {
-        const lastPlayRoute = getPreviousPongPlaySubRoute();
-        handleRoute(lastPlayRoute);
-    });
+		playButton.addEventListener('click', () => {
+			const lastPlayRoute = getPreviousPongPlaySubRoute();
+			handleRoute(lastPlayRoute);
+		});
 
-    leaderboardButton.addEventListener("click", () => {
-        handleRoute("/pong/leaderboard");
-    });
+		leaderboardButton.addEventListener('click', () => {
+			handleRoute('/pong/leaderboard');
+		});
 
-    updateActiveTab(el, window.location.pathname);
+		updateActiveTab(el, window.location.pathname);
 
-    subscribe("routeChanged", (route) => updateActiveTab(el, route));
-}
-
+		subscribe('routeChanged', (route) => updateActiveTab(el, route));
+	},
 });
 
 /**
  * Met à jour l'heure et la date affichées dans le footer.
  */
 function updateDateTime() {
-  const timeElement = document.getElementById("current-time");
-  const dateElement = document.getElementById("current-date");
+	const timeElement = document.getElementById('current-time');
+	const dateElement = document.getElementById('current-date');
 
-  if (!timeElement || !dateElement) return;
+	if (!timeElement || !dateElement) return;
 
-  const now = new Date();
-  const hours = now.getHours().toString().padStart(2, "0");
-  const minutes = now.getMinutes().toString().padStart(2, "0");
-  const day = now.getDate().toString().padStart(2, "0");
-  const month = (now.getMonth() + 1).toString().padStart(2, "0");
-  const year = now.getFullYear();
+	const now = new Date();
+	const hours = now.getHours().toString().padStart(2, '0');
+	const minutes = now.getMinutes().toString().padStart(2, '0');
+	const day = now.getDate().toString().padStart(2, '0');
+	const month = (now.getMonth() + 1).toString().padStart(2, '0');
+	const year = now.getFullYear();
 
-  timeElement.textContent = `${hours}:${minutes}`;
-  dateElement.textContent = `${day}/${month}/${year}`;
+	timeElement.textContent = `${hours}:${minutes}`;
+	dateElement.textContent = `${day}/${month}/${year}`;
 }
 
 /**
  * Initialise l'objet 3D du menu dans la scène Three.js.
  */
 
-import * as THREE from "https://esm.sh/three";
+import * as THREE from 'https://esm.sh/three';
 
 function initM1() {
-  Store.menuElement2 = document.getElementById("pong-screen-container");
-  if (!Store.menuElement2) {
-    console.error("The element with ID 'pong-screen-container' was not found.");
-    return;
-  }
+	Store.menuElement2 = document.getElementById('pong-screen-container');
+	if (!Store.menuElement2) {
+		console.error("The element with ID 'pong-screen-container' was not found.");
+		return;
+	}
 
-  const cameraQuaternion = new THREE.Quaternion().setFromEuler(
-    new THREE.Euler(Math.PI / 3.2, Math.PI / 5.5, -Math.PI / -12)
-  );
-  
-  const objectRotation = new THREE.Euler(0, 0, 0, "XYZ");
-  const objectQuaternion = new THREE.Quaternion().setFromEuler(objectRotation);
-  Store.menuObject2 = new CSS3DObject(Store.menuElement2);
-  Store.menuObject2.quaternion.copy(cameraQuaternion).multiply(objectQuaternion);
-  Store.menuObject2.position.set(-3.65, 4.6, -1.82);
-  Store.menuObject2.scale.set(0.002, 0.002, 0.002);
-  Store.menuElement2.style.pointerEvents = "auto";
-  Store.menuElement2.classList.add("active");
-  if (Store.menuObject2) Store.scene.add(Store.menuObject2);
+	const cameraQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.PI / 3.2, Math.PI / 5.5, -Math.PI / -12));
+
+	const objectRotation = new THREE.Euler(0, 0, 0, 'XYZ');
+	const objectQuaternion = new THREE.Quaternion().setFromEuler(objectRotation);
+	Store.menuObject2 = new CSS3DObject(Store.menuElement2);
+	Store.menuObject2.quaternion.copy(cameraQuaternion).multiply(objectQuaternion);
+	Store.menuObject2.position.set(-3.65, 4.6, -1.82);
+	Store.menuObject2.scale.set(0.002, 0.002, 0.002);
+	Store.menuElement2.style.pointerEvents = 'auto';
+	Store.menuElement2.classList.add('active');
+	if (Store.menuObject2) Store.scene.add(Store.menuObject2);
 }

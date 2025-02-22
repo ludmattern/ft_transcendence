@@ -8,11 +8,9 @@
  * @returns {string} - HTML de l'onglet
  */
 export function createNavItem(label, active = false) {
-  return `
+	return `
 	  <li class="nav-item">
-	  <span class="nav-link ${
-      active ? "active" : ""
-    }" data-tab="${label.toLowerCase()}">
+	  <span class="nav-link ${active ? 'active' : ''}" data-tab="${label.toLowerCase()}">
 		  <a href="#" data-tab="${label.toLowerCase()}">${label}</a>
 	  </span>
 	  </li>`;

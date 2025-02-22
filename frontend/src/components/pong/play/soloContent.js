@@ -1,11 +1,11 @@
-import { createComponent } from "/src/utils/component.js";
-import { playGame } from "/src/components/pong/play/utils.js";
+import { createComponent } from '/src/utils/component.js';
+import { playGame } from '/src/components/pong/play/utils.js';
 
 export const soloContent = createComponent({
-  tag: "soloContent",
+	tag: 'soloContent',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
     <section class="p-5 flex-grow-1" style="background-color: #111111; max-height: 700px; overflow: auto;">
       <h2 class="text-white text-center">So, You Think You Can Win against AI?</h2>
       <p class="text-secondary text-center">How adorable. Choose your doomed battlefield and prepare for utter humiliation.</p>
@@ -43,36 +43,35 @@ export const soloContent = createComponent({
     </section>
   `,
 
-  // Ajouter les événements pour gérer sessionStorage
-  attachEvents: () => {
-    const difficulty = document.getElementById("difficulty");
-    const liabilityCheckbox = document.getElementById("liabilityCheckbox");
+	// Ajouter les événements pour gérer sessionStorage
+	attachEvents: () => {
+		const difficulty = document.getElementById('difficulty');
+		const liabilityCheckbox = document.getElementById('liabilityCheckbox');
 
-    // Charger les valeurs sauvegardées
-    const savedDifficulty = sessionStorage.getItem("difficulty");
-    const savedLiability = sessionStorage.getItem("liabilityCheckbox");
+		// Charger les valeurs sauvegardées
+		const savedDifficulty = sessionStorage.getItem('difficulty');
+		const savedLiability = sessionStorage.getItem('liabilityCheckbox');
 
-    if (savedDifficulty) difficulty.value = savedDifficulty;
-    if (savedLiability) liabilityCheckbox.checked = savedLiability === "true";
+		if (savedDifficulty) difficulty.value = savedDifficulty;
+		if (savedLiability) liabilityCheckbox.checked = savedLiability === 'true';
 
+		difficulty.addEventListener('change', () => {
+			sessionStorage.setItem('difficulty', difficulty.value);
+		});
 
-    difficulty.addEventListener("change", () => {
-      sessionStorage.setItem("difficulty", difficulty.value);
-    });
+		liabilityCheckbox.addEventListener('change', () => {
+			sessionStorage.setItem('liabilityCheckbox', liabilityCheckbox.checked);
+		});
 
-    liabilityCheckbox.addEventListener("change", () => {
-      sessionStorage.setItem("liabilityCheckbox", liabilityCheckbox.checked);
-    });
+		const launchButton = document.getElementById('launch');
 
-    const launchButton = document.getElementById("launch");
-
-    launchButton.addEventListener("click", () => {
-	  const config = {
-      gameMode : "solo",
-      type: "fullScreen",
-      difficulty: difficulty.value,
-	};		
-		playGame(config);
-    })
-  },
+		launchButton.addEventListener('click', () => {
+			const config = {
+				gameMode: 'solo',
+				type: 'fullScreen',
+				difficulty: difficulty.value,
+			};
+			playGame(config);
+		});
+	},
 });

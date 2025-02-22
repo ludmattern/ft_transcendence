@@ -6,12 +6,11 @@ import { checkPasswordConfirmation } from '/src/components/hud/centralWindow/sub
 import { checkEmailConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
 
-
 export const settingsForm = createComponent({
-  tag: 'settingsForm',
+	tag: 'settingsForm',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
     <div id="settings-form" class="form-container">
       <h5>SETTINGS</h5>
       <span class="background-central-span">
@@ -44,126 +43,121 @@ export const settingsForm = createComponent({
     </div>
   `,
 
-  // Ajouter les événements après le chargement
-  attachEvents: async (el) => {
-    // Gestionnaire pour le bouton "Update"
-    el.querySelector('#update-button').addEventListener('click', async (e) => {
-      e.preventDefault();
-      const formData = collectFormData(el);
+	// Ajouter les événements après le chargement
+	attachEvents: async (el) => {
+		// Gestionnaire pour le bouton "Update"
+		el.querySelector('#update-button').addEventListener('click', async (e) => {
+			e.preventDefault();
+			const formData = collectFormData(el);
 
-      console.log('Form data:', formData);
-      // TODO: Appel API pour la mise à jour des paramètres.
+			console.log('Form data:', formData);
+			// TODO: Appel API pour la mise à jour des paramètres.
 
-      resetErrorMessages();
+			resetErrorMessages();
 
-      let canRegister = true;
+			let canRegister = true;
 
-      if (!validateId(formData.username)) canRegister = false;
-      if (canRegister && formData.newEmail)
-        if (!validateMail(formData.newEmail))
-          canRegister = false;
-      if (canRegister && formData.newPassword && !validatePassword(formData.newPassword)) canRegister = false;
-      if (canRegister && formData.newPassword && formData.confirmPassword && !checkPasswordConfirmation(formData.newPassword, formData.confirmPassword)) canRegister = false;
-      if (canRegister && formData.newEmail && formData.confirmMail && !checkEmailConfirmation(formData.newEmail, formData.confirmMail)) canRegister = false;
-      if (canRegister) {
-        try {
-          const response = await fetch("/api/user-service/update/", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData),
-          });
-          const data = await response.json();
-          if (data.success) {
-            if (formData.newUsername) {
-              sessionStorage.setItem("registered_user", formData.newUsername);
-              sessionStorage.setItem("username", formData.newUsername);
-            }
-            alert('Information updated successfully.');
-            resetErrorMessages();
-            emptyFields();
-          } else {
-            passwordError(data);
-            usernameError(data);
-            emailError(data);
-            emptyFormError(data);
-          }
-        }
-        catch (error) {
-          console.error('Error updating information:', error);
-          alert('An unexpected error occurred.');
-        }
-      }
-    });
-    // Gestionnaire pour le lien "Delete Account"
-    el.querySelector('#delete-account-link').addEventListener('click', (e) => {
-      e.preventDefault();
-      handleRoute('/settings/delete-account'); // Redirige vers la page de suppression de compte
-    });
-  },
+			if (!validateId(formData.username)) canRegister = false;
+			if (canRegister && formData.newEmail) if (!validateMail(formData.newEmail)) canRegister = false;
+			if (canRegister && formData.newPassword && !validatePassword(formData.newPassword)) canRegister = false;
+			if (canRegister && formData.newPassword && formData.confirmPassword && !checkPasswordConfirmation(formData.newPassword, formData.confirmPassword)) canRegister = false;
+			if (canRegister && formData.newEmail && formData.confirmMail && !checkEmailConfirmation(formData.newEmail, formData.confirmMail)) canRegister = false;
+			if (canRegister) {
+				try {
+					const response = await fetch('/api/user-service/update/', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(formData),
+					});
+					const data = await response.json();
+					if (data.success) {
+						if (formData.newUsername) {
+							sessionStorage.setItem('registered_user', formData.newUsername);
+							sessionStorage.setItem('username', formData.newUsername);
+						}
+						alert('Information updated successfully.');
+						resetErrorMessages();
+						emptyFields();
+					} else {
+						passwordError(data);
+						usernameError(data);
+						emailError(data);
+						emptyFormError(data);
+					}
+				} catch (error) {
+					console.error('Error updating information:', error);
+					alert('An unexpected error occurred.');
+				}
+			}
+		});
+		// Gestionnaire pour le lien "Delete Account"
+		el.querySelector('#delete-account-link').addEventListener('click', (e) => {
+			e.preventDefault();
+			handleRoute('/settings/delete-account'); // Redirige vers la page de suppression de compte
+		});
+	},
 });
 
 function emptyFormError(data) {
-  if (data.message.includes("No changes to update")) {
-    alert('No changes to update');
-  }
+	if (data.message.includes('No changes to update')) {
+		alert('No changes to update');
+	}
 }
 
 function passwordError(data) {
-  if (data.message.includes("Please enter current password")) {
-    document.getElementById("current-pass-empty").style.display = "block";
-  } else {
-    document.getElementById("current-pass-empty").style.display = "none";
-  }
+	if (data.message.includes('Please enter current password')) {
+		document.getElementById('current-pass-empty').style.display = 'block';
+	} else {
+		document.getElementById('current-pass-empty').style.display = 'none';
+	}
 
-  if (data.message.includes("Current password is incorrect")) {
-    document.getElementById("bad-current-pass").style.display = "block";
-  } else {
-    document.getElementById("bad-current-pass").style.display = "none";
-  }
+	if (data.message.includes('Current password is incorrect')) {
+		document.getElementById('bad-current-pass').style.display = 'block';
+	} else {
+		document.getElementById('bad-current-pass').style.display = 'none';
+	}
 
-  if (data.message.includes("Passwords do not match")) {
-    document.getElementById("error-message-pass").style.display = "block";
-  } else {
-    document.getElementById("error-message-pass").style.display = "none";
-  }
+	if (data.message.includes('Passwords do not match')) {
+		document.getElementById('error-message-pass').style.display = 'block';
+	} else {
+		document.getElementById('error-message-pass').style.display = 'none';
+	}
 }
 
 function usernameError(data) {
-  if (data.message.includes("Username already taken")) {
-    document.getElementById("error-message-id").style.display = "block";
-  } else {
-    document.getElementById("error-message-id").style.display = "none";
-  }
+	if (data.message.includes('Username already taken')) {
+		document.getElementById('error-message-id').style.display = 'block';
+	} else {
+		document.getElementById('error-message-id').style.display = 'none';
+	}
 }
 
 function emailError(data) {
-  if (data.message.includes("Email already in use")) {
-    document.getElementById("error-message-mail").style.display = "block";
-    document.getElementById("error-message-mail2").style.display = "none";
-  } else {
-    document.getElementById("error-message-mail").style.display = "none";
-  }
-  if (data.message.includes("Email too long")) {
-    document.getElementById("error-message-mail-size").style.display = "block";
-  }
-  else {
-    document.getElementById("error-message-mail-size").style.display = "none";
-  }
-  if (data.message.includes("Emails do not match")) {
-    document.getElementById("error-message-mail2").style.display = "block";
-  }
-  else {
-    document.getElementById("error-message-mail2").style.display = "none";
-  }
+	if (data.message.includes('Email already in use')) {
+		document.getElementById('error-message-mail').style.display = 'block';
+		document.getElementById('error-message-mail2').style.display = 'none';
+	} else {
+		document.getElementById('error-message-mail').style.display = 'none';
+	}
+	if (data.message.includes('Email too long')) {
+		document.getElementById('error-message-mail-size').style.display = 'block';
+	} else {
+		document.getElementById('error-message-mail-size').style.display = 'none';
+	}
+	if (data.message.includes('Emails do not match')) {
+		document.getElementById('error-message-mail2').style.display = 'block';
+	} else {
+		document.getElementById('error-message-mail2').style.display = 'none';
+	}
 }
 
 function emptyFields() {
-  document.getElementById("new-username").value = "";
-  document.getElementById("old-password").value = "";
-  document.getElementById("new-password").value = "";
-  document.getElementById("confirm-new-password").value = "";
-  document.getElementById("new-email").value = "";
-  document.getElementById("confirm-new-email").value = "";
+	document.getElementById('new-username').value = '';
+	document.getElementById('old-password').value = '';
+	document.getElementById('new-password').value = '';
+	document.getElementById('confirm-new-password').value = '';
+	document.getElementById('new-email').value = '';
+	document.getElementById('confirm-new-email').value = '';
 }
 
 /**
@@ -175,7 +169,7 @@ function emptyFields() {
  * @returns {string} - HTML du groupe de formulaire
  */
 function createFormGroup(id, type, label) {
-  return `
+	return `
     <div class="form-group">
       <label class="mb-3" for="${id}">${label}</label>
       <input type="${type}" id="${id}" name="${id}" class="form-control" required />
@@ -202,36 +196,35 @@ function createFormGroup(id, type, label) {
  * @returns {Object} - Données collectées du formulaire
  */
 function collectFormData(el) {
-  return {
-    username: sessionStorage.getItem('username'),
-    newUsername: el.querySelector('#new-username').value,
-    oldPassword: el.querySelector('#old-password').value,
-    newPassword: el.querySelector('#new-password').value,
-    confirmPassword: el.querySelector('#confirm-new-password').value,
-    newEmail: el.querySelector('#new-email').value,
-    confirmEmail: el.querySelector('#confirm-new-email').value,
-  };
+	return {
+		username: sessionStorage.getItem('username'),
+		newUsername: el.querySelector('#new-username').value,
+		oldPassword: el.querySelector('#old-password').value,
+		newPassword: el.querySelector('#new-password').value,
+		confirmPassword: el.querySelector('#confirm-new-password').value,
+		newEmail: el.querySelector('#new-email').value,
+		confirmEmail: el.querySelector('#confirm-new-email').value,
+	};
 }
 
-
 function resetErrorMessages() {
-  const errorIds = [
-    "error-message-id",
-    "bad-id",
-    "current-pass-empty",
-    "bad-current-pass",
-    "bad-pass-size",
-    "bad-pass-upper",
-    "bad-pass-lower",
-    "bad-pass-special",
-    "error-message-pass",
-    "error-message-mail-size",
-    "error-message-mail",
-    "error-message-mail2",
-  ];
+	const errorIds = [
+		'error-message-id',
+		'bad-id',
+		'current-pass-empty',
+		'bad-current-pass',
+		'bad-pass-size',
+		'bad-pass-upper',
+		'bad-pass-lower',
+		'bad-pass-special',
+		'error-message-pass',
+		'error-message-mail-size',
+		'error-message-mail',
+		'error-message-mail2',
+	];
 
-  errorIds.forEach((errId) => {
-    const el = document.getElementById(errId);
-    if (el) el.style.display = "none";
-  });
+	errorIds.forEach((errId) => {
+		const el = document.getElementById(errId);
+		if (el) el.style.display = 'none';
+	});
 }

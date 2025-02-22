@@ -1,18 +1,18 @@
-import { createComponent } from "/src/utils/component.js";
-import { handleRoute } from "/src/services/router.js";
-import { subscribe } from "/src/services/eventEmitter.js";
+import { createComponent } from '/src/utils/component.js';
+import { handleRoute } from '/src/services/router.js';
+import { subscribe } from '/src/services/eventEmitter.js';
 
 const navigationLinks = {
-  "pong-solo-link": "/pong/play/solo",
-  "pong-multiplayer-link": "/pong/play/multiplayer",
-  "pong-tournament-link": "/pong/play/tournament",
+	'pong-solo-link': '/pong/play/solo',
+	'pong-multiplayer-link': '/pong/play/multiplayer',
+	'pong-tournament-link': '/pong/play/tournament',
 };
 
 export const navBar = createComponent({
-  tag: "navBar",
+	tag: 'navBar',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
 	<!-- Sous-menu à gauche -->
 	<aside class="col-md-3 p-3">
 		<ul class="list-unstyled p-2">
@@ -29,22 +29,21 @@ export const navBar = createComponent({
 	</aside>
   `,
 
-  attachEvents: (el) => {
-    Object.entries(navigationLinks).forEach(([linkId, route]) => {
-      const linkElement = el.querySelector(`#${linkId}`);
-      if (linkElement) {
-        linkElement.addEventListener("click", (e) => {
-          e.preventDefault();
-          handleRoute(route);
-        });
-      }
-    });
+	attachEvents: (el) => {
+		Object.entries(navigationLinks).forEach(([linkId, route]) => {
+			const linkElement = el.querySelector(`#${linkId}`);
+			if (linkElement) {
+				linkElement.addEventListener('click', (e) => {
+					e.preventDefault();
+					handleRoute(route);
+				});
+			}
+		});
 
-    updateActiveLink(el, window.location.pathname);
+		updateActiveLink(el, window.location.pathname);
 
-    subscribe("routeChanged", (route) => updateActiveLink(el, route));
-
-  }
+		subscribe('routeChanged', (route) => updateActiveLink(el, route));
+	},
 });
 
 /**
@@ -54,20 +53,19 @@ export const navBar = createComponent({
  * @param {string} futurePath - La route actuelle (fourni par `routeChanged` ou `popstate`)
  */
 function updateActiveLink(el, futurePath) {
+	const activeLinkId = Object.keys(navigationLinks).find((key) => {
+		const path = navigationLinks[key];
+		return futurePath === path || futurePath.startsWith(`${path}/`);
+	});
 
-  const activeLinkId = Object.keys(navigationLinks).find((key) => {
-    const path = navigationLinks[key];
-    return futurePath === path || futurePath.startsWith(`${path}/`);
-  });
+	if (futurePath.startsWith('/pong')) {
+		el.querySelectorAll('li').forEach((item) => item.classList.remove('active'));
+	}
 
-  if (futurePath.startsWith("/pong")) {
-    el.querySelectorAll("li").forEach((item) => item.classList.remove("active"));
-  }
-
-  if (activeLinkId) {
-    const activeItem = el.querySelector(`#${activeLinkId}`);
-    if (activeItem) {
-      activeItem.classList.add("active");
-    }
-  }
+	if (activeLinkId) {
+		const activeItem = el.querySelector(`#${activeLinkId}`);
+		if (activeItem) {
+			activeItem.classList.add('active');
+		}
+	}
 }

@@ -1,10 +1,10 @@
 import { createComponent } from '/src/utils/component.js';
 
 export const otherProfileForm = createComponent({
-  tag: 'otherProfileForm',
+	tag: 'otherProfileForm',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
     <div id="other-profile-form" class="form-container">
       <h5 class="text-center">Other Pilot Profile</h5>
       <span class="background-central-span d-flex flex-column align-items-center flex-grow-1 p-4">
@@ -59,27 +59,27 @@ export const otherProfileForm = createComponent({
     </div>
   `,
 
-  // Ajouter les événements après le chargement
-  attachEvents: (el) => {
-    // Gestion des boutons en bas
-    el.addEventListener('click', (e) => {
-      if (e.target.matches('#invite-link')) {
-        console.debug('Invite sent.');
-      }
-      if (e.target.matches('#remove-link')) {
-        console.debug('Friend removed.');
-      }
-      if (e.target.matches('#add-link')) {
-        console.debug('Friend added.');
-      }
-      if (e.target.matches('#block-link')) {
-        console.debug('User blocked.');
-      }
-      if (e.target.matches('#unblock-link')) {
-        console.debug('User unblocked.');
-      }
-    });
-  },
+	// Ajouter les événements après le chargement
+	attachEvents: (el) => {
+		// Gestion des boutons en bas
+		el.addEventListener('click', (e) => {
+			if (e.target.matches('#invite-link')) {
+				console.debug('Invite sent.');
+			}
+			if (e.target.matches('#remove-link')) {
+				console.debug('Friend removed.');
+			}
+			if (e.target.matches('#add-link')) {
+				console.debug('Friend added.');
+			}
+			if (e.target.matches('#block-link')) {
+				console.debug('User blocked.');
+			}
+			if (e.target.matches('#unblock-link')) {
+				console.debug('User unblocked.');
+			}
+		});
+	},
 });
 
 /**
@@ -94,7 +94,7 @@ export const otherProfileForm = createComponent({
  * @returns {string} - HTML du match
  */
 function createMatchItem(outcome, mode, duration, date, opponents, outcomeClass) {
-  return `
+	return `
     <div class="match-item d-flex">
       <span class="col-2 ${outcomeClass} fw-bold">${outcome}</span>
       <span class="col-2">${mode}</span>

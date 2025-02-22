@@ -2,10 +2,10 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 
 export const socialForm = createComponent({
-  tag: 'socialForm',
+	tag: 'socialForm',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
     <div id="social-form" class="form-container">
       <h5 class="text-center">Social</h5>
       <span class="background-central-span d-flex flex-column align-items-center flex-grow-1 p-4">
@@ -39,34 +39,34 @@ export const socialForm = createComponent({
     </div>
   `,
 
-  // Ajouter les événements après le chargement
-  attachEvents: (el) => {
-    // Gestion des clics sur "Voir Profil" dans la liste d'amis
-    el.addEventListener('click', (e) => {
-      if (e.target.matches('#other-profile-link')) {
-        e.preventDefault();
-        handleRoute("/social/pilot=pseudo");
-        console.info('OtherProfileForm loaded on click.');
-      }
-    });
+	// Ajouter les événements après le chargement
+	attachEvents: (el) => {
+		// Gestion des clics sur "Voir Profil" dans la liste d'amis
+		el.addEventListener('click', (e) => {
+			if (e.target.matches('#other-profile-link')) {
+				e.preventDefault();
+				handleRoute('/social/pilot=pseudo');
+				console.info('OtherProfileForm loaded on click.');
+			}
+		});
 
-    // Gestion des clics sur "Ajouter" dans la liste des pilotes
-    el.addEventListener('click', (e) => {
-      if (e.target.matches('#add-link')) {
-        e.preventDefault();
-        console.log('Add friend clicked.');
-        // Ajoute la logique pour ajouter un ami
-      }
-    });
+		// Gestion des clics sur "Ajouter" dans la liste des pilotes
+		el.addEventListener('click', (e) => {
+			if (e.target.matches('#add-link')) {
+				e.preventDefault();
+				console.log('Add friend clicked.');
+				// Ajoute la logique pour ajouter un ami
+			}
+		});
 
-    // Gestion de la barre de recherche
-    el.querySelector('#search-link').addEventListener('click', (e) => {
-      e.preventDefault();
-      const query = el.querySelector('#search-bar').value;
-      console.log(`Search for: ${query}`);
-      // Ajouter la logique de recherche ici
-    });
-  },
+		// Gestion de la barre de recherche
+		el.querySelector('#search-link').addEventListener('click', (e) => {
+			e.preventDefault();
+			const query = el.querySelector('#search-bar').value;
+			console.log(`Search for: ${query}`);
+			// Ajouter la logique de recherche ici
+		});
+	},
 });
 
 /**
@@ -78,7 +78,7 @@ export const socialForm = createComponent({
  * @returns {string} - HTML du composant ami
  */
 function createFriendItem(status, pseudo, statusClass) {
-  return `
+	return `
     <div class="friend-item d-flex justify-content-between align-items-center px-3">
       <div class="d-flex align-items-center">
         <span class="status-indicator bi bi-circle-fill ${statusClass} me-2"></span>
@@ -101,7 +101,7 @@ function createFriendItem(status, pseudo, statusClass) {
  * @returns {string} - HTML du composant pilote
  */
 function createPilotItem(status, pseudo, statusClass) {
-  return `
+	return `
     <div class="pilot-item d-flex justify-content-between align-items-center px-3">
       <div class="d-flex align-items-center">
         <span class="status-indicator bi bi-circle-fill ${statusClass} me-2"></span>

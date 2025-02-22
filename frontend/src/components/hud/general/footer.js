@@ -1,14 +1,14 @@
-import { createComponent } from "/src/utils/component.js";
-import { addCameraRotationListener, toggleFreeView} from "/src/3d/freeViewHandler.js";
-import { startAnimation } from "/src/components/hud/index.js";
+import { createComponent } from '/src/utils/component.js';
+import { addCameraRotationListener, toggleFreeView } from '/src/3d/freeViewHandler.js';
+import { startAnimation } from '/src/components/hud/index.js';
 
 let lastOffset = 198;
 
 export const footer = createComponent({
-  tag: "footer",
+	tag: 'footer',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
 	<div class="row">
 	<div class="col-12">
 		<!-- Free View Button -->
@@ -22,18 +22,17 @@ export const footer = createComponent({
 		</div>
 	</div>
 	</div>
-  `,
+`,
 
-  // Ajouter les événements après le chargement
-  attachEvents: (el) => {
-    // Gestion de la boussole
-    initializeCompass(el);
+	// Ajouter les événements après le chargement
+	attachEvents: (el) => {
+		// Gestion de la boussole
+		initializeCompass(el);
 
-	const points = el.querySelectorAll(".points");
+		const points = el.querySelectorAll('.points');
 
-	startAnimation(points, "light-animation", 1000);
-  },
-  
+		startAnimation(points, 'light-animation', 1000);
+	},
 });
 
 /**
@@ -43,17 +42,14 @@ export const footer = createComponent({
  */
 function generateCompassHTML() {
 	const points = [
-	  'N', '', '15', '', '30', '', 'NE', '', '60', '', '75', '', 'E', '', '105', '', '120', '',
-	  'SE', '', '150', '', '165', '', 'S', '', '195', '', '210', '', 'SW', '', '240', '', '255', '',
-	  'W', '', '285', '', '300', '', 'NW', '', '330', '', '345', '', 'N',
+		'N', '', '15', '', '30', '', 'NE', '', '60', '', '75',
+		'', 'E', '', '105', '', '120', '', 'SE', '', '150', '',
+		'165', '', 'S', '', '195', '', '210', '', 'SW', '', '240',
+		'', '255', '', 'W', '', '285', '', '300', '', 'NW', '',
+		'330', '', '345', '', 'N',
 	];
 
-  return points
-    .map(
-      (text) =>
-        `<div class="point${isBold(text) ? " fw-bold" : ""}">${text}</div>`
-    )
-    .join("");
+	return points.map((text) => `<div class="point${isBold(text) ? ' fw-bold' : ''}">${text}</div>`).join('');
 }
 
 /**
@@ -63,7 +59,7 @@ function generateCompassHTML() {
  * @returns {boolean} - Retourne true si en gras
  */
 function isBold(text) {
-  return ["N", "NE", "E", "SE", "S", "SW", "W", "NW"].includes(text);
+	return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'].includes(text);
 }
 
 /**
@@ -72,27 +68,25 @@ function isBold(text) {
  * @param {HTMLElement} el - Élément racine du composant
  */
 function initializeCompass(el) {
-  const points = el.querySelectorAll(".point");
-  const compass = el.querySelector(".compass");
-  const radius = 800;
-  const baseHeight = 5;
-  const rotationRatio = 0.1;
+	const points = el.querySelectorAll('.point');
+	const compass = el.querySelector('.compass');
+	const radius = 800;
+	const baseHeight = 5;
+	const rotationRatio = 0.1;
 
-  // Positionnement initial
-  positionPoints(points, compass, radius, baseHeight, 198);
+	// Positionnement initial
+	positionPoints(points, compass, radius, baseHeight, 198);
 
-  // Gestion de la taille de la fenêtre
-  window.addEventListener("resize", () =>
-    positionPoints(points, compass, radius, baseHeight, lastOffset)
-  );
+	// Gestion de la taille de la fenêtre
+	window.addEventListener('resize', () => positionPoints(points, compass, radius, baseHeight, lastOffset));
 
-  // Mise à jour avec la rotation de la caméra
-  addCameraRotationListener((cameraRotation) => {
-    const percent = (cameraRotation + 1) / 2;
-    const offset = percent * 360 * rotationRatio + 180;
-	lastOffset = offset;
-    positionPoints(points, compass, radius, baseHeight, offset);
-  });
+	// Mise à jour avec la rotation de la caméra
+	addCameraRotationListener((cameraRotation) => {
+		const percent = (cameraRotation + 1) / 2;
+		const offset = percent * 360 * rotationRatio + 180;
+		lastOffset = offset;
+		positionPoints(points, compass, radius, baseHeight, offset);
+	});
 }
 
 /**
@@ -105,14 +99,14 @@ function initializeCompass(el) {
  * @param {number} [offset=180] - Décalage d'angle
  */
 function positionPoints(points, compass, radius, baseHeight, offset = 180) {
-  const curve = 110 * (1.2 / (window.innerWidth / 3840));
-  const totalPoints = points.length;
+	const curve = 110 * (1.2 / (window.innerWidth / 3840));
+	const totalPoints = points.length;
 
-  points.forEach((point, index) => {
-    const angle = (index / totalPoints) * Math.PI + offset * (Math.PI / 180);
-    const x = radius * Math.cos(angle) + compass.offsetWidth / 2;
-    const y = ((curve * Math.sin(angle)) % curve) + curve;
-    point.style.left = `${x}px`;
-    point.style.top = `${Math.abs(y + baseHeight)}px`;
-  });
+	points.forEach((point, index) => {
+		const angle = (index / totalPoints) * Math.PI + offset * (Math.PI / 180);
+		const x = radius * Math.cos(angle) + compass.offsetWidth / 2;
+		const y = ((curve * Math.sin(angle)) % curve) + curve;
+		point.style.left = `${x}px`;
+		point.style.top = `${Math.abs(y + baseHeight)}px`;
+	});
 }

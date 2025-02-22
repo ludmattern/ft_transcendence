@@ -1,30 +1,30 @@
-import * as THREE from "https://esm.sh/three";
-import Store from "./store.js";
-import { LineSegments } from "https://esm.sh/three";
-import { EdgesGeometry } from "https://esm.sh/three";
-import { LineBasicMaterial } from "https://esm.sh/three";
+import * as THREE from 'https://esm.sh/three';
+import Store from './store.js';
+import { LineSegments } from 'https://esm.sh/three';
+import { EdgesGeometry } from 'https://esm.sh/three';
+import { LineBasicMaterial } from 'https://esm.sh/three';
 let aspectRatio;
 
 export const renderTargetP1 = new THREE.WebGLRenderTarget(4096, 2048, {
-  format: THREE.RGBAFormat,
+	format: THREE.RGBAFormat,
 });
 
 export const renderTargetP2 = new THREE.WebGLRenderTarget(4096, 2048, {
-  format: THREE.RGBAFormat,
+	format: THREE.RGBAFormat,
 });
 
 export let cameraPlayer1, cameraPlayer2, screenMesh;
 
 const shaders = {
-  local: {
-    vertex: `
+	local: {
+		vertex: `
       varying vec2 vUv;
       void main() {
         vUv = uv;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     `,
-    fragment: `
+		fragment: `
       uniform sampler2D textureP1;
       uniform sampler2D textureP2;
       varying vec2 vUv;
@@ -39,16 +39,16 @@ const shaders = {
         gl_FragColor = color;
       }
     `,
-  },
-  matchmaking: {
-    vertex: `
+	},
+	matchmaking: {
+		vertex: `
       varying vec2 vUv;
       void main() {
         vUv = uv;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     `,
-    fragment: `
+		fragment: `
       uniform sampler2D textureP1;
       varying vec2 vUv;
 
@@ -56,74 +56,71 @@ const shaders = {
         gl_FragColor = texture2D(textureP1, vUv);
       }
     `,
-  },
+	},
 };
 
 export let screenMaterial = new THREE.ShaderMaterial({
-  uniforms: {
-    textureP1: { value: renderTargetP1.texture },
-    textureP2: { value: renderTargetP2.texture },
-  },
-  vertexShader: shaders.local.vertex,
-  fragmentShader: shaders.local.fragment,
+	uniforms: {
+		textureP1: { value: renderTargetP1.texture },
+		textureP2: { value: renderTargetP2.texture },
+	},
+	vertexShader: shaders.local.vertex,
+	fragmentShader: shaders.local.fragment,
 });
 
 export let cameraCube;
 
 export function buildGameScene(gameConfig) {
-  Store.gameConfig = gameConfig;
+	Store.gameConfig = gameConfig;
 
-  if (Store.pongScene) {
-    Store.pongScene.clear();
-  } else {
-    Store.pongScene = new THREE.Scene();
-  }
+	if (Store.pongScene) {
+		Store.pongScene.clear();
+	} else {
+		Store.pongScene = new THREE.Scene();
+	}
 
-  if (gameConfig.mode === "local") {
-    aspectRatio = 1;
+	if (gameConfig.mode === 'local') {
+		aspectRatio = 1;
 
-    cameraPlayer1 = new THREE.PerspectiveCamera(30, aspectRatio, 0.1, 1000);
-    cameraPlayer1.position.set(0, 0, -12);
-    cameraPlayer1.lookAt(0, 0, 0);
+		cameraPlayer1 = new THREE.PerspectiveCamera(30, aspectRatio, 0.1, 1000);
+		cameraPlayer1.position.set(0, 0, -12);
+		cameraPlayer1.lookAt(0, 0, 0);
 
-    cameraPlayer2 = new THREE.PerspectiveCamera(30, aspectRatio, 0.1, 1000);
-    cameraPlayer2.position.set(0, 0, 12);
-    cameraPlayer2.lookAt(0, 0, 0);
+		cameraPlayer2 = new THREE.PerspectiveCamera(30, aspectRatio, 0.1, 1000);
+		cameraPlayer2.position.set(0, 0, 12);
+		cameraPlayer2.lookAt(0, 0, 0);
 
-    // Applique le shader split-screen
-    screenMaterial.vertexShader = shaders.local.vertex;
-    screenMaterial.fragmentShader = shaders.local.fragment;
-    screenMaterial.needsUpdate = true;
+		// Applique le shader split-screen
+		screenMaterial.vertexShader = shaders.local.vertex;
+		screenMaterial.fragmentShader = shaders.local.fragment;
+		screenMaterial.needsUpdate = true;
 
-    cameraPlayer1.aspect = aspectRatio;
-    cameraPlayer1.updateProjectionMatrix();
+		cameraPlayer1.aspect = aspectRatio;
+		cameraPlayer1.updateProjectionMatrix();
 
-    cameraPlayer2.aspect = aspectRatio;
-    cameraPlayer2.updateProjectionMatrix();
-  } else if (
-    gameConfig.mode === "matchmaking" ||
-    gameConfig.mode === "private" || gameConfig.mode === "solo"
-  ) {
-    aspectRatio = 2;
+		cameraPlayer2.aspect = aspectRatio;
+		cameraPlayer2.updateProjectionMatrix();
+	} else if (gameConfig.mode === 'matchmaking' || gameConfig.mode === 'private' || gameConfig.mode === 'solo') {
+		aspectRatio = 2;
 
-    cameraPlayer1 = new THREE.PerspectiveCamera(25, aspectRatio, 0.01, 1000);
-    cameraPlayer1.position.set(0, 0, 12);
-    cameraPlayer1.lookAt(0, 0, 0);
+		cameraPlayer1 = new THREE.PerspectiveCamera(25, aspectRatio, 0.01, 1000);
+		cameraPlayer1.position.set(0, 0, 12);
+		cameraPlayer1.lookAt(0, 0, 0);
 
-    screenMaterial.vertexShader = shaders.matchmaking.vertex;
-    screenMaterial.fragmentShader = shaders.matchmaking.fragment;
-    screenMaterial.needsUpdate = true;
-  }
+		screenMaterial.vertexShader = shaders.matchmaking.vertex;
+		screenMaterial.fragmentShader = shaders.matchmaking.fragment;
+		screenMaterial.needsUpdate = true;
+	}
 
-  const screenGeometry = new THREE.PlaneGeometry(2, 1);
-  screenMesh = new THREE.Mesh(screenGeometry, screenMaterial);
-  screenMesh.position.set(0, 1, -2);
-  Store.pongScene.add(screenMesh);
+	const screenGeometry = new THREE.PlaneGeometry(2, 1);
+	screenMesh = new THREE.Mesh(screenGeometry, screenMaterial);
+	screenMesh.position.set(0, 1, -2);
+	Store.pongScene.add(screenMesh);
 
-  cameraCube = new THREE.PerspectiveCamera(25, aspectRatio, 0.01, 1000);
-  cameraCube.position.z = 7;
+	cameraCube = new THREE.PerspectiveCamera(25, aspectRatio, 0.01, 1000);
+	cameraCube.position.z = 7;
 
-  const vertexShader = `
+	const vertexShader = `
   varying vec2 vUv;
   void main() {
     vUv = uv;
@@ -131,7 +128,7 @@ export function buildGameScene(gameConfig) {
   }
 `;
 
-const fragmentShader = `
+	const fragmentShader = `
   uniform float uCellSize;      // Taille manuelle de la cellule (hauteur)
   uniform float uNumCells;      // Nombre de cellules par axe (pour le mode nombre de cellules)
   uniform float uUseNumCells;   // Mode : 1.0 = utiliser le nombre de cellules, 0.0 = utiliser uCellSize
@@ -164,197 +161,162 @@ const fragmentShader = `
   }
 `;
 
-
-  const neonMaterial = new THREE.ShaderMaterial({
-	vertexShader,
-	fragmentShader,
-	uniforms: {
-		uCellSize: { value: 0.1 },         // Taille manuelle (sera ignorée si uUseNumCells == 1)
-		uNumCells: { value: 19.0 },          // Nombre de cellules par axe
-		uUseNumCells: { value: 1.0 },        // 1.0 = utiliser uNumCells, 0.0 = utiliser uCellSize
-		uCellAspect: { value: 0.26 },
-		uThickness: { value: 0.02 },
-		uModOffset: { value: 0.55 },
-		uGridCenter: { value: 0.55 },
-		uLineMultiplier: { value: 5.0 },
-		uBackgroundColor: { value: new THREE.Color(0x000000) },
-		uNeonColor: { value: new THREE.Color(0x303049) }
-	}
+	const neonMaterial = new THREE.ShaderMaterial({
+		vertexShader,
+		fragmentShader,
+		uniforms: {
+			uCellSize: { value: 0.1 }, // Taille manuelle (sera ignorée si uUseNumCells == 1)
+			uNumCells: { value: 19.0 }, // Nombre de cellules par axe
+			uUseNumCells: { value: 1.0 }, // 1.0 = utiliser uNumCells, 0.0 = utiliser uCellSize
+			uCellAspect: { value: 0.26 },
+			uThickness: { value: 0.02 },
+			uModOffset: { value: 0.55 },
+			uGridCenter: { value: 0.55 },
+			uLineMultiplier: { value: 5.0 },
+			uBackgroundColor: { value: new THREE.Color(0x000000) },
+			uNeonColor: { value: new THREE.Color(0x303049) },
+		},
 	});
 
-  const floorCeilingMaterial = neonMaterial;
-  const sideWallMaterial = neonMaterial;
-  const endWallMaterial = neonMaterial;
+	const floorCeilingMaterial = neonMaterial;
+	const sideWallMaterial = neonMaterial;
+	const endWallMaterial = neonMaterial;
 
-  const tunnelWidth = 7.5;
-  const tunnelHeight = 1.5;
-  const tunnelDepth = 1.5;
+	const tunnelWidth = 7.5;
+	const tunnelHeight = 1.5;
+	const tunnelDepth = 1.5;
 
-  const leftWall = new THREE.Mesh(
-    new THREE.PlaneGeometry(tunnelDepth, tunnelHeight),
-    sideWallMaterial
-  );
-  leftWall.position.set(-tunnelWidth / 2, 0, 0);
-  leftWall.rotation.y = Math.PI / 2;
+	const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(tunnelDepth, tunnelHeight), sideWallMaterial);
+	leftWall.position.set(-tunnelWidth / 2, 0, 0);
+	leftWall.rotation.y = Math.PI / 2;
 
-  const rightWall = new THREE.Mesh(
-    new THREE.PlaneGeometry(tunnelDepth, tunnelHeight),
-    sideWallMaterial
-  );
-  rightWall.position.set(tunnelWidth / 2, 0, 0);
-  rightWall.rotation.y = -Math.PI / 2;
+	const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(tunnelDepth, tunnelHeight), sideWallMaterial);
+	rightWall.position.set(tunnelWidth / 2, 0, 0);
+	rightWall.rotation.y = -Math.PI / 2;
 
-  const ceiling = new THREE.Mesh(
-    new THREE.PlaneGeometry(tunnelWidth, tunnelDepth),
-    floorCeilingMaterial
-  );
-  ceiling.position.set(0, tunnelHeight / 2, 0);
-  ceiling.rotation.x = Math.PI / 2;
+	const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(tunnelWidth, tunnelDepth), floorCeilingMaterial);
+	ceiling.position.set(0, tunnelHeight / 2, 0);
+	ceiling.rotation.x = Math.PI / 2;
 
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(tunnelWidth, tunnelDepth),
-    floorCeilingMaterial
-  );
-  floor.position.set(0, -tunnelHeight / 2, 0);
-  floor.rotation.x = -Math.PI / 2;
+	const floor = new THREE.Mesh(new THREE.PlaneGeometry(tunnelWidth, tunnelDepth), floorCeilingMaterial);
+	floor.position.set(0, -tunnelHeight / 2, 0);
+	floor.rotation.x = -Math.PI / 2;
 
-  const frontWall = new THREE.Mesh(
-    new THREE.PlaneGeometry(tunnelWidth, tunnelHeight),
-    endWallMaterial
-  );
-  frontWall.position.set(0, 0, -tunnelDepth / 2);
+	const frontWall = new THREE.Mesh(new THREE.PlaneGeometry(tunnelWidth, tunnelHeight), endWallMaterial);
+	frontWall.position.set(0, 0, -tunnelDepth / 2);
 
-  const backWall = new THREE.Mesh(
-    new THREE.PlaneGeometry(tunnelWidth, tunnelHeight),
-    endWallMaterial
-  );
-  backWall.position.set(0, 0, tunnelDepth / 2);
-  backWall.rotation.y = Math.PI;
-  backWall.rotation.z = -Math.PI;
+	const backWall = new THREE.Mesh(new THREE.PlaneGeometry(tunnelWidth, tunnelHeight), endWallMaterial);
+	backWall.position.set(0, 0, tunnelDepth / 2);
+	backWall.rotation.y = Math.PI;
+	backWall.rotation.z = -Math.PI;
 
-  //Store.pongScene.add(leftWall);
-  //Store.pongScene.add(rightWall);
-  Store.pongScene.add(ceiling);
-  Store.pongScene.add(floor);
-  Store.pongScene.add(frontWall);
-  Store.pongScene.add(backWall);
+	//Store.pongScene.add(leftWall);
+	//Store.pongScene.add(rightWall);
+	Store.pongScene.add(ceiling);
+	Store.pongScene.add(floor);
+	Store.pongScene.add(frontWall);
+	Store.pongScene.add(backWall);
 
-  const plaqueMaterial = new THREE.MeshBasicMaterial({
-    color: 0x0000ff,
-    transparent: true,
-    opacity: 0.8,
-    side: THREE.DoubleSide,
-  });
+	const plaqueMaterial = new THREE.MeshBasicMaterial({
+		color: 0x0000ff,
+		transparent: true,
+		opacity: 0.8,
+		side: THREE.DoubleSide,
+	});
 
-const plaqueSize = { width: 0.25, height: 0.25};
+	const plaqueSize = { width: 0.25, height: 0.25 };
 
-  function createPlaqueWithEdges(width, height, material) {
-    const geometry = new THREE.PlaneGeometry(width, height);
-    const plaqueMesh = new THREE.Mesh(geometry, material);
+	function createPlaqueWithEdges(width, height, material) {
+		const geometry = new THREE.PlaneGeometry(width, height);
+		const plaqueMesh = new THREE.Mesh(geometry, material);
 
-    const edgesGeometry = new THREE.EdgesGeometry(geometry);
-    const edgesMaterial = new THREE.LineBasicMaterial({
-      color: 0xffffff,
-      linewidth: 10,
-    });
-    const edgesMesh = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+		const edgesGeometry = new THREE.EdgesGeometry(geometry);
+		const edgesMaterial = new THREE.LineBasicMaterial({
+			color: 0xffffff,
+			linewidth: 10,
+		});
+		const edgesMesh = new THREE.LineSegments(edgesGeometry, edgesMaterial);
 
-    const plaqueGroup = new THREE.Group();
-    plaqueGroup.add(plaqueMesh);
-    plaqueGroup.add(edgesMesh);
+		const plaqueGroup = new THREE.Group();
+		plaqueGroup.add(plaqueMesh);
+		plaqueGroup.add(edgesMesh);
 
-    return plaqueGroup;
-  }
+		return plaqueGroup;
+	}
 
-  Store.plaqueTop = createPlaqueWithEdges(
-    plaqueSize.width,
-    plaqueSize.height,
-    plaqueMaterial
-  );
-  Store.plaqueBottom = createPlaqueWithEdges(
-    plaqueSize.width,
-    plaqueSize.height,
-    plaqueMaterial
-  );
-  Store.plaqueLeft = createPlaqueWithEdges(
-    plaqueSize.width,
-    plaqueSize.height,
-    plaqueMaterial
-  );
-  Store.plaqueRight = createPlaqueWithEdges(
-    plaqueSize.width,
-    plaqueSize.height,
-    plaqueMaterial
-  );
+	Store.plaqueTop = createPlaqueWithEdges(plaqueSize.width, plaqueSize.height, plaqueMaterial);
+	Store.plaqueBottom = createPlaqueWithEdges(plaqueSize.width, plaqueSize.height, plaqueMaterial);
+	Store.plaqueLeft = createPlaqueWithEdges(plaqueSize.width, plaqueSize.height, plaqueMaterial);
+	Store.plaqueRight = createPlaqueWithEdges(plaqueSize.width, plaqueSize.height, plaqueMaterial);
 
-  Store.plaqueTop.rotation.x = Math.PI / 2;
-  Store.plaqueBottom.rotation.x = -Math.PI / 2;
+	Store.plaqueTop.rotation.x = Math.PI / 2;
+	Store.plaqueBottom.rotation.x = -Math.PI / 2;
 
-  Store.pongScene.add(Store.plaqueTop);
-  Store.pongScene.add(Store.plaqueBottom);
-  Store.pongScene.add(Store.plaqueLeft);
-  Store.pongScene.add(Store.plaqueRight);
+	Store.pongScene.add(Store.plaqueTop);
+	Store.pongScene.add(Store.plaqueBottom);
+	Store.pongScene.add(Store.plaqueLeft);
+	Store.pongScene.add(Store.plaqueRight);
 
-  const paddleGeometry = new THREE.BoxGeometry(0.07, 0.33, 0.33);
-  const paddleMaterial = new THREE.MeshStandardMaterial({
-    color: 0x7f00ff,
-    transparent: true,
-    opacity: 0.3,
-  });
+	const paddleGeometry = new THREE.BoxGeometry(0.07, 0.33, 0.33);
+	const paddleMaterial = new THREE.MeshStandardMaterial({
+		color: 0x7f00ff,
+		transparent: true,
+		opacity: 0.3,
+	});
 
-  const paddleMaterial2 = new THREE.MeshStandardMaterial({
-    color: 0xff007f,
-    transparent: true,
-    opacity: 0.3,
-  });
-  const edgesGeometry = new EdgesGeometry(paddleGeometry);
-  const edgesMaterial = new LineBasicMaterial({
-    color: 0xffffff,
-    linewidth: 10,
-  });
+	const paddleMaterial2 = new THREE.MeshStandardMaterial({
+		color: 0xff007f,
+		transparent: true,
+		opacity: 0.3,
+	});
+	const edgesGeometry = new EdgesGeometry(paddleGeometry);
+	const edgesMaterial = new LineBasicMaterial({
+		color: 0xffffff,
+		linewidth: 10,
+	});
 
-  const solidPaddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
-  const wireframePaddle = new LineSegments(edgesGeometry, edgesMaterial);
-  const paddleGroup = new THREE.Group();
+	const solidPaddle = new THREE.Mesh(paddleGeometry, paddleMaterial);
+	const wireframePaddle = new LineSegments(edgesGeometry, edgesMaterial);
+	const paddleGroup = new THREE.Group();
 
-  paddleGroup.add(solidPaddle);
-  paddleGroup.add(wireframePaddle);
+	paddleGroup.add(solidPaddle);
+	paddleGroup.add(wireframePaddle);
 
-  Store.player1Paddle = paddleGroup;
-  Store.pongScene.add(Store.player1Paddle);
+	Store.player1Paddle = paddleGroup;
+	Store.pongScene.add(Store.player1Paddle);
 
-  const paddleGroup2 = new THREE.Group();
-  const solidPaddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial2);
-  const wireframePaddle2 = new LineSegments(edgesGeometry, edgesMaterial);
+	const paddleGroup2 = new THREE.Group();
+	const solidPaddle2 = new THREE.Mesh(paddleGeometry, paddleMaterial2);
+	const wireframePaddle2 = new LineSegments(edgesGeometry, edgesMaterial);
 
-  paddleGroup2.add(solidPaddle2);
-  paddleGroup2.add(wireframePaddle2);
+	paddleGroup2.add(solidPaddle2);
+	paddleGroup2.add(wireframePaddle2);
 
-  Store.player2Paddle = paddleGroup2;
-  Store.pongScene.add(Store.player2Paddle);
+	Store.player2Paddle = paddleGroup2;
+	Store.pongScene.add(Store.player2Paddle);
 
-  const meshBallGeometry = new THREE.SphereGeometry(0.05, 30, 15);
-  const meshBallMaterial = new THREE.MeshStandardMaterial({
-    color: 0x5588f1,
-    emissive: 0x5588f1,
-    emissiveIntensity: 2,
-    roughness: 0.2,
-    metalness: 0.8,
-  });
+	const meshBallGeometry = new THREE.SphereGeometry(0.05, 30, 15);
+	const meshBallMaterial = new THREE.MeshStandardMaterial({
+		color: 0x5588f1,
+		emissive: 0x5588f1,
+		emissiveIntensity: 2,
+		roughness: 0.2,
+		metalness: 0.8,
+	});
 
-  Store.meshBall = new THREE.Mesh(meshBallGeometry, meshBallMaterial);
-  Store.meshBall.position.set(0, 0, 0);
-  Store.pongScene.add(Store.meshBall);
+	Store.meshBall = new THREE.Mesh(meshBallGeometry, meshBallMaterial);
+	Store.meshBall.position.set(0, 0, 0);
+	Store.pongScene.add(Store.meshBall);
 
-  cameraPlayer1 = new THREE.PerspectiveCamera(60, aspectRatio, 0.1, 100);
-  cameraPlayer1.lookAt(0, 0, 0);
+	cameraPlayer1 = new THREE.PerspectiveCamera(60, aspectRatio, 0.1, 100);
+	cameraPlayer1.lookAt(0, 0, 0);
 
-  cameraPlayer2 = new THREE.PerspectiveCamera(60, aspectRatio, 0.1, 100);
-  cameraPlayer2.lookAt(0, 0, 0);
+	cameraPlayer2 = new THREE.PerspectiveCamera(60, aspectRatio, 0.1, 100);
+	cameraPlayer2.lookAt(0, 0, 0);
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-  Store.pongScene.add(ambientLight);
-/*
+	const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+	Store.pongScene.add(ambientLight);
+	/*
   const guiParams = {
 	// Pour le mode manuel ou par nombre de cellules
 	cellSize: 0.1,       
@@ -412,102 +374,94 @@ const plaqueSize = { width: 0.25, height: 0.25};
 	neonMaterial.uniforms.uNeonColor.value.set(value);
   });
   
- */ 
+ */
 }
 
 const lerpFactor = 0.15;
 const lerpFactorCam = 0.15;
 
-
 export function animatePong(renderer) {
-  if (!Store.pongScene || !Store.gameConfig) return;
+	if (!Store.pongScene || !Store.gameConfig) return;
 
-  if (Store.gameConfig.mode === "local") {
-    if (!cameraPlayer1 || !cameraPlayer2) return;
+	if (Store.gameConfig.mode === 'local') {
+		if (!cameraPlayer1 || !cameraPlayer2) return;
 
-    if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
-    if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
+		if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
+		if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
 
-    if (Store.player1Paddle && Store.p1Target) {
-        Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
-        Store.p1Focus.lerp(Store.p1Target, lerpFactor);
-    }
-    if (Store.player2Paddle && Store.p2Target) {
-        Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
-        Store.p2Focus.lerp(Store.p2Target, lerpFactor);
-    }
+		if (Store.player1Paddle && Store.p1Target) {
+			Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
+			Store.p1Focus.lerp(Store.p1Target, lerpFactor);
+		}
+		if (Store.player2Paddle && Store.p2Target) {
+			Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
+			Store.p2Focus.lerp(Store.p2Target, lerpFactor);
+		}
 
-    const offsetP1 = new THREE.Vector3(-0.75, 0, 0);
-    const offsetP2 = new THREE.Vector3(0.75, 0, 0);
+		const offsetP1 = new THREE.Vector3(-0.75, 0, 0);
+		const offsetP2 = new THREE.Vector3(0.75, 0, 0);
 
-    cameraPlayer1.position.lerp(Store.p1Focus.clone().add(offsetP1), lerpFactorCam);
-    cameraPlayer1.lookAt(Store.p1Focus);
+		cameraPlayer1.position.lerp(Store.p1Focus.clone().add(offsetP1), lerpFactorCam);
+		cameraPlayer1.lookAt(Store.p1Focus);
 
-    cameraPlayer2.position.lerp(Store.p2Focus.clone().add(offsetP2), lerpFactorCam);
-    cameraPlayer2.lookAt(Store.p2Focus);
+		cameraPlayer2.position.lerp(Store.p2Focus.clone().add(offsetP2), lerpFactorCam);
+		cameraPlayer2.lookAt(Store.p2Focus);
 
-    screenMesh.visible = false;
+		screenMesh.visible = false;
 
-    renderer.setRenderTarget(renderTargetP1);
-    renderer.render(Store.pongScene, cameraPlayer1);
+		renderer.setRenderTarget(renderTargetP1);
+		renderer.render(Store.pongScene, cameraPlayer1);
 
-    renderer.setRenderTarget(renderTargetP2);
-    renderer.render(Store.pongScene, cameraPlayer2);
+		renderer.setRenderTarget(renderTargetP2);
+		renderer.render(Store.pongScene, cameraPlayer2);
 
-    screenMesh.visible = true;
+		screenMesh.visible = true;
 
-    screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
-    screenMaterial.uniforms.textureP2.value = renderTargetP2.texture;
+		screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
+		screenMaterial.uniforms.textureP2.value = renderTargetP2.texture;
 
-    renderer.setRenderTarget(null);
-    renderer.render(Store.pongScene, cameraCube);
-  } else if (
-    Store.gameConfig.mode === "matchmaking" ||
-    Store.gameConfig.mode === "private" ||Store.gameConfig.mode === "solo"
-  ) {
-    if (!cameraPlayer1) return;
-    let cam;
-    if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
-    if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
+		renderer.setRenderTarget(null);
+		renderer.render(Store.pongScene, cameraCube);
+	} else if (Store.gameConfig.mode === 'matchmaking' || Store.gameConfig.mode === 'private' || Store.gameConfig.mode === 'solo') {
+		if (!cameraPlayer1) return;
+		let cam;
+		if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
+		if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
 
-    if (Store.gameConfig.side == "left") {
+		if (Store.gameConfig.side == 'left') {
+			if (Store.player1Paddle && Store.p1Target) {
+				Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
+				Store.p1Focus.lerp(Store.p1Target, lerpFactor);
+				const offsetP1 = new THREE.Vector3(-0.75, 0, 0);
+				cameraPlayer1.position.lerp(Store.p1Focus.clone().add(offsetP1), lerpFactorCam);
+				cameraPlayer1.lookAt(Store.p1Focus);
+				cam = cameraPlayer1;
+			}
+			if (Store.player2Paddle && Store.p2Target) {
+				Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
+			}
+		} else if (Store.gameConfig.side == 'right') {
+			if (Store.player2Paddle && Store.p2Target) {
+				Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
+				Store.p2Focus.lerp(Store.p2Target, lerpFactor);
+				const offsetP2 = new THREE.Vector3(0.75, 0, 0);
+				cameraPlayer2.position.lerp(Store.p2Focus.clone().add(offsetP2), lerpFactorCam);
+				cameraPlayer2.lookAt(Store.p2Focus);
+				cam = cameraPlayer2;
+			}
+			if (Store.player1Paddle && Store.p1Target) {
+				Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
+			}
+		}
+		screenMesh.visible = false;
 
-      if (Store.player1Paddle && Store.p1Target) {
-          Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
-          Store.p1Focus.lerp(Store.p1Target, lerpFactor);
-      const offsetP1 = new THREE.Vector3(-0.75, 0, 0);
-      cameraPlayer1.position.lerp(Store.p1Focus.clone().add(offsetP1), lerpFactorCam);
-      cameraPlayer1.lookAt(Store.p1Focus);
-      cam = cameraPlayer1;
-      }
-      if (Store.player2Paddle && Store.p2Target) {
-        Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
-      }
-    } else if (Store.gameConfig.side == "right") {
+		renderer.setRenderTarget(renderTargetP1);
+		renderer.render(Store.pongScene, cam);
 
-      if (Store.player2Paddle && Store.p2Target) {
-          Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
-          Store.p2Focus.lerp(Store.p2Target, lerpFactor);
-      const offsetP2 = new THREE.Vector3(0.75, 0, 0);
-      cameraPlayer2.position.lerp(Store.p2Focus.clone().add(offsetP2), lerpFactorCam);
-      cameraPlayer2.lookAt(Store.p2Focus);
-      cam = cameraPlayer2;
-      }
-      if (Store.player1Paddle && Store.p1Target) {
-        Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
-      }
-    }
-    screenMesh.visible = false;
+		screenMesh.visible = true;
+		screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
 
-    
-
-    renderer.setRenderTarget(renderTargetP1);
-    renderer.render(Store.pongScene, cam);
-
-    screenMesh.visible = true;
-    screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
-
-    renderer.setRenderTarget(null);
-    renderer.render(Store.pongScene, cameraCube);
-  }
+		renderer.setRenderTarget(null);
+		renderer.render(Store.pongScene, cameraCube);
+	}
 }

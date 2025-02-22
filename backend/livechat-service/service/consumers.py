@@ -80,51 +80,63 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
 	async def info_message(self, event):
-		"""Send a friend request."""
+		"""Send a friend request or accept an existing one if initiated by the other user."""
 		logger.info(f"ChatConsumer.send_friend_request received event: {event}")
 
 		action = event.get("action")
 		author_id = event.get("author")
 		recipient_id = event.get("recipient")
 
-		if(str(action) == "send_friend_request"):
+		if str(action) == "send_friend_request":
 			if not author_id or not recipient_id:
-				await self.channel_layer.group_send(f"user_{author_id}",
-					{	
-						"type": "error_message",
-						"error": "Author or recipient not provided"
-					})
+				await self.channel_layer.group_send(
+					f"user_{author_id}",
+					{"type": "error_message", "error": "Author or recipient not provided"}
+				)
 				return
 
 			if str(author_id) == str(recipient_id):
-				await self.channel_layer.group_send(f"user_{author_id}",
-					{	
-						"type": "error_message",
-						"error": "You can't send a friend request to yourself"
-					})
+				await self.channel_layer.group_send(
+					f"user_{author_id}",
+					{"type": "error_message", "error": "You can't send a friend request to yourself"}
+				)
 				return
 
-			logger.info(f"Author: {author_id}, Recipient: {recipient_id}")
-			user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
-			logger.info(f"User: {user}")
-			friend = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
-			logger.info(f"Friend: {friend}")
+			# Récupérer les utilisateurs
+			initiator = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+			recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 
-			if user.id > friend.id:
-				user, friend = friend, user
-			exists = await database_sync_to_async(ManualFriendsRelations.objects.filter(user=user, friend=friend).exists)()
-			logger.info(f"Friend request exists: {exists}")
+			# Normaliser l'ordre pour éviter les doublons
+			if initiator.id > recipient_user.id:
+				user, friend = recipient_user, initiator
+			else:
+				user, friend = initiator, recipient_user
 
-			if exists:
-				logger.info("Friend request already sent")
-				await self.channel_layer.group_send(f"user_{author_id}",
-					{	
-						"type": "error_message",
-						"error": "Friend request already sent"
-					})
-				return
+			qs = ManualFriendsRelations.objects.filter(user=user, friend=friend)
+			if await database_sync_to_async(qs.exists)():
+				relation = await database_sync_to_async(qs.first)()
+				if relation.status == "pending":
+					initiator_id = await database_sync_to_async(lambda: relation.initiator.id)()
+					if str(initiator_id) != str(author_id):
+						relation.status = "accepted"
+						await database_sync_to_async(relation.save)()
+						confirmation_message = {
+							"type": "info_message",
+							"info": "Friend request accepted. You are now friends."
+						}
+						await self.channel_layer.group_send(f"user_{recipient_id}", confirmation_message)
+						await self.channel_layer.group_send(f"user_{author_id}", confirmation_message)
+					else:
+						await self.channel_layer.group_send(
+							f"user_{author_id}",
+							{"type": "error_message", "error": "Friend request already sent"}
+						)
+					return
 
-			await database_sync_to_async(ManualFriendsRelations.objects.create)(user=user, friend=friend, status="pending")
-			logger.info("Friend request written to database")
+			# Créer une nouvelle demande d'ami en indiquant explicitement l'initiateur réel
+			await database_sync_to_async(ManualFriendsRelations.objects.create)(
+				user=user, friend=friend, status="pending", initiator=initiator
+			)
 			await self.channel_layer.group_send(f"user_{recipient_id}", event)
 			await self.channel_layer.group_send(f"user_{author_id}", event)
+			logger.info(f"Friend request sent from {author_id} to {recipient_id}")

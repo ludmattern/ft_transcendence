@@ -1,11 +1,11 @@
-import { createComponent } from "/src/utils/component.js";
-import { handleRoute, getPreviousRoute } from "/src/services/router.js";
+import { createComponent } from '/src/utils/component.js';
+import { handleRoute, getPreviousRoute } from '/src/services/router.js';
 
 export const deleteAccountForm = createComponent({
-  tag: "deleteAccountForm",
+	tag: 'deleteAccountForm',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
     <div id="delete-account-form" class="form-container">
       <h5>RESIGN</h5>
       <span class="background-central-span">
@@ -19,38 +19,36 @@ export const deleteAccountForm = createComponent({
     </div>
   `,
 
-  // Ajouter les événements après le chargement
-  attachEvents: async (el) => {
-    el.addEventListener("click", async (e) => {
-      if (e.target.matches("#cancel-delete")) {
-        e.preventDefault();
-        handleRoute(getPreviousRoute()); // Retour à la route précédente
-      }
-      if (e.target.matches("#confirm-delete")) {
-        const formData = collectData(el);
-        try {
-          const response = await fetch("/api/user-service/delete/", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData),
-          });
-          const data = await response.json();
-          if (data.success) {
-              alert('Deleted account successfully.');
-              sessionStorage.removeItem("username");
-              sessionStorage.removeItem("userId");
-          }
-        }
-        catch (error) {
-          alert('An unexpected error occurred.');
-        }
-        e.preventDefault();
-        handleRoute("/login"); // Redirection vers login
-      }
-    });
-  },
+	// Ajouter les événements après le chargement
+	attachEvents: async (el) => {
+		el.addEventListener('click', async (e) => {
+			if (e.target.matches('#cancel-delete')) {
+				e.preventDefault();
+				handleRoute(getPreviousRoute()); // Retour à la route précédente
+			}
+			if (e.target.matches('#confirm-delete')) {
+				const formData = collectData(el);
+				try {
+					const response = await fetch('/api/user-service/delete/', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(formData),
+					});
+					const data = await response.json();
+					if (data.success) {
+						alert('Deleted account successfully.');
+						sessionStorage.removeItem('username');
+						sessionStorage.removeItem('userId');
+					}
+				} catch (error) {
+					alert('An unexpected error occurred.');
+				}
+				e.preventDefault();
+				handleRoute('/login'); // Redirection vers login
+			}
+		});
+	},
 });
-
 
 /**
  *
@@ -58,7 +56,7 @@ export const deleteAccountForm = createComponent({
  * @returns {Object} - Données collectées
  */
 function collectData(el) {
-  return {
-    username: sessionStorage.getItem('username'),
-  };
+	return {
+		username: sessionStorage.getItem('username'),
+	};
 }

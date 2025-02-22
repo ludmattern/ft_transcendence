@@ -1,10 +1,10 @@
 import { createComponent } from '/src/utils/component.js';
 
 export const profileForm = createComponent({
-  tag: 'profileForm',
+	tag: 'profileForm',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
     <div id="profile-form" class="form-container">
       <h5 class="text-center">Pilot Profile</h5>
       <span class="background-central-span d-flex flex-column align-items-center flex-grow-1 p-4">
@@ -63,38 +63,36 @@ export const profileForm = createComponent({
     </div>
   `,
 
-  // Ajouter les événements après le chargement
-  attachEvents: async (el) => {
-    // Gestion du clic sur un lien vers un autre profil
-    el.addEventListener('click', (e) => {
-      if (e.target.matches('#other-profile-link')) {
-        e.preventDefault();
-        // testloadComponent('#central-window', otherProfileForm); // Charger OtherProfileForm
-        console.info('OtherProfileForm loaded on click.');
-      }
-    });
+	// Ajouter les événements après le chargement
+	attachEvents: async (el) => {
+		// Gestion du clic sur un lien vers un autre profil
+		el.addEventListener('click', (e) => {
+			if (e.target.matches('#other-profile-link')) {
+				e.preventDefault();
+				// testloadComponent('#central-window', otherProfileForm); // Charger OtherProfileForm
+				console.info('OtherProfileForm loaded on click.');
+			}
+		});
 
+		const htmldata = collectData(el);
+		const response = await fetch('/api/user-service/profile/', {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(htmldata),
+		});
+		const data = await response.json();
+		if (data.success) {
+			console.log(`Profile data fetched:`, data);
+		} else {
+			console.error('Error while fetching profile data:', data);
+		}
 
-    const htmldata = collectData(el);
-    const response = await fetch("/api/user-service/profile/", {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(htmldata),
-    });
-    const data = await response.json();
-    if (data.success) {
-      console.log(`Profile data fetched:`, data);
-    } else {
-      console.error('Error while fetching profile data:', data);
-    }
-
-    // Exemple d'événement supplémentaire pour les statistiques
-    el.querySelector('.profile-pseudo-input').addEventListener('change', (e) => {
-      console.log(`Pseudo changé en : ${e.target.value}`);
-    });
-  },
+		// Exemple d'événement supplémentaire pour les statistiques
+		el.querySelector('.profile-pseudo-input').addEventListener('change', (e) => {
+			console.log(`Pseudo changé en : ${e.target.value}`);
+		});
+	},
 });
-
 
 /**
  *
@@ -102,9 +100,9 @@ export const profileForm = createComponent({
  * @returns {Object} - Données collectées
  */
 function collectData(el) {
-  return {
-    username: sessionStorage.getItem('username'),
-  };
+	return {
+		username: sessionStorage.getItem('username'),
+	};
 }
 
 /**
@@ -116,7 +114,7 @@ function collectData(el) {
  * @returns {string} - HTML du match
  */
 function createMatchItem(outcome, opponents, outcomeClass) {
-  return `
+	return `
     <div class="match-item d-flex">
       <span class="col-2 ${outcomeClass} fw-bold">${outcome}</span>
       <span class="col-4">${opponents}</span>
@@ -125,7 +123,7 @@ function createMatchItem(outcome, opponents, outcomeClass) {
 }
 
 function createWinrateItem(winrate_value) {
-  return `
+	return `
   <div class="stat-item d-flex align-items-center mb-1">
   <span class="bi bi-trophy me-2"></span>
   <span class="stat-title">Winrate:</span>
@@ -135,7 +133,7 @@ function createWinrateItem(winrate_value) {
 }
 
 function createRankItem(rank_value) {
-  return `
+	return `
     <div class="stat-item d-flex align-items-center">
       <span class="bi bi-award me-2"></span>
       <span class="stat-title">Rank:</span>

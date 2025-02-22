@@ -1,10 +1,10 @@
-import { createComponent } from "/src/utils/component.js";
+import { createComponent } from '/src/utils/component.js';
 
 export const pongPageSkeleton = createComponent({
-  tag: "pongPageSkeleton",
+	tag: 'pongPageSkeleton',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
 	  <main class="row d-flex flex-column flex-grow-1 p-5" id="pong-menu-container">
 		
 		<header id="pong-header-container" class="text-white d-flex align-items-center p-3 justify-content-around border" style="background-color: #113630;">
