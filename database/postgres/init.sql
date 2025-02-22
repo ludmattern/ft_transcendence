@@ -108,3 +108,18 @@ CREATE TABLE IF NOT EXISTS service_tournamentmatch (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     FOREIGN KEY (tournament_id) REFERENCES tournaments(id) ON DELETE CASCADE
 );
+
+
+INSERT INTO users (
+  username,
+  email,
+  password,
+  is_dummy
+) VALUES
+  ('a', 'a@.com', 'a', true),
+  ('b', 'b@.com', 'b', true),
+  ('c', 'c@.com', 'c', true),
+  ('d', 'd@.com', 'd', true);
+
+
+

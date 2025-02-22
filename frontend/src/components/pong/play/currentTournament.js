@@ -175,7 +175,7 @@ export const currentTournament = createComponent({
             </div>
           `;
         }).join("");
-        
+
 
         roundsHtml += `
           <div class="round-column">
@@ -225,7 +225,6 @@ export const currentTournament = createComponent({
             });
       });
     }
-
     renderBracket();
   ;}
 });
