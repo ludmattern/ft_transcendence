@@ -11,14 +11,14 @@ export const infoPanelItem = createComponent({
 		console.log('item', item);
 
 		return `
-	<div class="panel-item">
+	<div class="panel-item" data-notification-id="${item.type}-${item.inviter_id}">
 		<span>${content}<b class="author" style="cursor: pointer;">${item.inviter}</b></span>
 		${
 			item.actions
 				? `<div class="actions">
-			<button class="btn bi bi-check" id="accept-action">Accept</button>
-			<button class="btn bi bi-x" id="refuse-action">Refuse</button>
-			</div>`
+						<button class="btn bi bi-check" id="accept-action">Accept</button>
+						<button class="btn bi bi-x" id="refuse-action">Refuse</button>
+					</div>`
 				: ''
 		}
 	</div>`;
@@ -53,6 +53,7 @@ export const infoPanelItem = createComponent({
 		}
 	},
 });
+
 
 function behaviorFriendRequest(el, item) {
 	const acceptButton = el.querySelector('#accept-action');

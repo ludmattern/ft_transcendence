@@ -61,6 +61,8 @@ export function setupChatInput() {
 			payload.channel = 'general';
 		}
 
+		console.log('Sending message:', payload);
+
 		// Send the payload
 		ws.send(JSON.stringify(payload));
 	}
