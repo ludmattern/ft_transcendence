@@ -57,7 +57,7 @@ class ManualTournament(models.Model):
 
 
 class ManualTournamentParticipants(models.Model):
-    id = models.AutoField(primary_key=True)  # ✅ Added primary key
+    id = models.AutoField(primary_key=True)  
     tournament = models.ForeignKey(ManualTournament, on_delete=models.CASCADE, related_name='participants')
     user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name='tournaments')
     status = models.CharField(

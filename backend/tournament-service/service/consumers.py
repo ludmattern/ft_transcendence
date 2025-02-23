@@ -98,9 +98,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         
         
         n = len(players)
-        rounds_count = int(math.log2(n))  # Nombre de rounds (ex: 2 pour 4 joueurs, 3 pour 8, etc.)
+        rounds_count = int(math.log2(n))  
 
-        # Round 1 : les joueurs sont en ordre dans le tableau players
         for i in range(0, n, 2):
             match_order = (i // 2) + 1
             player1 = players[i]

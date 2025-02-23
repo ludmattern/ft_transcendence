@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS tournaments (
 	rounds INT DEFAULT 0,
 	name VARCHAR(255) DEFAULT 'TOURNAMENT_DEFAULT_NAME',
 	organizer_id INT NOT NULL,
-	status VARCHAR(50) DEFAULT 'upcoming', -- 'upcoming', 'ongoing', 'completed'
+	status VARCHAR(50) DEFAULT 'upcoming', -- 
 	mode VARCHAR(10) DEFAULT 'local',
 	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
