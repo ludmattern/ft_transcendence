@@ -275,5 +275,3 @@ INSERT INTO users (
   ('ez', 'ez@.com', 'ez', true),
   ('fa', 'fa@.com', 'fa', true),
   ('fb', 'fb@.com', 'fb', true);
-
-
