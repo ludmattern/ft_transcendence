@@ -1,4 +1,5 @@
 // src/components/hud/notifications.js
+import { emit } from '/src/services/eventEmitter.js';
 
 let notificationBuffer = [];
 
@@ -103,10 +104,13 @@ export async function updateAndCompareInfoData() {
 			console.log('Informations locales :', localInfo);
 			console.log('Informations serveur :', serverInfo);
 
-			const newMessages = serverInfo.filter((newMsg) => !localInfo.some((localMsg) => localMsg.id === newMsg.id));
+			const messagesToAdd = serverInfo.filter((newMsg) => !localInfo.some((localMsg) => localMsg.type === newMsg.type && localMsg.inviter_id === newMsg.inviter_id));
+			const messagesToRemove = localInfo.filter((localMsg) => !serverInfo.some((newMsg) => newMsg.type === localMsg.type && newMsg.inviter_id === localMsg.inviter_id));
 
-			if (newMessages.length > 0) {
-				console.log('Nouveaux messages :', newMessages);
+			if (messagesToAdd.length > 0 || messagesToRemove.length > 0) {
+				console.log('Nouveaux messages à ajouter :', messagesToAdd);
+				console.log('Messages à supprimer :', messagesToRemove);
+				emit('updatenotifications', { toAdd: messagesToAdd, toRemove: messagesToRemove });
 			} else {
 				console.log('Aucun nouveau message.');
 			}

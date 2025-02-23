@@ -6,7 +6,6 @@ import { startMatchmakingGame, startPrivateGame } from '/src/services/multiplaye
 import { createNotificationMessage, updateAndCompareInfoData } from '/src/components/hud/sideWindow/left/notifications.js';
 import { handleLocalTournamentGameEnding } from '/src/services/tournamentHandler.js';
 
-
 export function initializeWebSocket() {
 	if (ws) {
 		if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING || isWsConnected == true) {
@@ -56,16 +55,10 @@ export function initializeWebSocket() {
 		} else if (data.type === 'match_found') {
 			startMatchmakingGame(data.game_id, data.side, data);
 		} else if (data.type === 'info_message') {
-			await updateAndCompareInfoData();
-
-			if (data.action === 'send_friend_request') {
-				const isSender = data.author === sessionStorage.getItem('userId');
-				if (isSender) {
-					console.log(`Friend request sent to ${data.recipient} by ${data.author}`);
-				} else {
-					console.log(`Friend request received from ${data.author} to ${data.recipient}`);
-					createNotificationMessage(`Friend request received from ${data.author}!`);
-				}
+			if (data.action) {
+				await updateAndCompareInfoData();
+			} else {
+				createNotificationMessage(data.info);
 			}
 		}
 

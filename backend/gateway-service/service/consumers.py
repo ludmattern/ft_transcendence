@@ -39,14 +39,14 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 			
 
 			if message_type == "chat_message":
-				event = {
-					"type": "chat_message",
-					"message": data.get("message"),
-					"author": author,
-					"channel": "general",
-					"timestamp": data.get("timestamp"),
-				}
-				await self.channel_layer.group_send("chat_service", event)
+				# event = {
+				# 	"type": "chat_message",
+				# 	"message": data.get("message"),
+				# 	"author": author,
+				# 	"channel": "general",
+				# 	"timestamp": data.get("timestamp"),
+				# }
+				await self.channel_layer.group_send("chat_service", data)
 				logger.info(f"Message général relayé à 'chat_service' depuis {author}")
 
 			elif message_type == "private_message":

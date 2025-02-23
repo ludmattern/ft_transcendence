@@ -70,6 +70,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		if str(author_id) == str(recipient_id):
 			logger.info(f"Skipping message sending because author_id ({author_id}) equals recipient_id ({recipient_id})")
+			message = {"type": "error_message", "error": "You can't send a message to yourself."}
+			await self.channel_layer.group_send(f"user_{author_id}", message)
 			return
 
 		event["username"] = username
@@ -86,27 +88,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		action = event.get("action")
 		author_id = event.get("author")
 		recipient_id = event.get("recipient")
+		author_username = await get_username(author_id)
+		event["author_username"] = author_username
+		recipient_username = await get_username(recipient_id)
+		event["recipient_username"] = recipient_username
+
 
 		if str(action) == "send_friend_request":
 			if not author_id or not recipient_id:
-				await self.channel_layer.group_send(
-					f"user_{author_id}",
-					{"type": "error_message", "error": "Author or recipient not provided"}
-				)
+				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "Author or recipient not provided"})
 				return
 
 			if str(author_id) == str(recipient_id):
-				await self.channel_layer.group_send(
-					f"user_{author_id}",
-					{"type": "error_message", "error": "You can't send a friend request to yourself"}
-				)
+				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "You can't send a friend request to yourself"})
 				return
 
-			# Récupérer les utilisateurs
 			initiator = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
 			recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 
-			# Normaliser l'ordre pour éviter les doublons
 			if initiator.id > recipient_user.id:
 				user, friend = recipient_user, initiator
 			else:
@@ -120,23 +119,58 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					if str(initiator_id) != str(author_id):
 						relation.status = "accepted"
 						await database_sync_to_async(relation.save)()
-						confirmation_message = {
-							"type": "info_message",
-							"info": "Friend request accepted. You are now friends."
-						}
-						await self.channel_layer.group_send(f"user_{recipient_id}", confirmation_message)
-						await self.channel_layer.group_send(f"user_{author_id}", confirmation_message)
+						await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You are now friend with {author_username}"})
+						await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": f"You are now friend with {recipient_username}"})
+						await self.channel_layer.group_send(f"user_{recipient_id}", event)
+						await self.channel_layer.group_send(f"user_{author_id}", event)
+						logger.info(f"Friend request accepted between {author_id} and {recipient_id} : {event}")
 					else:
-						await self.channel_layer.group_send(
-							f"user_{author_id}",
-							{"type": "error_message", "error": "Friend request already sent"}
-						)
+						await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "Friend request already sent"})
 					return
 
-			# Créer une nouvelle demande d'ami en indiquant explicitement l'initiateur réel
 			await database_sync_to_async(ManualFriendsRelations.objects.create)(
 				user=user, friend=friend, status="pending", initiator=initiator
 			)
+			await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": f"Friend request sent to {recipient_username}"})
+			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"Friend request received from {author_username}"})
 			await self.channel_layer.group_send(f"user_{recipient_id}", event)
 			await self.channel_layer.group_send(f"user_{author_id}", event)
 			logger.info(f"Friend request sent from {author_id} to {recipient_id} : {event}")
+
+		elif str(action) in ["reject_friend_request", "remove_friend"]:
+			initiator = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+			recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
+			author_username = await get_username(author_id)
+			event["author_username"] = author_username
+			recipient_username = await get_username(recipient_id)
+			event["recipient_username"] = recipient_username
+
+			if initiator.id > recipient_user.id:
+				user, friend = recipient_user, initiator
+			else:
+				user, friend = initiator, recipient_user
+
+			qs = ManualFriendsRelations.objects.filter(user=user, friend=friend)
+			if await database_sync_to_async(qs.exists)():
+				relation = await database_sync_to_async(qs.first)()
+				if relation.status == "pending":
+					await database_sync_to_async(relation.delete)()
+					await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"{author_username} rejected your friend request."})
+					await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": f"Friend request from {recipient_username} rejected."})
+					await self.channel_layer.group_send(f"user_{recipient_id}", event)
+					await self.channel_layer.group_send(f"user_{author_id}", event)
+				elif relation.status == "accepted":
+					await database_sync_to_async(relation.delete)()
+					await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"{author_username} removed you from friends."})
+					await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": f"You removed {recipient_username} from friends."})
+					await self.channel_layer.group_send(f"user_{recipient_id}", event)
+					await self.channel_layer.group_send(f"user_{author_id}", event)
+				else:
+					logger.info(f"Invalid action: {action}")
+
+			else:
+				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "No friend relationship found."})
+			return
+
+		else:
+			await self.channel_layer.group_send(f"user_{author_id}",{"type": "error_message", "error": "Invalid action."})

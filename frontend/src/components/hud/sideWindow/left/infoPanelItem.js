@@ -1,39 +1,48 @@
 import { createComponent } from '/src/utils/component.js';
 import { playGame } from '/src/components/pong/play/utils.js';
 import { showContextMenu } from '/src/components/hud/sideWindow/left/contextMenu.js';
+import { handleFriendAction } from '/src/components/hud/sideWindow/left/contextMenu.js';
 
 export const infoPanelItem = createComponent({
 	tag: 'infoPanelItem',
 
 	render: (item) => {
 		const content = titleType(item.type);
+		console.log('item', item);
 
 		return `
-      <div class="panel-item">
-        <span>${content}<b class="author" style="cursor: pointer;">${item.inviter}</b></span>
-        ${
+	<div class="panel-item" data-notification-id="${item.type}-${item.inviter_id}">
+		<span>${content}<b class="author" style="cursor: pointer;">${item.inviter}</b></span>
+		${
 			item.actions
 				? `<div class="actions">
-               <button class="btn bi bi-check" id="accept-action">Accept</button>
-               <button class="btn bi bi-x" id="refuse-action">Refuse</button>
-             </div>`
+						<button class="btn bi bi-check" id="accept-action">Accept</button>
+						<button class="btn bi bi-x" id="refuse-action">Refuse</button>
+					</div>`
 				: ''
 		}
-      </div>`;
+	</div>`;
 	},
 
 	attachEvents: (el, item) => {
-		switch (item) {
-			case item.type === 'friend_request':
+		switch (item.type) {
+			case 'friend_request':
 				behaviorFriendRequest(el, item);
-			case item.type === 'tournament_invite':
+				break;
+			case 'tournament_invite':
 				behaviorTournament(el, item);
-			case item.type === 'tournament_next_game':
+				break;
+			case 'tournament_next_game':
 				behaviorTournamentGame();
-			case item.type === 'private_game_invite':
+				break;
+			case 'private_game_invite':
 				behaviorPrivateGame();
-			case item.type === 'miscellaneous':
+				break;
+			case 'miscellaneous':
 				behaviorMiscellaneous();
+				break;
+			default:
+				break;
 		}
 		const authorElem = el.querySelector('.author');
 		if (authorElem) {
@@ -44,6 +53,27 @@ export const infoPanelItem = createComponent({
 		}
 	},
 });
+
+
+function behaviorFriendRequest(el, item) {
+	const acceptButton = el.querySelector('#accept-action');
+	const refuseButton = el.querySelector('#refuse-action');
+
+	console.log('Friend request from:', item.inviter);
+
+	if (acceptButton) {
+		acceptButton.addEventListener('click', () => {
+			console.log(`Accepted ${item.inviter}'s request.`);
+			handleFriendAction(false, item.inviter_id);
+		});
+	}
+	if (refuseButton) {
+		refuseButton.addEventListener('click', () => {
+			console.log(`Refused ${item.inviter}'s request.`);
+			handleFriendAction(true, item.inviter_id);
+		});
+	}
+}
 
 function titleType(type) {
 	switch (type) {
@@ -131,24 +161,6 @@ function behaviorMiscellaneous(el, item) {
 	//     console.log(`Discarding ${item}.`);
 	//   });
 	// }
-}
-
-function behaviorFriendRequest(el, item) {
-	const acceptButton = el.querySelector('#accept-action');
-	const refuseButton = el.querySelector('#refuse-action');
-
-	if (acceptButton) {
-		acceptButton.addEventListener('click', () => {
-			console.log(`Accepted ${item.inviter}'s request.`);
-			acceptFriendRequestQuery(el, item);
-		});
-	}
-	if (refuseButton) {
-		refuseButton.addEventListener('click', () => {
-			console.log(`Refused ${item.inviter}'s request.`);
-			rejectFriendRequestQuery(el, item);
-		});
-	}
 }
 
 async function acceptFriendRequestQuery(el, item) {

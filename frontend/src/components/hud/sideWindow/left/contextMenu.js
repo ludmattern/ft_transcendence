@@ -58,7 +58,7 @@ function bodyData(author) {
 /**
  * Gestion des actions du menu contextuel.
  */
-async function handleFriendAction(isFriend, author) {
+export async function handleFriendAction(isFriend, author) {
 	let action;
 	if (isFriend) {
 		action = 'remove_friend';
