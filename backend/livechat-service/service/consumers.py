@@ -157,14 +157,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					await database_sync_to_async(relation.delete)()
 					await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"{author_username} rejected your friend request."})
 					await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": f"Friend request from {recipient_username} rejected."})
-					await self.channel_layer.group_send(f"user_{author_id}", event)
 					await self.channel_layer.group_send(f"user_{recipient_id}", event)
+					await self.channel_layer.group_send(f"user_{author_id}", event)
 				elif relation.status == "accepted":
 					await database_sync_to_async(relation.delete)()
 					await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"{author_username} removed you from friends."})
 					await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": f"You removed {recipient_username} from friends."})
-					await self.channel_layer.group_send(f"user_{author_id}", event)
 					await self.channel_layer.group_send(f"user_{recipient_id}", event)
+					await self.channel_layer.group_send(f"user_{author_id}", event)
 				else:
 					logger.info(f"Invalid action: {action}")
 
