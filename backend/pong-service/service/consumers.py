@@ -3,6 +3,8 @@ import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .game_manager import game_manager
 import time
+from asgiref.sync import sync_to_async
+
 #import numpy as np
 logger = logging.getLogger(__name__)
 #from stable_baselines3 import PPO
@@ -75,7 +77,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             if game_id not in self.running_games:
                  self.running_games[game_id] = {
                     "task": asyncio.create_task(self.game_loop(game_id)),
-                    # "bot_last_action": None  # 🟢 Stocke la dernière action
                 }
 
             payload = game.to_dict()
@@ -163,6 +164,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                         "payload": payload
                     }
                 )
+                from .models import GameHistory
 
                 if game.game_over:
                     if game.user_scores[game.player1_id] >= game.max_score:
@@ -182,8 +184,17 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                             "final_scores": game.user_scores
                         }
                     )
-                    game_manager.cleanup_game(game_id)
-                   # logger.info(f"Partie {game_id} terminée (game_over)")
+                    
+                    if not (str(game_id).startswith("game_") or str(game_id).startswith("tournLocal_") or str(game_id).startswith("solo_")):
+                        await sync_to_async(GameHistory.objects.create)(
+                            winner_id=winner_id,
+                            loser_id=loser_id,
+                            winner_score=game.user_scores.get(winner_id),
+                            loser_score=game.user_scores.get(loser_id)
+                        )
+                        logger.info(f"table game history maj")
+
+                    # logger.info(f"Partie {game_id} terminée (game_over)")
                     break
 
                 await asyncio.sleep(0.01)

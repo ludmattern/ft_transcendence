@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from service.views import getUsername, register_user, generate_qr_code, update_info, delete_account
+from service.views import get_game_history, getUsername, register_user, generate_qr_code, update_info, delete_account
 from service.friends import accept_friend_request, send_friend_request, reject_friend_request, remove_friend, is_friend
 from service.blocked import block_user, unblock_user
 from service.profile import profile_info
@@ -20,5 +20,7 @@ urlpatterns = [
 	path('remove-friend/', remove_friend, name='remove_friend'),
 	path('getUsername/', getUsername, name='getUsername'),
 	path('info-getter/<int:user_id>/', info_getter, name='info_getter'),
-	path('is-friend/', is_friend, name='is_friend')
+	path('is-friend/', is_friend, name='is_friend'),
+    path("get_game_history/", get_game_history, name="get_game_history"),
+
 ]

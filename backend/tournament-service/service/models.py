@@ -88,7 +88,7 @@ class ManualTournamentParticipants(models.Model):
 class TournamentMatch(models.Model):
     id = models.AutoField(primary_key=True)
     tournament = models.ForeignKey('ManualTournament', on_delete=models.CASCADE, related_name='matches')
-    round_number = models.IntegerField()  # ex: 1 pour le premier round, 2 pour le suivant, etc.
+    round_number = models.IntegerField() 
     match_order = models.IntegerField()    # l'ordre dans le round
     player1 = models.CharField(max_length=50, blank=True, null=True)
     player2 = models.CharField(max_length=50, blank=True, null=True)
@@ -99,3 +99,5 @@ class TournamentMatch(models.Model):
 
     def __str__(self):
         return f"Round {self.round_number} Match {self.match_order}: {self.player1} vs {self.player2}"
+
+

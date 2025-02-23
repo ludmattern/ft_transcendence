@@ -2,7 +2,9 @@ import json
 import bcrypt
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import ManualUser
+from .models import ManualUser, GameHistory
+from django.db.models import Q
+
 from cryptography.fernet import Fernet
 import pyotp
 import qrcode
@@ -180,3 +182,44 @@ def getUsername(request):
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
     else:
         return JsonResponse({'success': False, 'message': 'Only POST method is allowed'}, status=405)
+
+@csrf_exempt
+def get_game_history(request):
+    if request.method != "GET":
+        return JsonResponse({"error": "GET method required"}, status=405)
+    
+    user_id = request.GET.get("user_id")
+    if not user_id:
+        return JsonResponse({"error": "user_id parameter is required"}, status=400)
+    
+    try:
+        history_entries = GameHistory.objects.filter(
+            Q(winner_id=user_id) | Q(loser_id=user_id)
+        ).order_by("-created_at")[:10]
+        
+        history_list = []
+        for entry in history_entries:
+            try:
+                winner_user = ManualUser.objects.get(id=entry.winner_id)
+                winner_username = winner_user.username
+            except ManualUser.DoesNotExist:
+                winner_username = None
+            try:
+                loser_user = ManualUser.objects.get(id=entry.loser_id)
+                loser_username = loser_user.username
+            except ManualUser.DoesNotExist:
+                loser_username = None
+            
+            history_list.append({
+                "winner_id": entry.winner_id,
+                "winner_username": winner_username,
+                "loser_id": entry.loser_id,
+                "loser_username": loser_username,
+                "winner_score": entry.winner_score,
+                "loser_score": entry.loser_score,
+                "created_at": entry.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            })
+        
+        return JsonResponse({"success": True, "history": history_list})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

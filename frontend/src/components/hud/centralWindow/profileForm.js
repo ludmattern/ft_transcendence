@@ -1,10 +1,10 @@
 import { createComponent } from '/src/utils/component.js';
 
 export const profileForm = createComponent({
-	tag: 'profileForm',
+  tag: 'profileForm',
 
-	// Générer le HTML
-	render: () => `
+  // Générer le HTML
+  render: () => `
     <div id="profile-form" class="form-container">
       <h5 class="text-center">Pilot Profile</h5>
       <span class="background-central-span d-flex flex-column align-items-center flex-grow-1 p-4">
@@ -47,97 +47,97 @@ export const profileForm = createComponent({
           <h6 class="match-history-title d-flex justify-content-center m-3">
             <span class="bi bi-journal me-2"></span>Match History
           </h6>
+            <div class="match-history-header d-flex fw-bold">
+                <span class="col-2">Outcome</span>
+                <span class="col-2">Date</span>
+                <span class="col-4">Opponents</span>
+                <span class="col-4">Score</span>
+            </div>
           <div class="match-history-container d-flex flex-column" style="max-height: 40vh; overflow-y: auto;">
             <!-- Match History Header -->
-            <div class="match-history-header d-flex fw-bold">
-              <span class="col-2">Outcome</span>
-              <span class="col-4">Opponents</span>
-            </div>
-            <!-- Match Items -->
-            ${createMatchItem('Win', 'Opponent', 'text-success')}
-            ${createMatchItem('Loss', 'Opponent', 'text-danger')}
-            ${createMatchItem('Loss', 'Opponent', 'text-danger')}
           </div>
         </div>
       </span>
     </div>
   `,
 
-	// Ajouter les événements après le chargement
-	attachEvents: async (el) => {
-		// Gestion du clic sur un lien vers un autre profil
-		el.addEventListener('click', (e) => {
-			if (e.target.matches('#other-profile-link')) {
-				e.preventDefault();
-				// testloadComponent('#central-window', otherProfileForm); // Charger OtherProfileForm
-				console.info('OtherProfileForm loaded on click.');
-			}
-		});
+  // Ajouter les événements après le chargement
+  attachEvents: (el) => {
+    loadMatchHistory();
 
-		const htmldata = collectData(el);
-		const response = await fetch('/api/user-service/profile/', {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(htmldata),
-		});
-		const data = await response.json();
-		if (data.success) {
-			console.log(`Profile data fetched:`, data);
-		} else {
-			console.error('Error while fetching profile data:', data);
-		}
+    // Gestion du clic sur un lien vers un autre profil
+    el.addEventListener('click', (e) => {
+      if (e.target.matches('#other-profile-link')) {
+        e.preventDefault();
+        // testloadComponent('#central-window', otherProfileForm); // Charger OtherProfileForm
+        console.info('OtherProfileForm loaded on click.');
+      }
+    });
 
-		// Exemple d'événement supplémentaire pour les statistiques
-		el.querySelector('.profile-pseudo-input').addEventListener('change', (e) => {
-			console.log(`Pseudo changé en : ${e.target.value}`);
-		});
-	},
+    // Exemple d'événement supplémentaire pour les statistiques
+    el.querySelector('.profile-pseudo-input').addEventListener('change', (e) => {
+      console.log(`Pseudo changé en : ${e.target.value}`);
+    });
+  },
 });
-
-/**
- *
- * @param {HTMLElement} el - Élément racine
- * @returns {Object} - Données collectées
- */
-function collectData(el) {
-	return {
-		username: sessionStorage.getItem('username'),
-	};
-}
 
 /**
  * Génère un élément d'historique de match.
  *
  * @param {string} outcome - Résultat du match (Win/Loss)
+ * @param {string} mode - Mode de jeu
+ * @param {string} duration - Durée du match
+ * @param {string} date - Date du match
  * @param {string} opponents - Opposants
  * @param {string} outcomeClass - Classe CSS pour le résultat
  * @returns {string} - HTML du match
  */
-function createMatchItem(outcome, opponents, outcomeClass) {
-	return `
+
+
+async function loadMatchHistory() {
+  const userId = sessionStorage.getItem("userId");
+  if (!userId) {
+    console.error("User ID not found in sessionStorage");
+    return;
+  }
+  try {
+    const response = await fetch(`/api/user-service/get_game_history/?user_id=${userId}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("Game history data:", data);
+    if (data.success) {
+      const historyContainer = document.querySelector(".match-history-container");
+      if (!historyContainer) return;
+      
+      historyContainer.innerHTML = "";
+      
+      data.history.forEach(match => {
+        const outcome = match.winner_score > match.loser_score ? "Win" : "Loss";
+        const date = match.created_at;
+        const opponents = `${match.winner_username} vs ${match.loser_username}`;
+        const outcomeClass = (String(match.winner_id) === userId) ? "text-success" : "text-danger";
+        const score = `${match.winner_score} - ${match.loser_score}`;
+        
+        const matchHtml = createMatchItem(outcome, date, opponents, outcomeClass, score);
+        historyContainer.innerHTML += matchHtml;
+      });
+    } else {
+      console.error("Erreur lors du chargement de l'historique :", data.error);
+    }
+  } catch (error) {
+    console.error("Error loading match history:", error);
+  }
+}
+
+function createMatchItem(outcome, date, opponents, outcomeClass, score) {
+  return `
     <div class="match-item d-flex">
       <span class="col-2 ${outcomeClass} fw-bold">${outcome}</span>
+      <span class="col-2">${date}</span>
       <span class="col-4">${opponents}</span>
-    </div>
-  `;
-}
-
-function createWinrateItem(winrate_value) {
-	return `
-  <div class="stat-item d-flex align-items-center mb-1">
-  <span class="bi bi-trophy me-2"></span>
-  <span class="stat-title">Winrate:</span>
-  <span class="stat-value ms-1">${winrate_value}%</span>
-  </div>
-  `;
-}
-
-function createRankItem(rank_value) {
-	return `
-    <div class="stat-item d-flex align-items-center">
-      <span class="bi bi-award me-2"></span>
-      <span class="stat-title">Rank:</span>
-      <span class="stat-value ms-1">${rank_value}</span>
+      <span class="col-4">${score}</span>
     </div>
   `;
 }

@@ -162,7 +162,7 @@ def login_view(request):
             new_session_token = jwt.encode(
                 {
                     "sub": str(user.id),
-                    "iat": now,
+                    "iat": now,                                                                                                
                     "exp": (now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)).timestamp()
                 },
                 settings.JWT_SECRET_KEY,
@@ -371,4 +371,5 @@ def verify_2fa_view(request):
             return JsonResponse({'success': False, 'message': 'Invalid 2FA code'}, status=401)
     else:
         return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
+
 

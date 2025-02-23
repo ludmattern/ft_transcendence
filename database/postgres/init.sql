@@ -27,11 +27,12 @@ CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone_number);
 
 
 CREATE TABLE IF NOT EXISTS game_history (
-	game_id SERIAL PRIMARY KEY,
-	winner_id INT DEFAULT 0,
-	loser_id INT DEFAULT 0,
-	winner_score INT DEFAULT 0,
-	loser_score INT DEFAULT 0
+    id SERIAL PRIMARY KEY,
+    winner_id INT DEFAULT 0,
+    loser_id INT DEFAULT 0,
+    winner_score INT DEFAULT 0,
+    loser_score INT DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS friends (
@@ -92,8 +93,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 	updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
 	FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
-	FOREIGN KEY (tournament_id) REFERENCES tournaments(id) ON DELETE CASCADE,
-	FOREIGN KEY (game_id) REFERENCES game_history(game_id) ON DELETE CASCADE
+	FOREIGN KEY (tournament_id) REFERENCES tournaments(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS service_tournamentmatch (
