@@ -176,9 +176,8 @@ export const tournamentCreation = createComponent({
 			createTournamentButton.addEventListener('click', () => {
 				console.log('Local tournament created with players:', players);
 				const shuffledPlayers = shuffleArray([...players]);
-				createTournament(players);
+				createTournament(shuffledPlayers);
 				handleRoute('/pong/play/current-tournament');
-				alert('Tournament created with players: ' + players.join(', '));
 
 
 

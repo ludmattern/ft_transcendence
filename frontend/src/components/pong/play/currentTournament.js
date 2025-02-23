@@ -94,7 +94,7 @@ export const currentTournament = createComponent({
           <!-- Les titres et les colonnes seront insérés dynamiquement -->
         </div>
 
-        <button id="abandon-tournament" class="btn btn-pong-danger mt-5">Abandon Tournament</button>
+        <button id="abandon-tournament" class="btn btn-pong-danger mt-5">Leave Tournament</button>
       </section>
     `;
 	},
@@ -102,28 +102,6 @@ export const currentTournament = createComponent({
 		const username = sessionStorage.getItem('username');
 		const userId = sessionStorage.getItem('userId');
 
-		async function getBracketData() {
-			try {
-				console.log('User ID récupéré depuis sessionStorage:', userId);
-				const response = await fetch(`/api/tournament-service/get_current_tournament/?user_id=${userId}`);
-				if (!response.ok) {
-					throw new Error(`Erreur HTTP ${response.status}`);
-				}
-				const data = await response.json();
-				return data;
-			} catch (error) {
-				console.error('Erreur lors de la récupération du bracket :', error);
-				return [];
-			}
-		}
-
-		function hasUserCompletedInPreviousRound(bracketData, roundIndex) {
-			if (roundIndex === 0) return true;
-			const previousRound = bracketData[roundIndex - 1];
-			return previousRound.matches.some((match) => (match.player1 === username || match.player2 === username) && match.status === 'completed');
-		}
-
-    
 		async function renderBracket() {
 			const data = await getBracketData();
 
@@ -199,6 +177,8 @@ export const currentTournament = createComponent({
           <div class="rounds-content">${roundsHtml}</div>
         `;
 			}
+        // ici faudrait app une autre vue dans le cas du online
+
       const abandonTournamentButton = document.getElementById("abandon-tournament");
       abandonTournamentButton.addEventListener("click", async () => {
         try {
@@ -218,6 +198,7 @@ export const currentTournament = createComponent({
         }
       });
 
+      // ici faudrait app private matchmaking dans le cas du online pour creer la partit
 			const joinButtons = el.querySelectorAll('.join-match');
 			joinButtons.forEach((button) => {
 				button.addEventListener('click', () => {
@@ -243,3 +224,27 @@ export const currentTournament = createComponent({
 		renderBracket();
 	},
 });
+
+
+async function getBracketData() {
+  try {
+    const userId = sessionStorage.getItem('userId');
+
+    console.log('User ID récupéré depuis sessionStorage:', userId);
+    const response = await fetch(`/api/tournament-service/get_current_tournament/?user_id=${userId}`);
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Erreur lors de la récupération du bracket :', error);
+    return [];
+  }
+}
+
+function hasUserCompletedInPreviousRound(bracketData, roundIndex) {
+  if (roundIndex === 0) return true;
+  const previousRound = bracketData[roundIndex - 1];
+  return previousRound.matches.some((match) => (match.player1 === username || match.player2 === username) && match.status === 'completed');
+}

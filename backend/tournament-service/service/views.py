@@ -7,6 +7,10 @@ import logging
 import json
 
 logger = logging.getLogger(__name__)
+
+#TODO ici pas de changement avec le online 
+
+
 def get_current_tournament(request):
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
@@ -52,6 +56,9 @@ def get_current_tournament(request):
     return JsonResponse(data)
 
 
+#TODO ici logiquement les modifs seront au niveau du pong et ou matchamking 
+# ou il faudrat ajouter le tournament id dans la requete sinon pas de modif majeur
+
 @csrf_exempt
 def update_match_result(request):
     if request.method != "POST":
@@ -82,9 +89,9 @@ def update_match_result(request):
         match.score = f"{final_scores.get(winner_id)}-{final_scores.get(loser_id)}"
         match.status = "completed"
         match.save()
-        
+
         logger.info(f"Match updated for tournament {tournament_id}: {payload_player1} vs {payload_player2} - winner: {winner_id}, score: {match.score}")
-        
+
         current_round = match.round_number
         current_match_order = match.match_order
         
@@ -105,12 +112,12 @@ def update_match_result(request):
             logger.info(f"Prochain match (round {next_round}, match {next_match_order}) mis à jour avec le gagnant {winner_id}")
         except TournamentMatch.DoesNotExist:
             logger.info("Final match reached: no next match found, finishing tournament.")
-            tournament = ManualTournament.objects.get(id=tournament_id)
-            tournament.status = "completed"
-            tournament.save()
-            organizer = tournament.organizer
-            organizer.in_tournament = False
-            organizer.save()
+          #  tournament = ManualTournament.objects.get(id=tournament_id)
+           #tournament.status = "completed"
+          # tournament.save()
+            #organizer = tournament.organizer
+            #organizer.in_tournament = False
+            #organizer.save()
            # TournamentMatch.objects.filter(tournament=tournament).delete()        
             
         return JsonResponse({"success": True, "message": "Match updated"})
@@ -119,10 +126,11 @@ def update_match_result(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
+
+#TODO ici celle-ci fonctionne que pour le local 
+
 @csrf_exempt
 def abandon_local_tournament(request):
-   
-    
     if request.method != "POST":
         return JsonResponse({"error": "POST method required"}, status=405)
     try:

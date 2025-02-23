@@ -56,9 +56,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             await self.send(json.dumps({"error": "Organizer not found"}))
             return
 
+
+        #TODO ici  c est pour le local faudra changer le fonctionement pour le online
+        # to next TODO 
         serial_key = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
         logger.info(f"🔑 Génération de serial_key: {serial_key}")
-
+        
         tournament = await sync_to_async(ManualTournament.objects.create)(
             serial_key=serial_key,
             name="Local Tournament",
@@ -69,7 +72,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         )
         logger.info(f"🏆 Tournament créé: ID={tournament.id}, serial_key={serial_key}, organizer_id={organizer_id}")
 
-        # Création des participants
         for username in players:
             user, created = await sync_to_async(ManualUser.objects.get_or_create)(
                 username=username,
@@ -91,12 +93,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 status="accepted"
             )
             logger.info(f"✅ Participant ajouté: TournamentID={tournament.id}, User={user.username}, status=accepted")
-
+            
+        # TODO
+        
         
         n = len(players)
-        rounds_count = int(math.log2(n))  # Nombre de rounds (ex: 2 pour 4 joueurs, 3 pour 8, etc.)
+        rounds_count = int(math.log2(n))  
 
-        # Round 1 : les joueurs sont en ordre dans le tableau players
         for i in range(0, n, 2):
             match_order = (i // 2) + 1
             player1 = players[i]
@@ -111,7 +114,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             )
             logger.info(f"🏅 Round 1, Match {match_order} créé: {player1} vs {player2}")
 
-        # Rounds suivants : initialisation avec "TBD"
         previous_matches = n // 2
         for round_number in range(2, rounds_count + 1):
             num_matches = previous_matches // 2
@@ -127,7 +129,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 logger.info(f"🏅 Round {round_number}, Match {match_order} créé: TBD vs TBD")
             previous_matches = num_matches
 
-        # Envoi d'une notification aux clients via le channel layer
         await self.channel_layer.group_send(
             self.room_group_name,
             {
