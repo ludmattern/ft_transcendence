@@ -104,16 +104,8 @@ export async function updateAndCompareInfoData() {
 			console.log('Informations locales :', localInfo);
 			console.log('Informations serveur :', serverInfo);
 
-			const messagesToAdd = serverInfo.filter(newMsg =>
-				!localInfo.some(localMsg =>
-					localMsg.type === newMsg.type && localMsg.inviter_id === newMsg.inviter_id
-				)
-			);
-			const messagesToRemove = localInfo.filter(localMsg =>
-				!serverInfo.some(newMsg =>
-					newMsg.type === localMsg.type && newMsg.inviter_id === localMsg.inviter_id
-				)
-			);
+			const messagesToAdd = serverInfo.filter((newMsg) => !localInfo.some((localMsg) => localMsg.type === newMsg.type && localMsg.inviter_id === newMsg.inviter_id));
+			const messagesToRemove = localInfo.filter((localMsg) => !serverInfo.some((newMsg) => newMsg.type === localMsg.type && newMsg.inviter_id === localMsg.inviter_id));
 
 			if (messagesToAdd.length > 0 || messagesToRemove.length > 0) {
 				console.log('Nouveaux messages à ajouter :', messagesToAdd);

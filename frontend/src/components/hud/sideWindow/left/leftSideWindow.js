@@ -100,15 +100,18 @@ function updateNotifications(messagesToAdd, messagesToRemove, container) {
 	});
   
 	messagesToAdd.forEach((msg) => {
-	  const notificationId = `${msg.type}-${msg.inviter_id}`;
-	  const notificationWrapper = document.createElement('div');
-	  notificationWrapper.setAttribute('data-notification-id', notificationId);
+		const notificationId = `${msg.type}-${msg.inviter_id}`;
+		const notificationWrapper = document.createElement('div');
+		
+		notificationWrapper.innerHTML = infoPanelItem.render(msg);
+		
+		const renderedElement = notificationWrapper.firstElementChild;
+		renderedElement.setAttribute('data-notification-id', notificationId);
+		
+		infoPanelItem.attachEvents(renderedElement, msg);
+		
+		container.appendChild(renderedElement);
+	  });
 	  
-	  notificationWrapper.innerHTML = infoPanelItem.render(msg);
-	  
-	  infoPanelItem.attachEvents(notificationWrapper, msg);
-	  
-	  container.appendChild(notificationWrapper);
-	});
   }
   
