@@ -5,6 +5,8 @@ import { startAnimation } from '/src/components/hud/index.js';
 import { loadTabContent } from '/src/components/hud/sideWindow/left/tabContent.js';
 import { createNotificationMessage, removePrivateNotifications } from '/src/components/hud/sideWindow/left/notifications.js';
 import { createNavItem } from '/src/components/hud/sideWindow/left/navigation.js';
+import { subscribe } from '/src/services/eventEmitter.js';
+import { infoPanelItem } from '/src/components/hud/index.js';
 
 export const leftSideWindow = createComponent({
 	tag: 'leftSideWindow',
@@ -77,5 +79,36 @@ export const leftSideWindow = createComponent({
 		startAnimation(parentContainer, 'light-animation', 1000);
 
 		createNotificationMessage(`Welcome to your spaceship ${sessionStorage.getItem('username')} !`, 15000);
+
+		subscribe('updatenotifications', (data) => {
+			const activeTab = el.querySelector('.nav-link.active');
+			if (activeTab && activeTab.dataset.tab === 'info') {
+				console.log('Mise à jour des notifications reçue:', data);
+				updateNotifications(data.toAdd, data.toRemove, tabContentContainer);
+			}
+		});
 	},
 });
+
+function updateNotifications(messagesToAdd, messagesToRemove, container) {
+	messagesToRemove.forEach((msg) => {
+	  const notificationId = `${msg.type}-${msg.inviter_id}`;
+	  const existingNotification = container.querySelector(`[data-notification-id="${notificationId}"]`);
+	  if (existingNotification) {
+		existingNotification.remove();
+	  }
+	});
+  
+	messagesToAdd.forEach((msg) => {
+	  const notificationId = `${msg.type}-${msg.inviter_id}`;
+	  const notificationWrapper = document.createElement('div');
+	  notificationWrapper.setAttribute('data-notification-id', notificationId);
+	  
+	  notificationWrapper.innerHTML = infoPanelItem.render(msg);
+	  
+	  infoPanelItem.attachEvents(notificationWrapper, msg);
+	  
+	  container.appendChild(notificationWrapper);
+	});
+  }
+  
