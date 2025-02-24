@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import ManualUser, GameHistory
 from django.db.models import Q
+import os
 
 from cryptography.fernet import Fernet
 import pyotp
@@ -183,6 +184,7 @@ def getUsername(request):
     else:
         return JsonResponse({'success': False, 'message': 'Only POST method is allowed'}, status=405)
 
+
 @csrf_exempt
 def get_game_history(request):
     if request.method != "GET":
@@ -195,9 +197,12 @@ def get_game_history(request):
     try:
         history_entries = GameHistory.objects.filter(
             Q(winner_id=user_id) | Q(loser_id=user_id)
-        ).order_by("-created_at")[:10]
+        ).order_by("-created_at")[:20]
         
         history_list = []
+        wins = 0
+        total_games = history_entries.count()
+        
         for entry in history_entries:
             try:
                 winner_user = ManualUser.objects.get(id=entry.winner_id)
@@ -209,7 +214,10 @@ def get_game_history(request):
                 loser_username = loser_user.username
             except ManualUser.DoesNotExist:
                 loser_username = None
-            
+
+            if str(entry.winner_id) == user_id:
+                wins += 1
+
             history_list.append({
                 "winner_id": entry.winner_id,
                 "winner_username": winner_username,
@@ -220,6 +228,77 @@ def get_game_history(request):
                 "created_at": entry.created_at.strftime("%Y-%m-%d %H:%M:%S")
             })
         
-        return JsonResponse({"success": True, "history": history_list})
+        winrate = (wins / total_games * 100) if total_games > 0 else 0
+        
+        return JsonResponse({
+            "success": True,
+            "history": history_list,
+            "winrate": winrate
+        })
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
+    
+    
+@csrf_exempt
+def get_profile(request):
+    if request.method != "GET":
+        return JsonResponse({"error": "GET method required"}, status=405)
+    user_id = request.GET.get("user_id")
+    if not user_id:
+        return JsonResponse({"error": "user_id parameter is required"}, status=400)
+    try:
+        user = ManualUser.objects.get(id=user_id)
+        profile_picture = user.profile_picture.url  
+        data = {
+            "username": user.username,
+            "email": user.email,
+            "profile_picture": profile_picture,
+        }
+        return JsonResponse({"success": True, "profile": data})
+    except ManualUser.DoesNotExist:
+        return JsonResponse({"error": "User not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+from PIL import Image
+
+ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp']
+MAX_FILE_SIZE = 5 * 1024 * 1024  
+
+@csrf_exempt
+def upload_profile_picture(request):
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "POST method required"}, status=200)
+    try:
+        user_id = request.POST.get("user_id")
+        if not user_id:
+            return JsonResponse({"success": False, "error": "Missing user_id"}, status=200)
+        if "profile_picture" not in request.FILES:
+            return JsonResponse({"success": False, "error": "No file uploaded"}, status=200)
+
+        file = request.FILES["profile_picture"]
+
+        if file.size > MAX_FILE_SIZE:
+            return JsonResponse({"success": False, "error": "File too large"}, status=200)
+
+        ext = os.path.splitext(file.name)[1].lower().strip('.')
+        if ext not in ALLOWED_EXTENSIONS:
+            return JsonResponse({"success": False, "error": "Invalid file format"}, status=200)
+
+        try:
+            image = Image.open(file)
+            image.verify() 
+        except Exception:
+            return JsonResponse({"success": False, "error": "Uploaded file is not a valid image"}, status=200)
+
+        user = ManualUser.objects.get(id=user_id)
+        user.profile_picture = file
+        user.save()
+
+        return JsonResponse({"success": True, "profile_picture": user.profile_picture.url}, status=200)
+    except ManualUser.DoesNotExist:
+        return JsonResponse({"success": False, "error": "User not found"}, status=200)
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=200)

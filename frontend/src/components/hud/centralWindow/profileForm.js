@@ -12,26 +12,24 @@ export const profileForm = createComponent({
         <div class="profile-info d-flex justify-content-evenly align-items-center w-100 m-3 pb-3">
           <!-- Profile Picture -->
           <div class="profile-pic-container">
-            <a href="#">
-              <img src="/src/assets/img/default-profile-150.png" alt="Profile Picture" class="profile-pic rounded-circle" />
-            </a>
+              <img src="/src/assets/img/default-profile-150.png" id="profile-pic-link" alt="Profile Picture" class="profile-pic rounded-circle" />
+              <input type="file" id="profile-image-input" accept="image/*" style="display:none;" />
           </div>
           <!-- Profile Details -->
           <div class="profile-details modifiable-pilot text-start">
             <!-- Profile Status -->
             <div class="profile-status mb-2">
               <span class="status-indicator bi bi-circle-fill text-success"></span>
-              <form action="#" method="post" class="d-inline-block">
-                <input type="text" class="profile-pseudo-input form-control form-control-sm d-inline-block w-auto fw-bold"
-                  name="profile-pseudo" value="Pseudo" required />
-              </form>
+              <div class="d-inline-block">
+                <div class="d-inline-block" id="pseudo" style="color:var(--content-color); font-weight: bold;"></div>
+              </div>
             </div>
             <!-- Profile Statistics -->
             <div class="profile-stats">
               <div class="stat-item d-flex align-items-center mb-1">
                 <span class="bi bi-trophy me-2"></span>
                 <span class="stat-title">Winrate:</span>
-                <span class="stat-value ms-1">50%</span>
+                <span id="winrate" class="stat-value ms-1">50%</span>
               </div>
               <div class="stat-item d-flex align-items-center">
                 <span class="bi bi-award me-2"></span>
@@ -61,23 +59,28 @@ export const profileForm = createComponent({
     </div>
   `,
 
-  // Ajouter les événements après le chargement
   attachEvents: (el) => {
     loadMatchHistory();
+    loadUserProfile();
+    attachProfilePicUpload();
 
+     
+      
+    
+    
     // Gestion du clic sur un lien vers un autre profil
-    el.addEventListener('click', (e) => {
-      if (e.target.matches('#other-profile-link')) {
-        e.preventDefault();
-        // testloadComponent('#central-window', otherProfileForm); // Charger OtherProfileForm
-        console.info('OtherProfileForm loaded on click.');
-      }
-    });
+    // el.addEventListener('click', (e) => {
+    //   if (e.target.matches('#other-profile-link')) {
+    //     e.preventDefault();
+    //     // testloadComponent('#central-window', otherProfileForm); // Charger OtherProfileForm
+    //     console.info('OtherProfileForm loaded on click.');
+    //   }
+    // });
 
-    // Exemple d'événement supplémentaire pour les statistiques
-    el.querySelector('.profile-pseudo-input').addEventListener('change', (e) => {
-      console.log(`Pseudo changé en : ${e.target.value}`);
-    });
+    // // Exemple d'événement supplémentaire pour les statistiques
+    // el.querySelector('.profile-pseudo-input').addEventListener('change', (e) => {
+    //   console.log(`Pseudo changé en : ${e.target.value}`);
+    // });
   },
 });
 
@@ -94,12 +97,50 @@ export const profileForm = createComponent({
  */
 
 
+function attachProfilePicUpload() {
+  const profilePicLink = document.getElementById("profile-pic-link");
+  const fileInput = document.getElementById("profile-image-input");
+
+  if (profilePicLink && fileInput) {
+    profilePicLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("profile_picture", file);
+      formData.append("user_id", sessionStorage.getItem("userId"));
+
+      try {
+        const response = await fetch("/api/user-service/upload_profile_picture/", {
+          method: "POST",
+          body: formData
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("Profile picture updated:", data);
+        if (data.success && data.profile_picture) {
+          const profilePicImg = document.querySelector(".profile-pic");
+          if (profilePicImg) {
+            profilePicImg.src = data.profile_picture;
+          }
+        }
+      } catch (error) {
+        console.log("Erreur lors de l'upload de l'image.");
+      }
+    });
+  }
+}
+
 async function loadMatchHistory() {
   const userId = sessionStorage.getItem("userId");
-  if (!userId) {
-    console.error("User ID not found in sessionStorage");
-    return;
-  }
+
   try {
     const response = await fetch(`/api/user-service/get_game_history/?user_id=${userId}`);
     if (!response.ok) {
@@ -108,6 +149,11 @@ async function loadMatchHistory() {
     const data = await response.json();
     console.log("Game history data:", data);
     if (data.success) {
+      const winrateElement = document.getElementById("winrate");
+      if (winrateElement) 
+      {
+        winrateElement.textContent = `${data.winrate.toFixed(0)}%`;
+      }
       const historyContainer = document.querySelector(".match-history-container");
       if (!historyContainer) return;
       
@@ -140,4 +186,33 @@ function createMatchItem(outcome, date, opponents, outcomeClass, score) {
       <span class="col-4">${score}</span>
     </div>
   `;
+}
+
+
+
+async function loadUserProfile() {
+  const userId = sessionStorage.getItem("userId");
+
+  try {
+    const response = await fetch(`/api/user-service/get_profile/?user_id=${userId}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("User profile data:", data);
+    if (data.success && data.profile) {
+      const profilePicImg = document.querySelector(".profile-pic");
+      if (profilePicImg) {
+        profilePicImg.src = data.profile.profile_picture;
+      }
+      const pseudoElement = document.getElementById("pseudo");
+      if (pseudoElement && data.profile.username) {
+        pseudoElement.textContent = data.profile.username;
+      }
+    } else {
+      console.error("Error loading profile:", data.error);
+    }
+  } catch (error) {
+    console.error("Error loading user profile:", error);
+  }
 }

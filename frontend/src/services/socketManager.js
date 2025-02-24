@@ -103,7 +103,7 @@ export async function initializeWebSocket(userId) {
 
 export function closeWebSocket() {
 	if (ws) {
-		console.log(' Fermeture manuelle du WebSocket...');
+		console.log('Fermeture manuelle du WebSocket...');
 		ws.close();
 		ws = null;
 		isWsConnected = false;

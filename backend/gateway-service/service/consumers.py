@@ -125,17 +125,8 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				})
 				logger.info(f"🚀 matchmaking_event/private_event => service : {action} {user_id}, room={room_code}")
 
-			elif data.get("type") == "tournament":
-				logger.info("🚀 tournament event")
-				await self.channel_layer.group_send(
-					"tournament", 
-					{
-						"type": "create_local_tournament", 
-						"action": data.get("action"),
-						"organizer_id": data.get("organizer_id"),
-						"players": data.get("players"),
-					}
-				)
+
+	
 	
 		except json.JSONDecodeError:
 			await self.send(json.dumps({"error": "Format JSON invalide"}))

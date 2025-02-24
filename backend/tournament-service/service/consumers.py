@@ -9,6 +9,7 @@ from channels.db import database_sync_to_async
 from cryptography.fernet import Fernet
 from django.conf import settings
 import math
+import logging
 
 logger = logging.getLogger(__name__)
 

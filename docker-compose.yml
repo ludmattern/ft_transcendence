@@ -131,6 +131,11 @@ services:
       - fernet_key
     ports:
       - "3002:3002"
+    volumes:
+      - certif_data:/data/certs
+      - media_volume:/app/media:rw
+
+
 
   livechat-service:
     <<: *service_defaults
@@ -187,6 +192,8 @@ services:
       - certif_data:/etc/nginx/certs:rw
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./frontend:/usr/share/nginx/html/frontend:ro
+      - media_volume:/app/media:rw
+
     ports:
       - "8443:443"
     networks:
@@ -210,6 +217,8 @@ volumes:
     name: redis_data
   certif_data:
     name: certif_data_volume
+  media_volume:
+    driver: local
 
 secrets:
   fernet_key:
