@@ -90,11 +90,6 @@ function titleType(type) {
 	}
 }
 
-function bodyData(item) {
-	return {
-		inviter: item.inviter,
-	};
-}
 
 function behaviorTournament(el, item) {
 	// const acceptButton = el.querySelector("#accept-action");
@@ -161,32 +156,4 @@ function behaviorMiscellaneous(el, item) {
 	//     console.log(`Discarding ${item}.`);
 	//   });
 	// }
-}
-
-async function acceptFriendRequestQuery(el, item) {
-	const reponse = await fetch('/api/user-service/accept-friend-request', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(bodyData(el, item)),
-	});
-	const data = await reponse.json();
-	if (data.success) {
-		console.log('Friend request accepted');
-	} else {
-		console.log('Error accepting friend request');
-	}
-}
-
-async function rejectFriendRequestQuery(el, item) {
-	const reponse = await fetch('/api/user-service/reject-friend-request', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(bodyData(el, item)),
-	});
-	const data = await reponse.json();
-	if (data.success) {
-		console.log('Friend request rejected');
-	} else {
-		console.log('Error rejecting friend request');
-	}
 }
