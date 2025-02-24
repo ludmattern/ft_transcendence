@@ -12,8 +12,8 @@ export const profileForm = createComponent({
         <div class="profile-info d-flex justify-content-evenly align-items-center w-100 m-3 pb-3">
           <!-- Profile Picture -->
           <div class="profile-pic-container">
-              <img src="/src/assets/img/default-profile-150.png" id="profile-pic-link" alt="Profile Picture" class="profile-pic rounded-circle" />
-              <input type="file" id="profile-image-input" accept="image/*" style="display:none;" />
+              <img id="profile-pic-link" class="profile-pic d-none rounded-circle"/>
+              <input type="file" id="profile-image-input" alt="profile picture" accept="image/*" style="display:none;" />
           </div>
           <!-- Profile Details -->
           <div class="profile-details modifiable-pilot text-start">
@@ -29,12 +29,12 @@ export const profileForm = createComponent({
               <div class="stat-item d-flex align-items-center mb-1">
                 <span class="bi bi-trophy me-2"></span>
                 <span class="stat-title">Winrate:</span>
-                <span id="winrate" class="stat-value ms-1">50%</span>
+                <span id="winrate" class="stat-value ms-1"></span>
               </div>
               <div class="stat-item d-flex align-items-center">
                 <span class="bi bi-award me-2"></span>
                 <span class="stat-title">Rank:</span>
-                <span class="stat-value ms-1">1</span>
+                <span class="stat-value ms-1"></span>
               </div>
             </div>
           </div>
@@ -60,13 +60,9 @@ export const profileForm = createComponent({
   `,
 
   attachEvents: (el) => {
-    loadMatchHistory();
-    loadUserProfile();
-    attachProfilePicUpload();
-
-     
-      
-    
+	loadMatchHistory();
+	loadUserProfile();
+	attachProfilePicUpload();
     
     // Gestion du clic sur un lien vers un autre profil
     // el.addEventListener('click', (e) => {
@@ -204,7 +200,11 @@ async function loadUserProfile() {
       const profilePicImg = document.querySelector(".profile-pic");
       if (profilePicImg) {
         profilePicImg.src = data.profile.profile_picture;
+		profilePicImg.alt = data.profile.username + "'s profile picture";
+		profilePicImg.style.width = "150px";
+		profilePicImg.style.height = "150px";
       }
+	  profilePicImg.classList.remove("d-none");
       const pseudoElement = document.getElementById("pseudo");
       if (pseudoElement && data.profile.username) {
         pseudoElement.textContent = data.profile.username;
@@ -216,3 +216,10 @@ async function loadUserProfile() {
     console.error("Error loading user profile:", error);
   }
 }
+
+// import { subscribe } from '/src/services/eventEmitter.js';
+
+// subscribe('updatenotifications', (data) => {
+// //recharger le bloc d'amis
+
+// });

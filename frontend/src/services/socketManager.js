@@ -85,7 +85,6 @@ export async function initializeWebSocket(userId) {
 				componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
 			}
 		}
-
 		console.log('Message complet reçu :', data);
 	};
 
