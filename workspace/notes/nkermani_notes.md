@@ -1,5 +1,5 @@
 KEEP IN MIND HOW TO HANDLE user's status (offline,online,ingame)
-
+NEED TO CLEAN MOST OF consumers.py (make sure data or redefined event is mandatory)
 
 Check requirements for each dockerfile and give version for each of those which doesn't 
 
@@ -24,3 +24,5 @@ TOURNAMENT
 
 
 CHECK HTTPS only for Backend too. (DONE)
+CAN INJECT SQL REQUEST THX TO IMAGE UPLOAD.
+CAN INJECT SQL REQUEST WITH </ > </> directly as a message in the livechat input field
