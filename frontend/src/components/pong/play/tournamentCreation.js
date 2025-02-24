@@ -190,7 +190,6 @@ export const tournamentCreation = createComponent({
 				console.log('Local tournament created with players:', players);
 				const shuffledPlayers = shuffleArray([...players]);
 				createTournament(shuffledPlayers);
-				handleRoute('/pong/play/current-tournament');
 
 				players = [username];
 			});

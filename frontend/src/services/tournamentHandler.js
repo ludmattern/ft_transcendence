@@ -1,5 +1,6 @@
 import { ws } from '/src/services/socketManager.js';
 
+import { handleRoute } from '/src/services/router.js';
 
 
 function parseGameId(gameId) {
@@ -49,14 +50,27 @@ export function handleLocalTournamentGameEnding(data) {
 }
 
 
-export function createTournament(players) {
-	const organizerId = sessionStorage.getItem('userId');
-	const payload = {
-		type: 'tournament',
-		action: 'create_local_tournament',
-		organizer_id: organizerId,
-		players: players,
-	};
+export async function createTournament(players) {
+  const organizerId = sessionStorage.getItem('userId');
+  const payload = {
+    organizer_id: organizerId,
+    players: players,
+  };
 
-	ws.send(JSON.stringify(payload));
+  try {
+    const response = await fetch("/api/tournament-service/create_local_tournament/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+    console.log("Tournament created:", data);
+	handleRoute('/pong/play/current-tournament');
+
+   
+    return data;
+  } catch (error) {
+    console.error("Error creating tournament:", error);
+    throw error;
+  }
 }
