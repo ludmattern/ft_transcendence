@@ -6,7 +6,7 @@ import { startMatchmakingGame, startPrivateGame } from '/src/services/multiplaye
 import { createNotificationMessage, updateAndCompareInfoData } from '/src/components/hud/sideWindow/left/notifications.js';
 import { handleLocalTournamentGameEnding } from '/src/services/tournamentHandler.js';
 
-export function initializeWebSocket() {
+export async function initializeWebSocket(userId) {
 	if (ws) {
 		if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING || isWsConnected == true) {
 			return;
@@ -15,7 +15,23 @@ export function initializeWebSocket() {
 		}
 	}
 
-	ws = new WebSocket(`wss://${window.location.host}/ws/gateway/`);
+	const tournamentSerialKey = await fetch(`/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`)
+		.then(response => response.json())
+		.then(data => data.serial_key)
+		.catch(error => {
+			console.error('Error fetching tournament serial key:', error);
+		});
+
+	let wsUrl = `wss://${window.location.host}/ws/gateway/`;
+	console.log('Tournament serial key:', tournamentSerialKey);
+
+	if (tournamentSerialKey) {
+		wsUrl += `?serial_key=${encodeURIComponent(tournamentSerialKey)}`;
+	}
+
+	console.log('Connexion WebSocket à :', wsUrl);
+
+	ws = new WebSocket(wsUrl);
 
 	ws.onopen = () => {
 		console.log(' WebSocket connecté !');

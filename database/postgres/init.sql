@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
 	password VARCHAR(255) NOT NULL,
 	rank INT DEFAULT 0,
 	status VARCHAR(20) DEFAULT 'offline', -- 'offline', 'online', 'ingame'
-	in_tournament BOOLEAN DEFAULT FALSE, -- Whether the user is currently in a tournament still active
+	tournament_status VARCHAR(20) DEFAULT 'out', -- 'out', 'lobby', 'participating',
 	winrate FLOAT DEFAULT 0,
 	total_wins INT DEFAULT 0,
 	total_losses INT DEFAULT 0,
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS tournaments (
 	rounds INT DEFAULT 0,
 	name VARCHAR(255) DEFAULT 'TOURNAMENT_DEFAULT_NAME',
 	organizer_id INT NOT NULL,
-	status VARCHAR(50) DEFAULT 'upcoming', -- 
+	status VARCHAR(50) DEFAULT 'upcoming', -- 'upcoming', 'ongoing', 'completed'
 	mode VARCHAR(10) DEFAULT 'local',
 	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated_at TIMESTAMP NOT NULL DEFAULT NOW(),

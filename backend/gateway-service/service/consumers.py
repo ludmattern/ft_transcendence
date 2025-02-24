@@ -1,5 +1,6 @@
 import json
 import logging
+import urllib.parse
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 
@@ -8,15 +9,20 @@ logger = logging.getLogger(__name__)
 class GatewayConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		await self.accept()
-
-		# self.user_id = self.scope["user"].id if self.scope.get("user") and self.scope["user"].is_authenticated else "guest"
-		# user = self.scope.get("user")
-		# self.user_id = user.id
-
 		await self.channel_layer.group_add("gateway", self.channel_name)
-		# await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
-		# logger.info(f"🔗 Client {self.user_id} connecté au WebSocket Gateway")
-		logger.info(f"🔗 Client connecté au WebSocket Gateway")
+		
+		# Extraction de la serial_key depuis la query string
+		query_string = self.scope["query_string"].decode("utf-8")
+		query_params = urllib.parse.parse_qs(query_string)
+		serial_keys = query_params.get("serial_key", [])
+		if serial_keys:
+			serial_key = serial_keys[0]
+			group_name = f"tournament_{serial_key}"
+			await self.channel_layer.group_add(group_name, self.channel_name)
+			logger.info(f"Client ajouté au groupe {group_name}")
+		
+		logger.info("🔗 Client connecté au WebSocket Gateway")
+
 
 	async def disconnect(self, close_code):
 		if self.user_id:
@@ -37,17 +43,13 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				logger.info(f"Initialization complete: Client {self.username} (ID: {self.user_id}) connected.")
 				return  
 			
-
 			if message_type == "chat_message":
-				# event = {
-				# 	"type": "chat_message",
-				# 	"message": data.get("message"),
-				# 	"author": author,
-				# 	"channel": "general",
-				# 	"timestamp": data.get("timestamp"),
-				# }
 				await self.channel_layer.group_send("chat_service", data)
 				logger.info(f"Message général relayé à 'chat_service' depuis {author}")
+
+			if message_type == "tournament_message":
+				await self.channel_layer.group_send("tournament_service", data)
+				logger.info(f"Message général relayé à 'tournament_service' depuis {author}")
 
 			elif message_type == "private_message":
 				recipient = data.get("recipient")
@@ -134,13 +136,18 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 					}
 				)
 
-    
-    
+	
+	
 		except json.JSONDecodeError:
 			await self.send(json.dumps({"error": "Format JSON invalide"}))
 
 	async def chat_message(self, event):
 		"""Reçoit un message (provenant du chat-service) et le renvoie au client."""
+		await self.send(json.dumps(event))
+		logger.info(f"Message transmis au client WebSocket (General): {event}")
+
+	async def tournament_message(self, event):
+		"""Reçoit un message (provenant du tournament-service) et le renvoie au client."""
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (General): {event}")
 
