@@ -4,10 +4,10 @@ import string
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from .models import ManualTournament, ManualUser, ManualTournamentParticipants, TournamentMatch
-import logging
 from cryptography.fernet import Fernet
 from django.conf import settings
 import math
+import logging
 
 logger = logging.getLogger(__name__)
 

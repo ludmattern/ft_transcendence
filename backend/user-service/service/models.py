@@ -1,5 +1,6 @@
 from django.db import models
 import pyotp
+from django.core.validators import FileExtensionValidator
 
 class ManualUser(models.Model):
     id = models.AutoField(primary_key=True)
@@ -11,6 +12,11 @@ class ManualUser(models.Model):
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     temp_2fa_code = models.CharField(max_length=10, null=True, blank=True)
     is_dummy = models.BooleanField(default=False)
+    profile_picture = models.ImageField(
+        upload_to="profile_pics/",
+        default="profile_pics/default-profile-150.png",
+        validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])]
+    )
     totp_secret = models.CharField(max_length=32, default=pyotp.random_base32)
     token_expiry = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
 	total_wins INT DEFAULT 0,
 	total_losses INT DEFAULT 0,
 	total_games INT DEFAULT 0,
+  profile_picture VARCHAR(255) DEFAULT 'profile_pics/default-profile-150.png',
 	is_2fa_enabled BOOLEAN DEFAULT FALSE,
 	is_dummy BOOLEAN DEFAULT FALSE,
 	twofa_method VARCHAR(50) DEFAULT NULL,
