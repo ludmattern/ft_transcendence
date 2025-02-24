@@ -47,9 +47,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				await self.channel_layer.group_send("chat_service", data)
 				logger.info(f"Message général relayé à 'chat_service' depuis {author}")
 
-			if message_type == "tournament_message":
-				await self.channel_layer.group_send("tournament_service", data)
-				logger.info(f"Message général relayé à 'tournament_service' depuis {author}")
 
 			elif message_type == "private_message":
 				recipient = data.get("recipient")
@@ -86,6 +83,10 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				await self.channel_layer.group_send("chat_service", event)
 				logger.info(f"New notification send")
 
+			elif message_type == "tournament_message":
+				await self.channel_layer.group_send("tournament_service", data)
+				logger.info(f"Message général relayé à 'tournament_service")
+			
 			elif data.get("type") == "game_event":
 				game_id = data.get("game_id", "unknown_game") 
 				player1_id = data.get("player1", "Player 1")
@@ -124,17 +125,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				})
 				logger.info(f"🚀 matchmaking_event/private_event => service : {action} {user_id}, room={room_code}")
 
-			elif data.get("type") == "tournament":
-				logger.info("🚀 tournament event")
-				await self.channel_layer.group_send(
-					"tournament", 
-					{
-						"type": "create_local_tournament", 
-						"action": data.get("action"),
-						"organizer_id": data.get("organizer_id"),
-						"players": data.get("players"),
-					}
-				)
 
 	
 	
@@ -143,11 +133,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
 	async def chat_message(self, event):
 		"""Reçoit un message (provenant du chat-service) et le renvoie au client."""
-		await self.send(json.dumps(event))
-		logger.info(f"Message transmis au client WebSocket (General): {event}")
-
-	async def tournament_message(self, event):
-		"""Reçoit un message (provenant du tournament-service) et le renvoie au client."""
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (General): {event}")
 
@@ -161,8 +146,11 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (Friend Request): {event}")
 
-
-
+	async def tournament_message(self, event):
+		"""Reçoit un message (provenant du tournament-service) et le renvoie au client."""
+		await self.send(json.dumps(event))
+		logger.info(f"Message transmis au client WebSocket (Tournament): {event}")
+  
 	async def error_message(self, event):
 		"""This method handles error_message events delivered to this consumer."""
 		await self.send(json.dumps(event))

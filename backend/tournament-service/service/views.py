@@ -2,11 +2,16 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import math
 import random, string
-from .models import ManualTournament, ManualTournamentParticipants, TournamentMatch
+from .models import ManualTournament, ManualTournamentParticipants, TournamentMatch, ManualUser
 import logging
 import json
+from cryptography.fernet import Fernet
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
+cipher = Fernet(settings.FERNET_KEY)
+
+
 
 #TODO ici pas de changement avec le online 
 
@@ -163,3 +168,114 @@ def abandon_local_tournament(request):
 	except Exception as e:
 		logger.exception("Error abandoning tournament:")
 		return JsonResponse({"error": str(e)}, status=500)
+
+
+
+def encrypt_thing(args):
+    """Encrypts the args."""
+    return cipher.encrypt(args.encode('utf-8')).decode('utf-8')
+
+@csrf_exempt
+def create_local_tournament_view(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "POST method required"}, status=405)
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        organizer_id = body.get("organizer_id")
+        players = body.get("players", [])
+
+        # Vérifications de base
+        if not organizer_id:
+            logger.error("Organizer ID is missing in the request data.")
+            return JsonResponse({"error": "Organizer ID is required"}, status=400)
+        if len(players) not in [4, 8, 16]:
+            logger.error(f"Invalid tournament size: {len(players)} players provided. Expected 4, 8 ou 16.")
+            return JsonResponse({"error": "Invalid tournament size"}, status=400)
+
+        # Récupération de l'organisateur et vérification de son état
+        try:
+            organizer = ManualUser.objects.get(id=organizer_id)
+            if organizer.tournament_status != "out":
+                error_msg = f"L'utilisateur {organizer.id} est déjà dans un tournoi actif."
+                logger.warning(error_msg)
+                return JsonResponse({"error": error_msg}, status=400)
+        except ManualUser.DoesNotExist:
+            return JsonResponse({"error": "Organizer not found"}, status=404)
+
+        serial_key = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        logger.info(f"🔑 Génération de serial_key: {serial_key}")
+
+        tournament = ManualTournament.objects.create(
+            serial_key=serial_key,
+            name="Local Tournament",
+            organizer_id=organizer_id,
+            rounds=len(players) // 2,
+            status="ongoing",
+            mode="local"
+        )
+        logger.info(f"🏆 Tournament créé: ID={tournament.id}, serial_key={serial_key}, organizer_id={organizer_id}")
+
+        for username in players:
+            user, created = ManualUser.objects.get_or_create(
+                username=username,
+                defaults={
+                    "email": encrypt_thing(f"{username.lower()}@local.fake"),
+                    "password": "fakepassword",
+                    "is_dummy": True
+                }
+            )
+            if created:
+                logger.info(f"👤 Utilisateur créé: username={user.username}")
+            else:
+                logger.info(f"👤 Utilisateur récupéré: username={user.username}")
+            user.tournament_status = "participating"
+            user.save()
+            ManualTournamentParticipants.objects.create(
+                tournament=tournament,
+                user=user,
+                status="accepted"
+            )
+            logger.info(f"✅ Participant ajouté: TournamentID={tournament.id}, User={user.username}, status=accepted")
+
+        n = len(players)
+        rounds_count = int(math.log2(n))
+        for i in range(0, n, 2):
+            match_order = (i // 2) + 1
+            player1 = players[i]
+            player2 = players[i+1]
+            TournamentMatch.objects.create(
+                tournament=tournament,
+                round_number=1,
+                match_order=match_order,
+                player1=player1,
+                player2=player2,
+                status="pending"
+            )
+            logger.info(f"🏅 Round 1, Match {match_order} créé: {player1} vs {player2}")
+
+        previous_matches = n // 2
+        for round_number in range(2, rounds_count + 1):
+            num_matches = previous_matches // 2
+            for match_order in range(1, num_matches + 1):
+                TournamentMatch.objects.create(
+                    tournament=tournament,
+                    round_number=round_number,
+                    match_order=match_order,
+                    player1="TBD",
+                    player2="TBD",
+                    status="pending"
+                )
+                logger.info(f"🏅 Round {round_number}, Match {match_order} créé: TBD vs TBD")
+            previous_matches = num_matches
+
+        response_data = {
+            "success": True,
+            "serial_key": serial_key,
+            "tournament_id": tournament.id,
+            "players": players
+        }
+        return JsonResponse(response_data, status=200)
+
+    except Exception as e:
+        logger.exception("Error creating local tournament:")
+        return JsonResponse({"error": str(e)}, status=500)

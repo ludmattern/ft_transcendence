@@ -4,6 +4,8 @@ import string
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from .models import ManualTournament, ManualUser, ManualTournamentParticipants, TournamentMatch
+import logging
+from channels.db import database_sync_to_async 
 from cryptography.fernet import Fernet
 from django.conf import settings
 import math
@@ -13,11 +15,9 @@ logger = logging.getLogger(__name__)
 
 cipher = Fernet(settings.FERNET_KEY)
 
-
 def encrypt_thing(args):
 	"""Encrypts the args."""
 	return cipher.encrypt(args.encode('utf-8')).decode('utf-8')
-
 
 class TournamentConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
@@ -31,13 +31,45 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		logger.info(f"🔌 Déconnecté du groupe 'local_tournament' (channel={self.channel_name})")
 
 	async def tournament_message(self, event):
+		logger.info(f"Message de tournoi reçu: {event}")
 		action = event.get("action")
-		if action == "create_tournament_lobby":
-			serial_key = event.get("serial_key")
-			if serial_key:
-				group_name = f"tournament_{serial_key}"
-				await self.channel_layer.group_add(group_name, self.channel_name)
+		logger.info(f"Action reçue: {action}")
+		
+		if str(action) == "create_tournament_lobby":
+			logger.info("Creating tournament lobby")
+			user_id = event.get("userId")
+			tournament_size = event.get("tournamentSize")
+			user = await ManualUser.objects.get(id=user_id)
+			serial_key = str(user_id)  # You might want to change this later on
+			tournament = await self.ManualTournament.objects.create(serial_key=serial_key, organizer=user, rounds=tournament_size)
+			await ManualTournamentParticipants.objects.get_or_create(tournament=tournament, user=user)
+   
+			user.tournament_status = "lobby"
+			user.save()
+			logger.info("User %s created tournament lobby with serial key %s", user.username, serial_key)
+			# Add the current channel to a group specific to this tournament lobby
+			tournament_group = f"tournament_{tournament.serial_key}"
+			await self.channel_layer.group_add(tournament_group, self.channel_name)
+			logger.info("Channel %s added to group %s", self.channel_name, tournament_group)
 
+			# Adjusted response to match the client's expectations.
+			response = {
+				"type": "tournament_message",
+				"action": "create_tournament_lobby",
+				"tournamentLobbyId": tournament.serial_key,
+				"organizer": user.username,
+				"tournamentSize": tournament_size,
+				"message": "Tournament lobby created successfully",
+			}
+			# Send the response back to the client
+			await self.self.channel_layer.group_send(self.room_group_name,json.dumps(response))
+			logger.info("Tournament lobby created with serial key %s by user %s", tournament.serial_key, user.username)
+			
+			# Optionally, send to other channels if needed.
+			await self.channel_layer.group_send(self.room_group_name, {
+				"type": "tournament_created",
+				"serial_key": serial_key,
+			})
 
 	async def create_local_tournament(self, data):
 		organizer_id = data.get("organizer_id")
@@ -64,9 +96,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.send(json.dumps({"error": "Organizer not found"}))
 			return
 
-
 		#TODO ici  c est pour le local faudra changer le fonctionement pour le online
-		# to next TODO 
+		# to next TODO
 		serial_key = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
 		logger.info(f"🔑 Génération de serial_key: {serial_key}")
 		

@@ -79,7 +79,7 @@ export async function initializeWebSocket(userId) {
 				createNotificationMessage(data.info);
 			}
 		} else if (data.type === 'tournament_message') {
-			if (data.action === 'tournament_lobby_created') {
+			if (data.action === 'create_tournament_lobby') {
 				console.log('Lobby créé :', data.tournamentLobbyId);
 				handleRoute('/pong/play/tournament-creation');
 				componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
