@@ -32,7 +32,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 	async def tournament_message(self, event):
 		action = event.get("action")
-		if action == "join tournament":
+		if action == "create_tournament_lobby":
 			serial_key = event.get("serial_key")
 			if serial_key:
 				group_name = f"tournament_{serial_key}"

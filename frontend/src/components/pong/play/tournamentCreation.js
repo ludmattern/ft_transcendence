@@ -2,6 +2,7 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { createTournament } from '/src/services/tournamentHandler.js';
 import { setPreviousPongPlaySubRoute } from '/src/services/router.js';
+import { ws } from '/src/services/socketManager.js';
 
 // Fonction utilitaire pour générer un room code alphanumérique à 6 caractères
 function generateRoomCode() {
@@ -15,13 +16,22 @@ function generateRoomCode() {
 
 export const tournamentCreation = createComponent({
 	tag: 'tournamentCreation',
+	
 	render: () => {
-		// Récupération des paramètres depuis le sessionStorage
 		const tournamentMode = sessionStorage.getItem('tournamentMode') || 'local';
 		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
-		const username = sessionStorage.getItem('username') || 'You';
+		console.log('waitingForTournamentLobby:', sessionStorage.getItem('waitingForTournamentLobby'));
+		let waiting = sessionStorage.getItem('waitingForTournamentLobby') === 'true';
 
-		if (tournamentMode === 'local') {
+		if (waiting) {
+			return `
+			<section class="col-12 d-flex flex-column align-items-center text-center p-5"
+					 style="background-color: #111111; color: white; max-height: 700px; overflow: auto;">
+			  <h1 class="mb-4">Loading Tournament Creation ...</h1>
+			  <div class="pong-loader"></div>
+			</section>
+		  `;
+		} else if (tournamentMode === 'local') {
 			// Interface pour le tournoi en local
 			return `
         <section class="col-12 d-flex flex-column align-items-center text-center p-5"
@@ -91,6 +101,9 @@ export const tournamentCreation = createComponent({
 		}
 	},
 	attachEvents: (el) => {
+		if (sessionStorage.getItem('waitingForTournamentLobby')) {
+			return;
+		}
 		const tournamentMode = sessionStorage.getItem('tournamentMode') || 'local';
 		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
 		const username = sessionStorage.getItem('username') || 'You';
@@ -178,8 +191,6 @@ export const tournamentCreation = createComponent({
 				const shuffledPlayers = shuffleArray([...players]);
 				createTournament(shuffledPlayers);
 				handleRoute('/pong/play/current-tournament');
-
-
 
 				players = [username];
 			});

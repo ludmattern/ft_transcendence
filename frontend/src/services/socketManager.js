@@ -76,6 +76,9 @@ export async function initializeWebSocket(userId) {
 			} else {
 				createNotificationMessage(data.info);
 			}
+		} else if (data.type === 'tournament_lobby_created') {
+			console.log("Lobby créé :", data.tournamentLobbyId);
+			handleRoute('/pong/play/tournament-creation');
 		}
 
 		console.log('Message complet reçu :', data);
