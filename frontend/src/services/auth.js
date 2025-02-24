@@ -19,7 +19,7 @@ export async function isClientAuthenticated() {
 		sessionStorage.setItem('userId', data.id);
 		sessionStorage.setItem('username', data.username);
 
-		initializeWebSocket();
+		initializeWebSocket(data.id);
 		console.log('User is authenticated!');
 		return true;
 	} catch (error) {

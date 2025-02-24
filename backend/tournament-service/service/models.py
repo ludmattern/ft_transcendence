@@ -8,7 +8,15 @@ class ManualUser(models.Model):
     email = models.EmailField(max_length=100, unique=True)
     password = models.CharField(max_length=255)
     is_2fa_enabled = models.BooleanField(default=False)
-    in_tournament = models.BooleanField(default=False) 
+    tournament_status = models.CharField(
+        max_length=20,
+        choices=[
+            ('out', 'Out'),
+            ('lobby', 'Lobby'),
+            ('participating', 'Participating'),
+        ],
+        default='out'
+    )
     twofa_method = models.CharField(max_length=50, null=True, blank=True)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     temp_2fa_code = models.CharField(max_length=10, null=True, blank=True)
