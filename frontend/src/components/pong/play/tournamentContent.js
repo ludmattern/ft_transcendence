@@ -196,7 +196,8 @@ function joinOrCreateTournamentLobby(tournamentSize) {
 
 function joinTournamentLobby(tournamentSize, userId, tournamentSerialKey) {
 	const payload = {
-		type: 'join_tournament_lobby',
+		type: 'tournament_message',
+		action: 'join_tournament_lobby',
 		userId: userId,
 		tournamentSerialKey: tournamentSerialKey,
 		tournamentSize: tournamentSize,
@@ -207,7 +208,8 @@ function joinTournamentLobby(tournamentSize, userId, tournamentSerialKey) {
 
 function createTournamentLobby(tournamentSize, userId) {
 	const payload = {
-		type: 'create_tournament_lobby',
+		type: 'tournament_message',
+		action: 'create_tournament_lobby',
 		userId: userId,
 		tournamentSize: tournamentSize,
 		timestamp: new Date().toISOString(),

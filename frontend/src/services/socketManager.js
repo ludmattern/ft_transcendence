@@ -5,6 +5,8 @@ import { handleIncomingMessage } from '/src/components/hud/sideWindow/left/tabCo
 import { startMatchmakingGame, startPrivateGame } from '/src/services/multiplayerPong.js';
 import { createNotificationMessage, updateAndCompareInfoData } from '/src/components/hud/sideWindow/left/notifications.js';
 import { handleLocalTournamentGameEnding } from '/src/services/tournamentHandler.js';
+import componentManagers from '/src/index.js';
+import { tournamentCreation } from '/src/components/pong/play/tournamentCreation.js';
 
 export async function initializeWebSocket(userId) {
 	if (ws) {
@@ -16,9 +18,9 @@ export async function initializeWebSocket(userId) {
 	}
 
 	const tournamentSerialKey = await fetch(`/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`)
-		.then(response => response.json())
-		.then(data => data.serial_key)
-		.catch(error => {
+		.then((response) => response.json())
+		.then((data) => data.serial_key)
+		.catch((error) => {
 			console.error('Error fetching tournament serial key:', error);
 		});
 
@@ -76,9 +78,12 @@ export async function initializeWebSocket(userId) {
 			} else {
 				createNotificationMessage(data.info);
 			}
-		} else if (data.type === 'tournament_lobby_created') {
-			console.log("Lobby créé :", data.tournamentLobbyId);
-			handleRoute('/pong/play/tournament-creation');
+		} else if (data.type === 'tournament_message') {
+			if (data.action === 'tournament_lobby_created') {
+				console.log('Lobby créé :', data.tournamentLobbyId);
+				handleRoute('/pong/play/tournament-creation');
+				componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
+			}
 		}
 
 		console.log('Message complet reçu :', data);
