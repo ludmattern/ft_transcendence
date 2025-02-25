@@ -12,7 +12,7 @@ export const profileForm = createComponent({
         <div class="profile-info d-flex justify-content-evenly align-items-center w-100 m-3 pb-3">
           <!-- Profile Picture -->
           <div class="profile-pic-container">
-              <img id="profile-pic-link" class="profile-pic d-none rounded-circle"/>
+              <img id="profile-pic-link" class="profile-pic d-none rounded-circle" style="cursor: pointer;" />
               <input type="file" id="profile-image-input" alt="profile picture" accept="image/*" style="display:none;" />
           </div>
           <!-- Profile Details -->
@@ -60,8 +60,10 @@ export const profileForm = createComponent({
   `,
 
   attachEvents: (el) => {
-	loadMatchHistory();
-	loadUserProfile();
+  const userId = sessionStorage.getItem("userId");
+
+	loadMatchHistory(userId);
+	loadUserProfile(userId);
 	attachProfilePicUpload();
     
     // Gestion du clic sur un lien vers un autre profil
@@ -134,8 +136,7 @@ function attachProfilePicUpload() {
   }
 }
 
-async function loadMatchHistory() {
-  const userId = sessionStorage.getItem("userId");
+export async function loadMatchHistory(userId) {
 
   try {
     const response = await fetch(`/api/user-service/get_game_history/?user_id=${userId}`);
@@ -186,8 +187,7 @@ function createMatchItem(outcome, date, opponents, outcomeClass, score) {
 
 
 
-async function loadUserProfile() {
-  const userId = sessionStorage.getItem("userId");
+export async function loadUserProfile(userId) {
 
   try {
     const response = await fetch(`/api/user-service/get_profile/?user_id=${userId}`);
