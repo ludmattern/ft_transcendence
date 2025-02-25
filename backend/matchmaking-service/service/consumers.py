@@ -67,7 +67,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                     p1 = result["players"][0]
                     p2 = result["players"][1]
                     
-
                     match_info_p1 = matchmaking_manager.match_found[p1]
                     match_info_p2 = matchmaking_manager.match_found[p2]
                         
