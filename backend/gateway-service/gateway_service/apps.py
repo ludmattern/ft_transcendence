@@ -25,6 +25,6 @@ class GatewayServiceConfig(AppConfig):
 		start_dummy_tournament_connection()
 		logger.info("Dummy tournament connection lancée.")
 		
-		# from service.auth_connection import start_dummy_auth_connection
-		# start_dummy_auth_connection()
-		# logger.info("Dummy auth connection lancée.")
+		from service.auth_connection import start_dummy_auth_connection
+		start_dummy_auth_connection()
+		logger.info("Dummy auth connection lancée.")

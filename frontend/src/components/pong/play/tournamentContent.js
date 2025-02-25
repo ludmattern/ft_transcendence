@@ -1,6 +1,5 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
-import { setInTournament } from '/src/index.js';
 import { ws } from '/src/services/socketManager.js';
 
 export const tournamentContent = createComponent({
@@ -121,9 +120,7 @@ export const tournamentContent = createComponent({
 			sessionStorage.setItem('tournamentSize', size);
 			console.log(`Creating a tournament with mode: ${mode} and size: ${size}`);
 			if (mode === 'online') {
-				console.log('waitingForTournamentLobby:', sessionStorage.getItem('waitingForTournamentLobby'));
 				createTournamentLobby(size, sessionStorage.getItem('userId'));
-				setInTournament(true);
 			}
 			handleRoute('/pong/play/tournament-creation');
 		});

@@ -20,8 +20,6 @@ export const socialForm = createComponent({
               <span class="bi bi-people me-2"></span>Friend List
             </h6>
             <div class="friend-list-container d-flex flex-column" style="max-height: 18vh; overflow-y: auto;">
-              <!-- La liste d'amis sera injectée ici -->
-              <p>No friends found, Looser...</p>
             </div>
           </div>
           <span class="panel-mid"></span>
@@ -46,6 +44,7 @@ export const socialForm = createComponent({
 
   // Ajouter les événements après le chargement du composant dans le DOM
   attachEvents: (el) => {
+	getFriends(sessionStorage.getItem('userId'));
     el.addEventListener('click', (e) => {
       if (e.target.matches('#other-profile-link')) {
         e.preventDefault();
@@ -165,6 +164,9 @@ async function getFriends(userId) {
         .map(friend => createFriendItem('Online', friend.username, 'text-success'))
         .join('');
     }
+	else {
+	  friendListContainer.innerHTML = `<p style="opacity: 0.7;">It's a lonely world...</p>`;
+	}
   } catch (error) {
     console.error("Erreur lors de la récupération de la liste d'amis:", error);
   }
