@@ -1002,8 +1002,6 @@ p {
 #hud-body  #central-window .profile-pic {
 	width: 150px;
 	height: 150px;
-	cursor: pointer;
-
 }
 
 #hud-body .profile-match-history .match-item,

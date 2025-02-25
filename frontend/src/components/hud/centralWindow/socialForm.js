@@ -47,14 +47,20 @@ export const socialForm = createComponent({
 
   // Ajouter les événements après le chargement du composant dans le DOM
   attachEvents: (el) => {
-    // Gestion du clic sur "Voir Profil" dans la liste d'amis
     el.addEventListener('click', (e) => {
       if (e.target.matches('#other-profile-link')) {
         e.preventDefault();
-        handleRoute('/social/pilot=pseudo');
-        console.info('OtherProfileForm loaded on click.');
+        const friendItem = e.target.closest('.friend-item');
+        if (friendItem) {
+          const pseudoEl = friendItem.querySelector('.profile-pseudo');
+          if (pseudoEl) {
+            const friendUsername = pseudoEl.textContent.trim();
+            handleRoute(`/social/pilot=${friendUsername}`);
+          }
+        }
       }
     });
+    
 
     // Gestion du clic sur "Ajouter" dans la liste des pilotes
     el.addEventListener('click', (e) => {

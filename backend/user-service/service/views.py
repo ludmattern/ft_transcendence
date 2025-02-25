@@ -185,6 +185,15 @@ def getUsername(request):
         return JsonResponse({'success': False, 'message': 'Only POST method is allowed'}, status=405)
 
 
+def get_user_id(request, username):
+    if request.method != "GET":
+        return JsonResponse({"error": "GET method required"}, status=405)
+    try:
+        user = ManualUser.objects.get(username=username)
+        return JsonResponse({"success": True, "user_id": user.id})
+    except ManualUser.DoesNotExist:
+        return JsonResponse({"error": "User not found"}, status=404)
+
 @csrf_exempt
 def get_game_history(request):
     if request.method != "GET":
