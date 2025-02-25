@@ -1,6 +1,13 @@
 KEEP IN MIND HOW TO HANDLE user's status (offline,online,ingame)
 NEED TO CLEAN MOST OF consumers.py (make sure data or redefined event is mandatory)
 
+
+NEED TO REMIND FPREVOT TO: 
+    - ADD LITTLE FORMAT PICTURE FOR LIVECHAT
+    - SUPPRIMER LA PHOTO DE PROFILE (L'ANCIENNE DANS LE VOLUME SAUF SI C'ETAIT CELLE DE BASE)
+    - AJOUTER UN MESSAGE D'ERREUR QUAND LA LISTE DE SEARCH APRES UNE REQUETE EST VIDE.
+
+
 Check requirements for each dockerfile and give version for each of those which doesn't 
 
 NEED TO SETUP tournament-service in order to start making back views/consumers for infoPanel purposes. (tournament invite and private games)
