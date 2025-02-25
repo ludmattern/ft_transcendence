@@ -182,11 +182,15 @@ async function fetchPilot(query, container) {
     const data = await response.json();
     console.log("Search results:", data.pilots);
     if (container) {
-      container.innerHTML = data.pilots.map(pilot => createPilotItem(
-        'Online',
-        pilot.username,
-        'text-success'
-      )).join('');
+      if (data.pilots.length === 0) {
+        container.innerHTML = `<p>Maybe this pilot crashed or went far far far away...</p>`;
+      } else {
+        container.innerHTML = data.pilots.map(pilot => createPilotItem(
+          'Online',
+          pilot.username,
+          'text-success'
+        )).join('');
+      }
     }
   } catch (error) {
     console.error("Error searching pilots:", error);

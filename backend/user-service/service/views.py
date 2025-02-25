@@ -276,6 +276,7 @@ from PIL import Image
 ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp']
 MAX_FILE_SIZE = 5 * 1024 * 1024  
 
+
 @csrf_exempt
 def upload_profile_picture(request):
     if request.method != "POST":
@@ -303,14 +304,26 @@ def upload_profile_picture(request):
             return JsonResponse({"success": False, "error": "Uploaded file is not a valid image"}, status=200)
 
         user = ManualUser.objects.get(id=user_id)
+        
+        old_image_path = user.profile_picture.path if user.profile_picture else None
+        
         user.profile_picture = file
         user.save()
+
+        default_filename = "default-profile-150.png"
+        if old_image_path and os.path.exists(old_image_path):
+            if os.path.basename(old_image_path) != default_filename:
+                try:
+                    os.remove(old_image_path)
+                except Exception as e:
+                    return JsonResponse({"success": False, "error": "img not found"}, status=200)
 
         return JsonResponse({"success": True, "profile_picture": user.profile_picture.url}, status=200)
     except ManualUser.DoesNotExist:
         return JsonResponse({"success": False, "error": "User not found"}, status=200)
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=200)
+
 
 
 def search_pilots(request):
