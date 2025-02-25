@@ -33,7 +33,7 @@ export const commMessage = createComponent({
 	render: (item) => {
 		const isUser = !!item.isUser;
 		const isPrivate = item.channel === 'Private';
-
+		console.log("item is :", item)
 		// Pour un message privé envoyé par vous, afficher le destinataire, sinon "You" pour les messages généraux.
 		// Pour les messages reçus, préfixer d'un "@".
 		let displayName;
@@ -51,7 +51,7 @@ export const commMessage = createComponent({
 		  ${
 				!isUser
 					? `<img class="profile-picture" 
-				   src="${item.profilePicture || '/src/assets/img/default-profile-40.png'}" 
+				   src="/media${item.profilePicture || '/src/assets/img/default-profile-40.png'}" 
 				   alt="${displayName}'s profile picture" />`
 					: ''
 			}

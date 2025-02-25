@@ -200,9 +200,9 @@ export async function loadUserProfile(userId) {
       const profilePicImg = document.querySelector(".profile-pic");
       if (profilePicImg) {
         profilePicImg.src = data.profile.profile_picture;
-		profilePicImg.alt = data.profile.username + "'s profile picture";
-		profilePicImg.style.width = "150px";
-		profilePicImg.style.height = "150px";
+        profilePicImg.alt = data.profile.username + "'s profile picture";
+        profilePicImg.style.width = "150px";
+        profilePicImg.style.height = "150px";
       }
 	  profilePicImg.classList.remove("d-none");
       const pseudoElement = document.getElementById("pseudo");

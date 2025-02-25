@@ -141,3 +141,9 @@ async function fetchUserId(username) {
     console.error("Error fetching user ID:", error);
   }
 }
+
+
+/*
+SI LE USER EXISTE PAS FAIRE UNE PAGE SPECIALE 
+
+*/

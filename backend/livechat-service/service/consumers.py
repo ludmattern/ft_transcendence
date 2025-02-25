@@ -6,6 +6,7 @@ from channels.db import database_sync_to_async
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db.models import Q
 from .models import ManualUser, ManualFriendsRelations
+from asgiref.sync import sync_to_async
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,13 @@ def get_id(user_username):
 def get_users_id():
 	return list(ManualUser.objects.values_list('id', flat=True))
 
+async def get_profile_picture(user_id):
+    try:
+        user = await sync_to_async(ManualUser.objects.get)(id=user_id)
+        return user.profile_picture.url
+    except ManualUser.DoesNotExist:
+        return "/media/profile_pics/default-profile-150.png"
+
 class ChatConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		await self.accept()
@@ -41,7 +49,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 	async def chat_message(self, event):
 		author_id = event.get("author")
 		username = await get_username(author_id)
+		profile_picture = await get_profile_picture(author_id)
 		event["username"] = username
+		event["profilePicture"] = profile_picture
 		users = await get_users_id()  
 
 		for userid in users:
@@ -57,6 +67,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		username = await get_username(author_id)
 		recipient = event.get("recipient")
 		recipient_id = await get_id(recipient)
+		profile_picture = await get_profile_picture(author_id)
+		event["profilePicture"] = profile_picture
 
 		if recipient_id is None:
 			logger.info(f"No valid recipient id for recipient: {recipient}")
