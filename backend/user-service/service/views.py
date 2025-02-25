@@ -311,3 +311,22 @@ def upload_profile_picture(request):
         return JsonResponse({"success": False, "error": "User not found"}, status=200)
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=200)
+
+
+def search_pilots(request):
+    if request.method != "GET":
+        return JsonResponse({"error": "GET method required"}, status=405)
+    
+    query = request.GET.get("query")
+    if not query:
+        return JsonResponse({"error": "Query parameter is required"}, status=400)
+    
+    pilots = ManualUser.objects.filter(username__istartswith=query)
+    results = []
+    for pilot in pilots:
+        results.append({
+            "username": pilot.username,
+            "user_id": pilot.id
+        })
+    
+    return JsonResponse({"success": True, "pilots": results})

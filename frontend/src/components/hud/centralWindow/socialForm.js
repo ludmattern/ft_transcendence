@@ -36,8 +36,7 @@ export const socialForm = createComponent({
               <button class="btn btn-sm bi bi-search" id="search-link">Search</button>
             </div>
             <div class="pilot-list-container d-flex flex-column" style="max-height: 18vh; overflow-y: auto;">
-              ${createPilotItem('Online', 'Pilot1', 'text-success')}
-              ${createPilotItem('Offline', 'Pilot2', 'text-danger')}
+
             </div>
           </div>
         </span>
@@ -50,9 +49,9 @@ export const socialForm = createComponent({
     el.addEventListener('click', (e) => {
       if (e.target.matches('#other-profile-link')) {
         e.preventDefault();
-        const friendItem = e.target.closest('.friend-item');
-        if (friendItem) {
-          const pseudoEl = friendItem.querySelector('.profile-pseudo');
+        const item = e.target.closest('.friend-item') || e.target.closest('.pilot-item');
+        if (item) {
+          const pseudoEl = item.querySelector('.profile-pseudo');
           if (pseudoEl) {
             const friendUsername = pseudoEl.textContent.trim();
             handleRoute(`/social/pilot=${friendUsername}`);
@@ -78,7 +77,8 @@ export const socialForm = createComponent({
         e.preventDefault();
         const query = el.querySelector('#search-bar').value;
         console.log(`Search for: ${query}`);
-        // Ajouter ici la logique de recherche
+        const pilotListContainer = el.querySelector('.pilot-list-container');
+        fetchPilot(query, pilotListContainer);
       });
     }
 
@@ -129,7 +129,7 @@ function createPilotItem(status, pseudo, statusClass) {
         <span class="profile-pseudo fw-bold">${pseudo}</span>
       </div>
       <div class="d-flex">
-        <button class="btn btn-sm bi bi-person me-2" id="profile-link">Profile</button>
+        <button class="btn btn-sm bi bi-person me-2" id="other-profile-link">Profile</button>
         <button class="btn btn-sm bi bi-person-add" id="add-link">Add</button>
       </div>
     </div>
@@ -152,15 +152,36 @@ async function getFriends(userId) {
     const data = await response.json();
     console.log('Friend list:', data.friends);
 
-    // On récupère le conteneur de la liste d'amis dans le DOM
     const friendListContainer = document.querySelector('.friend-list-container');
     if (friendListContainer && data.friends && data.friends.length > 0) {
-      // On génère le HTML pour chaque ami et on l'injecte dans le conteneur
       friendListContainer.innerHTML = data.friends
         .map(friend => createFriendItem('Online', friend.username, 'text-success'))
         .join('');
     }
   } catch (error) {
     console.error("Erreur lors de la récupération de la liste d'amis:", error);
+  }
+}
+
+
+
+
+async function fetchPilot(query, container) {
+  try {
+    const response = await fetch(`/api/user-service/search_pilots/?query=${encodeURIComponent(query)}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("Search results:", data.pilots);
+    if (container) {
+      container.innerHTML = data.pilots.map(pilot => createPilotItem(
+        'Online',
+        pilot.username,
+        'text-success'
+      )).join('');
+    }
+  } catch (error) {
+    console.error("Error searching pilots:", error);
   }
 }
