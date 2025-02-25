@@ -1,12 +1,24 @@
 from django.db import models
+from django.core.validators import FileExtensionValidator
+
 
 class ManualUser(models.Model):
-	id = models.CharField(max_length=50, unique=True, primary_key=True)
-	username = models.CharField(max_length=50, unique=True)
+    id = models.CharField(max_length=50, unique=True, primary_key=True)
+    username = models.CharField(max_length=50, unique=True)
+    profile_picture = models.ImageField(
+        upload_to="profile_pics/",
+        default="profile_pics/default-profile-150.png",
+        validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "webp"])]
+    )
 
-	class Meta:
-		db_table = "users"
-		managed = False  # Django won't manage this table
+    class Meta:
+        db_table = "users"
+        managed = True
+
+    def __str__(self):
+        return self.username
+
+
 
 
 class ManualGameHistory(models.Model):
@@ -24,7 +36,7 @@ class ManualGameHistory(models.Model):
 		return f"Game {self.id}: {self.winner.username} vs {self.loser.username}"
 
 class ManualFriendsRelations(models.Model):
-	id = models.AutoField(primary_key=True)  # Added primary key for Django ORM
+	id = models.AutoField(primary_key=True)  
 	user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friends_initiated")
 	friend = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friends_received")
 	initiator = models.ForeignKey(ManualUser,on_delete=models.CASCADE, related_name="friend_requests_sent")
@@ -86,7 +98,7 @@ class ManualTournament(models.Model):
 
 
 class ManualTournamentParticipants(models.Model):
-	id = models.AutoField(primary_key=True)  # Added primary key
+	id = models.AutoField(primary_key=True)
 	tournament = models.ForeignKey(ManualTournament, on_delete=models.CASCADE, related_name='participants')
 	user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name='tournaments')
 	status = models.CharField(

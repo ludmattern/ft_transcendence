@@ -105,6 +105,7 @@ export async function initializeWebSocket(userId) {
 				handleIncomingMessage(data);
 			}
 		} else if (data.type === 'chat_message' || data.type === 'private_message') {
+			console.log("this is data ;" , data)
 			handleIncomingMessage(data);
 		} else if (data.type === 'private_match_found') {
 			console.log('Private match found:', data);
