@@ -84,6 +84,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				logger.info(f"New notification send")
 
 			elif message_type == "tournament_message":
+				logger.info(f"🏆 Message de tournoi reçu: {data}")
 				await self.channel_layer.group_send("tournament_service", data)
 				logger.info(f"Message général relayé à 'tournament_service")
 			

@@ -8,15 +8,10 @@ import ssl
 
 logger = logging.getLogger(__name__)
 
-
-
-
 async def connect_dummy_chat():
     ws_url = "wss://livechat_service:3003/ws/chat/"  
     while True:
         try:
-
-
             ssl_context = ssl.create_default_context()
             ssl_context.load_verify_locations("/data/certs/selfsigned.crt")
             ssl_context.check_hostname = False

@@ -19,9 +19,13 @@ def encrypt_thing(args):
 	"""Encrypts the args."""
 	return cipher.encrypt(args.encode('utf-8')).decode('utf-8')
 
+
+
+
+
 class TournamentConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
-		self.room_group_name = "tournament"
+		self.room_group_name = "tournament_service"
 		await self.channel_layer.group_add(self.room_group_name, self.channel_name)
 		await self.accept()
 		logger.info(f"🔗 Connecté au groupe 'local_tournament' (channel={self.channel_name})")
@@ -30,46 +34,140 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 		logger.info(f"🔌 Déconnecté du groupe 'local_tournament' (channel={self.channel_name})")
 
-	async def tournament_message(self, event):
-		logger.info(f"Message de tournoi reçu: {event}")
-		action = event.get("action")
-		logger.info(f"Action reçue: {action}")
+	async def tournament_message(self, data):
+		logger.info("Message de tournoi reçu: %s", data)
+		action = data.get("action")
+		logger.info("Action reçue: %s", action)
 		
 		if str(action) == "create_tournament_lobby":
-			logger.info("Creating tournament lobby")
-			user_id = event.get("userId")
-			tournament_size = event.get("tournamentSize")
-			user = await ManualUser.objects.get(id=user_id)
-			serial_key = str(user_id)  # You might want to change this later on
-			tournament = await self.ManualTournament.objects.create(serial_key=serial_key, organizer=user, rounds=tournament_size)
-			await ManualTournamentParticipants.objects.get_or_create(tournament=tournament, user=user)
-   
-			user.tournament_status = "lobby"
-			user.save()
-			logger.info("User %s created tournament lobby with serial key %s", user.username, serial_key)
-			# Add the current channel to a group specific to this tournament lobby
-			tournament_group = f"tournament_{tournament.serial_key}"
-			await self.channel_layer.group_add(tournament_group, self.channel_name)
-			logger.info("Channel %s added to group %s", self.channel_name, tournament_group)
+			await self.handle_create_tournament(data)
+		elif str(action) == "join_tournament_lobby" or str(action) == "join_tournament_lobbby":
+			await self.handle_join_tournament(data)
+		else:
+			logger.warning("Action inconnue: %s", action)
+			await self.send(json.dumps({"error": "Unknown action"}))
 
-			# Adjusted response to match the client's expectations.
-			response = {
+	async def handle_create_tournament(self, data):
+		logger.info("Creating tournament lobby")
+		user_id = data.get("userId")
+		tournament_size = data.get("tournamentSize")
+		
+		user = await self.get_user(user_id)
+		if user is None:
+			await self.send(json.dumps({"error": "User not found"}))
+			return
+
+		# Generate a serial key (for now simply using the user_id; consider using uuid for production)
+		serial_key = str(user_id)
+		tournament = await self.create_tournament(serial_key, user, tournament_size)
+		await self.add_participant(tournament, user)
+		await self.update_user_status(user, "lobby")
+		logger.info("User %s created tournament lobby with serial key %s", user.username, serial_key)
+		
+		# Add the current channel to a group specific to this tournament lobby
+		tournament_group = f"tournament_{tournament.serial_key}"
+		await self.channel_layer.group_add(tournament_group, self.channel_name)
+		logger.info("Channel %s added to group %s", self.channel_name, tournament_group)
+
+		# Build the response payload as expected by the client
+		response = {
+			"type": "tournament_message",
+			"action": "create_tournament_lobby",
+			"tournamentLobbyId": tournament.serial_key,
+			"organizer": user.username,
+			"tournamentSize": tournament_size,
+			"message": "Tournament lobby created successfully",
+		}
+		# Send the response back to the client
+		await self.send(json.dumps(response))
+		logger.info("Tournament lobby created with serial key %s by user %s", tournament.serial_key, user.username)
+		
+		await self.channel_layer.group_send(
+			tournament_group,
+			{
 				"type": "tournament_message",
 				"action": "create_tournament_lobby",
-				"tournamentLobbyId": tournament.serial_key,
-				"organizer": user.username,
-				"tournamentSize": tournament_size,
-				"message": "Tournament lobby created successfully",
-			}
-			# Send the response back to the client
-			await self.self.channel_layer.group_send(self.room_group_name,json.dumps(response))
-			logger.info("Tournament lobby created with serial key %s by user %s", tournament.serial_key, user.username)
-			
-			# Optionally, send to other channels if needed.
-			await self.channel_layer.group_send(self.room_group_name, {
-				"type": "tournament_created",
 				"serial_key": serial_key,
-			})
+			}
+		)
+
+	async def handle_join_tournament(self, data):
+		logger.info("Handling join tournament lobby")
+		user_id = data.get("userId")
+		tournament_serial_key = data.get("tournamentSerialKey")
+		tournament_size = data.get("tournamentSize")
+		
+		user = await self.get_user(user_id)
+		if user is None:
+			await self.send(json.dumps({"error": "User not found"}))
+			return
+		
+		tournament = await self.get_tournament(tournament_serial_key)
+		if tournament is None:
+			await self.send(json.dumps({"error": "Tournament not found"}))
+			return
+		
+		participant_count = await self.count_participants(tournament)
+		if participant_count >= int(tournament_size):
+			await self.send(json.dumps({"error": "Tournament lobby is full"}))
+			return
+
+		await self.add_participant(tournament, user)
+		await self.update_user_status(user, "lobby")
+		tournament_group = f"tournament_{tournament.serial_key}"
+		await self.channel_layer.group_add(tournament_group, self.channel_name)
+		logger.info("Channel %s added to group %s", self.channel_name, tournament_group)
+
+		response = {
+			"type": "tournament_message",
+			"action": "join_tournament_lobby",
+			"tournamentLobbyId": tournament.serial_key,
+			"message": f"{user.username} joined the tournament lobby",
+		}
+		await self.send(json.dumps(response))
+		logger.info("User %s joined tournament lobby %s", user.username, tournament.serial_key)
+
+	# -----------------
+	# Subfunctions: Wrap synchronous ORM calls with database_sync_to_async
+	# -----------------
+
+	@database_sync_to_async
+	def get_user(self, user_id):
+		try:
+			return ManualUser.objects.get(id=user_id)
+		except ManualUser.DoesNotExist:
+			return None
+
+	@database_sync_to_async
+	def create_tournament(self, serial_key, user, tournament_size):
+		return ManualTournament.objects.create(
+			serial_key=serial_key,
+			organizer=user,
+			rounds=tournament_size
+		)
+
+	@database_sync_to_async
+	def add_participant(self, tournament, user):
+		return ManualTournamentParticipants.objects.get_or_create(
+			tournament=tournament,
+			user=user
+		)
+
+	@database_sync_to_async
+	def update_user_status(self, user, status):
+		user.tournament_status = status
+		user.save()
+
+	@database_sync_to_async
+	def get_tournament(self, serial_key):
+		try:
+			return ManualTournament.objects.get(serial_key=serial_key)
+		except ManualTournament.DoesNotExist:
+			return None
+
+	@database_sync_to_async
+	def count_participants(self, tournament):
+		return tournament.participants.count()
 
 	async def create_local_tournament(self, data):
 		organizer_id = data.get("organizer_id")
