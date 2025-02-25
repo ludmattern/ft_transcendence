@@ -70,22 +70,29 @@ export const socialForm = createComponent({
       }
     });
 
-    // Gestion de la barre de recherche
     const searchLink = el.querySelector('#search-link');
+    const searchBar = el.querySelector('#search-bar');
+
     if (searchLink) {
       searchLink.addEventListener('click', (e) => {
         e.preventDefault();
-        const query = el.querySelector('#search-bar').value;
+        const query = searchBar.value.trim();
         console.log(`Search for: ${query}`);
         const pilotListContainer = el.querySelector('.pilot-list-container');
         fetchPilot(query, pilotListContainer);
       });
     }
-
-    // Récupérer et construire la liste d'amis après rendu
-    const userId = sessionStorage.getItem('userId');
-    if (userId) {
-      getFriends(userId);
+    
+    if (searchBar) {
+      searchBar.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const query = searchBar.value.trim();
+          console.log(`Search for: ${query}`);
+          const pilotListContainer = el.querySelector('.pilot-list-container');
+          fetchPilot(query, pilotListContainer);
+        }
+      });
     }
   },
 });
