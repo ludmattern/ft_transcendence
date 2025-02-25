@@ -1,4 +1,4 @@
 -r common/requirements_security.txt
+-r common/requirements_channels.txt
 pyjwt==2.10.1
 twilio==9.4.5
-daphne==4.1.2

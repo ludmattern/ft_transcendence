@@ -1,8 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
-import { handleRoute, getPreviousRoute, resetPreviousRoutes,  } from '/src/services/router.js';
+import { handleRoute, getPreviousRoute,  } from '/src/services/router.js';
 import { logoutUser } from '/src/services/auth.js';
-import componentManagers from '/src/index.js';
-import { switchwindow } from '/src/3d/animation.js';
 
 export const logoutForm = createComponent({
 	tag: 'logoutForm',
@@ -37,10 +35,6 @@ export const logoutForm = createComponent({
 			try {
 				await logoutUser(); // Simule la déconnexion (appel API ou suppression de session)
 				console.info('User logged out successfully.');
-				resetPreviousRoutes();
-				componentManagers['Pong'].cleanupComponents([]);
-				switchwindow('home');
-				handleRoute('/login'); // Redirige vers la page de connexion
 			} catch (error) {
 				console.warn('Error during logout:', error);
 				alert('An error occurred while logging out. Please try again.');

@@ -145,7 +145,7 @@ function processRoute(route, shouldPushState) {
 		routeMappings[finalRoute]();
 	} else if (finalRoute.startsWith('/social/pilot=')) {
 		const pilot = finalRoute.split('=')[1];
-		navigateToOtherProfile(pilot);
+		navigateToOtherProfile();
 	} else if (finalRoute.startsWith('/pong')) {
 		console.log('navigateToPong : ' + finalRoute.substring(6));
 		if (inTournament) {

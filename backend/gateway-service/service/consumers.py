@@ -11,7 +11,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		await self.accept()
 		await self.channel_layer.group_add("gateway", self.channel_name)
 		
-		# Extraction de la serial_key depuis la query string
 		query_string = self.scope["query_string"].decode("utf-8")
 		query_params = urllib.parse.parse_qs(query_string)
 		serial_keys = query_params.get("serial_key", [])
@@ -20,9 +19,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 			group_name = f"tournament_{serial_key}"
 			await self.channel_layer.group_add(group_name, self.channel_name)
 			logger.info(f"Client ajouté au groupe {group_name}")
-		
 		logger.info("🔗 Client connecté au WebSocket Gateway")
-
 
 	async def disconnect(self, close_code):
 		if self.user_id:
@@ -40,7 +37,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				self.user_id = data.get("userId")
 				self.username = data.get("username")
 				await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
-				await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
 				logger.info(f"Initialization complete: Client {self.username} (ID: {self.user_id}) connected.")
 				return  
 			
@@ -48,6 +44,9 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				await self.channel_layer.group_send("chat_service", data)
 				logger.info(f"Message général relayé à 'chat_service' depuis {author}")
 
+			if message_type == "heartbeat":
+				await self.channel_layer.group_send("auth_service", data)
+				logger.info(f"Message général relayé à 'auth_service' depuis {author}")
 
 			elif message_type == "private_message":
 				recipient = data.get("recipient")
@@ -68,7 +67,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				logger.info(f"Message privé envoyé à user_{recipient} depuis {author}")
 	
 			elif message_type == "info_message":
-				# For friend requests, the payload must include a recipient (username).
 				recipient = data.get("recipient")
 				if not recipient:
 					await self.send(json.dumps({"error": "Recipient is required for friend requests"}))
@@ -145,7 +143,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (Friend Request): {event}")
 
-	# Handler for broadcast messages from the tournament-service.
 	async def tournament_message(self, event):
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (Tournament Request): {event}")
@@ -175,3 +172,8 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 	async def tournament_creation(self, event):
 		await self.send(json.dumps(event))
 		logger.info(f"tournament_creation")
+	
+	async def logout(self, event):
+		await self.send(json.dumps({"type": "logout", "message": "Votre session a expiré ou a été supprimée."}))
+		logger.info(f"Déconnexion envoyée à l'utilisateur {self.user_id}")
+		await self.close() 

@@ -120,14 +120,10 @@ export const tournamentContent = createComponent({
 			sessionStorage.setItem('tournamentMode', mode);
 			sessionStorage.setItem('tournamentSize', size);
 			console.log(`Creating a tournament with mode: ${mode} and size: ${size}`);
-			console.log('waitingForTournamentLobby:', sessionStorage.getItem('waitingForTournamentLobby'));
 			if (mode === 'online') {
-				sessionStorage.setItem('waitingForTournamentLobby', true);
 				console.log('waitingForTournamentLobby:', sessionStorage.getItem('waitingForTournamentLobby'));
-				joinOrCreateTournamentLobby(size);
-			} else {
-				sessionStorage.removeItem('waitingForTournamentLobby');
-				console.log('waitingForTournamentLobby:', sessionStorage.getItem('waitingForTournamentLobby'));
+				createTournamentLobby(size, sessionStorage.getItem('userId'));
+				setInTournament(true);
 			}
 			handleRoute('/pong/play/tournament-creation');
 		});
@@ -169,47 +165,22 @@ function generateTournamentSizeSelector(variant) {
   `;
 }
 
-function joinOrCreateTournamentLobby(tournamentSize) {
+function createTournamentLobby(tournamentSize, userId) {
 	let tournamentSerialKey = null;
-	const userId = sessionStorage.getItem('userId');
+	fetch(`/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`)
+	.then((response) => response.json())
+	.then((data) => {
+	  tournamentSerialKey = data.serial_key;
+	})
+	.catch((error) => {
+	  console.error('Error fetching tournament serial key:', error);
+	});
 
-	if (!userId) {
-		handleRoute('/pong/play/tournament');
-		console.error('User ID not found in session storage.');
+	if (tournamentSerialKey) {
+		console.error('Error you cannot create another tournament lobby');
 		return;
 	}
 
-	fetch(`/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`)
-	  .then((response) => response.json())
-	  .then((data) => {
-		tournamentSerialKey = data.serial_key;
-	  })
-	  .catch((error) => {
-		console.error('Error fetching tournament serial key:', error);
-	  });
-	  
-	console.log('Tournament serial key:', tournamentSerialKey);
-
-	if (!tournamentSerialKey) {
-		createTournamentLobby(tournamentSize, userId);
-	} else {
-		joinTournamentLobby(tournamentSize, userId, tournamentSerialKey);
-	}
-}
-
-function joinTournamentLobby(tournamentSize, userId, tournamentSerialKey) {
-	const payload = {
-		type: 'tournament_message',
-		action: 'join_tournament_lobby',
-		userId: userId,
-		tournamentSerialKey: tournamentSerialKey,
-		tournamentSize: tournamentSize,
-		timestamp: new Date().toISOString(),
-	};
-	ws.send(JSON.stringify(payload));
-}
-
-function createTournamentLobby(tournamentSize, userId) {
 	const payload = {
 		type: 'tournament_message',
 		action: 'create_tournament_lobby',

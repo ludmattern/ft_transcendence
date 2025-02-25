@@ -16,19 +16,6 @@ export const tournamentCreation = createComponent({
 	tag: 'tournamentCreation',
 	
 	render: () => {
-		console.log('waitingForTournamentLobby:', sessionStorage.getItem('waitingForTournamentLobby'));
-		let waiting = sessionStorage.getItem('waitingForTournamentLobby') === 'true';
-		
-		if (waiting) {
-			return `
-			<section class="col-12 d-flex flex-column align-items-center text-center p-5"
-			style="background-color: #111111; color: white; max-height: 700px; overflow: auto; justify-content: center;">
-			<h2 class="mb-4">Loading tournament creation ...</h2>
-			<div class="pong-loader"></div>
-			</section>
-			`;
-		} 
-		
 		const tournamentMode = sessionStorage.getItem('tournamentMode') || 'local';
 		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
 
@@ -102,9 +89,6 @@ export const tournamentCreation = createComponent({
 		}
 	},
 	attachEvents: (el) => {
-		if (sessionStorage.getItem('waitingForTournamentLobby')) {
-			return;
-		}
 		const tournamentMode = sessionStorage.getItem('tournamentMode') || 'local';
 		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
 		const username = sessionStorage.getItem('username') || 'You';

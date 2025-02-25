@@ -1,4 +1,7 @@
 import { initializeWebSocket, closeWebSocket } from '/src/services/socketManager.js';
+import { handleRoute, resetPreviousRoutes,  } from '/src/services/router.js';
+import componentManagers from '/src/index.js';
+import { switchwindow } from '/src/3d/animation.js';
 
 export async function isClientAuthenticated() {
 	try {
@@ -15,6 +18,7 @@ export async function isClientAuthenticated() {
 		if (!data.success) {
 			return false;
 		}
+
 
 		sessionStorage.setItem('userId', data.id);
 		sessionStorage.setItem('username', data.username);
@@ -45,6 +49,10 @@ export async function logoutUser() {
 	} catch (err) {
 		console.log('Error during logout:', err);
 	}
+	resetPreviousRoutes();
+	componentManagers['Pong'].cleanupComponents([]);
+	switchwindow('home');
+	handleRoute('/login'); // Redirige vers la page de connexion
 }
 
 export async function loginUser(username, password) {
