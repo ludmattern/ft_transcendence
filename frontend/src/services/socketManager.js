@@ -2,6 +2,7 @@ export let ws = null;
 let isWsConnected = false;
 import { gameManager } from '/src/pongGame/gameManager.js';
 import { handleIncomingMessage } from '/src/components/hud/sideWindow/left/tabContent.js';
+import { handleRoute } from '/src/services/router.js';
 import { startMatchmakingGame, startPrivateGame } from '/src/services/multiplayerPong.js';
 import { createNotificationMessage, updateAndCompareInfoData } from '/src/components/hud/sideWindow/left/notifications.js';
 import { handleLocalTournamentGameEnding } from '/src/services/tournamentHandler.js';
@@ -52,6 +53,7 @@ export async function initializeWebSocket(userId) {
 
 	ws.onmessage = async (event) => {
 		const data = JSON.parse(event.data);
+		console.log('Message reçu :', data);
 
 		if (data.type === 'game_state' || data.type === 'game_over') {
 			if (data.type === 'game_over' && data.game_id.startsWith('tournLocal_')) {

@@ -183,17 +183,11 @@ function joinOrCreateTournamentLobby(tournamentSize) {
 	  .then((response) => response.json())
 	  .then((data) => {
 		tournamentSerialKey = data.serial_key;
-		// Now you can test it:
-		if (tournamentSerialKey) {
-		  console.log('Tournament serial key exists:', tournamentSerialKey);
-		  // Do something if the key is valid
-		} else {
-		  console.log('No tournament serial key received');
-		}
 	  })
 	  .catch((error) => {
 		console.error('Error fetching tournament serial key:', error);
 	  });
+	  
 	console.log('Tournament serial key:', tournamentSerialKey);
 
 	if (!tournamentSerialKey) {

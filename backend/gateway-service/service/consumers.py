@@ -40,6 +40,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				self.user_id = data.get("userId")
 				self.username = data.get("username")
 				await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
+				await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
 				logger.info(f"Initialization complete: Client {self.username} (ID: {self.user_id}) connected.")
 				return  
 			
@@ -125,9 +126,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 					"room_code": room_code  
 				})
 				logger.info(f"🚀 matchmaking_event/private_event => service : {action} {user_id}, room={room_code}")
-
-
-	
 	
 		except json.JSONDecodeError:
 			await self.send(json.dumps({"error": "Format JSON invalide"}))
@@ -147,11 +145,11 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 		await self.send(json.dumps(event))
 		logger.info(f"Message transmis au client WebSocket (Friend Request): {event}")
 
+	# Handler for broadcast messages from the tournament-service.
 	async def tournament_message(self, event):
-		"""Reçoit un message (provenant du tournament-service) et le renvoie au client."""
 		await self.send(json.dumps(event))
-		logger.info(f"Message transmis au client WebSocket (Tournament): {event}")
-  
+		logger.info(f"Message transmis au client WebSocket (Tournament Request): {event}")
+
 	async def error_message(self, event):
 		"""This method handles error_message events delivered to this consumer."""
 		await self.send(json.dumps(event))
