@@ -3,20 +3,29 @@ from django.core.validators import FileExtensionValidator
 
 
 class ManualUser(models.Model):
-    id = models.CharField(max_length=50, unique=True, primary_key=True)
-    username = models.CharField(max_length=50, unique=True)
-    profile_picture = models.ImageField(
-        upload_to="profile_pics/",
-        default="profile_pics/default-profile-150.png",
-        validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "webp"])]
-    )
+	id = models.CharField(max_length=50, unique=True, primary_key=True)
+	username = models.CharField(max_length=50, unique=True)
+	profile_picture = models.ImageField(
+		upload_to="profile_pics/",
+		default="profile_pics/default-profile-150.png",
+		validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "webp"])]
+	)
+	tournament_status = models.CharField(
+		max_length=20,
+		choices=[
+			('out', 'Out'),
+			('lobby', 'Lobby'),
+			('participating', 'Participating'),
+		],
+		default='out'
+	)
+	
+	class Meta:
+		db_table = "users"
+		managed = True
 
-    class Meta:
-        db_table = "users"
-        managed = True
-
-    def __str__(self):
-        return self.username
+	def __str__(self):
+		return self.username
 
 
 
