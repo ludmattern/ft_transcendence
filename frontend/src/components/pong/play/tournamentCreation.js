@@ -94,7 +94,7 @@ export const tournamentCreation = createComponent({
 	`;
 		}
 	},
-	attachEvents: (el) => {
+	attachEvents: async (el) => {
 		const tournamentMode = sessionStorage.getItem('tournamentMode') || 'local';
 		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
 		const username = sessionStorage.getItem('username') || 'You';
@@ -191,10 +191,15 @@ export const tournamentCreation = createComponent({
 			const sendInviteButton = el.querySelector('#send-invite');
 			const createTournamentButton = el.querySelector('#create-tournament');
 
+			const userId = await getUserIdFromCookieAPI();
+
 			const onlinePlayersList = el.querySelector('#online-players-list');
 			const onlinePlayersCountSpan = el.querySelector('#online-players-count');
 
-			let onlinePlayers = [{ name: username, pending: false }];
+
+			if (!onlinePlayers.some(player => player.name === username)) {
+				onlinePlayers.push({ name: username, userId: userId, pending: false });
+			}
 
 			updateOnlinePlayersUI();
 
@@ -322,5 +327,3 @@ export function updateOnlinePlayersUI() {
 }
 
 export { onlinePlayers };
-// 	createTournamentButton.disabled = onlinePlayers.length !== tournamentSize;
-// }
