@@ -3,6 +3,10 @@ import { handleRoute } from '/src/services/router.js';
 import { createTournament } from '/src/services/tournamentHandler.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { ws } from '/src/services/socketManager.js';
+import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.js'
+
+
+let onlinePlayers = [];
 
 // Fonction utilitaire pour générer un room code alphanumérique à 6 caractères
 function generateRoomCode() {
@@ -192,52 +196,6 @@ export const tournamentCreation = createComponent({
 
 			let onlinePlayers = [{ name: username, pending: false }];
 
-			function updateOnlinePlayersUI() {
-				onlinePlayersCountSpan.textContent = onlinePlayers.length;
-				onlinePlayersList.innerHTML = '';
-			
-				const sortedPlayers = onlinePlayers.sort((a, b) => b.pending - a.pending);
-			
-				sortedPlayers.forEach((player, index) => {
-					const li = document.createElement('li');
-					li.className = 'list-group-item d-flex justify-content-between align-items-center';
-					li.textContent = player.name;
-			
-					if (player.name === username) {
-						const badge = document.createElement('span');
-						badge.className = 'badge bg-secondary ms-2';
-						badge.textContent = 'You';
-						li.appendChild(badge);
-					} else if (player.pending) {
-						const badge = document.createElement('span');
-						badge.className = 'badge bg-warning ms-2';
-						badge.textContent = 'Pending';
-						li.appendChild(badge);
-			
-						const cancelButton = document.createElement('button');
-						cancelButton.className = 'btn btn-pong-danger btn-sm ms-2';
-						cancelButton.textContent = 'Cancel';
-						cancelButton.addEventListener('click', () => {
-							onlinePlayers.splice(index, 1);
-							updateOnlinePlayersUI();
-						});
-						li.appendChild(cancelButton);
-					} else {
-						const kickButton = document.createElement('button');
-						kickButton.className = 'btn btn-pong-danger btn-sm ms-2';
-						kickButton.textContent = 'Kick';
-						kickButton.addEventListener('click', () => {
-							onlinePlayers.splice(index, 1);
-							updateOnlinePlayersUI();
-						});
-						li.appendChild(kickButton);
-					}
-					onlinePlayersList.appendChild(li);
-				});
-			
-				createTournamentButton.disabled = onlinePlayers.length !== tournamentSize;
-			}			
-
 			updateOnlinePlayersUI();
 
 			createTournamentButton.addEventListener('click', () => { // Launch Tournament
@@ -268,12 +226,13 @@ export const tournamentCreation = createComponent({
 					return;
 				}
 				const userId = await getUserIdFromCookieAPI();
-				payload = {
+				const payload = {
 					type: 'info_message',
 					action: 'tournament_invite',
 					author: userId,
-					recipient: inviteMessage,
+					recipient: await fetchUserId(inviteMessage),	
 				}
+				console.log('Payload:', payload);
 				ws.send(JSON.stringify(payload));
 				onlinePlayers.push({ name: inviteMessage, pending: true });
 				updateOnlinePlayersUI();
@@ -303,48 +262,65 @@ export const tournamentCreation = createComponent({
 });
 
 
-// function updateOnlinePlayersUI() {
-// 	onlinePlayersCountSpan.textContent = onlinePlayers.length;
-// 	onlinePlayersList.innerHTML = '';
 
-// 	const sortedPlayers = onlinePlayers.sort((a, b) => b.pending - a.pending);
+export function updateOnlinePlayersUI() {
+	const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
+	const username = sessionStorage.getItem('username') || 'You';
 
-// 	sortedPlayers.forEach((player, index) => {
-// 		const li = document.createElement('li');
-// 		li.className = 'list-group-item d-flex justify-content-between align-items-center';
-// 		li.textContent = player.name;
+	const onlinePlayersList = document.querySelector('#online-players-list');
+	const onlinePlayersCountSpan = document.querySelector('#online-players-count');
+	const createTournamentButton = document.querySelector('#create-tournament');
 
-// 		if (player.name === username) {
-// 			const badge = document.createElement('span');
-// 			badge.className = 'badge bg-secondary ms-2';
-// 			badge.textContent = 'You';
-// 			li.appendChild(badge);
-// 		} else if (player.pending) {
-// 			const badge = document.createElement('span');
-// 			badge.className = 'badge bg-warning ms-2';
-// 			badge.textContent = 'Pending';
-// 			li.appendChild(badge);
+	if (!onlinePlayersList || !onlinePlayersCountSpan || !createTournamentButton) {
+		console.warn('updateOnlinePlayersUI: Missing DOM elements.');
+		return;
+	}
 
-// 			const cancelButton = document.createElement('button');
-// 			cancelButton.className = 'btn btn-pong-danger btn-sm ms-2';
-// 			cancelButton.textContent = 'Cancel';
-// 			cancelButton.addEventListener('click', () => {
-// 				onlinePlayers.splice(index, 1);
-// 				updateOnlinePlayersUI();
-// 			});
-// 			li.appendChild(cancelButton);
-// 		} else {
-// 			const kickButton = document.createElement('button');
-// 			kickButton.className = 'btn btn-pong-danger btn-sm ms-2';
-// 			kickButton.textContent = 'Kick';
-// 			kickButton.addEventListener('click', () => {
-// 				onlinePlayers.splice(index, 1);
-// 				updateOnlinePlayersUI();
-// 			});
-// 			li.appendChild(kickButton);
-// 		}
-// 		onlinePlayersList.appendChild(li);
-// 	});
+	onlinePlayersCountSpan.textContent = onlinePlayers.length;
+	onlinePlayersList.innerHTML = '';
 
+	const sortedPlayers = onlinePlayers.sort((a, b) => b.pending - a.pending);
+
+	sortedPlayers.forEach((player, index) => {
+		const li = document.createElement('li');
+		li.className = 'list-group-item d-flex justify-content-between align-items-center';
+		li.textContent = player.name;
+
+		if (player.name === username) {
+			const badge = document.createElement('span');
+			badge.className = 'badge bg-secondary ms-2';
+			badge.textContent = 'You';
+			li.appendChild(badge);
+		} else if (player.pending) {
+			const badge = document.createElement('span');
+			badge.className = 'badge bg-warning ms-2';
+			badge.textContent = 'Pending';
+			li.appendChild(badge);
+
+			const cancelButton = document.createElement('button');
+			cancelButton.className = 'btn btn-pong-danger btn-sm ms-2';
+			cancelButton.textContent = 'Cancel';
+			cancelButton.addEventListener('click', () => {
+				onlinePlayers.splice(index, 1);
+				updateOnlinePlayersUI();
+			});
+			li.appendChild(cancelButton);
+		} else {
+			const kickButton = document.createElement('button');
+			kickButton.className = 'btn btn-pong-danger btn-sm ms-2';
+			kickButton.textContent = 'Kick';
+			kickButton.addEventListener('click', () => {
+				onlinePlayers.splice(index, 1);
+				updateOnlinePlayersUI();
+			});
+			li.appendChild(kickButton);
+		}
+		onlinePlayersList.appendChild(li);
+	});
+
+	createTournamentButton.disabled = onlinePlayers.length !== tournamentSize;
+}
+
+export { onlinePlayers };
 // 	createTournamentButton.disabled = onlinePlayers.length !== tournamentSize;
 // }

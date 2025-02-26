@@ -129,7 +129,7 @@ function createMatchItem(outcome, mode, duration, date, opponents, outcomeClass)
 }
 
 
-async function fetchUserId(username) {
+export async function fetchUserId(username) {
   try {
     const response = await fetch(`/api/user-service/get_user_id/${username}/`);
     if (!response.ok) {

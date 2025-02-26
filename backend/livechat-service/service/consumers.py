@@ -183,21 +183,39 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			else:
 				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "No friend relationship found."})
 			return
-		elif str(action) == "tournament_invitation":
+		elif str(action) == "tournament_invite":
 			initiator = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
 			recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 			author_username = await get_username(author_id)
 			event["author_username"] = author_username
 			recipient_username = await get_username(recipient_id)
 			event["recipient_username"] = recipient_username
-   
-			initiator_tournament = await database_sync_to_async(ManualTournament.objects.filter)(organizer=initiator, status="lobby")
-			initiator_tournament = initiator_tournament.first()
-   
-			for participant in initiator_tournament.participants.all():
+
+			@database_sync_to_async
+			def get_initiator_tournament(initiator):
+				return ManualTournament.objects.filter(organizer=initiator, status="lobby").first()
+
+			initiator_tournament = await get_initiator_tournament(initiator)
+
+			if not initiator_tournament:
+				logger.warning(f"No active tournament found for initiator {initiator.username}")
+				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "No active tournament lobby found."})
+				return
+
+			@database_sync_to_async
+			def get_participants(tournament):
+				return list(tournament.participants.all())
+
+			participants = await get_participants(initiator_tournament)
+
+			for participant in participants:
 				await self.channel_layer.group_send(f"user_{participant.user.id}", event)
-			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You have been invited to a tournament by {author_username}"})
-   
+
+			await self.channel_layer.group_send(
+				f"user_{recipient_id}",
+				{"type": "info_message", "info": f"You have been invited to a tournament by {author_username}"}
+			)
+
 		else:
 			await self.channel_layer.group_send(f"user_{author_id}",{"type": "error_message", "error": "Invalid action."})
    
