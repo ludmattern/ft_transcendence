@@ -1,6 +1,8 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { createTournament } from '/src/services/tournamentHandler.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { ws } from '/src/services/socketManager.js';
 
 // Fonction utilitaire pour générer un room code alphanumérique à 6 caractères
 function generateRoomCode() {
@@ -193,14 +195,14 @@ export const tournamentCreation = createComponent({
 			function updateOnlinePlayersUI() {
 				onlinePlayersCountSpan.textContent = onlinePlayers.length;
 				onlinePlayersList.innerHTML = '';
-
+			
 				const sortedPlayers = onlinePlayers.sort((a, b) => b.pending - a.pending);
-
+			
 				sortedPlayers.forEach((player, index) => {
 					const li = document.createElement('li');
 					li.className = 'list-group-item d-flex justify-content-between align-items-center';
 					li.textContent = player.name;
-
+			
 					if (player.name === username) {
 						const badge = document.createElement('span');
 						badge.className = 'badge bg-secondary ms-2';
@@ -211,7 +213,7 @@ export const tournamentCreation = createComponent({
 						badge.className = 'badge bg-warning ms-2';
 						badge.textContent = 'Pending';
 						li.appendChild(badge);
-
+			
 						const cancelButton = document.createElement('button');
 						cancelButton.className = 'btn btn-pong-danger btn-sm ms-2';
 						cancelButton.textContent = 'Cancel';
@@ -232,9 +234,9 @@ export const tournamentCreation = createComponent({
 					}
 					onlinePlayersList.appendChild(li);
 				});
-
+			
 				createTournamentButton.disabled = onlinePlayers.length !== tournamentSize;
-			}
+			}			
 
 			updateOnlinePlayersUI();
 
@@ -255,7 +257,7 @@ export const tournamentCreation = createComponent({
 				);
 			});
 
-			sendInviteButton.addEventListener('click', () => { // Send Invitation (need to send a payload to the invited player)
+			sendInviteButton.addEventListener('click', async () => { // Send Invitation (need to send a payload to the invited player)
 				const inviteMessage = inviteInput.value.trim();
 				if (!inviteMessage) {
 					alert('Please enter an invitation message.');
@@ -265,6 +267,14 @@ export const tournamentCreation = createComponent({
 					alert(`You can only have up to ${tournamentSize} players.`);
 					return;
 				}
+				const userId = await getUserIdFromCookieAPI();
+				payload = {
+					type: 'info_message',
+					action: 'tournament_invite',
+					author: userId,
+					recipient: inviteMessage,
+				}
+				ws.send(JSON.stringify(payload));
 				onlinePlayers.push({ name: inviteMessage, pending: true });
 				updateOnlinePlayersUI();
 				console.log(`Invitation sent: "${inviteMessage}" with Room Code: ${roomCode}`);
@@ -291,3 +301,50 @@ export const tournamentCreation = createComponent({
 		}
 	},
 });
+
+
+// function updateOnlinePlayersUI() {
+// 	onlinePlayersCountSpan.textContent = onlinePlayers.length;
+// 	onlinePlayersList.innerHTML = '';
+
+// 	const sortedPlayers = onlinePlayers.sort((a, b) => b.pending - a.pending);
+
+// 	sortedPlayers.forEach((player, index) => {
+// 		const li = document.createElement('li');
+// 		li.className = 'list-group-item d-flex justify-content-between align-items-center';
+// 		li.textContent = player.name;
+
+// 		if (player.name === username) {
+// 			const badge = document.createElement('span');
+// 			badge.className = 'badge bg-secondary ms-2';
+// 			badge.textContent = 'You';
+// 			li.appendChild(badge);
+// 		} else if (player.pending) {
+// 			const badge = document.createElement('span');
+// 			badge.className = 'badge bg-warning ms-2';
+// 			badge.textContent = 'Pending';
+// 			li.appendChild(badge);
+
+// 			const cancelButton = document.createElement('button');
+// 			cancelButton.className = 'btn btn-pong-danger btn-sm ms-2';
+// 			cancelButton.textContent = 'Cancel';
+// 			cancelButton.addEventListener('click', () => {
+// 				onlinePlayers.splice(index, 1);
+// 				updateOnlinePlayersUI();
+// 			});
+// 			li.appendChild(cancelButton);
+// 		} else {
+// 			const kickButton = document.createElement('button');
+// 			kickButton.className = 'btn btn-pong-danger btn-sm ms-2';
+// 			kickButton.textContent = 'Kick';
+// 			kickButton.addEventListener('click', () => {
+// 				onlinePlayers.splice(index, 1);
+// 				updateOnlinePlayersUI();
+// 			});
+// 			li.appendChild(kickButton);
+// 		}
+// 		onlinePlayersList.appendChild(li);
+// 	});
+
+// 	createTournamentButton.disabled = onlinePlayers.length !== tournamentSize;
+// }

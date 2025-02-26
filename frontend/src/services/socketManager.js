@@ -8,6 +8,7 @@ import { createNotificationMessage, updateAndCompareInfoData } from '/src/compon
 import { handleLocalTournamentGameEnding } from '/src/services/tournamentHandler.js';
 import componentManagers from '/src/index.js';
 import { tournamentCreation } from '/src/components/pong/play/tournamentCreation.js';
+// import { updateOnlinePlayersUI } from '/src/components/pong/play/tournamentCreation.js';
 
 export async function initializeWebSocket(userId) {
 	if (ws) {
@@ -78,6 +79,11 @@ export async function initializeWebSocket(userId) {
 			startMatchmakingGame(data.game_id, data.side, data);
 		} else if (data.type === 'info_message') {
 			if (data.action) {
+				if (data.action === 'tournament_invite')
+				{
+					onlinePlayers.push({ name: inviteMessage, pending: true });
+					updateOnlinePlayersUI();
+				}
 				await updateAndCompareInfoData();
 			} else {
 				createNotificationMessage(data.info);
@@ -86,7 +92,6 @@ export async function initializeWebSocket(userId) {
 			console.log('Message de tournoi reçu :', data);
 			if (data.action === 'create_tournament_lobby') {
 				console.log('Lobby créé :', data.tournamentLobbyId);
-				sessionStorage.clear('waitingForTournamentLobby');
 				handleRoute('/pong/play/tournament-creation');
 				componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
 			}
