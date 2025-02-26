@@ -14,7 +14,7 @@ function generateRoomCode() {
 
 export const tournamentCreation = createComponent({
 	tag: 'tournamentCreation',
-	
+
 	render: () => {
 		const tournamentMode = sessionStorage.getItem('tournamentMode') || 'local';
 		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
@@ -177,7 +177,7 @@ export const tournamentCreation = createComponent({
 
 				players = [username];
 			});
-		} else {
+		} else { //online
 			const roomCodeElement = el.querySelector('#room-code');
 			const roomCode = roomCodeElement.textContent;
 			const copyRoomCodeButton = el.querySelector('#copy-room-code');
@@ -238,13 +238,13 @@ export const tournamentCreation = createComponent({
 
 			updateOnlinePlayersUI();
 
-			createTournamentButton.addEventListener('click', () => {
+			createTournamentButton.addEventListener('click', () => { // Launch Tournament
 				console.log('Online tournament created with room code:', roomCode);
 				console.log('Players:', onlinePlayers);
 				alert('Tournament created with room code: ' + roomCode);
 			});
 
-			copyRoomCodeButton.addEventListener('click', () => {
+			copyRoomCodeButton.addEventListener('click', () => { // Copy Room Code, MIGHT NOT USE IT
 				navigator.clipboard.writeText(roomCode).then(
 					() => {
 						alert('Room code copied to clipboard!');
@@ -255,7 +255,7 @@ export const tournamentCreation = createComponent({
 				);
 			});
 
-			sendInviteButton.addEventListener('click', () => {
+			sendInviteButton.addEventListener('click', () => { // Send Invitation (need to send a payload to the invited player)
 				const inviteMessage = inviteInput.value.trim();
 				if (!inviteMessage) {
 					alert('Please enter an invitation message.');

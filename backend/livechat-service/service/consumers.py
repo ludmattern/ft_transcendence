@@ -5,7 +5,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db.models import Q
-from .models import ManualUser, ManualFriendsRelations
+from .models import ManualUser, ManualFriendsRelations, ManualTournamentParticipants, ManualTournament
 from asgiref.sync import sync_to_async
 
 logger = logging.getLogger(__name__)
@@ -185,7 +185,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			return
 		elif str(action) == "tournament_invitation":
 			initiator = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
-			recipient_id = await get_id(recipient)
+			recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
+			author_username = await get_username(author_id)
+			event["author_username"] = author_username
+			recipient_username = await get_username(recipient_id)
+			event["recipient_username"] = recipient_username
+   
+			initiator_tournament = await database_sync_to_async(ManualTournament.objects.filter)(organizer=initiator, status="lobby")
+			initiator_tournament = initiator_tournament.first()
+   
+			for participant in initiator_tournament.participants.all():
+				await self.channel_layer.group_send(f"user_{participant.user.id}", event)
+			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You have been invited to a tournament by {author_username}"})
+   
 		else:
 			await self.channel_layer.group_send(f"user_{author_id}",{"type": "error_message", "error": "Invalid action."})
+   
 		
