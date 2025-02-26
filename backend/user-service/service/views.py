@@ -253,20 +253,26 @@ def get_game_history(request):
 def get_profile(request):
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
+    
     user_id = request.GET.get("user_id")
     if not user_id:
         return JsonResponse({"error": "user_id parameter is required"}, status=400)
+    
     try:
         user = ManualUser.objects.get(id=user_id)
         profile_picture = user.profile_picture.url  
+        
         data = {
             "username": user.username,
             "email": user.email,
             "profile_picture": profile_picture,
+            "is_connected": user.is_connected 
         }
         return JsonResponse({"success": True, "profile": data})
+    
     except ManualUser.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
+    
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
@@ -339,7 +345,8 @@ def search_pilots(request):
     for pilot in pilots:
         results.append({
             "username": pilot.username,
-            "user_id": pilot.id
+            "user_id": pilot.id,
+            "is_connected": pilot.is_connected
         })
     
     return JsonResponse({"success": True, "pilots": results})

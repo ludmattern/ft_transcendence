@@ -183,14 +183,15 @@ async function fetchPilot(query, container) {
     }
     const data = await response.json();
     console.log("Search results:", data.pilots);
+
     if (container) {
       if (data.pilots.length === 0) {
         container.innerHTML = `<p>Maybe this pilot crashed or went far far far away...</p>`;
       } else {
         container.innerHTML = data.pilots.map(pilot => createPilotItem(
-          'Online',
+          pilot.is_connected ? 'Online' : 'Offline',
           pilot.username,
-          'text-success'
+          pilot.is_connected ? 'text-success' : 'text-danger'
         )).join('');
       }
     }
@@ -198,3 +199,4 @@ async function fetchPilot(query, container) {
     console.error("Error searching pilots:", error);
   }
 }
+

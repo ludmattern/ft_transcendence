@@ -190,7 +190,6 @@ function createMatchItem(outcome, date, opponents, outcomeClass, score) {
 
 
 export async function loadUserProfile(userId) {
-
   try {
     const response = await fetch(`/api/user-service/get_profile/?user_id=${userId}`);
     if (!response.ok) {
@@ -198,6 +197,7 @@ export async function loadUserProfile(userId) {
     }
     const data = await response.json();
     console.log("User profile data:", data);
+
     if (data.success && data.profile) {
       const profilePicImg = document.querySelector(".profile-pic");
       if (profilePicImg) {
@@ -206,10 +206,22 @@ export async function loadUserProfile(userId) {
         profilePicImg.style.width = "150px";
         profilePicImg.style.height = "150px";
       }
-	  profilePicImg.classList.remove("d-none");
+      profilePicImg.classList.remove("d-none");
+
       const pseudoElement = document.getElementById("pseudo");
       if (pseudoElement && data.profile.username) {
         pseudoElement.textContent = data.profile.username;
+      }
+
+      const statusIndicator = document.querySelector(".status-indicator");
+      if (statusIndicator) {
+        if (data.profile.is_connected) {
+          statusIndicator.classList.remove("text-danger");
+          statusIndicator.classList.add("text-success");
+        } else {
+          statusIndicator.classList.remove("text-success");
+          statusIndicator.classList.add("text-danger");
+        }
       }
     } else {
       console.error("Error loading profile:", data.error);
@@ -218,6 +230,7 @@ export async function loadUserProfile(userId) {
     console.error("Error loading user profile:", error);
   }
 }
+
 
 // import { subscribe } from '/src/services/eventEmitter.js';
 

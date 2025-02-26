@@ -12,6 +12,7 @@ class ManualUser(models.Model):
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     temp_2fa_code = models.CharField(max_length=10, null=True, blank=True)
     is_dummy = models.BooleanField(default=False)
+    is_connected = models.BooleanField(default=False)
     profile_picture = models.ImageField(
         upload_to="profile_pics/",
         default="profile_pics/default-profile-150.png",
