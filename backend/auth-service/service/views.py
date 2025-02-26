@@ -373,3 +373,18 @@ def verify_2fa_view(request):
         return JsonResponse({'success': False, 'message': 'Only POST allowed'}, status=405)
 
 
+@csrf_exempt
+def get_user_id_from_cookie(request):
+    token = request.COOKIES.get('access_token')
+    if not token:
+        return JsonResponse({"error": "access_token cookie not found"}, status=400)
+    
+    try:
+        decoded = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        user_id = decoded.get('sub') or decoded.get('user_id')
+        if not user_id:
+            return JsonResponse({"error": "User ID not found in token"}, status=400)
+        
+        return JsonResponse({"success": True, "user_id": user_id})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)

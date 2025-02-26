@@ -3,6 +3,7 @@
 import { commMessage, infoPanelItem } from '/src/components/hud/index.js';
 import { setupChatInput, removeChatInput } from '/src/components/hud/sideWindow/left/chat.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 /**
  * Charge dynamiquement le contenu de l'onglet spécifié.
@@ -10,7 +11,7 @@ import { createNotificationMessage } from '/src/components/hud/sideWindow/left/n
  * @param {string} tabName - Le nom de l'onglet
  * @param {HTMLElement} container - Conteneur pour le contenu de l'onglet
  */
-export function loadTabContent(tabName, container) {
+export async function loadTabContent(tabName, container) {
 	container.innerHTML = '';
 
 	if (tabName === 'info') {
@@ -50,7 +51,7 @@ export function loadTabContent(tabName, container) {
 			}
 		}
 
-		const userId = sessionStorage.getItem('userId')?.toString() || 'unknown';
+		const userId = await getUserIdFromCookieAPI()?.toString() || 'unknown';
 
 		tabItems.forEach((item) => {
 			renderCommMessage(item, container, userId);
@@ -61,7 +62,7 @@ export function loadTabContent(tabName, container) {
 }
 
 export async function fetchAndStoreInfoData(container) {
-	const userId = sessionStorage.getItem('userId');
+	const userId = await getUserIdFromCookieAPI();
 
 	const response = await fetch(`/api/user-service/info-getter/${encodeURIComponent(userId)}/`, {
 		method: 'GET',
@@ -167,8 +168,8 @@ export function storeMessageInSessionStorage(msg) {
 	}
 }
 
-export function handleIncomingMessage(data) {
-	const userId = sessionStorage.getItem('userId');
+export async function handleIncomingMessage(data) {
+	const userId = await getUserIdFromCookieAPI();
 	const container = document.getElementById('l-tab-content');
 
 	if (data.type === 'error_message') {

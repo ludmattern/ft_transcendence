@@ -124,3 +124,25 @@ export async function verifyTwoFACode(username, twofaCode) {
 	console.log(data);
 	return data;
 }
+
+
+export async function getUserIdFromCookieAPI() {
+	try {
+	  const response = await fetch('/api/auth-service/get_user_id_from_cookie/');
+	  if (!response.ok) {
+		throw new Error(`HTTP error ${response.status}`);
+	  }
+	  const data = await response.json();
+	  if (data.success) {
+		return data.user_id;
+	  } else {
+		console.error('Erreur dans la réponse:', data.error);
+		return null;
+	  }
+	} catch (error) {
+	  console.error('Erreur lors de la récupération de l\'user ID:', error);
+	  return null;
+	}
+  }
+  
+  

@@ -1,8 +1,9 @@
 // src/components/hud/chat.js
 
 import { ws } from '/src/services/socketManager.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
-export function setupChatInput() {
+export async function setupChatInput() {
 	const container = document.querySelector('#l-tab-content-container');
 	if (!container) {
 		console.error('l-tab-content-container not found.');
@@ -26,7 +27,7 @@ export function setupChatInput() {
 	const inputField = container.querySelector('#message-input');
 	const sendButton = container.querySelector('#chat-send-button');
 
-	const userId = sessionStorage.getItem('userId');
+	const userId = await getUserIdFromCookieAPI();
 	if (!userId) {
 		console.error('No userId. Cannot send message.');
 		return;

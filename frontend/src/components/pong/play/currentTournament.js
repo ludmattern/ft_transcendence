@@ -1,6 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { playGame } from '/src/components/pong/play/utils.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export const currentTournament = createComponent({
 	tag: 'currentTournament',
@@ -98,9 +99,9 @@ export const currentTournament = createComponent({
       </section>
     `;
 	},
-	attachEvents: (el) => {
+	attachEvents: async (el) => {
 		const username = sessionStorage.getItem('username');
-		const userId = sessionStorage.getItem('userId');
+		const userId =await  getUserIdFromCookieAPI();
 
 		async function renderBracket() {
 			const data = await getBracketData();
@@ -228,7 +229,7 @@ export const currentTournament = createComponent({
 
 async function getBracketData() {
   try {
-    const userId = sessionStorage.getItem('userId');
+    const userId = await getUserIdFromCookieAPI();
 
     console.log('User ID récupéré depuis sessionStorage:', userId);
     const response = await fetch(`/api/tournament-service/get_current_tournament/?user_id=${userId}`);

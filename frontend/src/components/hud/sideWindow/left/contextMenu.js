@@ -2,6 +2,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { waitForElement } from '/src/components/hud/utils/utils.js';
 import { ws } from '/src/services/socketManager.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export const contextMenu = createComponent({
 	tag: 'contextMenu',
@@ -20,7 +21,7 @@ export const contextMenu = createComponent({
   `,
 
 	// Attache les événements aux boutons du menu
-	attachEvents: (el, item, userStatus) => {
+	attachEvents: async (el, item, userStatus) => {
 		el.querySelector('#action-friend').addEventListener('click', () => {
 			handleFriendAction(userStatus.isFriend, item.author);
 			hideContextMenu();
@@ -48,9 +49,9 @@ export const contextMenu = createComponent({
  * @param {HTMLElement} el - Élément racine du formulaire
  * @returns {Object} - Données collectées du formulaire
  */
-function bodyData(author) {
+async function bodyData(author) {
 	return {
-		userId: sessionStorage.getItem('userId'),
+		userId: await getUserIdFromCookieAPI(),
 		selectedUserId: author,
 	};
 }
@@ -70,9 +71,9 @@ export async function handleFriendAction(isFriend, author) {
 	const payload = {
 		type: 'info_message',
 		action,
-		author: sessionStorage.getItem('userId'),
+		author: await getUserIdFromCookieAPI(),
 		recipient: author,
-		initiator: sessionStorage.getItem('userId'),
+		initiator: await getUserIdFromCookieAPI(),
 		timestamp: new Date().toISOString(),
 	};
 
@@ -162,7 +163,8 @@ export async function showContextMenu(item, event) {
 		item.author = item.recipient_id;
 		item.username = item.recipient;
 	}
-	const isFriend = await isUserFriend(sessionStorage.getItem('userId'), item.author);
+	const userId = await getUserIdFromCookieAPI();
+	const isFriend = await isUserFriend(userId, item.author);
 
 	const userStatus = {
 		isFriend: isFriend,

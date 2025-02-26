@@ -1,4 +1,5 @@
 import { createComponent } from '/src/utils/component.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export const profileForm = createComponent({
   tag: 'profileForm',
@@ -59,8 +60,9 @@ export const profileForm = createComponent({
     </div>
   `,
 
-  attachEvents: (el) => {
-  const userId = sessionStorage.getItem("userId");
+  attachEvents: async (el) => {
+    const userId = await getUserIdFromCookieAPI();
+    console.log("hre",userId)
 
 	loadMatchHistory(userId);
 	loadUserProfile(userId);
@@ -223,3 +225,5 @@ export async function loadUserProfile(userId) {
 // //recharger le bloc d'amis
 
 // });
+
+

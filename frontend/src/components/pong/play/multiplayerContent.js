@@ -4,6 +4,7 @@ import { ws } from '/src/services/socketManager.js';
 import { playGame } from '/src/components/pong/play/utils.js';
 import componentManagers from '/src/index.js';
 import { pongTuto } from '/src/components/hud/index.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export const multiplayerContent = createComponent({
 	tag: 'multiplayerContent',
@@ -61,7 +62,7 @@ export const multiplayerContent = createComponent({
     </section>
   `,
 
-	attachEvents: (el) => {
+	attachEvents: async (el) => {
 		const localButton = el.querySelector('#launchLocal');
 		localButton.addEventListener('click', () => {
 			const config = {
@@ -91,14 +92,14 @@ export const multiplayerContent = createComponent({
 		const createPrivateButton = el.querySelector('#createPrivate');
 		const privateGameInput = el.querySelector('#privateGameInput');
 
-		createPrivateButton.addEventListener('click', () => {
+		createPrivateButton.addEventListener('click', async () => {
 			const opponentUsername = privateGameInput.value.trim();
 			if (!opponentUsername) {
 				console.log('Please enter a username code.');
 				return;
 			}
 			if (notAuthenticatedThenRedirect()) return;
-			const userId = sessionStorage.getItem('userId');
+			const userId = await getUserIdFromCookieAPI();
 			const config = {
 				gameMode: 'private',
 				action: 'create',
@@ -117,8 +118,8 @@ export const multiplayerContent = createComponent({
 	},
 });
 
-export function leaveMatchmaking() {
-	const userId = sessionStorage.getItem('userId');
+export async function leaveMatchmaking() {
+	const userId = await getUserIdFromCookieAPI();
 	ws.send(
 		JSON.stringify({
 			type: 'matchmaking',

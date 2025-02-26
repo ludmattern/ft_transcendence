@@ -1,4 +1,5 @@
 import { ws } from '/src/services/socketManager.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 import { handleRoute } from '/src/services/router.js';
 
@@ -51,7 +52,7 @@ export function handleLocalTournamentGameEnding(data) {
 
 
 export async function createTournament(players) {
-  const organizerId = sessionStorage.getItem('userId');
+  const organizerId = await getUserIdFromCookieAPI();
   const payload = {
     organizer_id: organizerId,
     players: players,

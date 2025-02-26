@@ -1,6 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { ws } from '/src/services/socketManager.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export const tournamentContent = createComponent({
 	tag: 'tournamentContent',
@@ -59,7 +60,7 @@ export const tournamentContent = createComponent({
     </section>
   `,
 
-	attachEvents: (el) => {
+	attachEvents: async (el) => {
 		// Gestion des onglets
 		const tabs = el.querySelectorAll('.nav-link');
 		const tabPanes = el.querySelectorAll('.tab-pane');
@@ -113,14 +114,14 @@ export const tournamentContent = createComponent({
 
 		// Création d'un tournoi
 		const createButton = el.querySelector('#createbutton');
-		createButton.addEventListener('click', () => {
+		createButton.addEventListener('click', async () => {
 			const mode = document.getElementById('tournamentMode').value;
 			const size = document.getElementById('tournamentSize').value;
 			sessionStorage.setItem('tournamentMode', mode);
 			sessionStorage.setItem('tournamentSize', size);
 			console.log(`Creating a tournament with mode: ${mode} and size: ${size}`);
 			if (mode === 'online') {
-				createTournamentLobby(size, sessionStorage.getItem('userId'));
+				createTournamentLobby(size, await getUserIdFromCookieAPI());
 			}
 			handleRoute('/pong/play/tournament-creation');
 		});

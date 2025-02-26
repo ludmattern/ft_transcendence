@@ -1,7 +1,8 @@
 import { gameManager } from '/src/pongGame/gameManager.js';
 import { ws } from '/src/services/socketManager.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
-export function gameModeSelector(config) {
+export async function gameModeSelector(config) {
 	if (config.gameMode === 'local') {
 		const gameConfig = {
 			mode: 'local',
@@ -15,7 +16,7 @@ export function gameModeSelector(config) {
 		};
 		gameManager.startGame(gameConfig);
 	} else if (config.gameMode === 'matchmaking') {
-		const userId = sessionStorage.getItem('userId');
+		const userId = await getUserIdFromCookieAPI();
 		ws.send(
 			JSON.stringify({
 				type: 'matchmaking',
@@ -25,7 +26,7 @@ export function gameModeSelector(config) {
 		);
 		console.log('launch matchmaking');
 	} else if (config.gameMode === 'private') {
-		const userId = sessionStorage.getItem('userId');
+		const userId = await getUserIdFromCookieAPI();
 		console.log('private game');
 		if (config.action === 'create') {
 			ws.send(
@@ -61,9 +62,9 @@ export function gameModeSelector(config) {
 	}
 }
 
-export function cancelMode(config) {
+export async function cancelMode(config) {
 	if (config.gameMode === 'matchmaking') {
-		const userId = sessionStorage.getItem('userId');
+		const userId = await getUserIdFromCookieAPI();
 		ws.send(
 			JSON.stringify({
 				type: 'matchmaking',
@@ -73,7 +74,7 @@ export function cancelMode(config) {
 		);
 		console.log("Sent 'leave matchmaking' via WebSocket");
 	} else if (config.gameMode === 'private') {
-		const userId = sessionStorage.getItem('userId');
+		const userId = await getUserIdFromCookieAPI();
 		ws.send(
 			JSON.stringify({
 				type: 'private_event',

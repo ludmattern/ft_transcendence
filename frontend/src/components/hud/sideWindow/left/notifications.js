@@ -1,5 +1,6 @@
 // src/components/hud/notifications.js
 import { emit } from '/src/services/eventEmitter.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 let notificationBuffer = [];
 
@@ -75,7 +76,7 @@ export function removePrivateNotifications() {
 
 export async function updateAndCompareInfoData() {
 	console.log('Mise à jour des informations...');
-	const userId = sessionStorage.getItem('userId');
+	const userId = await getUserIdFromCookieAPI();
 
 	try {
 		console.log('GET info getter with userId', userId);
