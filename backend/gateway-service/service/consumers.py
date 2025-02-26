@@ -6,6 +6,20 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 logger = logging.getLogger(__name__)
 
+from django.utils.timezone import now
+from service.models import ManualUser
+from asgiref.sync import sync_to_async
+
+@sync_to_async
+def update_user_status(user_id, is_connected):
+    try:
+        user = ManualUser.objects.get(id=user_id)
+        user.is_connected = is_connected
+        user.save()
+    except ManualUser.DoesNotExist:
+        pass
+
+
 class GatewayConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		await self.accept()
@@ -23,9 +37,13 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
 	async def disconnect(self, close_code):
 		if self.user_id:
+			await update_user_status(self.user_id, False)
 			await self.channel_layer.group_discard(f"user_{self.user_id}", self.channel_name)
+			logger.info(f"Utilisateur {self.user_id} est maintenant hors ligne.")
+		
 		await self.channel_layer.group_discard("gateway", self.channel_name)
 		logger.info(f"Client {self.user_id} déconnecté du Gateway")
+
 
 	async def receive(self, text_data):
 		try:
@@ -36,6 +54,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 			if message_type == "init":
 				self.user_id = data.get("userId")
 				self.username = data.get("username")
+				await update_user_status(self.user_id, True)
 				await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
 				logger.info(f"Initialization complete: Client {self.username} (ID: {self.user_id}) connected.")
 				return  

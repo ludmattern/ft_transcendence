@@ -13,9 +13,4 @@ MIGRATION_MODULES = {
 
 ASGI_APPLICATION = 'gateway.asgi.application'
 
-DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': ':memory:',
-	}
-}
+
