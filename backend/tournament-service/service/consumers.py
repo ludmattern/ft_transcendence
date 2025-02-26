@@ -90,7 +90,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	def add_participant(self, tournament, user):
 		return ManualTournamentParticipants.objects.get_or_create(
 			tournament=tournament,
-			user=user
+			user=user,
+			status="accepted"
 		)
 
 	@database_sync_to_async

@@ -4,6 +4,7 @@ import { createTournament } from '/src/services/tournamentHandler.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { ws } from '/src/services/socketManager.js';
 import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.js'
+import { initializeWebSocket } from '/src/services/socketManager.js';
 
 
 let onlinePlayers = [];
@@ -196,10 +197,9 @@ export const tournamentCreation = createComponent({
 			const onlinePlayersList = el.querySelector('#online-players-list');
 			const onlinePlayersCountSpan = el.querySelector('#online-players-count');
 
-
-			if (!onlinePlayers.some(player => player.name === username)) {
-				onlinePlayers.push({ name: username, userId: userId, pending: false });
-			}
+			await fetchTournamentParticipants(userId);
+			
+			console.log('Online players:', onlinePlayers);
 
 			updateOnlinePlayersUI();
 
@@ -327,3 +327,36 @@ export function updateOnlinePlayersUI() {
 }
 
 export { onlinePlayers };
+
+async function fetchTournamentParticipants(tournamentId) {
+	try {
+		const apiUrl = `/api/tournament-service/getTournamentParticipants/${encodeURIComponent(tournamentId)}/`;
+		console.log(`🔍 Fetching tournament participants from: ${apiUrl}`);
+		const response = await fetch(apiUrl);
+		// Check if the response is not OK (e.g., 404, 500)
+		if (!response.ok) {
+			if (response.status === 404) {
+				console.warn(`⚠️ Tournament ID ${tournamentId} not found.`);
+				return;
+			}
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+		const data = await response.json();
+		if (data.error) {
+			console.error("⚠️ Error fetching participants:", data.error);
+			return;
+		}
+		// Map participants to update the UI
+		onlinePlayers = data.participants.map(p => ({
+			name: p.username,
+			userId: p.id,
+			pending: p.status === "pending",
+		}));
+		console.log("✅ Updated online players:", onlinePlayers);
+		// Update UI
+		updateOnlinePlayersUI();
+	} catch (error) {
+		console.error("❌ Failed to fetch tournament participants:", error);
+	}
+}
+

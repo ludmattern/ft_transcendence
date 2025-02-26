@@ -226,7 +226,6 @@ export const currentTournament = createComponent({
 	},
 });
 
-
 async function getBracketData() {
   try {
     const userId = await getUserIdFromCookieAPI();

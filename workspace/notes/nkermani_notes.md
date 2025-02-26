@@ -7,6 +7,8 @@ NEED TO REMIND FPREVOT TO:
     - SUPPRIMER LA PHOTO DE PROFILE (L'ANCIENNE DANS LE VOLUME SAUF SI C'ETAIT CELLE DE BASE)
 
 
+F5 DELETE, ne reload pas la page, des gens qui sont sur la page tournament. (Ils faudraient donc fetch)
+
 Check requirements for each dockerfile and give version for each of those which doesn't 
 
 NEED TO SETUP tournament-service in order to start making back views/consumers for infoPanel purposes. (tournament invite and private games)

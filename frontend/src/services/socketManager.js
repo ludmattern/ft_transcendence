@@ -19,19 +19,20 @@ export async function initializeWebSocket(userId) {
 		}
 	}
 
-	const tournamentSerialKey = await fetch(`/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`)
-		.then((response) => response.json())
-		.then((data) => data.serial_key)
-		.catch((error) => {
-			console.error('Error fetching tournament serial key:', error);
-		});
+	// const tournamentSerialKey = await fetch(`/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`)
+	// 	.then((response) => response.json())
+	// 	.then((data) => data.serial_key)
+	// 	.catch((error) => {
+	// 		console.error('Error fetching tournament serial key:', error);
+	// 	});
 
+	// console.log('Tournament serial key:', tournamentSerialKey);
+	
 	let wsUrl = `wss://${window.location.host}/ws/gateway/`;
-	console.log('Tournament serial key:', tournamentSerialKey);
-
-	if (tournamentSerialKey) {
-		wsUrl += `?serial_key=${encodeURIComponent(tournamentSerialKey)}`;
-	}
+	
+	// if (tournamentSerialKey) {
+	// 	wsUrl += `?serial_key=${encodeURIComponent(tournamentSerialKey)}`;
+	// }
 
 	console.log('Connexion WebSocket à :', wsUrl);
 

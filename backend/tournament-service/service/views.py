@@ -11,6 +11,29 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 cipher = Fernet(settings.FERNET_KEY)
 
+def getTournamentParticipants(request, tournament_id):
+    try:
+        # Fetch the tournament
+        tournament = ManualTournament.objects.get(id=tournament_id)
+        # Fetch all participants in the tournament
+        participants = ManualTournamentParticipants.objects.filter(tournament=tournament)
+        # Build the response
+        data = {
+            "tournament_id": tournament.id,
+            "tournament_name": tournament.name,
+            "participants": [
+                {
+                    "id": participant.user.id,
+                    "username": participant.user.username,
+                    "status": participant.status
+                }
+                for participant in participants
+            ]
+        }
+        return JsonResponse(data, safe=False)
+
+    except ManualTournament.DoesNotExist:
+        return JsonResponse({"error": "Tournament not found"}, status=404)
 
 
 #TODO ici pas de changement avec le online 
