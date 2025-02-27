@@ -234,7 +234,7 @@ export const tournamentCreation = createComponent({
 				console.log('Payload:', payload);
 				ws.send(JSON.stringify(payload));
 				onlinePlayers.push({ name: inviteMessage, pending: true });
-				updateOnlinePlayersUI();
+				fetchTournamentParticipants(userId);
 				console.log(`Invitation sent: "${inviteMessage}" with Room Code: ${roomCode}`);
 				inviteInput.value = '';
 			});
@@ -254,7 +254,7 @@ export const tournamentCreation = createComponent({
 				}
 				const newPlayerName = 'Player ' + simulatedPlayerIndex++;
 				onlinePlayers.push({ name: newPlayerName, pending: false });
-				updateOnlinePlayersUI();
+				fetchTournamentParticipants(userId);
 			});
 		}
 	},
@@ -299,7 +299,7 @@ export function updateOnlinePlayersUI() {
 			cancelButton.textContent = 'Cancel';
 			cancelButton.addEventListener('click', () => {
 				onlinePlayers.splice(index, 1);
-				updateOnlinePlayersUI();
+				fetchTournamentParticipants();
 			});
 			li.appendChild(cancelButton);
 		} else {
@@ -308,7 +308,7 @@ export function updateOnlinePlayersUI() {
 			kickButton.textContent = 'Kick';
 			kickButton.addEventListener('click', () => {
 				onlinePlayers.splice(index, 1);
-				updateOnlinePlayersUI();
+				fetchTournamentParticipants();
 			});
 			li.appendChild(kickButton);
 		}
