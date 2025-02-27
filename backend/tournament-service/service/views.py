@@ -105,6 +105,20 @@ def getTournamentSerialKey(request, user_id):
 	data = {"serial_key": serial_key}
 	return JsonResponse(data)
 
+def getTournamentIdFromSerialKey(request, serial_key):
+	if request.method != "GET":
+		return JsonResponse({"error": "GET method required"}, status=405)
+	if not serial_key:
+		return JsonResponse({"error": "serial_key parameter is required"}, status=400)
+	
+	try:
+		tournament = ManualTournament.objects.get(serial_key=serial_key)
+	except ManualTournament.DoesNotExist:
+		return JsonResponse({"error": "Tournament not found"}, status=404)
+
+	data = {"tournament_id": tournament.id}
+	return JsonResponse(data)
+
 
 #TODO ici logiquement les modifs seront au niveau du pong et ou matchamking 
 # ou il faudrat ajouter le tournament id dans la requete sinon pas de modif majeur

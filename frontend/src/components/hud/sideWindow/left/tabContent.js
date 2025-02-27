@@ -51,8 +51,10 @@ export async function loadTabContent(tabName, container) {
 			}
 		}
 
-		const userId = await getUserIdFromCookieAPI()?.toString() || 'unknown';
+		const userIdRaw = await getUserIdFromCookieAPI();
+		const userId = userIdRaw ? userIdRaw.toString() : 'unknown';
 
+		console.log("UserId récupéré :", userId);
 		tabItems.forEach((item) => {
 			renderCommMessage(item, container, userId);
 		});

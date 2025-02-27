@@ -9,7 +9,7 @@ import { handleLocalTournamentGameEnding } from '/src/services/tournamentHandler
 import componentManagers from '/src/index.js';
 import { tournamentCreation } from '/src/components/pong/play/tournamentCreation.js';
 import { updateOnlinePlayersUI } from '/src/components/pong/play/tournamentCreation.js';
-import { fetchTournamentParticipants } from '/src/components/pong/play/tournamentCreation.js'
+import { fetchTournamentParticipants, getTournamentIdFromSerialKey } from '/src/components/pong/play/tournamentCreation.js'
 
 export async function initializeWebSocket(userId) {
 	if (ws) {
@@ -52,11 +52,10 @@ export async function initializeWebSocket(userId) {
 		};
 		ws.send(JSON.stringify(initPayload));
 	};
-
+	
 	ws.onmessage = async (event) => {
 		const data = JSON.parse(event.data);
-		console.log('Message reçu :', data);
-
+		console.log('Message complet reçu :', data);
 		if (data.type === 'logout') {
 			console.warn('Déconnexion détectée via WebSocket Heartbeat');
 			logoutUser();
@@ -99,10 +98,11 @@ export async function initializeWebSocket(userId) {
 				console.log('Lobby créé :', data.tournamentLobbyId);
 				handleRoute('/pong/play/tournament-creation');
 				componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
-				fetchTournamentParticipants(data.tournamentLobbyId);
+				const tournamentDetails = await getTournamentIdFromSerialKey(data.tournamentLobbyId);
+				console.log("Tournament details:", tournamentDetails);
+				fetchTournamentParticipants(tournamentDetails.tournament_id);
 			}
 		}
-		console.log('Message complet reçu :', data);
 	};
 
 	ws.onerror = (error) => {
