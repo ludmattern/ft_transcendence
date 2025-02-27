@@ -7,5 +7,5 @@ urlpatterns = [
     path("getTournamentSerialKey/<int:user_id>/", getTournamentSerialKey, name="getTournamentSerialKey"),
     path("abandon_local_tournament/", abandon_local_tournament, name="abandon_local_tournament"),
     path('create_local_tournament/', create_local_tournament_view, name='create_local_tournament'),
-    path('getTournamentParticipants/<int:tournament_id>/', getTournamentParticipants, name="getTournamentParticipants"),
+    path('getTournamentParticipants/<int:tournament_id>/', getTournamentParticipants, name='getTournamentParticipants'),
 ]

@@ -12,32 +12,36 @@ logger = logging.getLogger(__name__)
 cipher = Fernet(settings.FERNET_KEY)
 
 def getTournamentParticipants(request, tournament_id):
-    try:
-        # Fetch the tournament
-        tournament = ManualTournament.objects.get(id=tournament_id)
-        # Fetch all participants in the tournament
-        participants = ManualTournamentParticipants.objects.filter(tournament=tournament)
-        # Build the response
-        data = {
-            "tournament_id": tournament.id,
-            "tournament_name": tournament.name,
-            "participants": [
-                {
-                    "id": participant.user.id,
-                    "username": participant.user.username,
-                    "status": participant.status
-                }
-                for participant in participants
-            ]
-        }
-        return JsonResponse(data, safe=False)
+    if request.method != "GET":
+        return JsonResponse({"error": "GET method required"}, status=405)
 
+    if not tournament_id:
+        return JsonResponse({"error": "tournament_id parameter is required"}, status=400)
+
+    try:
+        tournament = ManualTournament.objects.get(id=tournament_id)
     except ManualTournament.DoesNotExist:
         return JsonResponse({"error": "Tournament not found"}, status=404)
 
+    participants = ManualTournamentParticipants.objects.filter(tournament=tournament)
+
+    data = {
+        "tournament_id": tournament.id,
+        "tournament_name": tournament.name,
+        "participants": [
+            {
+                "id": participant.user.id,
+                "username": participant.user.username,
+                "status": participant.status
+            }
+            for participant in participants
+        ]
+    }
+
+    return JsonResponse(data)
+
 
 #TODO ici pas de changement avec le online 
-
 
 def get_current_tournament(request):
 	if request.method != "GET":
