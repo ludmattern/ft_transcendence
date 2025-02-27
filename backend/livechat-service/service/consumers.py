@@ -209,7 +209,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			participants = await get_participants(initiator_tournament)
 
 			for participant in participants:
-				await self.channel_layer.group_send(f"user_{participant.user.id}", event)
+				await self.channel_layer.group_send(f"user_{participant.user.id}", {type: "info_message", "info": f"{author_username} invited {recipient_username} to the tournament.", "message": "Successfully invited."})
 
 			await self.channel_layer.group_send(
 				f"user_{recipient_id}",

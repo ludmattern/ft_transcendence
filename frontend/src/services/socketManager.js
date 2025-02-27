@@ -83,8 +83,11 @@ export async function initializeWebSocket(userId) {
 			if (data.action) {
 				if (data.action === 'tournament_invite')
 				{
-					onlinePlayers.push({ name: inviteMessage, pending: true });
-					updateOnlinePlayersUI();
+					if(data.message === "Successfully invited.")
+					{
+						onlinePlayers.push({ name: inviteMessage, pending: true });
+						fetchTournamentParticipants();
+					}
 				}
 				await updateAndCompareInfoData();
 			} else {
