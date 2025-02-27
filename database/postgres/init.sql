@@ -4,11 +4,11 @@ CREATE TABLE IF NOT EXISTS users (
 	email VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
 	rank INT DEFAULT 0,
-	status VARCHAR(20) DEFAULT 'offline', -- 'offline', 'online', 'ingame'
 	tournament_status VARCHAR(20) DEFAULT 'out', -- 'out', 'lobby', 'participating',
 	winrate FLOAT DEFAULT 0,
 	total_wins INT DEFAULT 0,
 	total_losses INT DEFAULT 0,
+  elo INT DEFAULT 1000,
   is_connected BOOLEAN DEFAULT FALSE,
 	total_games INT DEFAULT 0,
   profile_picture VARCHAR(255) DEFAULT 'profile_pics/default-profile-150.png',

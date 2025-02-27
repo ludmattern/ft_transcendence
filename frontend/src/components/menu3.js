@@ -6,7 +6,9 @@ export const menu3 = createComponent({
 	tag: 'menu3',
 
 	render: () => `
-    <div class="menu3" id="menu3"></div>
+    <div class="menu3" id="menu3">
+
+	</div>
   `,
 
 	attachEvents: (el) => {

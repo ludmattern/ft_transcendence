@@ -5,7 +5,7 @@ import { ws } from '/src/services/socketManager.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export const contextMenu = createComponent({
-	tag: 'contextMenu',
+	tag: 'contextMenu', 
 
 	// Génère le HTML du menu contextuel en fonction de l'item et d'un objet userStatus
 	render: (item, userStatus) => `
