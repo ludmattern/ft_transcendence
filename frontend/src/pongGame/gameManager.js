@@ -274,7 +274,7 @@ class GameManager {
 
 export const gameManager = new GameManager();
 
-async function getUsername(playerId) {
+export async function getUsername(playerId) {
 	try {
 		const response = await fetch('/api/user-service/getUsername/', {
 			method: 'POST',

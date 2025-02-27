@@ -351,3 +351,28 @@ def search_pilots(request):
         })
     
     return JsonResponse({"success": True, "pilots": results})
+
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from service.models import ManualUser
+
+
+@csrf_exempt
+def get_leaderboard(request):
+    if request.method != "GET":
+        return JsonResponse({"error": "GET method required"}, status=405)
+
+    players = ManualUser.objects.filter(elo__gt=0).order_by("-elo")[:500]
+
+    results = [
+        {
+            "rank": index + 1,
+            "username": player.username,
+            "elo": player.elo
+        }
+        for index, player in enumerate(players)
+    ]
+
+    return JsonResponse({"success": True, "players": results})

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from service.views import search_pilots, get_user_id, upload_profile_picture, get_profile, get_game_history, getUsername, register_user, generate_qr_code, update_info, delete_account
+from service.views import get_leaderboard, search_pilots, get_user_id, upload_profile_picture, get_profile, get_game_history, getUsername, register_user, generate_qr_code, update_info, delete_account
 from service.friends import is_friend, get_friends
 from service.profile import profile_info
 from service.info import info_getter
@@ -20,6 +20,6 @@ urlpatterns = [
 	path("get_friends/", get_friends, name="get_friends"),
     path("get_user_id/<str:username>/", get_user_id, name="get_user_id"),
     path("search_pilots/", search_pilots, name="search_pilots"),
-
+    path("leaderboard/", get_leaderboard, name="leaderboard"),
 
 ]

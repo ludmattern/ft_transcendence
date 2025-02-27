@@ -183,6 +183,13 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
                         loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
 
+                        if winner.elo == 0:
+                            winner.elo = 1000
+                            await sync_to_async(winner.save)()
+                        if loser.elo == 0:
+                            loser.elo = 1000
+                            await sync_to_async(loser.save)() 
+
                         new_winner_elo, new_loser_elo = calculate_elo(winner.elo, loser.elo)
 
                         def elo():

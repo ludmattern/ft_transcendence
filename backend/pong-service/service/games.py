@@ -1,7 +1,6 @@
 import random
 import time
 import logging
-from service.utils import update_elo
 
 logger = logging.getLogger(__name__)
 class BasePongGame:

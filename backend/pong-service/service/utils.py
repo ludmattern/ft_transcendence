@@ -8,6 +8,7 @@ from service.models import ManualUser
 
 def calculate_elo(winner_elo, loser_elo, k_factor=32):
 
+    
     expected_winner = 1 / (1 + 10 ** ((loser_elo - winner_elo) / 400))
     expected_loser = 1 / (1 + 10 ** ((winner_elo - loser_elo) / 400))
 
@@ -15,40 +16,3 @@ def calculate_elo(winner_elo, loser_elo, k_factor=32):
     new_loser_elo = round(loser_elo + k_factor * (0 - expected_loser))
 
     return new_winner_elo, new_loser_elo
-
-
-
-@csrf_exempt
-def update_elo(request):
-   
-    if request.method != "POST":
-        return JsonResponse({"error": "POST method required"}, status=405)
-
-    try:
-        data = json.loads(request.body)
-        winner_id = data.get("winner_id")
-        loser_id = data.get("loser_id")
-
-        if not winner_id or not loser_id:
-            return JsonResponse({"error": "Both winner_id and loser_id are required"}, status=400)
-
-        winner = ManualUser.objects.get(id=winner_id)
-        loser = ManualUser.objects.get(id=loser_id)
-
-        new_winner_elo, new_loser_elo = calculate_elo(winner.elo, loser.elo)
-
-        winner.elo = new_winner_elo
-        loser.elo = new_loser_elo
-        winner.save()
-        loser.save()
-
-        return JsonResponse({
-            "success": True,
-            "winner_elo": new_winner_elo,
-            "loser_elo": new_loser_elo
-        })
-
-    except ManualUser.DoesNotExist:
-        return JsonResponse({"error": "One or both users not found"}, status=404)
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)

@@ -19,7 +19,7 @@ class GameHistory(models.Model):
 class ManualUser(models.Model):
     id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50, unique=True)
-    elo = models.IntegerField(default=1000)
+    elo = models.IntegerField(default=0)
 
 
     class Meta:
