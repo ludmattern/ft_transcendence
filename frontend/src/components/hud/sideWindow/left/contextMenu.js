@@ -3,7 +3,8 @@ import { createComponent } from '/src/utils/component.js';
 import { waitForElement } from '/src/components/hud/utils/utils.js';
 import { ws } from '/src/services/socketManager.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
-
+import { handleRoute } from '/src/services/router.js';
+import { getUsername } from '/src/pongGame/gameManager.js';
 export const contextMenu = createComponent({
 	tag: 'contextMenu', 
 
@@ -114,8 +115,9 @@ function handleInviteAction(author) {
 	console.log(`Inviting ${author} to a game...`);
 }
 
-function handleProfileAction(author) {
-	console.log(`Viewing profile of ${author}...`);
+async function handleProfileAction(author) {
+	const username = await getUsername(author)
+	handleRoute(`/social/pilot=${username}`);
 }
 
 function handleMessageAction(author) {
