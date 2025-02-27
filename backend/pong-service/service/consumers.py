@@ -2,8 +2,11 @@ import asyncio
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .game_manager import game_manager
-import time
 from asgiref.sync import sync_to_async
+from django.db import transaction
+from service.models import ManualUser
+from django.http import JsonResponse
+from service.utils import calculate_elo
 
 #import numpy as np
 logger = logging.getLogger(__name__)
@@ -45,6 +48,8 @@ logger = logging.getLogger(__name__)
 #         return "right"
 #     else:
 #         return None
+
+
 
 class PongGroupConsumer(AsyncWebsocketConsumer):
 
@@ -173,7 +178,24 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     else:
                         winner_id = game.player2_id
                         loser_id = game.player1_id
+                        
+                    if str(game_id).startswith("matchmaking_"):
+                        winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
+                        loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
 
+                        new_winner_elo, new_loser_elo = calculate_elo(winner.elo, loser.elo)
+
+                        def elo():
+                            with transaction.atomic():
+                                winner.elo = new_winner_elo
+                                loser.elo = new_loser_elo
+                
+                                winner.save()
+                                loser.save()
+
+                        await sync_to_async(elo)()
+                    
+                    
                     await self.channel_layer.group_send(
                         f"game_{game_id}",
                         {

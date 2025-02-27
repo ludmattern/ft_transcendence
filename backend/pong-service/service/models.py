@@ -13,3 +13,18 @@ class GameHistory(models.Model):
 
     def __str__(self):
         return f"GameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
+
+
+
+class ManualUser(models.Model):
+    id = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=50, unique=True)
+    elo = models.IntegerField(default=1000)
+
+
+    class Meta:
+        db_table = "users"
+        managed = True
+
+    def __str__(self):
+        return self.username
