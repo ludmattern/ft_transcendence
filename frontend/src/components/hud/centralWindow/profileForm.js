@@ -34,7 +34,7 @@ export const profileForm = createComponent({
               </div>
               <div class="stat-item d-flex align-items-center">
                 <span class="bi bi-award me-2"></span>
-                <span class="stat-title">Rank:</span>
+                <span id="elo" class="stat-title">Elo:</span>
                 <span class="stat-value ms-1"></span>
               </div>
             </div>
@@ -211,6 +211,12 @@ export async function loadUserProfile(userId) {
       const pseudoElement = document.getElementById("pseudo");
       if (pseudoElement && data.profile.username) {
         pseudoElement.textContent = data.profile.username;
+      }
+      console.log(data.profile.elo)
+      const eloElement = document.getElementById("elo");
+      if (eloElement)
+      {
+        eloElement.textContent = `Elo: ${data.profile.elo}`;
       }
 
       const statusIndicator = document.querySelector(".status-indicator");

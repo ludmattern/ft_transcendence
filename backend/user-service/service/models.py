@@ -13,6 +13,7 @@ class ManualUser(models.Model):
     temp_2fa_code = models.CharField(max_length=10, null=True, blank=True)
     is_dummy = models.BooleanField(default=False)
     is_connected = models.BooleanField(default=False)
+    elo = models.IntegerField(default=1000)
     profile_picture = models.ImageField(
         upload_to="profile_pics/",
         default="profile_pics/default-profile-150.png",

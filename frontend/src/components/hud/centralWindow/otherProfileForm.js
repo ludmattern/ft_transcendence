@@ -33,7 +33,7 @@ export const otherProfileForm = createComponent({
               </div>
               <div class="stat-item d-flex align-items-center">
                 <span class="bi bi-award me-2"></span>
-                <span class="stat-title">Rank:</span>
+                <span id="elo" class="stat-title">Elo:</span>
                 <span class="stat-value ms-1"></span>
               </div>
             </div>

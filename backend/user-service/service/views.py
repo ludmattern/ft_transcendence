@@ -266,7 +266,8 @@ def get_profile(request):
             "username": user.username,
             "email": user.email,
             "profile_picture": profile_picture,
-            "is_connected": user.is_connected 
+            "is_connected": user.is_connected,
+            "elo": user.elo
         }
         return JsonResponse({"success": True, "profile": data})
     
