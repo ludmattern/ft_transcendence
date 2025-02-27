@@ -197,12 +197,6 @@ export const tournamentCreation = createComponent({
 			const onlinePlayersList = el.querySelector('#online-players-list');
 			const onlinePlayersCountSpan = el.querySelector('#online-players-count');
 
-			await fetchTournamentParticipants(userId);
-			
-			console.log('Online players:', onlinePlayers);
-
-			updateOnlinePlayersUI();
-
 			createTournamentButton.addEventListener('click', () => { // Launch Tournament
 				console.log('Online tournament created with room code:', roomCode);
 				console.log('Players:', onlinePlayers);
@@ -266,8 +260,6 @@ export const tournamentCreation = createComponent({
 	},
 });
 
-
-
 export function updateOnlinePlayersUI() {
 	const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
 	const username = sessionStorage.getItem('username') || 'You';
@@ -327,36 +319,43 @@ export function updateOnlinePlayersUI() {
 }
 
 export { onlinePlayers };
+export async function fetchTournamentParticipants(tournamentId) {
+    try {
+        const apiUrl = `/api/tournament-service/getTournamentParticipants/${encodeURIComponent(tournamentId)}/`;
+        console.log(`🔍 Fetching tournament participants from: ${apiUrl}`);
 
-async function fetchTournamentParticipants(tournamentId) {
-	try {
-		const apiUrl = `/api/tournament-service/getTournamentParticipants/${encodeURIComponent(tournamentId)}/`;
-		console.log(`🔍 Fetching tournament participants from: ${apiUrl}`);
-		const response = await fetch(apiUrl);
-		// Check if the response is not OK (e.g., 404, 500)
-		if (!response.ok) {
-			if (response.status === 404) {
-				console.warn(`⚠️ Tournament ID ${tournamentId} not found.`);
-				return;
-			}
-			throw new Error(`HTTP error! Status: ${response.status}`);
-		}
-		const data = await response.json();
-		if (data.error) {
-			console.error("⚠️ Error fetching participants:", data.error);
-			return;
-		}
-		// Map participants to update the UI
-		onlinePlayers = data.participants.map(p => ({
-			name: p.username,
-			userId: p.id,
-			pending: p.status === "pending",
-		}));
-		console.log("✅ Updated online players:", onlinePlayers);
-		// Update UI
-		updateOnlinePlayersUI();
-	} catch (error) {
-		console.error("❌ Failed to fetch tournament participants:", error);
-	}
+        const response = await fetch(apiUrl, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            mode: "cors",
+            credentials: "include"
+        });
+
+        if (!response.ok) {
+            console.error(`⚠️ HTTP error! Status: ${response.status}, Response:`, await response.text());
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("✅ Updated online players:", data);
+        updateOnlinePlayersUI();
+    } catch (error) {
+        console.error("❌ Failed to fetch tournament participants:", error);
+    }
 }
-
+async function fetchCurrentTournament() {
+	try {
+	  const userId = await getUserIdFromCookieAPI();
+  
+	  console.log('User ID récupéré depuis sessionStorage:', userId);
+	  const response = await fetch(`/api/tournament-service/get_current_tournament/?user_id=${userId}`);
+	  if (!response.ok) {
+		throw new Error(`Erreur HTTP ${response.status}`);
+	  }
+	  const data = await response.json();
+	  return data;
+	} catch (error) {
+	  console.error('Erreur lors de la récupération du bracket :', error);
+	  return [];
+	}
+  }

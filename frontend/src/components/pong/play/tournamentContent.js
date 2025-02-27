@@ -164,20 +164,20 @@ function generateTournamentSizeSelector(variant) {
 }
 
 function createTournamentLobby(tournamentSize, userId) {
-	let tournamentSerialKey = null;
-	fetch(`/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`)
-	.then((response) => response.json())
-	.then((data) => {
-	  tournamentSerialKey = data.serial_key;
-	})
-	.catch((error) => {
-	  console.error('Error fetching tournament serial key:', error);
-	});
+	// let tournamentSerialKey = null;
+	// fetch(`/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`)
+	// .then((response) => response.json())
+	// .then((data) => {
+	//   tournamentSerialKey = data.serial_key;
+	// })
+	// .catch((error) => {
+	//   console.error('Error fetching tournament serial key:', error);
+	// });
 
-	if (tournamentSerialKey) {
-		console.error('Error you cannot create another tournament lobby');
-		return;
-	}
+	// if (tournamentSerialKey) {
+	// 	console.error('Error you cannot create another tournament lobby');
+	// 	return;
+	// }
 
 	const payload = {
 		type: 'tournament_message',

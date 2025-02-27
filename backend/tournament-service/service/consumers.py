@@ -98,3 +98,4 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	def update_user_status(self, user, status):
 		user.tournament_status = status
 		user.save()
+  

@@ -241,7 +241,7 @@ async function getBracketData() {
     console.error('Erreur lors de la récupération du bracket :', error);
     return [];
   }
-}
+} 
 
 function hasUserCompletedInPreviousRound(bracketData, roundIndex) {
   if (roundIndex === 0) return true;
