@@ -46,11 +46,13 @@ export const otherProfileForm = createComponent({
             <span class="bi bi-journal me-2"></span>Match History
           </h6>
           <div class="match-history-header d-flex fw-bold">
-            <span class="col-2">Outcome</span>
-            <span class="col-2">Date</span>
-            <span class="col-4">Opponents</span>
-            <span class="col-4">Score</span>
+            <span class="col-3">Outcome</span>
+            <span class="col-3">Date</span>
+            <span class="col-3">Opponents</span>
+            <span class="col-3">Score</span>
           </div>
+          <div class="match-history-container d-flex flex-column" style="max-height: 40vh; overflow-y: auto;">
+
           <!-- Conteneur pour les éléments d'historique -->
           <div id="match-items-container" class="match-history-items d-flex flex-column" style="max-height: 40vh; overflow-y: auto;">
             <!-- Les éléments de match seront ajoutés ici -->
@@ -116,17 +118,7 @@ export const otherProfileForm = createComponent({
  * @param {string} outcomeClass - Classe CSS pour le résultat
  * @returns {string} - HTML du match
  */
-function createMatchItem(outcome, mode, duration, date, opponents, outcomeClass) {
-	return `
-    <div class="match-item d-flex">
-      <span class="col-2 ${outcomeClass} fw-bold">${outcome}</span>
-      <span class="col-2">${mode}</span>
-      <span class="col-2">${duration}</span>
-      <span class="col-2">${date}</span>
-      <span class="col-4">${opponents}</span>
-    </div>
-  `;
-}
+
 
 
 export async function fetchUserId(username) {

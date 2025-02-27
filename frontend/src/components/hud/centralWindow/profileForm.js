@@ -47,10 +47,10 @@ export const profileForm = createComponent({
             <span class="bi bi-journal me-2"></span>Match History
           </h6>
             <div class="match-history-header d-flex fw-bold">
-                <span class="col-2">Outcome</span>
-                <span class="col-2">Date</span>
-                <span class="col-4">Opponents</span>
-                <span class="col-4">Score</span>
+                <span class="col-3">Outcome</span>
+                <span class="col-3">Date</span>
+                <span class="col-3">Opponents</span>
+                <span class="col-3">Score</span>
             </div>
           <div class="match-history-container d-flex flex-column" style="max-height: 40vh; overflow-y: auto;">
             <!-- Match History Header -->
@@ -159,10 +159,10 @@ export async function loadMatchHistory(userId) {
       historyContainer.innerHTML = "";
       
       data.history.forEach(match => {
-        const outcome = match.winner_score > match.loser_score ? "Win" : "Loss";
+        const outcome = (String(match.winner_id) == userId) ? "Win" : "Loss";
         const date = match.created_at;
         const opponents = `${match.winner_username} vs ${match.loser_username}`;
-        const outcomeClass = (String(match.winner_id) === userId) ? "text-success" : "text-danger";
+        const outcomeClass = (String(match.winner_id) == userId) ? "text-success" : "text-danger";
         const score = `${match.winner_score} - ${match.loser_score}`;
         
         const matchHtml = createMatchItem(outcome, date, opponents, outcomeClass, score);
@@ -179,10 +179,10 @@ export async function loadMatchHistory(userId) {
 function createMatchItem(outcome, date, opponents, outcomeClass, score) {
   return `
     <div class="match-item d-flex">
-      <span class="col-2 ${outcomeClass} fw-bold">${outcome}</span>
-      <span class="col-2">${date}</span>
-      <span class="col-4">${opponents}</span>
-      <span class="col-4">${score}</span>
+      <span class="col-3 ${outcomeClass} fw-bold">${outcome}</span>
+      <span class="col-3">${date}</span>
+      <span class="col-3">${opponents}</span>
+      <span class="col-3">${score}</span>
     </div>
   `;
 }
