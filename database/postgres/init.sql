@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS users (
 	id SERIAL PRIMARY KEY,
 	username VARCHAR(50) NOT NULL UNIQUE,
-	email VARCHAR(255) NOT NULL UNIQUE,
-	password VARCHAR(255) NOT NULL,
+	email VARCHAR(255),
+	password VARCHAR(255),
 	rank INT DEFAULT 0,
 	tournament_status VARCHAR(20) DEFAULT 'out', -- 'out', 'lobby', 'participating',
 	winrate FLOAT DEFAULT 0,

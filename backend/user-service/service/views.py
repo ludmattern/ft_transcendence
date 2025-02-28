@@ -53,10 +53,9 @@ def register_user(request):
             if ManualUser.objects.filter(username=username).exists():
                 return JsonResponse({'success': False, 'message': 'Username already taken'}, status=409)
 
-            
             encrypted_email = encrypt_thing(email)
 
-            existing_users = ManualUser.objects.all()
+            existing_users = ManualUser.objects.filter(is_dummy=False)
 
             for user in existing_users:
                 decrypted_email = decrypt_thing(user.email)

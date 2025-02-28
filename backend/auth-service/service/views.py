@@ -388,3 +388,135 @@ def get_user_id_from_cookie(request):
         return JsonResponse({"success": True, "user_id": user_id})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+    
+    
+    
+    
+    
+import requests
+from django.shortcuts import redirect
+from django.http import JsonResponse
+from django.conf import settings
+from urllib.parse import urlencode
+
+
+
+
+SERVER_IP = "10.13.3.5"
+REDIRECT_URI = f"https://{SERVER_IP}:8443/api/auth-service/oauth/callback/"
+
+CLIENT_ID = "pasdanslecommit"
+CLIENT_SECRET = "pasdanslecommit" 
+
+
+def get_42_auth_url(request):
+    auth_url = (
+        f"https://api.intra.42.fr/oauth/authorize?"
+        f"client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=public"
+    )
+    return JsonResponse({"url": auth_url})
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+
+@csrf_exempt
+def oauth_callback(request):
+    code = request.GET.get('code')
+    if not code:
+        return JsonResponse({'success': False, 'message': 'No code provided'}, status=400)
+
+    token_url = "https://api.intra.42.fr/oauth/token"
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+    data = {
+        "grant_type": "authorization_code",
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,
+        "code": code,
+        "redirect_uri": REDIRECT_URI
+    }
+
+
+    try:
+        response = requests.post(token_url, data=urlencode(data), headers=headers)
+        response_data = response.json()
+
+        if "access_token" not in response_data:
+            return JsonResponse({'success': False, 'message': 'Failed to get access token'}, status=400)
+
+        access_token = response_data["access_token"]
+
+        user_info_url = "https://api.intra.42.fr/v2/me"
+        headers = {"Authorization": f"Bearer {access_token}"}
+        user_response = requests.get(user_info_url, headers=headers)
+        user_data = user_response.json()
+
+        username = user_data.get("login")
+        email = user_data.get("email")
+
+        if not username or not email:
+            return JsonResponse({'success': False, 'message': 'Invalid user data from 42'}, status=400)
+
+        existing_users = ManualUser.objects.filter(is_dummy=False)
+        for user in existing_users:
+            decrypted_email = decrypt_thing(user.email)
+            if decrypted_email == email:
+                return authenticate_and_respond(user)
+
+        original_username = username
+        if ManualUser.objects.filter(username=username).exists():
+            counter = 1
+            while ManualUser.objects.filter(username=f"{original_username}_{counter}").exists():
+                counter += 1
+            username = f"{original_username}_{counter}"
+
+      #logique a change c rince
+        encrypted_email = encrypt_thing(email)
+
+        user = ManualUser.objects.create(
+            username=username,
+            email=encrypted_email,
+            password=None,
+            is_2fa_enabled=False,
+            twofa_method=None,
+            phone_number=None,
+            is_dummy=False
+        )
+
+        return authenticate_and_respond(user)
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': 'Internal Server Error'}, status=500)
+
+
+
+def authenticate_and_respond(user):
+    now = datetime.datetime.utcnow()
+    new_session_token = jwt.encode(
+        {
+            "sub": str(user.id),
+            "iat": now,
+            "exp": (now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)).timestamp()
+        },
+        settings.JWT_SECRET_KEY,
+        algorithm=settings.JWT_ALGORITHM
+    )
+    new_session_token_str = new_session_token if isinstance(new_session_token, str) else new_session_token.decode("utf-8")
+
+    user.token_expiry = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+    user.session_token = new_session_token_str
+    user.status = 'online'
+    user.save()
+
+    response = redirect(f"https://10.13.3.5:8443")
+    response.set_cookie(
+        key='access_token',
+        value=new_session_token_str,
+        httponly=True,
+        secure=True,
+        samesite='None', 
+        max_age=settings.JWT_EXP_DELTA_SECONDS
+    )
+    return response

@@ -22,6 +22,12 @@ export const loginForm = createComponent({
           </div>
           <button class="btn bi bi-check">accept</button>
         </form>
+        <div class="mt-3">
+          <button id="login-42" class="btn btn-outline-primary w-100">
+            <img src="/src/assets/img/42.png" alt="42 logo" style="height: 20px; vertical-align: middle; margin-right: 8px;">
+            Sign in with 42
+          </button>
+        </div>
         <div>
           <span>
             <p>New pilot? <a href="#" id="enlist-link" class="text-info">Enlist</a></p>
@@ -48,7 +54,6 @@ export const loginForm = createComponent({
 			if (data.twofa_method) {
 				sessionStorage.setItem('pending2FA_user', pilotId);
 				sessionStorage.setItem('pending2FA_method', data.twofa_method);
-				console.log('here work');
 				handleRoute('/login/2fa');
 			} else if (data.success) {
 				console.log('here SUCCESS');
@@ -63,5 +68,20 @@ export const loginForm = createComponent({
 				document.getElementById('error-message').classList.remove('d-none');
 			}
 		});
+		document.querySelector('#login-42').addEventListener('click', async () => {
+			try {
+				const response = await fetch('/api/auth-service/get-42-url/');
+				const data = await response.json();
+				console.log(data)
+				if (data.url) {
+					window.location.href = data.url;
+				} else {
+					console.error("Erreur : Impossible d'obtenir l'URL d'authentification.");
+				}
+			} catch (error) {
+				console.error("Erreur lors de l'appel API :", error);
+			}
+		});
+		
 	},
 });

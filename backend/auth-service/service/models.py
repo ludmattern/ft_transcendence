@@ -1,11 +1,12 @@
 from django.db import models
 import pyotp
+from django.core.validators import FileExtensionValidator
 
 class ManualUser(models.Model):
-    id = models.CharField(max_length=50, unique=True, primary_key=True)
+    id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=100, unique=True)
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255, null=True, blank=True)
     is_2fa_enabled = models.BooleanField(default=False)
     twofa_method = models.CharField(max_length=50, null=True, blank=True)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
@@ -16,6 +17,11 @@ class ManualUser(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     session_token = models.CharField(max_length=255, null=True, default=None)
     is_dummy = models.BooleanField(default=False)
+    profile_picture = models.ImageField(
+        upload_to="profile_pics/",
+        default="profile_pics/default-profile-150.png",
+        validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])]
+    )
 
 
     class Meta:
