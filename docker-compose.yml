@@ -116,6 +116,9 @@ services:
       - twilio_account_sid
       - twilio_auth_token
       - twilio_phone_number
+      - 42_uid
+      - 42_secret
+      - hostname
     ports:
       - "3001:3001"
 
@@ -233,3 +236,9 @@ secrets:
     file: ./secret/twilio_auth_token.txt
   twilio_phone_number:
     file: ./secret/twilio_phone_number.txt
+  42_secret:
+    file: ./secret/42_secret.txt
+  42_uid:
+    file: ./secret/42_uid.txt
+  hostname:
+    file: ./secret/hostname.txt

@@ -402,12 +402,11 @@ from urllib.parse import urlencode
 
 
 
-SERVER_IP = "1aa0.13.3.3"
+SERVER_IP = settings.HOSTNAME
 REDIRECT_URI = f"https://{SERVER_IP}:8443/api/auth-service/oauth/callback/"
 
-CLIENT_ID = "ua"
-CLIENT_SECRET = "a" 
-
+CLIENT_ID = settings.UID_42
+CLIENT_SECRET = settings.SECRET_42
 
 def get_42_auth_url(request):
     auth_url = (
@@ -417,7 +416,6 @@ def get_42_auth_url(request):
     return JsonResponse({"url": auth_url})
 
 import logging
-
 logger = logging.getLogger(__name__)
 
 @csrf_exempt
@@ -507,7 +505,7 @@ def authenticate_and_respond(user):
     user.status = 'online'
     user.save()
 
-    response = redirect(f"https://10aa.13.3.3:8443")
+    response = redirect(f"https://{SERVER_IP}:8443")
     response.set_cookie(
         key='access_token',
         value=new_session_token_str,
