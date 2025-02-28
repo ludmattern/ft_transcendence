@@ -204,18 +204,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			@database_sync_to_async
 			def get_participants(tournament):
-				return list(tournament.participants.all())
+				return list(tournament.participants.select_related('user').all())
 
 			participants = await get_participants(initiator_tournament)
 
 			for participant in participants:
 				await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{author_username} invited {recipient_username} to the tournament.", "message": "Successfully invited."})
 
-			await self.channel_layer.group_send(
-				f"user_{recipient_id}", {"type": "info_message", "info": f"You have been invited to a tournament by {author_username}"}
-			)
+			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You have been invited to a tournament by {author_username}"})
 
 		else:
-			await self.channel_layer.group_send(f"user_{author_id}",{"type": "error_message", "error": "Invalid action."})
+			await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "Invalid action."})
    
 		
