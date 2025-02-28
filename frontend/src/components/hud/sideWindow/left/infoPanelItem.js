@@ -2,6 +2,8 @@ import { createComponent } from '/src/utils/component.js';
 import { playGame } from '/src/components/pong/play/utils.js';
 import { showContextMenu } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { handleFriendAction } from '/src/components/hud/sideWindow/left/contextMenu.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { ws } from '/src/services/socketManager.js';
 
 export const infoPanelItem = createComponent({
 	tag: 'infoPanelItem',
@@ -93,27 +95,42 @@ function titleType(type) {
 
 
 function behaviorTournament(el, item) {
-	// const acceptButton = el.querySelector("#accept-action");
-	// const refuseButton = el.querySelector("#refuse-action");
-	// if (acceptButton) {
-	//   acceptButton.addEventListener("click", () => {
-	//     console.log(`Accepted ${item.inviter}'s request.`);
-	//     const config = {
-	//       gameMode: "private",
-	//       action: "join",
-	//       matchkey: "4",
-	//       type: "fullScreen",
-	//     };
-	//     playGame(config);
-	//     // Logique pour accepter la demande
-	//   });
-	// }
-	// if (refuseButton) {
-	//   refuseButton.addEventListener("click", () => {
-	//     console.log(`Refused ${item.inviter}'s request.`);
-	//     // Logique pour refuser la demande
-	//   });
-	// }
+	const acceptButton = el.querySelector('#accept-action');
+	const refuseButton = el.querySelector('#refuse-action');
+
+	console.log('tournament request from:', item.inviter);
+
+	if (acceptButton) {
+		acceptButton.addEventListener('click', () => {
+			console.log(`Accepted ${item.inviter}'s request.`);
+			handleTournamentAction(true, item);
+		});
+	}
+	if (refuseButton) {
+		refuseButton.addEventListener('click', () => {
+			console.log(`Refused ${item.inviter}'s request.`);
+			handleFriendAction(true, item.inviter_id);
+		});
+	}
+}
+
+export async function handleTournamentAction(action, item) {
+	const userId = await getUserIdFromCookieAPI();
+	if (action) {
+		action = 'join_tournament';
+		console.log(`joining tournament...`);
+	} else {
+		action = 'reject_tournament';
+		console.log(`rejecting tournament...`);
+	}
+	const payload = {
+		type: 'tournament_message',
+		action,
+		userId: userId,
+		tournamentId: item.tournament_id,
+	};
+
+	ws.send(JSON.stringify(payload));
 }
 
 function behaviorTournamentGame(el, item) {
