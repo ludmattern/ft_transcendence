@@ -55,12 +55,16 @@ def register_user(request):
 
             encrypted_email = encrypt_thing(email)
 
-            existing_users = ManualUser.objects.filter(is_dummy=False)
+            existing_users = ManualUser.objects.filter(is_dummy=False, email__isnull=False).exclude(email="")
 
             for user in existing_users:
-                decrypted_email = decrypt_thing(user.email)
-                if decrypted_email == email:
-                    return JsonResponse({'success': False, 'message': 'Email already in use'}, status=409)
+                try:
+                    decrypted_email = decrypt_thing(user.email)
+                    if decrypted_email == email:
+                        return JsonResponse({'success': False, 'message': 'Email already in use'}, status=409)
+                except Exception as e:
+                    return JsonResponse({'success': False, 'message': 'email fail'}, status=409)
+
 
             if is_2fa_enabled and twofa_method == 'sms' and not phone_number:
                 return JsonResponse({'success': False, 'message': 'Phone number is required for SMS 2FA'}, status=400)

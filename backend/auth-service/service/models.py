@@ -22,6 +22,8 @@ class ManualUser(models.Model):
         default="profile_pics/default-profile-150.png",
         validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])]
     )
+    oauth_id = models.CharField(max_length=255, null=True, blank=True, unique=True)  # 🔹 Ajout ici
+
 
 
     class Meta:
