@@ -13,6 +13,14 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+@database_sync_to_async
+def get_username(user_id):
+	try:
+		user = ManualUser.objects.get(pk=user_id)
+		return user.username
+	except ManualUser.DoesNotExist:
+		return None
+
 cipher = Fernet(settings.FERNET_KEY)
 
 def encrypt_thing(args):
@@ -30,13 +38,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 		logger.info("Disconnected from tournament_service group (channel=%s)", self.channel_name)
 
-	async def tournament_message(self, data):
-		logger.info("Tournament message received: %s", data)
-		action = data.get("action")
+	async def tournament_message(self, event):
+		logger.info("Tournament message received: %s", event)
+		action = event.get("action")
 		logger.info("Action received: %s", action)
 		if str(action) == "create_tournament_lobby":
-			user_id = data.get("userId")
-			tournament_size = data.get("tournamentSize")
+			user_id = event.get("userId")
+			tournament_size = event.get("tournamentSize")
 			user = await self.get_user(user_id)
 			serial_key = str(user_id)
 			tournament = await self.create_tournament(serial_key, user, tournament_size)
@@ -52,8 +60,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			})   
 			logger.info("Tournament lobby created successfully")
 		elif str(action) == "join_tournament_lobby":
-			user_id = data.get("userId")
-			serial_key = data.get("tournamentLobbyId")
+			user_id = event.get("userId")
+			serial_key = event.get("tournamentLobbyId")
 			user = await self.get_user(user_id)
 			tournament = await self.get_tournament(serial_key)
 			await self.add_participant(tournament, user)
@@ -64,6 +72,43 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 					"message": f"{user.username} joined the tournament lobby",
 				})
 			logger.info(f"{user.username} joined the tournament lobby")
+
+		elif str(action) == "tournament_invite":
+			author_id = event.get("author")
+			recipient_id = event.get("recipient")
+			initiator = await self.get_user(author_id)
+			recipient_user = await self.get_user(recipient_id)
+
+			author_username = await get_username(author_id)
+			event["author_username"] = author_username
+			recipient_username = await get_username(recipient_id)
+			event["recipient_username"] = recipient_username
+
+			logger.info("Author: %s, Recipient: %s", author_username, recipient_username)
+
+			@database_sync_to_async
+			def get_initiator_tournament(initiator):
+				return ManualTournament.objects.filter(organizer=initiator, status="upcoming").first()
+
+			tournament = await get_initiator_tournament(initiator)
+
+			logger.info("Tournament: %s", tournament)
+
+			if not tournament:
+				logger.warning(f"No active tournament found for initiator {initiator.username}")
+				return
+
+			logger.info("Tournament found: %s", tournament)
+			await self.invite_participant(tournament, recipient_user)
+			await self.channel_layer.group_send(f"user_{author_id}", {
+				"type": "info_message",
+				"action": "back_tournament_invite",
+				"author": author_id,
+				"recipient": recipient_id,
+			})	
+
+			logger.info("Tournament invite sent to %s", recipient_username)
+
 		else:
 			logger.warning("Unknown action: %s", action)
 			await self.send(json.dumps({"error": "Unknown action"}))
@@ -92,6 +137,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			tournament=tournament,
 			user=user,
 			status="accepted"
+		)
+	
+	@database_sync_to_async
+	def invite_participant(self, tournament, user):
+		return ManualTournamentParticipants.objects.get_or_create(
+			tournament=tournament,
+			user=user,
+			status="pending"
 		)
 
 	@database_sync_to_async

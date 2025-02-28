@@ -10,6 +10,7 @@ import componentManagers from '/src/index.js';
 import { tournamentCreation } from '/src/components/pong/play/tournamentCreation.js';
 import { updateOnlinePlayersUI } from '/src/components/pong/play/tournamentCreation.js';
 import { fetchTournamentParticipants, getTournamentIdFromSerialKey } from '/src/components/pong/play/tournamentCreation.js'
+import { emit } from '/src/services/eventEmitter.js';
 
 export async function initializeWebSocket(userId) {
 	if (ws) {
@@ -79,15 +80,10 @@ export async function initializeWebSocket(userId) {
 		} else if (data.type === 'match_found') {
 			startMatchmakingGame(data.game_id, data.side, data);
 		} else if (data.type === 'info_message') {
-			if (data.action) {
-				if (data.action === 'tournament_invite')
-				{
-					if(data.message === "Successfully invited.")
-					{
-						onlinePlayers.push({ name: inviteMessage, pending: true });
-						fetchTournamentParticipants();
-					}
-				}
+			if (data.action && data.action === 'updatePlayerList') {
+				console.log('ABABABABABABAB ->>> Liste de joueurs mise à jour:', data);
+				emit('updatePlayerList', data);
+			} else if (data.action) {
 				await updateAndCompareInfoData();
 			} else {
 				createNotificationMessage(data.info);
@@ -100,6 +96,7 @@ export async function initializeWebSocket(userId) {
 				componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
 				const tournamentDetails = await getTournamentIdFromSerialKey(data.tournamentLobbyId);
 				console.log("Tournament details:", tournamentDetails);
+				console.log("3 -> Tournament ID:", tournamentDetails.tournament_id);
 				fetchTournamentParticipants(tournamentDetails.tournament_id);
 			}
 		}
