@@ -417,7 +417,6 @@ def get_42_auth_url(request):
 
 import logging
 logger = logging.getLogger(__name__)
-
 @csrf_exempt
 def oauth_callback(request):
     code = request.GET.get('code')
@@ -443,22 +442,26 @@ def oauth_callback(request):
 
         access_token = response_data["access_token"]
 
+        # 🔹 Récupérer les infos utilisateur depuis 42
         user_info_url = "https://api.intra.42.fr/v2/me"
         headers = {"Authorization": f"Bearer {access_token}"}
         user_response = requests.get(user_info_url, headers=headers)
         user_data = user_response.json()
 
         username = user_data.get("login")
-        email = user_data.get("email")
-
-        if not username or not email:
+        logger.info(f"✅ Nouveau username récupéré : {username}")
+        oauth_id = user_data.get("id")
+        logger.info(f"✅ Nouveau oauth_id récupéré : {oauth_id}")
+        
+        if not username or not oauth_id:
             return JsonResponse({'success': False, 'message': 'Invalid user data from 42'}, status=400)
 
-        existing_users = ManualUser.objects.filter(is_dummy=False)
-        for user in existing_users:
-            decrypted_email = decrypt_thing(user.email)
-            if decrypted_email == email:
-                return authenticate_and_respond(user)
+        existing_user = ManualUser.objects.filter(oauth_id=oauth_id).first()
+        if existing_user:
+            return authenticate_and_respond(existing_user)
+
+
+
 
         original_username = username
         if ManualUser.objects.filter(username=username).exists():
@@ -467,12 +470,12 @@ def oauth_callback(request):
                 counter += 1
             username = f"{original_username}_{counter}"
 
-      #logique a change c rince
-        encrypted_email = encrypt_thing(email)
+        logger.info(f"✅ Nouveau username généré : {username}")
+
 
         user = ManualUser.objects.create(
             username=username,
-            email=encrypted_email,
+            oauth_id=oauth_id,
             password=None,
             is_2fa_enabled=False,
             twofa_method=None,
@@ -484,7 +487,6 @@ def oauth_callback(request):
 
     except Exception as e:
         return JsonResponse({'success': False, 'message': 'Internal Server Error'}, status=500)
-
 
 
 def authenticate_and_respond(user):
@@ -504,7 +506,7 @@ def authenticate_and_respond(user):
     user.session_token = new_session_token_str
     user.status = 'online'
     user.save()
-
+    
     response = redirect(f"https://{SERVER_IP}:8443")
     response.set_cookie(
         key='access_token',
