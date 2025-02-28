@@ -3,6 +3,7 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { createTournament } from '/src/services/tournamentHandler.js';
 import { subscribe } from '/src/services/eventEmitter.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 
 // tournamentCreation.js
 export const tournamentCreation = createComponent({
@@ -307,18 +308,27 @@ export const onlineTournamentCreation = createComponent({
 
     // Envoi d'invitations
     sendInviteButton.addEventListener('click', async () => {
-      const inviteMessage = inviteInput.value.trim();
-      if (!inviteMessage) {
+      const invitedUsernamePilot = inviteInput.value.trim();
+      if (!invitedUsernamePilot) {
         alert('Please enter an invitation message.');
-        return;
+        return ;
       }
       if (onlinePlayers.length >= tournamentSize) {
         alert(`You can only have up to ${tournamentSize} players.`);
-        return;
+        return ;
       }
 
       const userId = await getUserIdFromCookieAPI();
-      const recipientId = await fetchUserId(inviteMessage);
+      const recipientId = await fetchUserId(invitedUsernamePilot);
+	  if (!recipientId) {
+		createNotificationMessage(`${invitedUsernamePilot} has not enlisted in Space Force yet`, 5000, true);
+		inviteInput.value = '';
+		return ;
+	  } else if (recipientId.toString() === userId) {
+		createNotificationMessage(`You cannot invite yourself`, 5000, true);
+		inviteInput.value = '';
+		return ;
+	  }
 
       const payload = {
         type: 'tournament_message',
@@ -382,10 +392,10 @@ export function updateOnlinePlayersUI(players, tournamentSize, currentUserId) {
 	  li.className = 'list-group-item d-flex justify-content-between align-items-center';
   
 	  // Si l'API ne renvoie pas le username, on affiche le user_id
-	  const displayName = player.username || `User ${player.user_id}`;
+	  const displayName = player.username || `User ${player.id}`;
 	  li.textContent = displayName;
   
-	  if (player.user_id == currentUserId) {
+	  if (player.id == currentUserId) {
 		const badge = document.createElement('span');
 		badge.className = 'badge bg-secondary ms-2';
 		badge.textContent = 'You';
@@ -450,7 +460,7 @@ export async function fetchTournamentParticipants(tournamentId) {
 	  console.log("✅ Participants mis à jour :", onlinePlayers);
   
 	  const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
-	  const currentUserId = sessionStorage.getItem('userId'); // ou await getUserIdFromCookieAPI()
+	  const currentUserId = await getUserIdFromCookieAPI()
   
 	  updateOnlinePlayersUI(onlinePlayers, tournamentSize, currentUserId);
 	} catch (error) {

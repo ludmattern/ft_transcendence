@@ -25,6 +25,7 @@ export const infoPanelItem = createComponent({
 	},
 
 	attachEvents: (el, item) => {
+		console.log('item', item);
 		switch (item.type) {
 			case 'friend_request':
 				behaviorFriendRequest(el, item);
