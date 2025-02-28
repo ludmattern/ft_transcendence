@@ -319,7 +319,7 @@ export const onlineTournamentCreation = createComponent({
       const recipientId = await fetchUserId(inviteMessage);
 
       const payload = {
-        type: 'info_message',
+        type: 'tournament_message',
         action: 'tournament_invite',
         author: userId,
         recipient: recipientId,
@@ -327,10 +327,6 @@ export const onlineTournamentCreation = createComponent({
       console.log("Envoi de l'invitation :", payload);
       ws.send(JSON.stringify(payload));
 
-      onlinePlayers.push({ name: inviteMessage, pending: true });
-      updateOnlinePlayersUI(onlinePlayers, tournamentSize, username);
-
-      alert(`Invitation sent: "${inviteMessage}"`);
       inviteInput.value = '';
     });
 

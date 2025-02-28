@@ -183,7 +183,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			else:
 				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "No friend relationship found."})
 			return
-		elif str(action) == "tournament_invite":
+		elif str(action) == "back_tournament_invite":
 			initiator = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
 			recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 			author_username = await get_username(author_id)
