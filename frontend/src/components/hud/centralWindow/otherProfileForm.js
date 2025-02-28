@@ -58,14 +58,15 @@ export const otherProfileForm = createComponent({
             <!-- Les éléments de match seront ajoutés ici -->
           </div>
           <!-- Boutons en bas, en dehors du conteneur des match items -->
-          <div class="d-flex justify-content-center mt-3">
+          
+        </div>
+        <div class="d-flex justify-content-center mt-3">
             <button class="btn bi bi-envelope me-2" id="invite-link">Invite</button>
             <button class="btn bi bi-person-dash me-2" id="remove-link">Remove</button>
             <button class="btn bi bi-person-add me-2" id="add-link">Add</button>
             <button class="btn bi bi-person-slash me-2" id="block-link">Block</button>
             <button class="btn bi bi-person-check" id="unblock-link">Unblock</button>
           </div>
-        </div>
 
       </span>
     </div>
