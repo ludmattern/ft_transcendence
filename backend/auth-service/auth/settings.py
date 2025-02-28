@@ -37,6 +37,12 @@ try:
 		TWILIO_AUTH_TOKEN = f.read().strip()
 	with open('/run/secrets/twilio_phone_number', 'r') as f:
 		TWILIO_PHONE_NUMBER = f.read().strip()
+	with open('/run/secrets/42_uid', 'r') as f:
+		UID_42 = f.read().strip()
+	with open('/run/secrets/42_secret', 'r') as f:
+		SECRET_42 = f.read().strip()
+	with open('/run/secrets/hostname', 'r') as f:
+		HOSTNAME = f.read().strip()
 except Exception:
 	print("Error reading Fernet key from file")
 

@@ -22,10 +22,10 @@ export const loginForm = createComponent({
           </div>
           <button class="btn bi bi-check">accept</button>
         </form>
-        <div class="mt-3">
+        <div>
           <button id="login-42" class="btn btn-outline-primary w-100">
-            <img src="/src/assets/img/42.png" alt="42 logo" style="height: 20px; vertical-align: middle; margin-right: 8px;">
-            Sign in with 42
+            Sign in with    
+			 <img src="/src/assets/img/42.png" alt="42 logo" style="filter: invert(1); height: 20px; vertical-align: middle; margin-right: 8px;">
           </button>
         </div>
         <div>
