@@ -109,7 +109,7 @@ function behaviorTournament(el, item) {
 	if (refuseButton) {
 		refuseButton.addEventListener('click', () => {
 			console.log(`Refused ${item.inviter}'s request.`);
-			handleFriendAction(true, item.inviter_id);
+			handleTournamentAction(false, item);
 		});
 	}
 }

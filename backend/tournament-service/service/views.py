@@ -23,7 +23,7 @@ def getTournamentParticipants(request, tournament_id):
     except ManualTournament.DoesNotExist:
         return JsonResponse({"error": "Tournament not found"}, status=404)
 
-    participants = ManualTournamentParticipants.objects.filter(tournament=tournament)
+    participants = ManualTournamentParticipants.objects.filter(tournament=tournament, status="accepted" or "pending")
 
     data = {
         "tournament_id": tournament.id,

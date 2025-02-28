@@ -73,12 +73,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				logger.warning(f"User {invitedUser.username} not found in tournament {invitedTournament}")
 				return
 			
-			# @database_sync_to_async
-			# def get_tournament_from_id(invitedTournament):
-			# 	return ManualTournament.objects.get(id=invitedTournament)
-
-			# tournament = await get_tournament_from_id(invitedTournament)
-			
 			@database_sync_to_async
 			def accept_invited_user(invitedUserInTournament):
 				invitedUserInTournament.status = "accepted"
@@ -89,6 +83,34 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.channel_layer.group_send(f"user_{invitedId}", {
 				"type": "info_message",
 				"action": "back_join_tournament",
+				"tournament_id": invitedTournament,
+				"recipient": invitedId,
+			})
+
+		elif str(action) == "reject_tournament":
+			invitedId = event.get("userId")
+			invitedUser = await self.get_user(invitedId)
+			invitedTournament = event.get("tournamentId")
+
+			@database_sync_to_async
+			def find_invitedUser_in_tournament(invitedUser, invitedTournament):
+				return ManualTournamentParticipants.objects.filter(user=invitedUser, tournament=invitedTournament, status="pending").first()
+
+			invitedUserInTournament = await find_invitedUser_in_tournament(invitedUser, invitedTournament)
+			if not invitedUserInTournament:
+				logger.warning(f"User {invitedUser.username} not found in tournament {invitedTournament}")
+				return
+			
+			@database_sync_to_async
+			def cancel_invited_user(invitedUserInTournament):
+				invitedUserInTournament.status = "rejected"
+				invitedUserInTournament.save()
+
+			await cancel_invited_user(invitedUserInTournament)
+
+			await self.channel_layer.group_send(f"user_{invitedId}", {
+				"type": "info_message",
+				"action": "back_reject_tournament",
 				"tournament_id": invitedTournament,
 				"recipient": invitedId,
 			})
