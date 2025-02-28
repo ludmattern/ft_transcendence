@@ -30,11 +30,11 @@ def get_users_id():
 	return list(ManualUser.objects.values_list('id', flat=True))
 
 async def get_profile_picture(user_id):
-    try:
-        user = await sync_to_async(ManualUser.objects.get)(id=user_id)
-        return user.profile_picture.url
-    except ManualUser.DoesNotExist:
-        return "/media/profile_pics/default-profile-150.png"
+	try:
+		user = await sync_to_async(ManualUser.objects.get)(id=user_id)
+		return user.profile_picture.url
+	except ManualUser.DoesNotExist:
+		return "/media/profile_pics/default-profile-150.png"
 
 class ChatConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
@@ -183,7 +183,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			else:
 				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "No friend relationship found."})
 			return
-		elif str(action) == "tournament_invite":
+		elif str(action) == "back_tournament_invite":
 			initiator = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
 			recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 			author_username = await get_username(author_id)
@@ -209,13 +209,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			participants = await get_participants(initiator_tournament)
 
 			for participant in participants:
-				await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{author_username} invited {recipient_username} to the tournament.", "message": "Successfully invited."})
+				if participant.user.id != recipient_id and participant.user.id != author_id:
+					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{author_username} invited {recipient_username} to the tournament.", "message": "Successfully invited."})
+					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": initiator_tournament.id, "player": recipient_username})
 
-			await self.channel_layer.group_send(
-				f"user_{recipient_id}", {"type": "info_message", "info": f"You have been invited to a tournament by {author_username}"}
-			)
+			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "tournament_invite"})
+			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You have been invited to a tournament by {author_username}"})
 
 		else:
-			await self.channel_layer.group_send(f"user_{author_id}",{"type": "error_message", "error": "Invalid action."})
-   
+			await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "Invalid action."})
+
 		

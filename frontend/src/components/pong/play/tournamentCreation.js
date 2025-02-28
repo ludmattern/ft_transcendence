@@ -2,6 +2,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { createTournament } from '/src/services/tournamentHandler.js';
+import { subscribe } from '/src/services/eventEmitter.js';
 
 // tournamentCreation.js
 export const tournamentCreation = createComponent({
@@ -222,6 +223,7 @@ async function reloadLobbyData(tournamentSerialKey) {
 	  console.log("Tournament ID extrait :", tournamentId);
 	  
 	  // Appel de la fonction pour récupérer les participants en utilisant l'id du tournoi
+	  console.log('1 -> tournoi id :', tournamentId)
 	  await fetchTournamentParticipants(tournamentId);
 	  console.log("Données du lobby rechargées avec succès.");
 	} catch (error) {
@@ -319,7 +321,7 @@ export const onlineTournamentCreation = createComponent({
       const recipientId = await fetchUserId(inviteMessage);
 
       const payload = {
-        type: 'info_message',
+        type: 'tournament_message',
         action: 'tournament_invite',
         author: userId,
         recipient: recipientId,
@@ -327,10 +329,6 @@ export const onlineTournamentCreation = createComponent({
       console.log("Envoi de l'invitation :", payload);
       ws.send(JSON.stringify(payload));
 
-      onlinePlayers.push({ name: inviteMessage, pending: true });
-      updateOnlinePlayersUI(onlinePlayers, tournamentSize, username);
-
-      alert(`Invitation sent: "${inviteMessage}"`);
       inviteInput.value = '';
     });
 
@@ -347,6 +345,12 @@ export const onlineTournamentCreation = createComponent({
       console.log("Liste des joueurs :", onlinePlayers);
       alert('Tournament created with room code: ' + roomCode);
     });
+
+	subscribe('updatePlayerList', (data) => {
+		console.log('2 -> tournoi id :', data, data.tournament_id)
+		fetchTournamentParticipants(data.tournament_id);
+	});
+
   },
 });
 

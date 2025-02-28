@@ -68,6 +68,7 @@ export const loginForm = createComponent({
 				document.getElementById('error-message').classList.remove('d-none');
 			}
 		});
+		
 		document.querySelector('#login-42').addEventListener('click', async () => {
 			try {
 				const response = await fetch('/api/auth-service/get-42-url/');

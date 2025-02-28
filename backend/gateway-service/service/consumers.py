@@ -86,6 +86,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 				logger.info(f"Message privé envoyé à user_{recipient} depuis {author}")
 	
 			elif message_type == "info_message":
+				logger.info(f"ℹ️ Message d'information reçu: {data}")
 				recipient = data.get("recipient")
 				if not recipient:
 					await self.send(json.dumps({"error": "Recipient is required for friend requests"}))
@@ -159,8 +160,13 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
 	async def info_message(self, event):
 		"""This method handles friend request sending events delivered to this consumer."""
-		await self.send(json.dumps(event))
-		logger.info(f"Message transmis au client WebSocket (Friend Request): {event}")
+		action = event.get("action")
+		if (action == "back_tournament_invite"):
+			await self.channel_layer.group_send("chat_service", event)
+			logger.info(f"Message transmis au chat_service (back_tournament_invite): {event}")
+		else:
+			await self.send(json.dumps(event))
+			logger.info(f"Message transmis au client WebSocket (info_message): {event}")
 
 	async def tournament_message(self, event):
 		await self.send(json.dumps(event))
