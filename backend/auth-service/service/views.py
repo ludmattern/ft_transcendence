@@ -402,11 +402,11 @@ from urllib.parse import urlencode
 
 
 
-SERVER_IP = "10.13.3.5"
+SERVER_IP = "1aa0.13.3.3"
 REDIRECT_URI = f"https://{SERVER_IP}:8443/api/auth-service/oauth/callback/"
 
-CLIENT_ID = "pasdanslecommit"
-CLIENT_SECRET = "pasdanslecommit" 
+CLIENT_ID = "ua"
+CLIENT_SECRET = "a" 
 
 
 def get_42_auth_url(request):
@@ -419,8 +419,6 @@ def get_42_auth_url(request):
 import logging
 
 logger = logging.getLogger(__name__)
-
-
 
 @csrf_exempt
 def oauth_callback(request):
@@ -437,7 +435,6 @@ def oauth_callback(request):
         "code": code,
         "redirect_uri": REDIRECT_URI
     }
-
 
     try:
         response = requests.post(token_url, data=urlencode(data), headers=headers)
@@ -510,13 +507,13 @@ def authenticate_and_respond(user):
     user.status = 'online'
     user.save()
 
-    response = redirect(f"https://10.13.3.5:8443")
+    response = redirect(f"https://10aa.13.3.3:8443")
     response.set_cookie(
         key='access_token',
         value=new_session_token_str,
         httponly=True,
         secure=True,
-        samesite='None', 
+        samesite='Strict',
         max_age=settings.JWT_EXP_DELTA_SECONDS
     )
     return response
