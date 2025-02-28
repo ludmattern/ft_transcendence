@@ -161,9 +161,9 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 	async def info_message(self, event):
 		"""This method handles friend request sending events delivered to this consumer."""
 		action = event.get("action")
-		if (action == "back_tournament_invite"):
+		if (action == "back_tournament_invite" or action == "back_join_tournament"):
 			await self.channel_layer.group_send("chat_service", event)
-			logger.info(f"Message transmis au chat_service (back_tournament_invite): {event}")
+			logger.info(f"Message transmis au chat_service (back_tournament): {event}")
 		else:
 			await self.send(json.dumps(event))
 			logger.info(f"Message transmis au client WebSocket (info_message): {event}")

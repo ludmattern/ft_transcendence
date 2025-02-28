@@ -59,19 +59,39 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				"message": f"Tournament lobby created successfully by {user.username}",
 			})   
 			logger.info("Tournament lobby created successfully")
-		elif str(action) == "join_tournament_lobby":
-			user_id = event.get("userId")
-			serial_key = event.get("tournamentLobbyId")
-			user = await self.get_user(user_id)
-			tournament = await self.get_tournament(serial_key)
-			await self.add_participant(tournament, user)
-			await self.update_user_status(user, "lobby")
-			for participant in tournament.participants.all():
-				await self.channel_layer.group_send(f"user_{participant.user.id}", {
-					"type": "tournament_message",
-					"message": f"{user.username} joined the tournament lobby",
-				})
-			logger.info(f"{user.username} joined the tournament lobby")
+		elif str(action) == "join_tournament":
+			invitedId = event.get("userId")
+			invitedUser = await self.get_user(invitedId)
+			invitedTournament = event.get("tournamentId")
+
+			@database_sync_to_async
+			def find_invitedUser_in_tournament(invitedUser, invitedTournament):
+				return ManualTournamentParticipants.objects.filter(user=invitedUser, tournament=invitedTournament, status="pending").first()
+
+			invitedUserInTournament = await find_invitedUser_in_tournament(invitedUser, invitedTournament)
+			if not invitedUserInTournament:
+				logger.warning(f"User {invitedUser.username} not found in tournament {invitedTournament}")
+				return
+			
+			# @database_sync_to_async
+			# def get_tournament_from_id(invitedTournament):
+			# 	return ManualTournament.objects.get(id=invitedTournament)
+
+			# tournament = await get_tournament_from_id(invitedTournament)
+			
+			@database_sync_to_async
+			def accept_invited_user(invitedUserInTournament):
+				invitedUserInTournament.status = "accepted"
+				invitedUserInTournament.save()
+
+			await accept_invited_user(invitedUserInTournament)
+
+			await self.channel_layer.group_send(f"user_{invitedId}", {
+				"type": "info_message",
+				"action": "back_join_tournament",
+				"tournament_id": invitedTournament,
+				"recipient": invitedId,
+			})
 
 		elif str(action) == "tournament_invite":
 			author_id = event.get("author")
