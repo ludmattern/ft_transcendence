@@ -204,7 +204,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			@database_sync_to_async
 			def get_participants(tournament):
-				return list(tournament.participants.all())
+				return list(tournament.participants.select_related('user').all())
 
 			participants = await get_participants(initiator_tournament)
 
