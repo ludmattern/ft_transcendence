@@ -1,196 +1,159 @@
 import json
-import random
-import string
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
-from .models import ManualTournament, ManualUser, ManualTournamentParticipants, TournamentMatch
+from .models import ManualTournament, ManualUser, ManualTournamentParticipants
 import logging
 from channels.db import database_sync_to_async 
 from cryptography.fernet import Fernet
 from django.conf import settings
-import math
-import logging
 
 logger = logging.getLogger(__name__)
 
 @database_sync_to_async
 def get_username(user_id):
-	try:
-		user = ManualUser.objects.get(pk=user_id)
-		return user.username
-	except ManualUser.DoesNotExist:
-		return None
+    try:
+        user = ManualUser.objects.get(pk=user_id)
+        return user.username
+    except ManualUser.DoesNotExist:
+        return None
 
 cipher = Fernet(settings.FERNET_KEY)
 
 def encrypt_thing(args):
-	"""Encrypts the args."""
-	return cipher.encrypt(args.encode('utf-8')).decode('utf-8')
+    """Encrypts the args."""
+    return cipher.encrypt(args.encode('utf-8')).decode('utf-8')
 
 class TournamentConsumer(AsyncWebsocketConsumer):
-	async def connect(self):
-		self.room_group_name = "tournament_service"
-		await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-		await self.accept()
-		logger.info("Connected to tournament_service group (channel=%s)", self.channel_name)
+    async def connect(self):
+        self.room_group_name = "tournament_service"
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        await self.accept()
+        logger.info("Connected to tournament_service group (channel=%s)", self.channel_name)
 
-	async def disconnect(self, close_code):
-		await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-		logger.info("Disconnected from tournament_service group (channel=%s)", self.channel_name)
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        logger.info("Disconnected from tournament_service group (channel=%s)", self.channel_name)
 
-	async def tournament_message(self, event):
-		logger.info("Tournament message received: %s", event)
-		action = event.get("action")
-		logger.info("Action received: %s", action)
-		if str(action) == "create_tournament_lobby":
-			user_id = event.get("userId")
-			tournament_size = event.get("tournamentSize")
-			user = await self.get_user(user_id)
-			serial_key = str(user_id)
-			tournament = await self.create_tournament(serial_key, user, tournament_size)
-			await self.add_participant(tournament, user)
-			await self.update_user_status(user, "lobby")
-			await self.channel_layer.group_send(f"user_{user_id}", {
-				"type": "tournament_message",
-				"action": "create_tournament_lobby",
-				"tournamentLobbyId": tournament.serial_key,
-				"organizer": user.username,
-				"tournamentSize": tournament_size,
-				"message": f"Tournament lobby created successfully by {user.username}",
-			})   
-			logger.info("Tournament lobby created successfully")
-		elif str(action) == "join_tournament":
-			invitedId = event.get("userId")
-			invitedUser = await self.get_user(invitedId)
-			invitedTournament = event.get("tournamentId")
+    async def tournament_message(self, event):
+        logger.info("Tournament message received: %s", event)
+        action = event.get("action")
+        logger.info("Action received: %s", action)
+        if str(action) == "create_tournament_lobby":
+            await self.handle_create_tournament_lobby(event)
+        elif str(action) == "join_tournament":
+            await self.handle_participant_status_change(event, "accepted", "back_join_tournament")
+        elif str(action) == "reject_tournament":
+            await self.handle_participant_status_change(event, "rejected", "back_reject_tournament")
+        elif str(action) == "tournament_invite":
+            await self.handle_tournament_invite(event)
+        else:
+            logger.warning("Unknown action: %s", action)
+            await self.send(json.dumps({"error": "Unknown action"}))
 
-			@database_sync_to_async
-			def find_invitedUser_in_tournament(invitedUser, invitedTournament):
-				return ManualTournamentParticipants.objects.filter(user=invitedUser, tournament=invitedTournament, status="pending").first()
+    async def handle_create_tournament_lobby(self, event):
+        user_id = event.get("userId")
+        tournament_size = event.get("tournamentSize")
+        user = await self.get_user(user_id)
+        serial_key = str(user_id)
+        tournament = await self.create_tournament(serial_key, user, tournament_size)
+        await self.add_participant(tournament, user)
+        await self.update_user_status(user, "lobby")
+        await self.channel_layer.group_send(f"user_{user_id}", {
+            "type": "tournament_message",
+            "action": "create_tournament_lobby",
+            "tournamentLobbyId": tournament.serial_key,
+            "organizer": user.username,
+            "tournamentSize": tournament_size,
+            "message": f"Tournament lobby created successfully by {user.username}",
+        })
+        logger.info("Tournament lobby created successfully")
 
-			invitedUserInTournament = await find_invitedUser_in_tournament(invitedUser, invitedTournament)
-			if not invitedUserInTournament:
-				logger.warning(f"User {invitedUser.username} not found in tournament {invitedTournament}")
-				return
-			
-			@database_sync_to_async
-			def accept_invited_user(invitedUserInTournament):
-				invitedUserInTournament.status = "accepted"
-				invitedUserInTournament.save()
+    async def handle_participant_status_change(self, event, new_status, callback_action):
+        invited_id = event.get("userId")
+        invited_user = await self.get_user(invited_id)
+        invited_tournament = event.get("tournamentId")
+        participant = await self.update_invited_participant_status(invited_user, invited_tournament, new_status)
+        if not participant:
+            logger.warning(f"User {invited_user.username} not found in tournament {invited_tournament}")
+            return
+        await self.send_info(invited_id, callback_action, tournament_id=invited_tournament, recipient=invited_id)
 
-			await accept_invited_user(invitedUserInTournament)
+    async def handle_tournament_invite(self, event):
+        author_id = event.get("author")
+        recipient_id = event.get("recipient")
+        initiator = await self.get_user(author_id)
+        recipient_user = await self.get_user(recipient_id)
 
-			await self.channel_layer.group_send(f"user_{invitedId}", {
-				"type": "info_message",
-				"action": "back_join_tournament",
-				"tournament_id": invitedTournament,
-				"recipient": invitedId,
-			})
+        event["author_username"] = await get_username(author_id)
+        event["recipient_username"] = await get_username(recipient_id)
+        logger.info("Author: %s, Recipient: %s", event["author_username"], event["recipient_username"])
 
-		elif str(action) == "reject_tournament":
-			invitedId = event.get("userId")
-			invitedUser = await self.get_user(invitedId)
-			invitedTournament = event.get("tournamentId")
+        tournament = await self.get_initiator_tournament(initiator)
+        logger.info("Tournament: %s", tournament)
+        if not tournament:
+            logger.warning(f"No active tournament found for initiator {initiator.username}")
+            return
 
-			@database_sync_to_async
-			def find_invitedUser_in_tournament(invitedUser, invitedTournament):
-				return ManualTournamentParticipants.objects.filter(user=invitedUser, tournament=invitedTournament, status="pending").first()
+        await self.invite_participant(tournament, recipient_user)
+        await self.send_info(author_id, "back_tournament_invite", author=author_id, recipient=recipient_id)
+        logger.info("Tournament invite sent to %s", event["recipient_username"])
 
-			invitedUserInTournament = await find_invitedUser_in_tournament(invitedUser, invitedTournament)
-			if not invitedUserInTournament:
-				logger.warning(f"User {invitedUser.username} not found in tournament {invitedTournament}")
-				return
-			
-			@database_sync_to_async
-			def cancel_invited_user(invitedUserInTournament):
-				invitedUserInTournament.status = "rejected"
-				invitedUserInTournament.save()
+    async def send_info(self, user_id, action, **kwargs):
+        payload = {"type": "info_message", "action": action, **kwargs}
+        await self.channel_layer.group_send(f"user_{user_id}", payload)
 
-			await cancel_invited_user(invitedUserInTournament)
+    @database_sync_to_async
+    def get_user(self, user_id):
+        try:
+            return ManualUser.objects.get(id=user_id)
+        except ManualUser.DoesNotExist:
+            return None
 
-			await self.channel_layer.group_send(f"user_{invitedId}", {
-				"type": "info_message",
-				"action": "back_reject_tournament",
-				"tournament_id": invitedTournament,
-				"recipient": invitedId,
-			})
+    @database_sync_to_async
+    def create_tournament(self, serial_key, user, tournament_size):
+        return ManualTournament.objects.create(
+            serial_key=serial_key,
+            organizer=user,
+            rounds=tournament_size
+        )
 
-		elif str(action) == "tournament_invite":
-			author_id = event.get("author")
-			recipient_id = event.get("recipient")
-			initiator = await self.get_user(author_id)
-			recipient_user = await self.get_user(recipient_id)
+    @database_sync_to_async
+    def add_participant(self, tournament, user):
+        return ManualTournamentParticipants.objects.get_or_create(
+            tournament=tournament,
+            user=user,
+            status="accepted"
+        )
+    
+    @database_sync_to_async
+    def invite_participant(self, tournament, user):
+        participant, created = ManualTournamentParticipants.objects.get_or_create(
+            tournament=tournament,
+            user=user,
+            defaults={'status': 'pending'}
+        )
+        if not created and participant.status == "rejected":
+            participant.status = "pending"
+            participant.save()
+        return participant
 
-			author_username = await get_username(author_id)
-			event["author_username"] = author_username
-			recipient_username = await get_username(recipient_id)
-			event["recipient_username"] = recipient_username
+    @database_sync_to_async
+    def update_user_status(self, user, status):
+        user.tournament_status = status
+        user.save()
 
-			logger.info("Author: %s, Recipient: %s", author_username, recipient_username)
+    @database_sync_to_async
+    def get_initiator_tournament(self, initiator):
+        return ManualTournament.objects.filter(organizer=initiator, status="upcoming").first()
 
-			@database_sync_to_async
-			def get_initiator_tournament(initiator):
-				return ManualTournament.objects.filter(organizer=initiator, status="upcoming").first()
-
-			tournament = await get_initiator_tournament(initiator)
-
-			logger.info("Tournament: %s", tournament)
-
-			if not tournament:
-				logger.warning(f"No active tournament found for initiator {initiator.username}")
-				return
-
-			logger.info("Tournament found: %s", tournament)
-			await self.invite_participant(tournament, recipient_user)
-			await self.channel_layer.group_send(f"user_{author_id}", {
-				"type": "info_message",
-				"action": "back_tournament_invite",
-				"author": author_id,
-				"recipient": recipient_id,
-			})	
-
-			logger.info("Tournament invite sent to %s", recipient_username)
-
-		else:
-			logger.warning("Unknown action: %s", action)
-			await self.send(json.dumps({"error": "Unknown action"}))
-
-	# ---------------------------------
-	# Database helper functions (wrapped with database_sync_to_async)
-	# ---------------------------------
-	@database_sync_to_async
-	def get_user(self, user_id):
-		try:
-			return ManualUser.objects.get(id=user_id)
-		except ManualUser.DoesNotExist:
-			return None
-
-	@database_sync_to_async
-	def create_tournament(self, serial_key, user, tournament_size):
-		return ManualTournament.objects.create(
-			serial_key=serial_key,
-			organizer=user,
-			rounds=tournament_size
-		)
-
-	@database_sync_to_async
-	def add_participant(self, tournament, user):
-		return ManualTournamentParticipants.objects.get_or_create(
-			tournament=tournament,
-			user=user,
-			status="accepted"
-		)
-	
-	@database_sync_to_async
-	def invite_participant(self, tournament, user):
-		return ManualTournamentParticipants.objects.get_or_create(
-			tournament=tournament,
-			user=user,
-			status="pending"
-		)
-
-	@database_sync_to_async
-	def update_user_status(self, user, status):
-		user.tournament_status = status
-		user.save()
-  
+    @database_sync_to_async
+    def update_invited_participant_status(self, user, tournament, new_status):
+        participant = ManualTournamentParticipants.objects.filter(
+            user=user,
+            tournament=tournament,
+            status="pending"
+        ).first()
+        if participant:
+            participant.status = new_status
+            participant.save()
+        return participant
