@@ -162,53 +162,53 @@ let onlinePlayers = [];
  * Sinon, envoie la demande de création d'un nouveau lobby.
  */
 async function checkOrCreateLobby(tournamentSize) {
-  try {
-    console.log("Vérification de l'existence d'un lobby...");
-    const userId = await getUserIdFromCookieAPI();
-    console.log("User ID récupéré :", userId);
+	try {
+		console.log("Vérification de l'existence d'un lobby...");
+		const userId = await getUserIdFromCookieAPI();
+		console.log("User ID récupéré :", userId);
 
-    const url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`;
-    console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
+		const url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`;
+		console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
 
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Erreur HTTP lors de la vérification du lobby (code ${response.status})`);
-    }
-    const data = await response.json();
-    const tournamentSerialKey = data.serial_key;
-    console.log("Clé de tournoi récupérée :", tournamentSerialKey);
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`Erreur HTTP lors de la vérification du lobby (code ${response.status})`);
+		}
+		const data = await response.json();
+		const tournamentSerialKey = data.serial_key;
+		console.log("Clé de tournoi récupérée :", tournamentSerialKey);
 
-    if (tournamentSerialKey) {
-      console.log("Un lobby existe déjà. Rechargement des données du lobby...");
-	
-      await reloadLobbyData(tournamentSerialKey);
-    } else {
-      console.log("Aucun lobby existant. Création d'un nouveau lobby...");
-      await createNewLobby(userId, tournamentSize);
-    }
-  } catch (error) {
-    console.error("Erreur dans checkOrCreateLobby :", error);
-  }
+		if (tournamentSerialKey) {
+			console.log("Un lobby existe déjà. Rechargement des données du lobby...");
+
+			await reloadLobbyData(tournamentSerialKey);
+		} else {
+			console.log("Aucun lobby existant. Création d'un nouveau lobby...");
+			await createNewLobby(userId, tournamentSize);
+		}
+	} catch (error) {
+		console.error("Erreur dans checkOrCreateLobby :", error);
+	}
 }
 
 /**
  * Crée un nouveau lobby en envoyant la demande via WebSocket.
  */
 async function createNewLobby(userId, tournamentSize) {
-  try {
-    const payload = {
-      type: 'tournament_message',
-      action: 'create_tournament_lobby',
-      userId: userId,
-      tournamentSize: tournamentSize,
-      timestamp: new Date().toISOString(),
-    };
-    console.log("Envoi du payload pour créer le lobby :", payload);
-    ws.send(JSON.stringify(payload));
-    console.log("Payload envoyé avec succès.");
-  } catch (error) {
-    console.error("Erreur lors de la création du nouveau lobby :", error);
-  }
+	try {
+		const payload = {
+			type: 'tournament_message',
+			action: 'create_tournament_lobby',
+			userId: userId,
+			tournamentSize: tournamentSize,
+			timestamp: new Date().toISOString(),
+		};
+		console.log("Envoi du payload pour créer le lobby :", payload);
+		ws.send(JSON.stringify(payload));
+		console.log("Payload envoyé avec succès.");
+	} catch (error) {
+		console.error("Erreur lors de la création du nouveau lobby :", error);
+	}
 }
 
 /**
@@ -217,31 +217,31 @@ async function createNewLobby(userId, tournamentSize) {
  */
 async function reloadLobbyData(tournamentSerialKey) {
 	try {
-	  console.log("Rechargement des données pour le lobby avec clé :", tournamentSerialKey);
-	  const tournamentDetails = await getTournamentIdFromSerialKey(tournamentSerialKey);
-	  // Utilisez tournamentDetails.tournament_id au lieu de tournamentDetails.id
-	  const tournamentId = tournamentDetails.tournament_id;
-	  console.log("Tournament ID extrait :", tournamentId);
-	  
-	  // Appel de la fonction pour récupérer les participants en utilisant l'id du tournoi
-	  console.log('1 -> tournoi id :', tournamentId)
-	  await fetchTournamentParticipants(tournamentId);
-	  console.log("Données du lobby rechargées avec succès.");
+		console.log("Rechargement des données pour le lobby avec clé :", tournamentSerialKey);
+		const tournamentDetails = await getTournamentIdFromSerialKey(tournamentSerialKey);
+		// Utilisez tournamentDetails.tournament_id au lieu de tournamentDetails.id
+		const tournamentId = tournamentDetails.tournament_id;
+		console.log("Tournament ID extrait :", tournamentId);
+
+		// Appel de la fonction pour récupérer les participants en utilisant l'id du tournoi
+		console.log('1 -> tournoi id :', tournamentId)
+		await fetchTournamentParticipants(tournamentId);
+		console.log("Données du lobby rechargées avec succès.");
 	} catch (error) {
-	  console.error("Erreur lors du rechargement des données du lobby :", error);
+		console.error("Erreur lors du rechargement des données du lobby :", error);
 	}
-  }
-  
+}
+
 
 /**
  * Composant de création de tournoi en ligne.
  * Il gère l'affichage du lobby, l'envoi d'invitations et les contrôles associés.
  */
 export const onlineTournamentCreation = createComponent({
-  tag: 'onlineTournamentCreation',
-  render: () => {
-    const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
-    return `
+	tag: 'onlineTournamentCreation',
+	render: () => {
+		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
+		return `
       <section class="col-12 d-flex flex-column align-items-center text-center p-5"
           style="background-color: #111111; color: white; max-height: 700px; overflow: auto;">
         <h1 class="mb-4">Online Tournament Creation</h1>
@@ -274,94 +274,94 @@ export const onlineTournamentCreation = createComponent({
         <button id="cancel-tournament" class="btn btn-pong-danger mt-3">Cancel</button>
       </section>
     `;
-  },
-  attachEvents: async (el) => {
-    const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
-    const username = sessionStorage.getItem('username') || 'You';
+	},
+	attachEvents: async (el) => {
+		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
+		const username = sessionStorage.getItem('username') || 'You';
 
-    // Vérifier ou créer le lobby à l'arrivée sur la page
-    await checkOrCreateLobby(tournamentSize);
+		// Vérifier ou créer le lobby à l'arrivée sur la page
+		await checkOrCreateLobby(tournamentSize);
 
-	// attendre un peu que le lobby soit créé
-	await new Promise((resolve) => setTimeout(resolve, 2000));
+		// attendre un peu que le lobby soit créé
+		await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    // Récupération des éléments de l'interface
-    const roomCodeElement = el.querySelector('#room-code');
-    const copyRoomCodeButton = el.querySelector('#copy-room-code');
-    const inviteInput = el.querySelector('#invite-input');
-    const sendInviteButton = el.querySelector('#send-invite');
-    const createTournamentButton = el.querySelector('#create-tournament');
-    const cancelTournamentButton = el.querySelector('#cancel-tournament');
+		// Récupération des éléments de l'interface
+		const roomCodeElement = el.querySelector('#room-code');
+		const copyRoomCodeButton = el.querySelector('#copy-room-code');
+		const inviteInput = el.querySelector('#invite-input');
+		const sendInviteButton = el.querySelector('#send-invite');
+		const createTournamentButton = el.querySelector('#create-tournament');
+		const cancelTournamentButton = el.querySelector('#cancel-tournament');
 
-    // Bouton d'annulation
-    cancelTournamentButton.addEventListener('click', () => {
-      handleRoute('/pong/play/tournament');
-    });
+		// Bouton d'annulation
+		cancelTournamentButton.addEventListener('click', () => {
+			handleRoute('/pong/play/tournament');
+		});
 
-    // Copier le room code dans le presse-papier
-    copyRoomCodeButton.addEventListener('click', () => {
-      const roomCode = roomCodeElement.textContent;
-      navigator.clipboard.writeText(roomCode)
-        .then(() => alert('Room code copied to clipboard!'))
-        .catch(() => alert('Failed to copy room code.'));
-    });
+		// Copier le room code dans le presse-papier
+		copyRoomCodeButton.addEventListener('click', () => {
+			const roomCode = roomCodeElement.textContent;
+			navigator.clipboard.writeText(roomCode)
+				.then(() => alert('Room code copied to clipboard!'))
+				.catch(() => alert('Failed to copy room code.'));
+		});
 
-    // Envoi d'invitations
-    sendInviteButton.addEventListener('click', async () => {
-      const invitedUsernamePilot = inviteInput.value.trim();
-      if (!invitedUsernamePilot) {
-        alert('Please enter an invitation message.');
-        return ;
-      }
-      if (onlinePlayers.length >= tournamentSize) {
-        alert(`You can only have up to ${tournamentSize} players.`);
-        return ;
-      }
+		// Envoi d'invitations
+		sendInviteButton.addEventListener('click', async () => {
+			const invitedUsernamePilot = inviteInput.value.trim();
+			if (!invitedUsernamePilot) {
+				alert('Please enter an invitation message.');
+				return;
+			}
+			if (onlinePlayers.length >= tournamentSize) {
+				alert(`You can only have up to ${tournamentSize} players.`);
+				return;
+			}
 
-      const userId = await getUserIdFromCookieAPI();
-      const recipientId = await fetchUserId(invitedUsernamePilot);
-	  if (!recipientId) {
-		createNotificationMessage(`${invitedUsernamePilot} has not enlisted in Space Force yet`, 5000, true);
-		inviteInput.value = '';
-		return ;
-	  } else if (recipientId.toString() === userId) {
-		createNotificationMessage(`You cannot invite yourself`, 5000, true);
-		inviteInput.value = '';
-		return ;
-	  }
+			const userId = await getUserIdFromCookieAPI();
+			const recipientId = await fetchUserId(invitedUsernamePilot);
+			if (!recipientId) {
+				createNotificationMessage(`${invitedUsernamePilot} has not enlisted in Space Force yet`, 5000, true);
+				inviteInput.value = '';
+				return;
+			} else if (recipientId.toString() === userId) {
+				createNotificationMessage(`You cannot invite yourself`, 5000, true);
+				inviteInput.value = '';
+				return;
+			}
 
-      const payload = {
-        type: 'tournament_message',
-        action: 'tournament_invite',
-        author: userId,
-        recipient: recipientId,
-      };
-      console.log("Envoi de l'invitation :", payload);
-      ws.send(JSON.stringify(payload));
+			const payload = {
+				type: 'tournament_message',
+				action: 'tournament_invite',
+				author: userId,
+				recipient: recipientId,
+			};
+			console.log("Envoi de l'invitation :", payload);
+			ws.send(JSON.stringify(payload));
 
-      inviteInput.value = '';
-    });
+			inviteInput.value = '';
+		});
 
-    inviteInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        sendInviteButton.click();
-      }
-    });
+		inviteInput.addEventListener('keypress', (e) => {
+			if (e.key === 'Enter') {
+				sendInviteButton.click();
+			}
+		});
 
-    // Création du tournoi
-    createTournamentButton.addEventListener('click', () => {
-      const roomCode = roomCodeElement.textContent;
-      console.log("Tournoi en ligne créé avec le room code :", roomCode);
-      console.log("Liste des joueurs :", onlinePlayers);
-      alert('Tournament created with room code: ' + roomCode);
-    });
+		// Création du tournoi
+		createTournamentButton.addEventListener('click', () => {
+			const roomCode = roomCodeElement.textContent;
+			console.log("Tournoi en ligne créé avec le room code :", roomCode);
+			console.log("Liste des joueurs :", onlinePlayers);
+			alert('Tournament created with room code: ' + roomCode);
+		});
 
-	subscribe('updatePlayerList', (data) => {
-		console.log('2 -> tournoi id :', data, data.tournament_id)
-		fetchTournamentParticipants(data.tournament_id);
-	});
+		subscribe('updatePlayerList', (data) => {
+			console.log('2 -> tournoi id :', data, data.tournament_id)
+			fetchTournamentParticipants(data.tournament_id);
+		});
 
-  },
+	},
 });
 
 /**
@@ -371,126 +371,156 @@ export function updateOnlinePlayersUI(players, tournamentSize, currentUserId) {
 	const onlinePlayersList = document.querySelector('#online-players-list');
 	const onlinePlayersCountSpan = document.querySelector('#online-players-count');
 	const createTournamentButton = document.querySelector('#create-tournament');
-  
+
 	if (!onlinePlayersList || !onlinePlayersCountSpan || !createTournamentButton) {
-	  console.warn('updateOnlinePlayersUI: Certains éléments DOM sont manquants.');
-	  return;
+		console.warn('updateOnlinePlayersUI: Certains éléments DOM sont manquants.');
+		return;
 	}
-  
+
 	onlinePlayersCountSpan.textContent = players.length;
 	onlinePlayersList.innerHTML = '';
-  
+
 	// Tri : afficher en premier les joueurs confirmés (status !== 'pending')
 	const sortedPlayers = players.sort((a, b) => {
-	  const aPending = a.status === 'pending' ? 1 : 0;
-	  const bPending = b.status === 'pending' ? 1 : 0;
-	  return aPending - bPending;
+		const aPending = a.status === 'pending' ? 1 : 0;
+		const bPending = b.status === 'pending' ? 1 : 0;
+		return aPending - bPending;
 	});
-  
+
 	sortedPlayers.forEach((player, index) => {
-	  const li = document.createElement('li');
-	  li.className = 'list-group-item d-flex justify-content-between align-items-center';
-  
-	  // Si l'API ne renvoie pas le username, on affiche le user_id
-	  const displayName = player.username || `User ${player.id}`;
-	  li.textContent = displayName;
-  
-	  if (player.id == currentUserId) {
-		const badge = document.createElement('span');
-		badge.className = 'badge bg-secondary ms-2';
-		badge.textContent = 'You';
-		li.appendChild(badge);
-	  } else if (player.status === 'pending') {
-		const badge = document.createElement('span');
-		badge.className = 'badge bg-warning ms-2';
-		badge.textContent = 'Pending';
-		li.appendChild(badge);
-  
-		const cancelButton = document.createElement('button');
-		cancelButton.className = 'btn btn-pong-danger btn-sm ms-2';
-		cancelButton.textContent = 'Cancel';
-		cancelButton.addEventListener('click', () => {
-		  players.splice(index, 1);
-		  updateOnlinePlayersUI(players, tournamentSize, currentUserId);
-		});
-		li.appendChild(cancelButton);
-	  } else {
-		const kickButton = document.createElement('button');
-		kickButton.className = 'btn btn-pong-danger btn-sm ms-2';
-		kickButton.textContent = 'Kick';
-		kickButton.addEventListener('click', () => {
-		  players.splice(index, 1);
-		  updateOnlinePlayersUI(players, tournamentSize, currentUserId);
-		});
-		li.appendChild(kickButton);
-	  }
-	  onlinePlayersList.appendChild(li);
+		const li = document.createElement('li');
+		li.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+		// Si l'API ne renvoie pas le username, on affiche le user_id
+		const displayName = player.username || `User ${player.id}`;
+		li.textContent = displayName;
+
+		if (player.id == currentUserId) {
+			const badge = document.createElement('span');
+			badge.className = 'badge bg-secondary ms-2';
+			badge.textContent = 'You';
+			li.appendChild(badge);
+		} else if (player.status === 'pending') {
+			const badge = document.createElement('span');
+			badge.className = 'badge bg-warning ms-2';
+			badge.textContent = 'Pending';
+			li.appendChild(badge);
+
+
+			const cancelButton = document.createElement('button');
+			cancelButton.className = 'btn btn-pong-danger btn-sm ms-2';
+			cancelButton.textContent = 'Cancel';
+			cancelButton.addEventListener('click', async () => {
+
+				const url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(currentUserId)}/`;
+				console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
+				const response = await fetch(url);
+				const data = await response.json();
+				const tournamentSerialKey = data.serial_key;
+				const tournamentId = await getTournamentIdFromSerialKey(tournamentSerialKey);
+
+				const cancelledUserId = player.id;
+				const payload = {
+					type: 'tournament_message',
+					action: 'reject_tournament',
+					userId: cancelledUserId,
+					tournament_id: tournamentId.tournament_id,
+				};
+				ws.send(JSON.stringify(payload));
+			});
+			li.appendChild(cancelButton);
+		} else {
+			const kickButton = document.createElement('button');
+			kickButton.className = 'btn btn-pong-danger btn-sm ms-2';
+			kickButton.textContent = 'Kick';
+			kickButton.addEventListener('click', async () => {
+
+				const url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(currentUserId)}/`;
+				console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
+				const response = await fetch(url);
+				const data = await response.json();
+				const tournamentSerialKey = data.serial_key;
+				const tournamentId = await getTournamentIdFromSerialKey(tournamentSerialKey);
+
+				const kickedUserId = player.id;
+				const payload = {
+					type: 'tournament_message',
+					action: 'kick_tournament',
+					author: currentUserId,
+					recipient: kickedUserId,
+					tournament_id: tournamentId.tournament_id,
+				};
+				ws.send(JSON.stringify(payload));
+			});
+			li.appendChild(kickButton);
+		}
+		onlinePlayersList.appendChild(li);
 	});
-  
+
 	createTournamentButton.disabled = players.length !== tournamentSize;
-  }
-  
+}
+
 /**
  * Récupère les participants du tournoi.
  * La clé du tournoi (tournamentSerialKey) sert ici d'identifiant.
  */
 export async function fetchTournamentParticipants(tournamentId) {
 	try {
-	  const apiUrl = `/api/tournament-service/getTournamentParticipants/${encodeURIComponent(tournamentId)}/`;
-	  console.log(`🔍 Récupération des participants du tournoi via : ${apiUrl}`);
-  
-	  const response = await fetch(apiUrl, {
-		method: "GET",
-		headers: { "Content-Type": "application/json" },
-		mode: "cors",
-		credentials: "include"
-	  });
-  
-	  if (!response.ok) {
-		const errorText = await response.text();
-		console.error(`⚠️ Erreur HTTP ${response.status} :`, errorText);
-		throw new Error(`HTTP error! Status: ${response.status}`);
-	  }
-  
-	  const data = await response.json();
-	  console.log("✅ Données récupérées :", data);
-  
-	  // On suppose que l'objet retourné contient une propriété 'participants'
-	  onlinePlayers = data.participants || [];
-	  console.log("✅ Participants mis à jour :", onlinePlayers);
-  
-	  const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
-	  const currentUserId = await getUserIdFromCookieAPI()
-  
-	  updateOnlinePlayersUI(onlinePlayers, tournamentSize, currentUserId);
+		const apiUrl = `/api/tournament-service/getTournamentParticipants/${encodeURIComponent(tournamentId)}/`;
+		console.log(`🔍 Récupération des participants du tournoi via : ${apiUrl}`);
+
+		const response = await fetch(apiUrl, {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+			mode: "cors",
+			credentials: "include"
+		});
+
+		if (!response.ok) {
+			const errorText = await response.text();
+			console.error(`⚠️ Erreur HTTP ${response.status} :`, errorText);
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const data = await response.json();
+		console.log("✅ Données récupérées :", data);
+
+		// On suppose que l'objet retourné contient une propriété 'participants'
+		onlinePlayers = data.participants || [];
+		console.log("✅ Participants mis à jour :", onlinePlayers);
+
+		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
+		const currentUserId = await getUserIdFromCookieAPI()
+
+		updateOnlinePlayersUI(onlinePlayers, tournamentSize, currentUserId);
 	} catch (error) {
-	  console.error("❌ Échec de la récupération des participants :", error);
+		console.error("❌ Échec de la récupération des participants :", error);
 	}
-  }
-  
+}
+
 export async function getTournamentIdFromSerialKey(serialKey) {
 	try {
-	  const apiUrl = `/api/tournament-service/getTournamentIdFromSerialKey/${encodeURIComponent(serialKey)}/`;
-	  console.log("Récupération du tournoi via serial key depuis :", apiUrl);
-	  const response = await fetch(apiUrl, {
-		method: "GET",
-		headers: { "Content-Type": "application/json" },
-		mode: "cors",
-		credentials: "include"
-	  });
-	  if (!response.ok) {
-		const errorText = await response.text();
-		console.error(`Erreur HTTP ${response.status} lors de la récupération du tournoi :`, errorText);
-		throw new Error(`Erreur HTTP ${response.status}`);
-	  }
-	  const tournament = await response.json();
-	  console.log("Détails du tournoi récupérés :", tournament);
-	  return tournament;
+		const apiUrl = `/api/tournament-service/getTournamentIdFromSerialKey/${encodeURIComponent(serialKey)}/`;
+		console.log("Récupération du tournoi via serial key depuis :", apiUrl);
+		const response = await fetch(apiUrl, {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+			mode: "cors",
+			credentials: "include"
+		});
+		if (!response.ok) {
+			const errorText = await response.text();
+			console.error(`Erreur HTTP ${response.status} lors de la récupération du tournoi :`, errorText);
+			throw new Error(`Erreur HTTP ${response.status}`);
+		}
+		const tournament = await response.json();
+		console.log("Détails du tournoi récupérés :", tournament);
+		return tournament;
 	} catch (error) {
-	  console.error("Erreur dans getTournamentBySerialKey :", error);
-	  throw error;
+		console.error("Erreur dans getTournamentBySerialKey :", error);
+		throw error;
 	}
-  }
+}
 
-  
+
 export { onlinePlayers, checkOrCreateLobby, reloadLobbyData };

@@ -46,6 +46,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             await self.handle_participant_status_change(event, "rejected", "back_reject_tournament")
         elif str(action) == "tournament_invite":
             await self.handle_tournament_invite(event)
+        elif str(action) == "kick_tournament":
+            await self.handle_kick_tournament(event)
+
         else:
             logger.warning("Unknown action: %s", action)
             await self.send(json.dumps({"error": "Unknown action"}))
@@ -98,6 +101,27 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         await self.send_info(author_id, "back_tournament_invite", author=author_id, recipient=recipient_id)
         logger.info("Tournament invite sent to %s", event["recipient_username"])
 
+    async def handle_kick_tournament(self, event):
+        author_id = event.get("author")
+        recipient_id = event.get("recipient")
+        initiator = await self.get_user(author_id)
+        recipient_user = await self.get_user(recipient_id)
+        
+        event["author_username"] = await get_username(author_id)
+        event["recipient_username"] = await get_username(recipient_id)
+        logger.info("Author: %s, Recipient: %s", event["author_username"], event["recipient_username"])
+
+        tournament = await self.get_initiator_tournament(initiator)
+        if not tournament:
+            logger.warning(f"No active tournament found for initiator {initiator.username}")
+            return
+        
+        await self.kick_participant(tournament, recipient_user)
+        await self.send_info(author_id, "back_kick_tournament", author=author_id, recipient=recipient_id, tournament_id=tournament.id)
+        logger.info("%s is kicked from tournament.", event["recipient_username"])
+        
+
+
     async def send_info(self, user_id, action, **kwargs):
         payload = {"type": "info_message", "action": action, **kwargs}
         await self.channel_layer.group_send(f"user_{user_id}", payload)
@@ -124,6 +148,13 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             user=user,
             status="accepted"
         )
+        
+    @database_sync_to_async
+    def kick_participant(self, tournament, user):
+        return ManualTournamentParticipants.objects.filter(
+            tournament=tournament,
+            user=user
+        ).delete()
     
     @database_sync_to_async
     def invite_participant(self, tournament, user):
