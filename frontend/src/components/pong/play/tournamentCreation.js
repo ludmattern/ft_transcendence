@@ -424,7 +424,7 @@ export function updateOnlinePlayersUI(players, tournamentSize, currentUserId) {
 					type: 'tournament_message',
 					action: 'reject_tournament',
 					userId: cancelledUserId,
-					tournament_id: tournamentId.tournament_id,
+					tournamentId: tournamentId.tournament_id,
 				};
 				ws.send(JSON.stringify(payload));
 			});
@@ -448,7 +448,7 @@ export function updateOnlinePlayersUI(players, tournamentSize, currentUserId) {
 					action: 'kick_tournament',
 					author: currentUserId,
 					recipient: kickedUserId,
-					tournament_id: tournamentId.tournament_id,
+					tournamentId: tournamentId.tournament_id,
 				};
 				ws.send(JSON.stringify(payload));
 			});
