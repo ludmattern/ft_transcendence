@@ -348,12 +348,12 @@ export const onlineTournamentCreation = createComponent({
 			}
 		});
 
-		// Création du tournoi
 		createTournamentButton.addEventListener('click', () => {
 			const roomCode = roomCodeElement.textContent;
 			console.log("Tournoi en ligne créé avec le room code :", roomCode);
 			console.log("Liste des joueurs :", onlinePlayers);
-			alert('Tournament created with room code: ' + roomCode);
+			sessionStorage.setItem('tournamentCreationNeeded', true);
+			handleRoute('/pong/play/current-tournament');
 		});
 
 		subscribe('updatePlayerList', (data) => {

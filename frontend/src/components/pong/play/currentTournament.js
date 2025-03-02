@@ -2,6 +2,7 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { playGame } from '/src/components/pong/play/utils.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { ws } from '/src/services/socketManager.js';
 
 export const currentTournament = createComponent({
 	tag: 'currentTournament',
@@ -100,6 +101,30 @@ export const currentTournament = createComponent({
     `;
 	},
 	attachEvents: async (el) => {
+
+    const tournamentCreationNeeded = sessionStorage.getItem('tournamentCreationNeeded') === 'true';
+    if (tournamentCreationNeeded) {
+      try {
+        sessionStorage.removeItem('tournamentCreationNeeded');
+        const userId = await getUserIdFromCookieAPI();
+        const payload = {
+          type: "tournament_message",
+          action: "create_online_tournament",
+          organizer_id: userId,
+        };
+      
+        ws.send(JSON.stringify(payload));      
+        console.log("Online tournament created:", payload);
+      }
+      catch (error) {
+        console.error("Error creating online tournament:", error);
+      }
+    }
+
+   
+
+
+
 		const username = sessionStorage.getItem('username');
 		const userId =await  getUserIdFromCookieAPI();
 
@@ -248,3 +273,17 @@ function hasUserCompletedInPreviousRound(bracketData, roundIndex) {
   const previousRound = bracketData[roundIndex - 1];
   return previousRound.matches.some((match) => (match.player1 === username || match.player2 === username) && match.status === 'completed');
 }
+
+
+
+/*
+Cote front:
+----> Si TournamentCreationNeeded est set a true dans session storage on creer le payload pour creer le tournoi en back avec ws
+  -----> on mes a jour le tournoi ongoin du client actif
+----> Si TournamentCreationNeeded est set a false dans session storage on recupere les donnees du tournoi en cours
+
+cote back:
+----> on bacule le tournoie en ongoing et on creer le premier round dans la db
+----> on broadcast a tout les joueurs du tournoi que le tournoi commence 
+
+*/

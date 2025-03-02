@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
-from .models import ManualTournament, ManualUser, ManualTournamentParticipants
+from .models import ManualTournament, ManualUser, ManualTournamentParticipants, TournamentMatch
 import logging
 from channels.db import database_sync_to_async 
 from cryptography.fernet import Fernet
@@ -18,6 +18,65 @@ def get_username(user_id):
         return None
 
 cipher = Fernet(settings.FERNET_KEY)
+
+@database_sync_to_async
+def get_single_user_tournament(user_id):
+    return ManualTournament.objects.filter(participants__user_id=user_id).first()
+
+@database_sync_to_async
+def get_accepted_participants(tournament_id):
+    participants_qs = ManualTournamentParticipants.objects.filter(
+        tournament_id=tournament_id, 
+        status='accepted'
+    ).select_related('user')
+
+    return [p.user.username for p in participants_qs]
+
+
+@database_sync_to_async
+def create_matches_for_tournament(tournament_id, usernames):
+
+    import math
+    n = len(usernames)
+    if n not in [4, 8, 16]:
+        raise ValueError("val error.")
+
+    tournament = ManualTournament.objects.get(id=tournament_id)
+    tournament.status = "ongoing"
+    tournament.rounds = n // 2
+    tournament.save()
+
+    for i in range(0, n, 2):
+        match_order = (i // 2) + 1
+        player1 = usernames[i]
+        player2 = usernames[i+1]
+
+        TournamentMatch.objects.create(
+            tournament=tournament,
+            round_number=1,
+            match_order=match_order,
+            player1=player1,
+            player2=player2,
+            status="pending"
+        )
+    
+    rounds_count = int(math.log2(n))
+    previous_matches = n // 2
+    for round_number in range(2, rounds_count + 1):
+        num_matches = previous_matches // 2
+        for match_order in range(1, num_matches + 1):
+            TournamentMatch.objects.create(
+                tournament=tournament,
+                round_number=round_number,
+                match_order=match_order,
+                player1="TBD",
+                player2="TBD",
+                status="pending"
+            )
+        previous_matches = num_matches
+
+    return tournament
+
 
 def encrypt_thing(args):
     """Encrypts the args."""
@@ -48,7 +107,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             await self.handle_tournament_invite(event)
         elif str(action) == "kick_tournament":
             await self.handle_kick_tournament(event)
-
+        elif str(action) == "create_online_tournament":
+            await self.create_online_tournament(event)
         else:
             logger.warning("Unknown action: %s", action)
             await self.send(json.dumps({"error": "Unknown action"}))
@@ -188,3 +248,42 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             participant.status = new_status
             participant.save()
         return participant
+    
+
+    async def create_online_tournament(self, event):
+        try:
+            user_id = event.get("organizer_id")
+            user = await self.get_user(user_id)
+            if not user:
+                logger.warning(f"User {user_id} not found.")
+                return
+
+            tournament = await get_single_user_tournament(user.id)
+            if not tournament:
+                logger.warning(f"No upcoming tournament found for organizer {user.username}")
+                return
+
+            usernames = await get_accepted_participants(tournament.id)
+            if not usernames:
+                logger.warning(f"No participants found with status 'accepted' for tournament {tournament.id}")
+                return
+
+            updated_tournament = await create_matches_for_tournament(tournament.id, usernames)
+            logger.info(
+                f"Online tournament bracket created successfully for tournament {updated_tournament.id} "
+                f"with {len(usernames)} participants."
+            )
+
+            # await self.send_info(
+            #     user_id, 
+            #     "back_create_online_tournament", 
+            #     tournament_id=updated_tournament.id,
+            #     bracket_created=True
+            # )
+
+        except ValueError as ve:
+            logger.error(f"Bracket creation failed: {str(ve)}")
+
+        except Exception as e:
+            logger.exception("Error while creating online tournament bracket:")
+
