@@ -34,6 +34,18 @@ def get_accepted_participants(tournament_id):
 
 
 @database_sync_to_async
+def set_tournament_mode(tournament_id, mode):
+    """
+    Récupère un tournoi, met à jour son mode et le sauvegarde.
+    Retourne le tournoi mis à jour.
+    """
+    tournament = ManualTournament.objects.get(id=tournament_id)
+    tournament.mode = mode
+    tournament.save()
+    return tournament
+
+
+@database_sync_to_async
 def create_matches_for_tournament(tournament_id, usernames):
 
     import math
@@ -237,6 +249,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
     def get_initiator_tournament(self, initiator):
         return ManualTournament.objects.filter(organizer=initiator, status="upcoming").first()
 
+
+
     @database_sync_to_async
     def update_invited_participant_status(self, user, tournament, new_status):
         participant = ManualTournamentParticipants.objects.filter(
@@ -267,6 +281,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             if not usernames:
                 logger.warning(f"No participants found with status 'accepted' for tournament {tournament.id}")
                 return
+            
+            await set_tournament_mode(tournament.id, "online")
 
             updated_tournament = await create_matches_for_tournament(tournament.id, usernames)
             logger.info(

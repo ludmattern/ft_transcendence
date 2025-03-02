@@ -89,6 +89,7 @@ def get_current_tournament(request):
 		"rounds": rounds_list,
 		"mode": tournament.mode
 	}
+	
 	return JsonResponse(data)
 
 def getTournamentSerialKey(request, user_id):
