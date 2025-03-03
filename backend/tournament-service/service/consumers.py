@@ -301,12 +301,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 f"with {len(usernames)} participants."
             )
 
-            # await self.send_info(
-            #     user_id, 
-            #     "back_create_online_tournament", 
-            #     tournament_id=updated_tournament.id,
-            #     bracket_created=True
-            # )
+            await self.channel_layer.group_send(
+                f"user_{user_id}",
+                {
+                    "type": "tournament_message",
+                    "action": "back_create_online_tournament",
+                    "tournament_id": updated_tournament.id,
+                    "bracket_created": True,
+                }
+            )
+
 
         except ValueError as ve:
             logger.error(f"Bracket creation failed: {str(ve)}")
