@@ -270,7 +270,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"invite of {recipient_username} has been cancelled."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 
-			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "tournament_invite"})
+			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"Your invite has been cancelled."})
    
 
@@ -293,7 +293,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{recipient_username} has been kicked."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 
-			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "tournament_invite"})
+			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You have been kicked."})
 
 		else:

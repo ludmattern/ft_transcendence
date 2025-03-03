@@ -70,6 +70,7 @@ export async function initializeWebSocket(userId) {
 			if (data.action && data.action === 'updatePlayerList') {
 				console.log('ABABABABABABAB ->>> Liste de joueurs mise à jour:', data);
 				emit('updatePlayerList', data);
+				await updateAndCompareInfoData();
 			} else if (data.action) {
 				await updateAndCompareInfoData();
 			} else {
