@@ -110,6 +110,7 @@ CREATE TABLE IF NOT EXISTS service_tournamentmatch (
 	status VARCHAR(20) DEFAULT 'pending',
 	winner VARCHAR(50),
 	score VARCHAR(20),
+  match_key VARCHAR(100),
 	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	FOREIGN KEY (tournament_id) REFERENCES tournaments(id) ON DELETE CASCADE
 );

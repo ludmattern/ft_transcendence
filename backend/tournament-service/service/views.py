@@ -72,6 +72,7 @@ def get_current_tournament(request):
 			"status": match.status,
 			"winner": match.winner,
 			"score": match.score,
+            "match_key": match.match_key,
 		})
 	
 	rounds_list = []

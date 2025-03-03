@@ -104,6 +104,7 @@ class TournamentMatch(models.Model):
     winner = models.CharField(max_length=50, blank=True, null=True)
     score = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    match_key = models.CharField(max_length=100, null=True, blank=True)  
 
     def __str__(self):
         return f"Round {self.round_number} Match {self.match_order}: {self.player1} vs {self.player2}"

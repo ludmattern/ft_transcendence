@@ -6,8 +6,12 @@ import logging
 from channels.db import database_sync_to_async 
 from cryptography.fernet import Fernet
 from django.conf import settings
+import secrets
 
 logger = logging.getLogger(__name__)
+def generate_online_match_key():
+    random_part = secrets.token_hex(4)
+    return f"tournOnline_{random_part}"
 
 @database_sync_to_async
 def get_username(user_id):
@@ -57,6 +61,7 @@ def create_matches_for_tournament(tournament_id, usernames):
     tournament.status = "ongoing"
     tournament.rounds = n // 2
     tournament.save()
+    match_key = generate_online_match_key()
 
     for i in range(0, n, 2):
         match_order = (i // 2) + 1
@@ -69,7 +74,8 @@ def create_matches_for_tournament(tournament_id, usernames):
             match_order=match_order,
             player1=player1,
             player2=player2,
-            status="pending"
+            status="pending",
+            match_key=match_key
         )
     
     rounds_count = int(math.log2(n))
@@ -83,7 +89,8 @@ def create_matches_for_tournament(tournament_id, usernames):
                 match_order=match_order,
                 player1="TBD",
                 player2="TBD",
-                status="pending"
+                status="pending",
+                match_key=match_key
             )
         previous_matches = num_matches
 

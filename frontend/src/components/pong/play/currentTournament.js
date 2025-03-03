@@ -143,6 +143,7 @@ export const currentTournament = createComponent({
 
           const matchesHtml = round.matches.map((match) => {
             let joinButton = '';
+            const matchKey = match.match_key; 
 
             if (match.status === 'completed') {
               let displayHtml = getCompletedMatchHtml(match);
@@ -153,16 +154,23 @@ export const currentTournament = createComponent({
           
               if ((match.player1 === username || match.player2 === username) && 
                   hasUserCompletedInPreviousRound(bracketData, roundIndex, username)) {
-                joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
-              }
+                    joinButton = `
+                    <button class="btn btn-pong-blue btn-sm join-match ms-2" 
+                            data-match-key="${matchKey}">
+                      Join Game
+                    </button>`;              }
             }
 
             return `
-              <div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
-                   data-player1="${match.player1}" data-player2="${match.player2}">
+              <div class="match p-2 bg-dark rounded"
+                  data-match-id="${match.id}"
+                  data-player1="${match.player1}"
+                  data-player2="${match.player2}"
+                  data-match-key="${matchKey}">
                 <span class="text-white">${match.player1} vs ${match.player2}</span>
-                ${joinButton === '' 
-                    ? `<span class="text-secondary ms-2">${match.status}</span>` 
+                ${
+                  joinButton === ''
+                    ? `<span class="text-secondary ms-2">${match.status}</span>`
                     : joinButton
                 }
               </div>
@@ -279,14 +287,20 @@ export const currentTournament = createComponent({
           const matchId = matchDiv.getAttribute('data-match-id');
           const player1 = matchDiv.getAttribute('data-player1');
           const player2 = matchDiv.getAttribute('data-player2');
+          const matchKey = button.getAttribute('data-match-key'); 
 
-          // ❗ ICI : On peut encore distinguer local / online 
-          // au moment de cliquer sur "Join Game".
-          // Ex : "playGame" pour local, "startOnlineMatch" pour online...
+        
           if (mode === 'online') {
             console.log("Join Online Match:", { matchId, player1, player2 });
-            // Exemple minimal :
-            // ws.send(JSON.stringify({ type: 'matchmaking', matchId, player1, player2 }));
+            const config = {
+              gameMode: 'private',
+              action: 'create',
+              matchkey: matchKey,
+              type: 'fullScreen',
+            };
+            console.log(config);
+            playGame(config);
+          
           } else {
             const config = {
               gameMode: 'local-tournament',
