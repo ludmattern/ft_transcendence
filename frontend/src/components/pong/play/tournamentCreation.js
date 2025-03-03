@@ -276,6 +276,9 @@ export const onlineTournamentCreation = createComponent({
     `;
 	},
 	attachEvents: async (el) => {
+		subscribe('leavingLobby', () => {
+			handleRoute('/pong/play/tournament');
+		});
 		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
 		const userId = await getUserIdFromCookieAPI();
 		const username = sessionStorage.getItem('username') || 'You';

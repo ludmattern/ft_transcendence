@@ -1,5 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { playGame } from '/src/components/pong/play/utils.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { showContextMenu } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { handleFriendAction } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
@@ -117,6 +118,29 @@ function behaviorTournament(el, item) {
 export async function handleTournamentAction(action, item) {
 	const userId = await getUserIdFromCookieAPI();
 	if (action) {
+		try {
+			console.log("Vérification de l'existence d'un lobby...");
+			const userId = await getUserIdFromCookieAPI();
+			console.log("User ID récupéré :", userId);
+	
+			let url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`;
+			console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
+	
+			let response = await fetch(url);
+			if (!response.ok) {
+				throw new Error(`Erreur HTTP lors de la vérification du lobby (code ${response.status})`);
+			}
+			let data = await response.json();
+			const tournamentSerialKey = data.serial_key;
+			console.log("Clé de tournoi récupérée :", tournamentSerialKey);
+	
+			if (tournamentSerialKey) {
+				createNotificationMessage("You are already in a tournament", 2500, true);
+				return;
+			}
+		} catch (error) {
+			console.error("Erreur dans checkOrCreateLobby :", error);
+		}
 		action = 'join_tournament';
 		console.log(`joining tournament...`);
 	} else {

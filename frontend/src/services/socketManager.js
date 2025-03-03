@@ -71,6 +71,9 @@ export async function initializeWebSocket(userId) {
 				console.log('ABABABABABABAB ->>> Liste de joueurs mise à jour:', data);
 				emit('updatePlayerList', data);
 				await updateAndCompareInfoData();
+			} else if (data.info && data.info === 'You have been kicked.') {
+				console.log('Vous avez été expulsé du lobby.');
+				emit('leavingLobby');
 			} else if (data.action) {
 				await updateAndCompareInfoData();
 			} else {
