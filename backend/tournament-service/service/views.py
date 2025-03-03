@@ -139,6 +139,27 @@ def isUserTournamentOrganizer(request, user_id, tournament_serial_key):
 	data = {"is_organizer": str(tournament.organizer_id) == user_id}
 	return JsonResponse(data)
 
+def getStatusOfCurrentTournament(request, user_id):
+	if request.method != "GET":
+		return JsonResponse({"error": "GET method required"}, status=405)
+	if not user_id:
+		return JsonResponse({"error": "user_id parameter is required"}, status=400)
+	
+	try:
+		tournament = ManualTournament.objects.filter(
+			participants__user__id=user_id
+		).latest("created_at")
+	except ManualTournament.DoesNotExist:
+		data = {"status": "none"}
+		return JsonResponse(data)
+
+	data =	{
+				"status": tournament.status,
+				"mode": tournament.mode,
+			}
+
+	return JsonResponse(data)
+
 #TODO ici logiquement les modifs seront au niveau du pong et ou matchamking 
 # ou il faudrat ajouter le tournament id dans la requete sinon pas de modif majeur
 

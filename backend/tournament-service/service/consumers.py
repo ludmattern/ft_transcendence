@@ -217,7 +217,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         return ManualTournament.objects.create(
             serial_key=serial_key,
             organizer=user,
-            rounds=tournament_size
+            rounds=tournament_size,
+            mode="online",
         )
 
     @database_sync_to_async

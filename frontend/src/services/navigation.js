@@ -1,6 +1,7 @@
 import { switchwindow } from '/src/3d/animation.js';
 import { renderPage } from '/src/utils/componentRenderer.js';
 import { hudPages, pongPages } from '/src/pages/pages.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 /**
  * Fonction générique pour naviguer dans l'application.
@@ -45,8 +46,35 @@ export const navigateToHome = () => navigateTo('HUD', 'home', false, false, 'hom
 export const navigateToLost = () => navigateTo('HUD', 'lostForm');
 export const navigateTo2FA = () => navigateTo('HUD', 'twoFAForm', false, true);
 
-export function navigateToPong(subroute = null) {
+export async function navigateToPong(subroute = null) {
 	navigateTo('HUD', 'pong', false, false, 'pong');
+
+	if (subroute && subroute.includes('play/tournament')) {
+		const userId = await getUserIdFromCookieAPI();
+		console.log("User ID récupéré :", userId);
+
+		const url = `/api/tournament-service/getStatusOfCurrentTournament/${encodeURIComponent(userId)}/`;
+		const response = await fetch(url);
+		if (!response.ok) {
+			console.error("Erreur lors de la récupération du statut du tournoi :", response);
+			return;
+		}
+		const data = await response.json();
+		console.log("Statut du tournoi récupéré :", data);
+
+		switch (data.status) {
+			case "ongoing":
+				subroute = 'play/current-tournament';
+			case "upcoming":
+				subroute = 'play/tournament-creation';
+			default:
+				if (data.status && data.mode && data.mode !== 'local') {
+					sessionStorage.setItem('tournamentMode', data.status);
+				}
+				break;
+		}
+	}
+	console.log("status du tournoi et sous route :", subroute);
 	navigateTo('Pong', subroute || 'home', false, false);
 }
 

@@ -8,19 +8,6 @@ const componentManagers = {
 	Pong: new ComponentManager('Pong'),
 };
 
-//will be moved into a service in the future
-let inTournament = false;
-
-//will be moved into a service in the future
-export function setInTournament(value) {
-	inTournament = value;
-}
-
-//will be moved into a service in the future
-export function getInTournament() {
-	return inTournament;
-}
-
 async function setDatabaseID() {
 	const db = await CacheDB.dbPromise;
 	if (!db) return;
