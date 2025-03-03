@@ -30,8 +30,8 @@ function collapseNotification(notification) {
 function processNotificationBuffer() {
 	const container = document.getElementById('bottom-notification-container');
 	while (container.childElementCount < 3 && notificationBuffer.length > 0) {
-		const { message, duration } = notificationBuffer.shift();
-		createNotificationMessage(message, duration);
+		const { message, duration, error } = notificationBuffer.shift();
+		createNotificationMessage(message, duration, error);
 	}
 }
 
@@ -49,7 +49,7 @@ export function createNotificationMessage(message, duration = 2500, error = fals
 	}
 
 	if (container.childElementCount >= 3) {
-		notificationBuffer.push({ message, duration });
+		notificationBuffer.push({ message, duration, error });
 		return;
 	}
 
