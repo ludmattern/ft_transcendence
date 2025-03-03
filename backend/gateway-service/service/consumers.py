@@ -19,7 +19,6 @@ def update_user_status(user_id, is_connected):
     except ManualUser.DoesNotExist:
         pass
 
-
 class GatewayConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		await self.accept()

@@ -206,7 +206,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
     async def send_info(self, user_id, action, **kwargs):
         logger.info(f"paremeters recieved: {user_id}, {action}, {kwargs}")
         payload = {"type": "info_message", "action": action, **kwargs}
-        await self.channel_layer.group_send(f"user_{user_id}", payload)
+        await self.channel_layer.group_send(f"user_{0}", payload)
 
     @database_sync_to_async
     def get_user(self, user_id):

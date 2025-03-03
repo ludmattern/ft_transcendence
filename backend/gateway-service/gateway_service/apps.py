@@ -9,6 +9,10 @@ class GatewayServiceConfig(AppConfig):
 	name = 'gateway_service'
 
 	def ready(self):
+		from service.gateway_connection import start_dummy_gateway_connection
+		start_dummy_gateway_connection()
+		logger.info("Dummy gateway connection lancée.")
+
 		from service.chat_connection import start_dummy_chat_connection
 		start_dummy_chat_connection()
 		logger.info("Dummy chat connection lancée.")

@@ -108,10 +108,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		if str(action) == "send_friend_request":
 			if not author_id or not recipient_id:
+				logger.warning("Author or recipient not provided")
 				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "Author or recipient not provided"})
 				return
 
 			if str(author_id) == str(recipient_id):
+				logger.warning("You can't send a friend request to yourself")
 				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "You can't send a friend request to yourself"})
 				return
 
