@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
   profile_picture VARCHAR(255) DEFAULT 'profile_pics/default-profile-150.png',
 	is_2fa_enabled BOOLEAN DEFAULT FALSE,
 	is_dummy BOOLEAN DEFAULT FALSE,
+	current_tournament_id INT DEFAULT 0,
 	twofa_method VARCHAR(50) DEFAULT NULL,
 	phone_number VARCHAR(255) DEFAULT NULL,
 	temp_2fa_code VARCHAR(255) DEFAULT NULL,

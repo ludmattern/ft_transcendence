@@ -12,6 +12,7 @@ class ManualUser(models.Model):
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     temp_2fa_code = models.CharField(max_length=10, null=True, blank=True)
     is_dummy = models.BooleanField(default=False)
+    current_tournament_id = models.IntegerField(default=0)
     is_connected = models.BooleanField(default=False)
     elo = models.IntegerField(default=0)
     profile_picture = models.ImageField(
