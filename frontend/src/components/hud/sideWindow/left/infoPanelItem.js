@@ -123,7 +123,7 @@ export async function handleTournamentAction(action, item) {
 			const userId = await getUserIdFromCookieAPI();
 			console.log("User ID récupéré :", userId);
 	
-			let url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`;
+			let url = `/api/tournament-service/getParticipantStatusInTournament/${encodeURIComponent(userId)}/`;
 			console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
 	
 			let response = await fetch(url);
@@ -131,10 +131,9 @@ export async function handleTournamentAction(action, item) {
 				throw new Error(`Erreur HTTP lors de la vérification du lobby (code ${response.status})`);
 			}
 			let data = await response.json();
-			const tournamentSerialKey = data.serial_key;
-			console.log("Clé de tournoi récupérée :", tournamentSerialKey);
+			console.log("status de tournoi récupérée :", data.status);
 	
-			if (tournamentSerialKey) {
+			if (data.status === 'accepted') {
 				createNotificationMessage("You are already in a tournament", 2500, true);
 				return;
 			}

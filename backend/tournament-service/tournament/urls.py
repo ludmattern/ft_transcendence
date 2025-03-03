@@ -8,7 +8,8 @@ from service.views import (
     getTournamentParticipants,
     getTournamentIdFromSerialKey,
 	isUserTournamentOrganizer,
-	getStatusOfCurrentTournament
+	getStatusOfCurrentTournament,
+	getParticipantStatusInTournament
 )
 
 urlpatterns = [
@@ -20,5 +21,6 @@ urlpatterns = [
     path('getTournamentParticipants/<int:tournament_id>/', getTournamentParticipants, name='getTournamentParticipants'),
     path('getTournamentIdFromSerialKey/<str:serial_key>/', getTournamentIdFromSerialKey, name='getTournamentIdFromSerialKey'),
 	path('isUserTournamentOrganizer/<str:user_id>/<str:tournament_serial_key>/', isUserTournamentOrganizer, name='isUserTournamentOrganizer'),
-	path('getStatusOfCurrentTournament/<str:user_id>/', getStatusOfCurrentTournament, name='getStatusOfCurrentTournament')
+	path('getStatusOfCurrentTournament/<str:user_id>/', getStatusOfCurrentTournament, name='getStatusOfCurrentTournament'),
+	path('getParticipantStatusInTournament/<str:user_id>/', getParticipantStatusInTournament, name='getParticipantStatusInTournament')
 ]

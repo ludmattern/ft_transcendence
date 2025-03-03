@@ -101,7 +101,7 @@ def getTournamentSerialKey(request, user_id):
 	
 	try:
 		tournament = ManualTournament.objects.filter(
-			status="upcoming",
+			status="upcoming" or "ongoing",
 			participants__user__id=user_id
 		).latest("created_at")
 		serial_key = tournament.serial_key
@@ -109,6 +109,23 @@ def getTournamentSerialKey(request, user_id):
 		serial_key = ""
 
 	data = {"serial_key": serial_key}
+	return JsonResponse(data)
+
+def getParticipantStatusInTournament(request, user_id):
+	if request.method != "GET":
+		return JsonResponse({"error": "GET method required"}, status=405)
+	if not user_id:
+		return JsonResponse({"error": "user_id parameter is required"}, status=400)
+	
+	try:
+		participant = ManualTournamentParticipants.objects.filter(
+			user__id=user_id,
+			status="accepted" or "pending"
+		).latest("created_at")
+		status = participant.status
+	except ManualTournamentParticipants.DoesNotExist:
+		status = "none"
+	data = {"status": status}
 	return JsonResponse(data)
 
 def getTournamentIdFromSerialKey(request, serial_key):

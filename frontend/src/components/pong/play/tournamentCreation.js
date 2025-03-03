@@ -367,8 +367,14 @@ export const onlineTournamentCreation = createComponent({
 				<button id="cancel-tournament" class="btn btn-pong-danger mt-3">Cancel</button>
 			`;
 			const cancelTournamentButton = controlButtonsContainer.querySelector('#cancel-tournament');
-			cancelTournamentButton.addEventListener('click', () => {
-				handleRoute('/pong/play/tournament');
+			cancelTournamentButton.addEventListener('click', async () => {
+				const userId = await getUserIdFromCookieAPI();
+				payload = {
+					type: 'tournament_message',
+					action: 'cancel_tournament',
+					userId: userId,
+				};
+				ws.send(JSON.stringify(payload));
 			});
 		} else {
 			// Pour les non-organisateurs, afficher uniquement un bouton "Leave Lobby"
@@ -465,7 +471,7 @@ export function updateOnlinePlayersUI(players, tournamentSize, currentUserId, cu
 					const tournamentId = await getTournamentIdFromSerialKey(tournamentSerialKey);
 					const payload = {
 						type: 'tournament_message',
-						action: 'reject_tournament',
+						action: 'cancel_tournament_invite',
 						userId: player.id,
 						tournamentId: tournamentId.tournament_id,
 					};

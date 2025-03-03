@@ -122,12 +122,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             await self.handle_participant_status_change(event, "accepted", "back_join_tournament")
         elif str(action) == "reject_tournament":
             await self.handle_participant_status_change(event, "rejected", "back_reject_tournament")
+        elif str(action) == "cancel_tournament_invite":
+            await self.handle_participant_status_change(event, "rejected", "back_cancel_tournament_invite")
         elif str(action) == "tournament_invite":
             await self.handle_tournament_invite(event)
         elif str(action) == "kick_tournament":
             await self.handle_kick_tournament(event)
         elif str(action) == "create_online_tournament":
             await self.create_online_tournament(event)
+        elif str(action) == "cancel_tournament":
+            await self.handle_cancel_tournament(event)
         else:
             logger.warning("Unknown action: %s", action)
             await self.send(json.dumps({"error": "Unknown action"}))
@@ -201,7 +205,22 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         await self.send_info(author_id, "back_kick_tournament", author=author_id, recipient=recipient_id, tournament_id=tournament.id)
         logger.info("%s is kicked from tournament.", event["recipient_username"])
         
+    # async def handle_cancel_tournament(self, event):
+    #     logger.info("Cancel tournament event received: %s", event)
+    #     author_id = event.get("userId")
+    #     initiator = await self.get_user(author_id)
+        
+    #     tournament = await self.get_initiator_tournament(initiator)
+    #     if not tournament:
+    #         logger.warning(f"No active tournament found for initiator {initiator.username}")
+    #         return
+        
+	# 	participant_list = await get_accepted_participants(tournament.id)
 
+    #     await self.kick_participant(tournament, recipient_user)
+    #     await self.send_info(author_id, "back_cancel_tournament", author=author_id, tournament_id=tournament.id, participant_list=participant_list)
+    #     logger.info("%s is kicked from tournament.", event["recipient_username"])
+        
 
     async def send_info(self, user_id, action, **kwargs):
         logger.info(f"paremeters recieved: {user_id}, {action}, {kwargs}")
