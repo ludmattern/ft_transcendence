@@ -1,5 +1,7 @@
 import uuid
+import logging
 
+logger = logging.getLogger(__name__)
 class PrivateManager:
     def __init__(self):
         self.waiting_rooms = {}
@@ -7,6 +9,7 @@ class PrivateManager:
 
     def join_room(self, room_code, user_id):
 
+        logging.info(f"User {user_id} joined room {room_code}")
         if room_code not in self.waiting_rooms:
             self.waiting_rooms[room_code] = []
         if user_id not in self.waiting_rooms[room_code]:
@@ -15,7 +18,7 @@ class PrivateManager:
         if len(self.waiting_rooms[room_code]) >= 2:
             p1 = self.waiting_rooms[room_code].pop(0)
             p2 = self.waiting_rooms[room_code].pop(0)
-            game_id = f"private_{uuid.uuid4()}"
+            game_id = room_code
 
             match_info_p1 = {
                 "game_id": game_id,

@@ -4,9 +4,11 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from .game_manager import game_manager
 from asgiref.sync import sync_to_async
 from django.db import transaction
-from service.models import ManualUser
+from service.models import ManualUser, TournamentMatch
 from django.http import JsonResponse
 from service.utils import calculate_elo
+
+
 
 #import numpy as np
 logger = logging.getLogger(__name__)
@@ -178,7 +180,35 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     else:
                         winner_id = game.player2_id
                         loser_id = game.player1_id
-                        
+                    
+                    winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
+                    loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
+                    
+                    if game_id.startswith("tournOnline_"):
+                        match = await sync_to_async(TournamentMatch.objects.filter(match_key=game_id).first)()
+                        if match:
+                            match.winner = str(winner_id)
+                            match.score = f"{game.user_scores[winner_id]}-{game.user_scores[loser_id]}"
+                            match.status = "completed"
+                            await sync_to_async(match.save)()
+
+                            next_round = match.round_number + 1
+                            next_match_order = (match.match_order + 1) // 2
+                            next_match = await sync_to_async(TournamentMatch.objects.filter(
+                                tournament_id=match.tournament_id,
+                                round_number=next_round,
+                                match_order=next_match_order
+                            ).first)()
+
+                            if next_match:
+                                if match.match_order % 2 == 1:
+                                    next_match.player1 = str(winner_id)
+                                else:
+                                    next_match.player2 = str(winner_id)
+                                await sync_to_async(next_match.save)()
+                    
+                    #TODO REMPLACER ID PAR USERNAME ET REGLER LE PB DU DEUXIEME MATCH QUI SE MET PAS A JOUR
+                    
                     if str(game_id).startswith("matchmaking_"):
                         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
                         loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
@@ -214,7 +244,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                         }
                     )
                     
-                    if not (str(game_id).startswith("game_") or str(game_id).startswith("tournLocal_") or str(game_id).startswith("solo_")):
+                    if not (str(game_id).startswith("game_") or str(game_id).startswith("tournLocal_") or str(game_id).startswith("solo_") or str(game_id).startswith("tournOnline_")):
                         await sync_to_async(GameHistory.objects.create)(
                             winner_id=winner_id,
                             loser_id=loser_id,

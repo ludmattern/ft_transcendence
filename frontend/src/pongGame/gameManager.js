@@ -255,7 +255,7 @@ class GameManager {
 	generateGameId(gameConfig) {
 		if (!gameConfig.gameId) {
 			if (gameConfig.mode === 'private') {
-				return `private_${Date.now()}`;
+				return gameConfig.matchkey;
 			}
 			if (gameConfig.mode === 'matchmaking') {
 				return `matchmaking_${Date.now()}`;
