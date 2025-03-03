@@ -270,15 +270,7 @@ export const onlineTournamentCreation = createComponent({
           <ul id="online-players-list" class="list-group"></ul>
         </div>
         
-        <!-- Zone d'envoi d'invitations -->
-        <div class="w-50 mb-4">
-          <div class="input-group">
-            <input id="invite-input" type="text" class="form-control" placeholder="Enter invitation message" aria-label="Invitation">
-            <button id="send-invite" class="btn btn-pong-blue" type="button">Send Invitation</button>
-          </div>
-        </div>
-        
-        <!-- Conteneur pour les boutons de contrôle (affichés différemment selon le statut) -->
+        <!-- Les boutons de contrôle seront affichés ici -->
         <div id="control-buttons-container" style="display: flex; flex-direction: column;"></div>
       </section>
     `;
@@ -297,8 +289,6 @@ export const onlineTournamentCreation = createComponent({
 		// Récupération des éléments de l'interface
 		const roomCodeElement = el.querySelector('#room-code');
 		const copyRoomCodeButton = el.querySelector('#copy-room-code');
-		const inviteInput = el.querySelector('#invite-input');
-		const sendInviteButton = el.querySelector('#send-invite');
 		const controlButtonsContainer = el.querySelector('#control-buttons-container');
 
 		// Bouton pour copier le room code
@@ -309,65 +299,71 @@ export const onlineTournamentCreation = createComponent({
 				.catch(() => alert('Failed to copy room code.'));
 		});
 
-		// Envoi d'invitations
-		sendInviteButton.addEventListener('click', async () => {
-			const invitedUsernamePilot = inviteInput.value.trim();
-			if (!invitedUsernamePilot) {
-				alert('Please enter an invitation message.');
-				return;
-			}
-			if (onlinePlayers.length >= tournamentSize) {
-				alert(`You can only have up to ${tournamentSize} players.`);
-				return;
-			}
+		// Si l'utilisateur est organisateur, ajouter la zone d'invitation
+		if (isOrganizer) {
+			const inviteContainerHTML = `
+        <div id="invite-container" class="w-50 mb-4">
+          <div class="input-group">
+            <input id="invite-input" type="text" class="form-control" placeholder="Enter invitation message" aria-label="Invitation">
+            <button id="send-invite" class="btn btn-pong-blue" type="button">Send Invitation</button>
+          </div>
+        </div>
+      `;
+			// On insère la zone d'invitation avant le conteneur des boutons de contrôle
+			controlButtonsContainer.insertAdjacentHTML('beforebegin', inviteContainerHTML);
 
-			const userId = await getUserIdFromCookieAPI();
-			const recipientId = await fetchUserId(invitedUsernamePilot);
-			if (!recipientId) {
-				createNotificationMessage(`${invitedUsernamePilot} has not enlisted in Space Force yet`, 5000, true);
+			const inviteInput = el.querySelector('#invite-input');
+			const sendInviteButton = el.querySelector('#send-invite');
+
+			// Envoi d'invitations (uniquement pour l'organisateur)
+			sendInviteButton.addEventListener('click', async () => {
+				const invitedUsernamePilot = inviteInput.value.trim();
+				if (!invitedUsernamePilot) {
+					alert('Please enter an invitation message.');
+					return;
+				}
+				if (onlinePlayers.length >= tournamentSize) {
+					alert(`You can only have up to ${tournamentSize} players.`);
+					return;
+				}
+
+				const userId = await getUserIdFromCookieAPI();
+				const recipientId = await fetchUserId(invitedUsernamePilot);
+				if (!recipientId) {
+					createNotificationMessage(`${invitedUsernamePilot} has not enlisted in Space Force yet`, 5000, true);
+					inviteInput.value = '';
+					return;
+				} else if (recipientId.toString() === userId) {
+					createNotificationMessage(`You cannot invite yourself`, 5000, true);
+					inviteInput.value = '';
+					return;
+				}
+
+				const payload = {
+					type: 'tournament_message',
+					action: 'tournament_invite',
+					author: userId,
+					recipient: recipientId,
+				};
+				console.log("Envoi de l'invitation :", payload);
+				ws.send(JSON.stringify(payload));
+
 				inviteInput.value = '';
-				return;
-			} else if (recipientId.toString() === userId) {
-				createNotificationMessage(`You cannot invite yourself`, 5000, true);
-				inviteInput.value = '';
-				return;
-			}
+			});
 
-			const payload = {
-				type: 'tournament_message',
-				action: 'tournament_invite',
-				author: userId,
-				recipient: recipientId,
-			};
-			console.log("Envoi de l'invitation :", payload);
-			ws.send(JSON.stringify(payload));
-
-			inviteInput.value = '';
-		});
-
-		inviteInput.addEventListener('keypress', (e) => {
-			if (e.key === 'Enter') {
-				sendInviteButton.click();
-			}
-		});
+			inviteInput.addEventListener('keypress', (e) => {
+				if (e.key === 'Enter') {
+					sendInviteButton.click();
+				}
+			});
+		}
 
 		// Affichage des boutons de contrôle en fonction du statut d'organisateur
 		if (isOrganizer) {
 			controlButtonsContainer.innerHTML = `
-				<button id="create-tournament" class="btn btn-pong" disabled>Create Tournament</button>
 				<button id="cancel-tournament" class="btn btn-pong-danger mt-3">Cancel</button>
 			`;
-			const createTournamentButton = controlButtonsContainer.querySelector('#create-tournament');
 			const cancelTournamentButton = controlButtonsContainer.querySelector('#cancel-tournament');
-
-			createTournamentButton.addEventListener('click', () => {
-				const roomCode = roomCodeElement.textContent;
-				console.log("Tournoi en ligne créé avec le room code :", roomCode);
-				console.log("Liste des joueurs :", onlinePlayers);
-				sessionStorage.setItem('tournamentCreationNeeded', true);
-				handleRoute('/pong/play/current-tournament');
-			});
-
 			cancelTournamentButton.addEventListener('click', () => {
 				handleRoute('/pong/play/tournament');
 			});
@@ -425,6 +421,28 @@ export function updateOnlinePlayersUI(players, tournamentSize, currentUserId, cu
 			badge.textContent = 'You';
 			li.appendChild(badge);
 		} else if (currentUserIsOrganizer) {
+			const controlButtonsContainer = document.querySelector('#control-buttons-container');
+			let createTournamentButton = document.querySelector('#create-tournament');
+			if (players.length === tournamentSize) {
+				if (!createTournamentButton) {
+					createTournamentButton = document.createElement('button');
+					createTournamentButton.id = 'create-tournament';
+					createTournamentButton.className = 'btn btn-pong';
+					createTournamentButton.textContent = 'Create Tournament';
+					createTournamentButton.addEventListener('click', () => {
+						const roomCode = document.querySelector('#room-code').textContent;
+						console.log("Tournoi en ligne créé avec le room code :", roomCode);
+						console.log("Liste des joueurs :", onlinePlayers);
+						sessionStorage.setItem('tournamentCreationNeeded', true);
+						handleRoute('/pong/play/current-tournament');
+					});
+					controlButtonsContainer.insertAdjacentElement('afterbegin', createTournamentButton);
+				}
+			} else {
+				if (createTournamentButton) {
+					createTournamentButton.remove();
+				}
+			}		
 			// Seulement l'organisateur peut voir les boutons Kick/Cancel
 			if (player.status === 'pending') {
 				const badge = document.createElement('span');

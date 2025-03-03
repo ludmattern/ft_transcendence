@@ -158,6 +158,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         if not participant:
             logger.warning(f"User {invited_user.username} not found in tournament {invited_tournament}")
             return
+        logger.info(f"Participant {invited_user.username} status updated to {new_status}")
+        logger.info(f"Parameters: {invited_id}, {callback_action}, {invited_tournament}, {invited_id}")
         await self.send_info(invited_id, callback_action, tournament_id=invited_tournament, recipient=invited_id)
 
     async def handle_tournament_invite(self, event):
@@ -202,6 +204,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 
     async def send_info(self, user_id, action, **kwargs):
+        logger.info(f"paremeters recieved: {user_id}, {action}, {kwargs}")
         payload = {"type": "info_message", "action": action, **kwargs}
         await self.channel_layer.group_send(f"user_{user_id}", payload)
 

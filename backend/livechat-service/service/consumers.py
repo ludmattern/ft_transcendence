@@ -249,6 +249,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			logger.info(f"Recipient {recipient_id} notified of joining tournament")
 
 		elif str(action) == "back_reject_tournament":
+			logger.info(f"Rejecting tournament invite")
 			recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 			recipient_username = await get_username(recipient_id)
 			tournament_id = event.get("tournament_id")
