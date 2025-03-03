@@ -96,6 +96,7 @@ export const currentTournament = createComponent({
     `;
   },
   attachEvents: async (el) => {
+    currentTournament.el = el;
     const tournamentCreationNeeded = sessionStorage.getItem('tournamentCreationNeeded') === 'true';
     if (tournamentCreationNeeded) {
       try {
@@ -113,214 +114,214 @@ export const currentTournament = createComponent({
         console.error("Error creating online tournament:", error);
       }
     }
+    else { 
+      renderBracket();
+    }
 
-    const username = sessionStorage.getItem('username');
-    const userId = await getUserIdFromCookieAPI();
-
-
-    async function renderBracket() {
-      const data = await getBracketData();
-      if (!data || !data.rounds) {
-        console.warn("No bracket data available.");
-        return;
-      }
-
-      console.log("Bracket data:", data);
-
-      const mode = data.mode;  
-      const bracketData = data.rounds;    
-      const tournament_id = data.tournament_id;
-
-      let titlesHtml = '';
-      let roundsHtml = '';
-
-      /* ---------------------------------------------
-         1) LOGIQUE SI MODE = "ONLINE"
-      --------------------------------------------- */
-      if (mode === 'online') {
-        bracketData.forEach((round, roundIndex) => {
-          titlesHtml += `<div class="h4 round-title">${round.round}</div>`;
-
-          const matchesHtml = round.matches.map((match) => {
-            let joinButton = '';
-            const matchKey = match.match_key; 
-
-            if (match.status === 'completed') {
-              let displayHtml = getCompletedMatchHtml(match);
-              return createCompletedMatchHtml(match, displayHtml);
-            }
-
-            if (match.status === 'pending' && match.player1 !== 'TBD' && match.player2 !== 'TBD') {
-          
-              if ((match.player1 === username || match.player2 === username) && 
-                  hasUserCompletedInPreviousRound(bracketData, roundIndex, username)) {
-                    joinButton = `
-                    <button class="btn btn-pong-blue btn-sm join-match ms-2" 
-                            data-match-key="${matchKey}">
-                      Join Game
-                    </button>`;              }
-            }
-
-            return `
-              <div class="match p-2 bg-dark rounded"
-                  data-match-id="${match.id}"
-                  data-player1="${match.player1}"
-                  data-player2="${match.player2}"
-                  data-match-key="${matchKey}">
-                <span class="text-white">${match.player1} vs ${match.player2}</span>
-                ${
-                  joinButton === ''
-                    ? `<span class="text-secondary ms-2">${match.status}</span>`
-                    : joinButton
-                }
-              </div>
-            `;
-          }).join('');
-
-          roundsHtml += `
-            <div class="round-column">
-              <div class="matches-container">${matchesHtml}</div>
-            </div>
-          `;
-
-          if (roundIndex < bracketData.length - 1) {
-            const bracketCount = Math.pow(2, bracketData.length - 1 - roundIndex) / 2;
-            let bracketLines = '';
-            for (let i = 0; i < bracketCount; i++) {
-              bracketLines += `<div class="bracket-line" style="height: calc(3rem * ${roundIndex + 1.3});"></div>`;
-            }
-            roundsHtml += `<div class="round-column">${bracketLines}</div>`;
-          }
-        });
-
-      /* ---------------------------------------------
-         2) LOGIQUE SI MODE = "LOCAL"
-      --------------------------------------------- */
-      } else {
-    
-        bracketData.forEach((round, roundIndex) => {
-          titlesHtml += `<div class="h4 round-title">${round.round}</div>`;
-
-          const matchesHtml = round.matches.map((match) => {
-            let joinButton = '';
-
-            if (match.status === 'completed') {
-              let displayHtml = getCompletedMatchHtml(match);
-              return createCompletedMatchHtml(match, displayHtml);
-            }
-
-            if (match.status === 'pending' && match.player1 !== 'TBD' && match.player2 !== 'TBD') {
-              joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
-            }
-
-            return `
-              <div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
-                   data-player1="${match.player1}" data-player2="${match.player2}">
-                <span class="text-white">${match.player1} vs ${match.player2}</span>
-                ${joinButton === '' 
-                    ? `<span class="text-secondary ms-2">${match.status}</span>` 
-                    : joinButton
-                }
-              </div>
-            `;
-          }).join('');
-
-          roundsHtml += `
-            <div class="round-column">
-              <div class="matches-container">${matchesHtml}</div>
-            </div>
-          `;
-
-          if (roundIndex < bracketData.length - 1) {
-            const bracketCount = Math.pow(2, bracketData.length - 1 - roundIndex) / 2;
-            let bracketLines = '';
-            for (let i = 0; i < bracketCount; i++) {
-              bracketLines += `<div class="bracket-line" style="height: calc(3rem * ${roundIndex + 1.3});"></div>`;
-            }
-            roundsHtml += `<div class="round-column">${bracketLines}</div>`;
-          }
-        });
-      }
-
-      // --------------------------------
-      // 3) Insertion du HTML
-      // --------------------------------
-      const bracketContainer = el.querySelector('#bracket-container');
-      if (bracketContainer) {
-        bracketContainer.innerHTML = `
-          <div class="h4 round-titles">${titlesHtml}</div>
-          <div class="rounds-content">${roundsHtml}</div>
-        `;
-      }
-
-      // --------------------------------
-      // 4) Gestion du bouton "Abandon"
-      // --------------------------------
-      const abandonTournamentButton = document.getElementById("abandon-tournament");
-      if (abandonTournamentButton) {
-        abandonTournamentButton.addEventListener("click", async () => {
-          try {
-          
-            const response = await fetch("/api/tournament-service/abandon_local_tournament/", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({ tournament_id })
-            });
-            const result = await response.json();
-            console.log("Tournament abandoned:", result);
-            handleRoute("/pong/play/tournament");
-          } catch (error) {
-            console.error("Error abandoning tournament:", error);
-          }
-        });
-      }
-
-      // --------------------------------
-      // 5) Gestion du bouton "Join Game"
-      // --------------------------------
-      const joinButtons = el.querySelectorAll('.join-match');
-      joinButtons.forEach((button) => {
-        button.addEventListener('click', () => {
-          const matchDiv = button.closest('.match');
-          const matchId = matchDiv.getAttribute('data-match-id');
-          const player1 = matchDiv.getAttribute('data-player1');
-          const player2 = matchDiv.getAttribute('data-player2');
-          const matchKey = button.getAttribute('data-match-key'); 
-
-        
-          if (mode === 'online') {
-            console.log("Join Online Match:", { matchId, player1, player2 });
-            const config = {
-              gameMode: 'private',
-              action: 'create',
-              matchkey: matchKey,
-              type: 'fullScreen',
-            };
-            console.log(config);
-            playGame(config);
-          
-          } else {
-            const config = {
-              gameMode: 'local-tournament',
-              player1: player1,
-              player2: player2,
-              type: 'splitScreen',
-              matchId: matchId,
-              tournament_id: tournament_id,
-            };
-            console.log("Join Local Match with config:", config);
-            playGame(config);
-          }
-        });
-      });
-    } 
-
-    renderBracket();
   },
 });
 
+export async function renderBracket() {
+  const el = currentTournament.el;
+  const username = sessionStorage.getItem('username');
+  const userId = await getUserIdFromCookieAPI();
+  const data = await getBracketData();
+  if (!data || !data.rounds) {
+    console.warn("No bracket data available.");
+    return;
+  }
+
+  console.log("Bracket data:", data);
+
+  const mode = data.mode;  
+  const bracketData = data.rounds;    
+  const tournament_id = data.tournament_id;
+
+  let titlesHtml = '';
+  let roundsHtml = '';
+
+  /* ---------------------------------------------
+     1) LOGIQUE SI MODE = "ONLINE"
+  --------------------------------------------- */
+  if (mode === 'online') {
+    bracketData.forEach((round, roundIndex) => {
+      titlesHtml += `<div class="h4 round-title">${round.round}</div>`;
+
+      const matchesHtml = round.matches.map((match) => {
+        let joinButton = '';
+        const matchKey = match.match_key; 
+
+        if (match.status === 'completed') {
+          let displayHtml = getCompletedMatchHtml(match);
+          return createCompletedMatchHtml(match, displayHtml);
+        }
+
+        if (match.status === 'pending' && match.player1 !== 'TBD' && match.player2 !== 'TBD') {
+      
+          if ((match.player1 === username || match.player2 === username) && 
+              hasUserCompletedInPreviousRound(bracketData, roundIndex, username)) {
+                joinButton = `
+                <button class="btn btn-pong-blue btn-sm join-match ms-2" 
+                        data-match-key="${matchKey}">
+                  Join Game
+                </button>`;              }
+        }
+
+        return `
+          <div class="match p-2 bg-dark rounded"
+              data-match-id="${match.id}"
+              data-player1="${match.player1}"
+              data-player2="${match.player2}"
+              data-match-key="${matchKey}">
+            <span class="text-white">${match.player1} vs ${match.player2}</span>
+            ${
+              joinButton === ''
+                ? `<span class="text-secondary ms-2">${match.status}</span>`
+                : joinButton
+            }
+          </div>
+        `;
+      }).join('');
+
+      roundsHtml += `
+        <div class="round-column">
+          <div class="matches-container">${matchesHtml}</div>
+        </div>
+      `;
+
+      if (roundIndex < bracketData.length - 1) {
+        const bracketCount = Math.pow(2, bracketData.length - 1 - roundIndex) / 2;
+        let bracketLines = '';
+        for (let i = 0; i < bracketCount; i++) {
+          bracketLines += `<div class="bracket-line" style="height: calc(3rem * ${roundIndex + 1.3});"></div>`;
+        }
+        roundsHtml += `<div class="round-column">${bracketLines}</div>`;
+      }
+    });
+
+  /* ---------------------------------------------
+     2) LOGIQUE SI MODE = "LOCAL"
+  --------------------------------------------- */
+  } else {
+
+    bracketData.forEach((round, roundIndex) => {
+      titlesHtml += `<div class="h4 round-title">${round.round}</div>`;
+
+      const matchesHtml = round.matches.map((match) => {
+        let joinButton = '';
+
+        if (match.status === 'completed') {
+          let displayHtml = getCompletedMatchHtml(match);
+          return createCompletedMatchHtml(match, displayHtml);
+        }
+
+        if (match.status === 'pending' && match.player1 !== 'TBD' && match.player2 !== 'TBD') {
+          joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
+        }
+
+        return `
+          <div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
+               data-player1="${match.player1}" data-player2="${match.player2}">
+            <span class="text-white">${match.player1} vs ${match.player2}</span>
+            ${joinButton === '' 
+                ? `<span class="text-secondary ms-2">${match.status}</span>` 
+                : joinButton
+            }
+          </div>
+        `;
+      }).join('');
+
+      roundsHtml += `
+        <div class="round-column">
+          <div class="matches-container">${matchesHtml}</div>
+        </div>
+      `;
+
+      if (roundIndex < bracketData.length - 1) {
+        const bracketCount = Math.pow(2, bracketData.length - 1 - roundIndex) / 2;
+        let bracketLines = '';
+        for (let i = 0; i < bracketCount; i++) {
+          bracketLines += `<div class="bracket-line" style="height: calc(3rem * ${roundIndex + 1.3});"></div>`;
+        }
+        roundsHtml += `<div class="round-column">${bracketLines}</div>`;
+      }
+    });
+  }
+
+  // --------------------------------
+  // 3) Insertion du HTML
+  // --------------------------------
+  const bracketContainer = el.querySelector('#bracket-container');
+  if (bracketContainer) {
+    bracketContainer.innerHTML = `
+      <div class="h4 round-titles">${titlesHtml}</div>
+      <div class="rounds-content">${roundsHtml}</div>
+    `;
+  }
+
+  // --------------------------------
+  // 4) Gestion du bouton "Abandon"
+  // --------------------------------
+  const abandonTournamentButton = document.getElementById("abandon-tournament");
+  if (abandonTournamentButton) {
+    abandonTournamentButton.addEventListener("click", async () => {
+      try {
+      
+        const response = await fetch("/api/tournament-service/abandon_local_tournament/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ tournament_id })
+        });
+        const result = await response.json();
+        console.log("Tournament abandoned:", result);
+        handleRoute("/pong/play/tournament");
+      } catch (error) {
+        console.error("Error abandoning tournament:", error);
+      }
+    });
+  }
+
+  // --------------------------------
+  // 5) Gestion du bouton "Join Game"
+  // --------------------------------
+  const joinButtons = el.querySelectorAll('.join-match');
+  joinButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const matchDiv = button.closest('.match');
+      const matchId = matchDiv.getAttribute('data-match-id');
+      const player1 = matchDiv.getAttribute('data-player1');
+      const player2 = matchDiv.getAttribute('data-player2');
+      const matchKey = button.getAttribute('data-match-key'); 
+
+    
+      if (mode === 'online') {
+        console.log("Join Online Match:", { matchId, player1, player2 });
+        const config = {
+          gameMode: 'private',
+          action: 'create',
+          matchkey: matchKey,
+          type: 'fullScreen',
+        };
+        console.log(config);
+        playGame(config);
+      
+      } else {
+        const config = {
+          gameMode: 'local-tournament',
+          player1: player1,
+          player2: player2,
+          type: 'splitScreen',
+          matchId: matchId,
+          tournament_id: tournament_id,
+        };
+        console.log("Join Local Match with config:", config);
+        playGame(config);
+      }
+    });
+  });
+} 
 
 async function getBracketData() {
   try {

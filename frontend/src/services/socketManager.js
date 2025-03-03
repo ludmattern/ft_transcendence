@@ -11,6 +11,7 @@ import { tournamentCreation } from '/src/components/pong/play/tournamentCreation
 import { updateOnlinePlayersUI } from '/src/components/pong/play/tournamentCreation.js';
 import { fetchTournamentParticipants, getTournamentIdFromSerialKey } from '/src/components/pong/play/tournamentCreation.js'
 import { emit } from '/src/services/eventEmitter.js';
+import { renderBracket } from '/src/components/pong/play/currentTournament.js';
 
 export async function initializeWebSocket(userId) {
 	if (ws) {
@@ -81,7 +82,11 @@ export async function initializeWebSocket(userId) {
 			}
 		} else if (data.type === 'tournament_message') {
 			console.log('Message de tournoi reçu :', data);
-			if (data.action === 'create_tournament_lobby') {
+			if (data.action === 'back_create_online_tournament') 
+			{
+				renderBracket();
+			}
+			else if (data.action === 'create_tournament_lobby') {
 				console.log('Lobby créé :', data.tournamentLobbyId);
 				handleRoute('/pong/play/tournament-creation');
 				componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
