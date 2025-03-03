@@ -155,6 +155,7 @@ import { ws } from '/src/services/socketManager.js';
 import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.js';
 
 let onlinePlayers = [];
+let isOrganizer = false; // Variable globale pour stocker le statut d'organisateur
 
 /**
  * Vérifie l'existence d'un lobby pour l'utilisateur.
@@ -167,23 +168,32 @@ async function checkOrCreateLobby(tournamentSize) {
 		const userId = await getUserIdFromCookieAPI();
 		console.log("User ID récupéré :", userId);
 
-		const url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`;
+		let url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(userId)}/`;
 		console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
 
-		const response = await fetch(url);
+		let response = await fetch(url);
 		if (!response.ok) {
 			throw new Error(`Erreur HTTP lors de la vérification du lobby (code ${response.status})`);
 		}
-		const data = await response.json();
+		let data = await response.json();
 		const tournamentSerialKey = data.serial_key;
 		console.log("Clé de tournoi récupérée :", tournamentSerialKey);
 
 		if (tournamentSerialKey) {
 			console.log("Un lobby existe déjà. Rechargement des données du lobby...");
-
-			await reloadLobbyData(tournamentSerialKey);
+			url = `/api/tournament-service/isUserTournamentOrganizer/${encodeURIComponent(userId)}/${encodeURIComponent(tournamentSerialKey)}/`;
+			console.log("Appel de l'API pour vérifier si l'utilisateur est l'organisateur du tournoi :", url);
+			response = await fetch(url);
+			if (!response.ok) {
+				throw new Error(`Erreur HTTP lors de la vérification de l'organisateur du tournoi (code ${response.status})`);
+			}
+			data = await response.json();
+			isOrganizer = data.is_organizer;
+			console.log("Statut d'organisateur récupéré :", isOrganizer);
+			await reloadLobbyData(tournamentSerialKey, isOrganizer);
 		} else {
 			console.log("Aucun lobby existant. Création d'un nouveau lobby...");
+			isOrganizer = true; // Si aucun lobby existe, on est l'organisateur par défaut
 			await createNewLobby(userId, tournamentSize);
 		}
 	} catch (error) {
@@ -215,7 +225,7 @@ async function createNewLobby(userId, tournamentSize) {
  * Recharge les données d'un lobby existant.
  * Par exemple, on peut récupérer la liste des participants et mettre à jour l'interface.
  */
-async function reloadLobbyData(tournamentSerialKey) {
+async function reloadLobbyData(tournamentSerialKey, isOrganizer) {
 	try {
 		console.log("Rechargement des données pour le lobby avec clé :", tournamentSerialKey);
 		const tournamentDetails = await getTournamentIdFromSerialKey(tournamentSerialKey);
@@ -224,14 +234,13 @@ async function reloadLobbyData(tournamentSerialKey) {
 		console.log("Tournament ID extrait :", tournamentId);
 
 		// Appel de la fonction pour récupérer les participants en utilisant l'id du tournoi
-		console.log('1 -> tournoi id :', tournamentId)
+		console.log('1 -> tournoi id :', tournamentId);
 		await fetchTournamentParticipants(tournamentId);
 		console.log("Données du lobby rechargées avec succès.");
 	} catch (error) {
 		console.error("Erreur lors du rechargement des données du lobby :", error);
 	}
 }
-
 
 /**
  * Composant de création de tournoi en ligne.
@@ -269,20 +278,20 @@ export const onlineTournamentCreation = createComponent({
           </div>
         </div>
         
-        <!-- Boutons de contrôle -->
-        <button id="create-tournament" class="btn btn-pong" disabled>Create Tournament</button>
-        <button id="cancel-tournament" class="btn btn-pong-danger mt-3">Cancel</button>
+        <!-- Conteneur pour les boutons de contrôle (affichés différemment selon le statut) -->
+        <div id="control-buttons-container" style="display: flex; flex-direction: column;"></div>
       </section>
     `;
 	},
 	attachEvents: async (el) => {
 		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
+		const userId = await getUserIdFromCookieAPI();
 		const username = sessionStorage.getItem('username') || 'You';
 
-		// Vérifier ou créer le lobby à l'arrivée sur la page
+		// Vérifier ou créer le lobby ; cette fonction met à jour la variable globale isOrganizer
 		await checkOrCreateLobby(tournamentSize);
 
-		// attendre un peu que le lobby soit créé
+		// Attendre un peu que le lobby soit mis en place
 		await new Promise((resolve) => setTimeout(resolve, 2000));
 
 		// Récupération des éléments de l'interface
@@ -290,15 +299,9 @@ export const onlineTournamentCreation = createComponent({
 		const copyRoomCodeButton = el.querySelector('#copy-room-code');
 		const inviteInput = el.querySelector('#invite-input');
 		const sendInviteButton = el.querySelector('#send-invite');
-		const createTournamentButton = el.querySelector('#create-tournament');
-		const cancelTournamentButton = el.querySelector('#cancel-tournament');
+		const controlButtonsContainer = el.querySelector('#control-buttons-container');
 
-		// Bouton d'annulation
-		cancelTournamentButton.addEventListener('click', () => {
-			handleRoute('/pong/play/tournament');
-		});
-
-		// Copier le room code dans le presse-papier
+		// Bouton pour copier le room code
 		copyRoomCodeButton.addEventListener('click', () => {
 			const roomCode = roomCodeElement.textContent;
 			navigator.clipboard.writeText(roomCode)
@@ -348,31 +351,54 @@ export const onlineTournamentCreation = createComponent({
 			}
 		});
 
-		createTournamentButton.addEventListener('click', () => {
-			const roomCode = roomCodeElement.textContent;
-			console.log("Tournoi en ligne créé avec le room code :", roomCode);
-			console.log("Liste des joueurs :", onlinePlayers);
-			sessionStorage.setItem('tournamentCreationNeeded', true);
-			handleRoute('/pong/play/current-tournament');
-		});
+		// Affichage des boutons de contrôle en fonction du statut d'organisateur
+		if (isOrganizer) {
+			controlButtonsContainer.innerHTML = `
+				<button id="create-tournament" class="btn btn-pong" disabled>Create Tournament</button>
+				<button id="cancel-tournament" class="btn btn-pong-danger mt-3">Cancel</button>
+			`;
+			const createTournamentButton = controlButtonsContainer.querySelector('#create-tournament');
+			const cancelTournamentButton = controlButtonsContainer.querySelector('#cancel-tournament');
 
+			createTournamentButton.addEventListener('click', () => {
+				const roomCode = roomCodeElement.textContent;
+				console.log("Tournoi en ligne créé avec le room code :", roomCode);
+				console.log("Liste des joueurs :", onlinePlayers);
+				sessionStorage.setItem('tournamentCreationNeeded', true);
+				handleRoute('/pong/play/current-tournament');
+			});
+
+			cancelTournamentButton.addEventListener('click', () => {
+				handleRoute('/pong/play/tournament');
+			});
+		} else {
+			// Pour les non-organisateurs, afficher uniquement un bouton "Leave Lobby"
+			controlButtonsContainer.innerHTML = `
+				<button id="leave-lobby" class="btn btn-pong-danger mt-3">Leave Lobby</button>
+			`;
+			const leaveLobbyButton = controlButtonsContainer.querySelector('#leave-lobby');
+			leaveLobbyButton.addEventListener('click', () => {
+				handleRoute('/pong/play/tournament');
+			});
+		}
+
+		// Abonnement aux mises à jour de la liste des joueurs
 		subscribe('updatePlayerList', (data) => {
-			console.log('2 -> tournoi id :', data, data.tournament_id)
+			console.log('2 -> tournoi id :', data, data.tournament_id);
 			fetchTournamentParticipants(data.tournament_id);
 		});
-
 	},
 });
 
 /**
  * Met à jour l'interface affichant la liste des joueurs en ligne.
  */
-export function updateOnlinePlayersUI(players, tournamentSize, currentUserId) {
+export function updateOnlinePlayersUI(players, tournamentSize, currentUserId, currentUserIsOrganizer) {
 	const onlinePlayersList = document.querySelector('#online-players-list');
 	const onlinePlayersCountSpan = document.querySelector('#online-players-count');
 	const createTournamentButton = document.querySelector('#create-tournament');
 
-	if (!onlinePlayersList || !onlinePlayersCountSpan || !createTournamentButton) {
+	if (!onlinePlayersList || !onlinePlayersCountSpan) {
 		console.warn('updateOnlinePlayersUI: Certains éléments DOM sont manquants.');
 		return;
 	}
@@ -387,11 +413,9 @@ export function updateOnlinePlayersUI(players, tournamentSize, currentUserId) {
 		return aPending - bPending;
 	});
 
-	sortedPlayers.forEach((player, index) => {
+	sortedPlayers.forEach((player) => {
 		const li = document.createElement('li');
 		li.className = 'list-group-item d-flex justify-content-between align-items-center';
-
-		// Si l'API ne renvoie pas le username, on affiche le user_id
 		const displayName = player.username || `User ${player.id}`;
 		li.textContent = displayName;
 
@@ -400,64 +424,62 @@ export function updateOnlinePlayersUI(players, tournamentSize, currentUserId) {
 			badge.className = 'badge bg-secondary ms-2';
 			badge.textContent = 'You';
 			li.appendChild(badge);
-		} else if (player.status === 'pending') {
-			const badge = document.createElement('span');
-			badge.className = 'badge bg-warning ms-2';
-			badge.textContent = 'Pending';
-			li.appendChild(badge);
+		} else if (currentUserIsOrganizer) {
+			// Seulement l'organisateur peut voir les boutons Kick/Cancel
+			if (player.status === 'pending') {
+				const badge = document.createElement('span');
+				badge.className = 'badge bg-warning ms-2';
+				badge.textContent = 'Pending';
+				li.appendChild(badge);
 
-
-			const cancelButton = document.createElement('button');
-			cancelButton.className = 'btn btn-pong-danger btn-sm ms-2';
-			cancelButton.textContent = 'Cancel';
-			cancelButton.addEventListener('click', async () => {
-
-				const url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(currentUserId)}/`;
-				console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
-				const response = await fetch(url);
-				const data = await response.json();
-				const tournamentSerialKey = data.serial_key;
-				const tournamentId = await getTournamentIdFromSerialKey(tournamentSerialKey);
-
-				const cancelledUserId = player.id;
-				const payload = {
-					type: 'tournament_message',
-					action: 'reject_tournament',
-					userId: cancelledUserId,
-					tournamentId: tournamentId.tournament_id,
-				};
-				ws.send(JSON.stringify(payload));
-			});
-			li.appendChild(cancelButton);
-		} else {
-			const kickButton = document.createElement('button');
-			kickButton.className = 'btn btn-pong-danger btn-sm ms-2';
-			kickButton.textContent = 'Kick';
-			kickButton.addEventListener('click', async () => {
-
-				const url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(currentUserId)}/`;
-				console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
-				const response = await fetch(url);
-				const data = await response.json();
-				const tournamentSerialKey = data.serial_key;
-				const tournamentId = await getTournamentIdFromSerialKey(tournamentSerialKey);
-
-				const kickedUserId = player.id;
-				const payload = {
-					type: 'tournament_message',
-					action: 'kick_tournament',
-					author: currentUserId,
-					recipient: kickedUserId,
-					tournamentId: tournamentId.tournament_id,
-				};
-				ws.send(JSON.stringify(payload));
-			});
-			li.appendChild(kickButton);
+				const cancelButton = document.createElement('button');
+				cancelButton.className = 'btn btn-pong-danger btn-sm ms-2';
+				cancelButton.textContent = 'Cancel';
+				cancelButton.addEventListener('click', async () => {
+					const url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(currentUserId)}/`;
+					console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
+					const response = await fetch(url);
+					const data = await response.json();
+					const tournamentSerialKey = data.serial_key;
+					const tournamentId = await getTournamentIdFromSerialKey(tournamentSerialKey);
+					const payload = {
+						type: 'tournament_message',
+						action: 'reject_tournament',
+						userId: player.id,
+						tournamentId: tournamentId.tournament_id,
+					};
+					ws.send(JSON.stringify(payload));
+				});
+				li.appendChild(cancelButton);
+			} else {
+				const kickButton = document.createElement('button');
+				kickButton.className = 'btn btn-pong-danger btn-sm ms-2';
+				kickButton.textContent = 'Kick';
+				kickButton.addEventListener('click', async () => {
+					const url = `/api/tournament-service/getTournamentSerialKey/${encodeURIComponent(currentUserId)}/`;
+					console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
+					const response = await fetch(url);
+					const data = await response.json();
+					const tournamentSerialKey = data.serial_key;
+					const tournamentId = await getTournamentIdFromSerialKey(tournamentSerialKey);
+					const payload = {
+						type: 'tournament_message',
+						action: 'kick_tournament',
+						author: currentUserId,
+						recipient: player.id,
+						tournamentId: tournamentId.tournament_id,
+					};
+					ws.send(JSON.stringify(payload));
+				});
+				li.appendChild(kickButton);
+			}
 		}
 		onlinePlayersList.appendChild(li);
 	});
 
-	createTournamentButton.disabled = players.length !== tournamentSize;
+	if (createTournamentButton) {
+		createTournamentButton.disabled = players.length !== tournamentSize;
+	}
 }
 
 /**
@@ -490,9 +512,9 @@ export async function fetchTournamentParticipants(tournamentId) {
 		console.log("✅ Participants mis à jour :", onlinePlayers);
 
 		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
-		const currentUserId = await getUserIdFromCookieAPI()
+		const currentUserId = await getUserIdFromCookieAPI();
 
-		updateOnlinePlayersUI(onlinePlayers, tournamentSize, currentUserId);
+		updateOnlinePlayersUI(onlinePlayers, tournamentSize, currentUserId, isOrganizer);
 	} catch (error) {
 		console.error("❌ Échec de la récupération des participants :", error);
 	}
@@ -521,6 +543,5 @@ export async function getTournamentIdFromSerialKey(serialKey) {
 		throw error;
 	}
 }
-
 
 export { onlinePlayers, checkOrCreateLobby, reloadLobbyData };

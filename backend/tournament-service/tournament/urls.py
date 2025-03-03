@@ -6,7 +6,8 @@ from service.views import (
     abandon_local_tournament,
     getTournamentSerialKey,
     getTournamentParticipants,
-    getTournamentIdFromSerialKey
+    getTournamentIdFromSerialKey,
+	isUserTournamentOrganizer
 )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     path('create_local_tournament/', create_local_tournament_view, name='create_local_tournament'),
     path('getTournamentParticipants/<int:tournament_id>/', getTournamentParticipants, name='getTournamentParticipants'),
     path('getTournamentIdFromSerialKey/<str:serial_key>/', getTournamentIdFromSerialKey, name='getTournamentIdFromSerialKey'),
+	path('isUserTournamentOrganizer/<str:user_id>/<str:tournament_serial_key>/', isUserTournamentOrganizer, name='isUserTournamentOrganizer'),
 ]
