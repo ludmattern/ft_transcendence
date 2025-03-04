@@ -198,7 +198,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				return ManualTournament.objects.filter(organizer=initiator, status="upcoming").first()
 
 			initiator_tournament = await get_initiator_tournament(initiator)
-
+			logger.info(f"Initiator tournament: {initiator_tournament}")
 			if not initiator_tournament:
 				logger.warning(f"No active tournament found for initiator {initiator.username}")
 				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "No active tournament upcoming found."})
@@ -208,13 +208,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			def get_participants(tournament):
 				return list(tournament.participants.select_related('user').all())
 
+			logger.info(f"Getting participants for tournament {initiator_tournament}")
 			participants = await get_participants(initiator_tournament)
 
 			for participant in participants:
+				logger.info(f"Participant: {participant}")
+				logger.info(f"Participant user id: {participant.user.id}, recipient: {recipient_id}, author: {author_id}")
 				if participant.user.id != recipient_id and participant.user.id != author_id:
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{author_username} invited {recipient_username} to the tournament."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": initiator_tournament.id, "player": recipient_username})
 
+			logger.info(f"Sending invite to recipient {recipient_id}")
+			await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": initiator_tournament.id, "player": recipient_username})
+
+			logger.info(f"Sending invite to recipient {recipient_id}")
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "tournament_invite"})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You have been invited to a tournament by {author_username}"})
 		

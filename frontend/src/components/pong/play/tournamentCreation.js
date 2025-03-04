@@ -1,5 +1,4 @@
 import { createComponent } from '/src/utils/component.js';
-import { handleRoute } from '/src/services/router.js';
 import { handleTournamentRedirection } from '/src/services/router.js';
 import { localTournamentCreation } from './localTournamentCreation.js';
 import { onlineTournamentCreation } from './onlineTournamentCreation.js';

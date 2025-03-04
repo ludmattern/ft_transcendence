@@ -178,43 +178,50 @@ def getStatusOfCurrentTournament(request, user_id):
 	return JsonResponse(data)
 
 def getCurrentTournamentInformation(request, user_id):
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
+	if request.method != "GET":
+		return JsonResponse({"error": "GET method required"}, status=405)
 
-    try:
-        user = ManualUser.objects.get(id=user_id)
-    except ManualUser.DoesNotExist:
-        return JsonResponse({"error": "User not found"}, status=404)
+	try:
+		user = ManualUser.objects.get(id=user_id)
+	except ManualUser.DoesNotExist:
+		return JsonResponse({"error": "User not found"}, status=404)
 
-    if user.current_tournament_id == 0:
-        return JsonResponse({
-            "tournament": None,
-            "message": "User is not participating in any tournament."
-        })
+	if user.current_tournament_id == 0:
+		return JsonResponse({
+			"tournament": None,
+			"message": "User is not participating in any tournament.",
+			"user_id": user.id,
+		})
 
-    try:
-        tournament = ManualTournament.objects.get(id=user.current_tournament_id)
-    except ManualTournament.DoesNotExist:
-        return JsonResponse({
-            "tournament": None,
-            "message": "Tournament not found."
-        })
+	try:
+		tournament = ManualTournament.objects.get(id=user.current_tournament_id)
+	except ManualTournament.DoesNotExist:
+		return JsonResponse({
+				"tournament": None,
+				"message": "Tournament not found.",
+				"user_id": user.id,
+		})
 
-    participants_qs = ManualTournamentParticipants.objects.filter(tournament=tournament).select_related("user")
-    participants_list = [
-        {"id": participant.user.id, "username": participant.user.username} 
-        for participant in participants_qs
-    ]
+	participants_qs = ManualTournamentParticipants.objects.filter(tournament=tournament).exclude(status="rejected").select_related("user")
+	participants_list = [
+		{"id": participant.user.id,
+		"username": participant.user.username,
+		"status": participant.status} 
+		for participant in participants_qs
+	]
 
-    data = {
-        "tournament_id": tournament.id,
-        "serial_key": tournament.serial_key,
+	data = {
+		"user_id": user.id,
+		"tournament_id": tournament.id,
+		"serial_key": tournament.serial_key,
 		"size": tournament.size,
-        "status": tournament.status,
-        "participants": participants_list,
-        "mode": tournament.mode
-    }
-    return JsonResponse(data)
+		"status": tournament.status,
+		"organizer_id": tournament.organizer.id,
+		"participants": participants_list,
+		"participants_count": len(participants_list),
+		"mode": tournament.mode
+	}
+	return JsonResponse(data)
 
 #TODO ici logiquement les modifs seront au niveau du pong et ou matchamking 
 # ou il faudrat ajouter le tournament id dans la requete sinon pas de modif majeur

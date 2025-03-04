@@ -2,14 +2,14 @@ export let ws = null;
 let isWsConnected = false;
 import { gameManager } from '/src/pongGame/gameManager.js';
 import { handleIncomingMessage } from '/src/components/hud/sideWindow/left/tabContent.js';
-import { handleRoute } from '/src/services/router.js';
+import { handleRoute, getCurrentTournamentInformation } from '/src/services/router.js';
 import { startMatchmakingGame, startPrivateGame } from '/src/services/multiplayerPong.js';
 import { createNotificationMessage, updateAndCompareInfoData } from '/src/components/hud/sideWindow/left/notifications.js';
 import { handleLocalTournamentGameEnding } from '/src/services/tournamentHandler.js';
 import componentManagers from '/src/index.js';
 import { tournamentCreation } from '/src/components/pong/play/tournamentCreation.js';
-import { fetchTournamentParticipants, getTournamentIdFromSerialKey } from '/src/components/pong/play/onlineTournamentCreation.js'
 import { emit } from '/src/services/eventEmitter.js';
+import { updateOnlinePlayersUI } from '/src/components/pong/play/onlineTournamentCreation.js';
 
 export async function initializeWebSocket(userId) {
 	if (ws) {
@@ -65,10 +65,11 @@ export async function initializeWebSocket(userId) {
 			startMatchmakingGame(data.game_id, data.side, data);
 		} else if (data.type === 'info_message') {
 			if (data.action && data.action === 'updatePlayerList') {
-				emit('updatePlayerList', data);
+				const tournamentData = await getCurrentTournamentInformation();
+				emit('updatePlayerList', tournamentData);
 				await updateAndCompareInfoData();
 			} else if (data.action && data.action === 'leavingLobby') {
-				emit('leavingLobby', data);
+				emit('leavingLobby');
 			} else if (data.info && data.info === 'You have been kicked.') {
 				emit('leavingLobby');
 			} else if (data.action) {
@@ -82,8 +83,8 @@ export async function initializeWebSocket(userId) {
 			} else if (data.action === 'create_tournament_lobby') {
 				handleRoute('/pong/play/tournament-creation');
 				componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
-				const tournamentDetails = await getTournamentIdFromSerialKey(data.tournamentLobbyId);
-				fetchTournamentParticipants(tournamentDetails.tournament_id);
+				const data = await getCurrentTournamentInformation();
+				updateOnlinePlayersUI(data);
 			}
 		}
 	};
