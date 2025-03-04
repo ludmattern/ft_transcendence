@@ -52,7 +52,7 @@ export async function navigateToPong(subroute = null) {
 	if (subroute && subroute.includes('play/tournament')) {
 		const userId = await getUserIdFromCookieAPI();
 		console.log("User ID récupéré :", userId);
-
+		
 		const url = `/api/tournament-service/getStatusOfCurrentTournament/${encodeURIComponent(userId)}/`;
 		const response = await fetch(url);
 		if (!response.ok) {
