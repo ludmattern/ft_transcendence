@@ -13,7 +13,8 @@ class BasePongGame:
 
         self.player1_id = player1_id if player1_id else "unknown1"
         self.player2_id = player2_id if player2_id else "unknown2"
-
+        logger.info(f"here : player1_id={self.player1_id}")
+        logger.info(f"here : player2_id={self.player2_id}")
         self.player_mapping = {
             self.player1_id: 1,
             self.player2_id: 2
@@ -58,7 +59,7 @@ class BasePongGame:
         step = 0.05
         player = self.state["players"][player_id]
 
-        logger.info(f"here player1_id={player_id}")
+        # logger.info(f"here player1_id={player_id}")
 
         if direction == "up":
             player["y"] = min(self.tunnel_height / 2 - self.paddle_height / 2, player["y"] + step)

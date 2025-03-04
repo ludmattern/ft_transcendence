@@ -18,7 +18,7 @@ export async function loadTabContent(tabName, container) {
 		let infoTabData = sessionStorage.getItem('infoTabData');
 		console.log('Info tab loading');
 
-		if (infoTabData) {
+		if (infoTabData && infoTabData !== '[]') {
 			try {
 				const parsedData = JSON.parse(infoTabData);
 				if (!parsedData) {

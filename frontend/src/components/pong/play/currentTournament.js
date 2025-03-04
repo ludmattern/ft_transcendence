@@ -3,7 +3,7 @@ import { handleRoute } from '/src/services/router.js';
 import { playGame } from '/src/components/pong/play/utils.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { ws } from '/src/services/socketManager.js';
-
+import { subscribe } from '/src/services/eventEmitter.js';
 export const currentTournament = createComponent({
   tag: 'currentTournament',
   render: () => {
@@ -117,7 +117,7 @@ export const currentTournament = createComponent({
     else { 
       renderBracket();
     }
-
+    subscribe('updateBracket', renderBracket);
   },
 });
 
@@ -345,7 +345,6 @@ function hasUserCompletedInPreviousRound(bracketData, roundIndex, username) {
     (match) => (match.player1 === username || match.player2 === username) && match.status === 'completed'
   );
 }
-
 
 function createCompletedMatchHtml(match, displayHtml) {
   return `
