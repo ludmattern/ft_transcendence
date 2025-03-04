@@ -346,7 +346,9 @@ function hasUserCompletedInPreviousRound(bracketData, roundIndex, username) {
   );
 }
 
+
 function createCompletedMatchHtml(match, displayHtml) {
+  console.log("score", match.score);
   return `
     <div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
          data-player1="${match.player1}" data-player2="${match.player2}">
@@ -357,10 +359,13 @@ function createCompletedMatchHtml(match, displayHtml) {
 }
 
 function getCompletedMatchHtml(match) {
-  if (!match.winner) {
+  if (!match.score) {
     return `${match.player1} vs ${match.player2}`;
   }
-  if (match.winner === match.player1) {
+
+  const [score1, score2] = match.score.split("-").map(Number);
+
+  if (score1 > score2) {
     return `<span class="text-success fw-bold">${match.player1}</span> vs <span class="text-danger">${match.player2}</span>`;
   } else {
     return `<span class="text-danger">${match.player1}</span> vs <span class="text-success fw-bold">${match.player2}</span>`;

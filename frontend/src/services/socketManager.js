@@ -10,8 +10,6 @@ import componentManagers from '/src/index.js';
 import { tournamentCreation } from '/src/components/pong/play/tournamentCreation.js';
 import { fetchTournamentParticipants, getTournamentIdFromSerialKey } from '/src/components/pong/play/tournamentCreation.js'
 import { emit } from '/src/services/eventEmitter.js';
-import { renderBracket } from '/src/components/pong/play/currentTournament.js';
-import { render } from '../pongGame/gameNavigation';
 
 export async function initializeWebSocket(userId) {
 	if (ws) {
