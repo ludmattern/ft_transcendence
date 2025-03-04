@@ -209,7 +209,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			return
 		
 		recipient_user.current_tournament_id = 0
-		recipient_user.save()
+		await sync_to_async(recipient_user.save)()
 		await self.kick_participant(tournament, recipient_user)
 		await self.send_info(author_id, "back_kick_tournament", author=author_id, recipient=recipient_id, tournament_id=tournament.id)
 		logger.info("%s is kicked from tournament.", event["recipient_username"])
