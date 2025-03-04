@@ -98,31 +98,30 @@ export const currentTournament = createComponent({
     `;
   },
   attachEvents: async (el) => {
-	if (await handleTournamentRedirection('/pong/play/current-tournament')) {
-		console.log("Tournament redirection has occurred.");
-		return;
+	  currentTournament.el = el;
+	  const tournamentCreationNeeded = sessionStorage.getItem('tournamentCreationNeeded') === 'true';
+	  if (tournamentCreationNeeded) {
+		  try {
+			  sessionStorage.removeItem('tournamentCreationNeeded');
+			  const userId = await getUserIdFromCookieAPI();
+			  const payload = {
+				  type: "tournament_message",
+				  action: "create_online_tournament",
+				  organizer_id: userId,
+				};
+				ws.send(JSON.stringify(payload));
+				console.log("Online tournament created:", payload);
+			}
+			catch (error) {
+				console.error("Error creating online tournament:", error);
+			}
+		} else { 
+			if (await handleTournamentRedirection('/pong/play/current-tournament')) {
+				console.log("Tournament redirection has occurred.");
+				return;
+			}
+			renderBracket();
 	}
-    currentTournament.el = el;
-    const tournamentCreationNeeded = sessionStorage.getItem('tournamentCreationNeeded') === 'true';
-    if (tournamentCreationNeeded) {
-      try {
-        sessionStorage.removeItem('tournamentCreationNeeded');
-        const userId = await getUserIdFromCookieAPI();
-        const payload = {
-          type: "tournament_message",
-          action: "create_online_tournament",
-          organizer_id: userId,
-        };
-        ws.send(JSON.stringify(payload));
-        console.log("Online tournament created:", payload);
-      }
-      catch (error) {
-        console.error("Error creating online tournament:", error);
-      }
-    }
-    else { 
-      renderBracket();
-    }
     subscribe('updateBracket', renderBracket);
   },
 });
