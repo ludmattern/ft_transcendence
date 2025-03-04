@@ -74,6 +74,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         action = event.get("action", "")
         player1_id = event.get("player1", "Player 1")
         player2_id = event.get("player2", "Player 2")
+        logger.info(f"🚀 Envoi à pong_service: game_id={game_id}, player1={player1_id}, player2={player2_id}")
         await self.channel_layer.group_add(f"game_{game_id}", self.channel_name)
         #logger.info(f"Client ajouté au groupe game_{game_id}")
 
@@ -180,7 +181,8 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     else:
                         winner_id = game.player2_id
                         loser_id = game.player1_id
-                    
+                    logger.info(f"winner_id: {winner_id}")
+                    logger.info(f"loser_id: {loser_id}")
                     winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
                     loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
                     
@@ -206,20 +208,21 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                                 else:
                                     next_match.player2 = str(winner_id)
                                 await sync_to_async(next_match.save)()
-                    
+
                     #TODO REMPLACER ID PAR USERNAME ET REGLER LE PB DU DEUXIEME MATCH QUI SE MET PAS A JOUR
                     
                     if str(game_id).startswith("matchmaking_"):
                         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
                         loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
 
+                        logger.info(f"winner elo: {winner.id}")
                         if winner.elo == 0:
                             winner.elo = 1000
                             await sync_to_async(winner.save)()
                         if loser.elo == 0:
                             loser.elo = 1000
                             await sync_to_async(loser.save)() 
-
+                        
                         new_winner_elo, new_loser_elo = calculate_elo(winner.elo, loser.elo)
 
                         def elo():

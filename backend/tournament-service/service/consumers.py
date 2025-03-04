@@ -61,7 +61,6 @@ def create_matches_for_tournament(tournament_id, usernames):
 	tournament.status = "ongoing"
 	tournament.rounds = n // 2
 	tournament.save()
-	match_key = generate_online_match_key()
 
 	for i in range(0, n, 2):
 		match_order = (i // 2) + 1
@@ -75,7 +74,7 @@ def create_matches_for_tournament(tournament_id, usernames):
 			player1=player1,
 			player2=player2,
 			status="pending",
-			match_key=match_key
+			match_key=generate_online_match_key()
 		)
 	
 	rounds_count = int(math.log2(n))
@@ -90,7 +89,7 @@ def create_matches_for_tournament(tournament_id, usernames):
 				player1="TBD",
 				player2="TBD",
 				status="pending",
-				match_key=match_key
+				match_key=generate_online_match_key()
 			)
 		previous_matches = num_matches
 

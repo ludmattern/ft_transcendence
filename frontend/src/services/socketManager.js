@@ -12,6 +12,7 @@ import { updateOnlinePlayersUI } from '/src/components/pong/play/tournamentCreat
 import { fetchTournamentParticipants, getTournamentIdFromSerialKey } from '/src/components/pong/play/tournamentCreation.js'
 import { emit } from '/src/services/eventEmitter.js';
 import { renderBracket } from '/src/components/pong/play/currentTournament.js';
+import { render } from '../pongGame/gameNavigation';
 
 export async function initializeWebSocket(userId) {
 	if (ws) {
@@ -52,6 +53,10 @@ export async function initializeWebSocket(userId) {
 			if (data.type === 'game_over' && data.game_id.startsWith('tournLocal_')) {
 				handleLocalTournamentGameEnding(data);
 			}
+			else if (data.type === 'game_over' && data.game_id.startsWith('tournOnline_'))
+			{
+				emit('updateBracket');
+			}
 			gameManager.handleGameUpdate(data);
 		} else if (data.type === 'error_message') {
 			if (data.error) {
@@ -84,7 +89,7 @@ export async function initializeWebSocket(userId) {
 			console.log('Message de tournoi reçu :', data);
 			if (data.action === 'back_create_online_tournament') 
 			{
-				renderBracket();
+				emit('updateBracket');
 			}
 			else if (data.action === 'create_tournament_lobby') {
 				console.log('Lobby créé :', data.tournamentLobbyId);
