@@ -8,7 +8,6 @@ import { createNotificationMessage, updateAndCompareInfoData } from '/src/compon
 import { handleLocalTournamentGameEnding } from '/src/services/tournamentHandler.js';
 import componentManagers from '/src/index.js';
 import { tournamentCreation } from '/src/components/pong/play/tournamentCreation.js';
-import { updateOnlinePlayersUI } from '/src/components/pong/play/tournamentCreation.js';
 import { fetchTournamentParticipants, getTournamentIdFromSerialKey } from '/src/components/pong/play/tournamentCreation.js'
 import { emit } from '/src/services/eventEmitter.js';
 import { renderBracket } from '/src/components/pong/play/currentTournament.js';
@@ -69,7 +68,6 @@ export async function initializeWebSocket(userId) {
 			startMatchmakingGame(data.game_id, data.side, data);
 		} else if (data.type === 'info_message') {
 			if (data.action && data.action === 'updatePlayerList') {
-				console.log('ABABABABABABAB ->>> Liste de joueurs mise à jour:', data);
 				emit('updatePlayerList', data);
 				await updateAndCompareInfoData();
 			} else if (data.info && data.info === 'You have been kicked.') {
