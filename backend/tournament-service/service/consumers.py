@@ -25,7 +25,10 @@ cipher = Fernet(settings.FERNET_KEY)
 
 @database_sync_to_async
 def get_single_user_tournament(user_id):
-	return ManualTournament.objects.filter(participants__user_id=user_id).first()
+    return ManualTournament.objects.filter(
+        participants__user_id=user_id, 
+        status="upcoming"
+    ).order_by("-created_at").first()
 
 @database_sync_to_async
 def get_accepted_participants(tournament_id):

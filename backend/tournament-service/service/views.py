@@ -463,7 +463,6 @@ def abandon_online_tournament(request):
 				match.status = "completed"
 				match.save()
 
-				logger.info(f"User {user.username} forfeited, {opponent} wins by default.")
 				next_round = match.round_number + 1
 				next_match_order = (match.match_order + 1) // 2
 				next_match = TournamentMatch.objects.filter(

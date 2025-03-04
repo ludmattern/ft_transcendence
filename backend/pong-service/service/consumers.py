@@ -4,7 +4,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from .game_manager import game_manager
 from asgiref.sync import sync_to_async
 from django.db import transaction
-from service.models import ManualUser, TournamentMatch
+from service.models import ManualUser, TournamentMatch, ManualTournamentParticipants
 from django.http import JsonResponse
 from service.utils import calculate_elo
 
@@ -189,6 +189,15 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
                         loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
                         match = await sync_to_async(TournamentMatch.objects.filter(match_key=game_id).first)()
+                        
+                        participant = await sync_to_async(ManualTournamentParticipants.objects.filter(
+                        tournament_id=match.tournament_id, user=loser, status="accepted"
+                        ).first)()
+
+                        if participant:
+                            participant.status = "eliminated"
+                            await sync_to_async(participant.save)()
+                        
                         if match:
                             match.winner = str(winner_id)
                             match.score = f"{game.user_scores[game.player1_id]}-{game.user_scores[game.player2_id]}"
@@ -212,8 +221,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                                 next_match.player2 = winner_username  
                             await sync_to_async(next_match.save)()
 
-
-                    #TODO REMPLACER ID PAR USERNAME ET REGLER LE PB DU DEUXIEME MATCH QUI SE MET PAS A JOUR
                     
                     if str(game_id).startswith("matchmaking_"):
                         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
