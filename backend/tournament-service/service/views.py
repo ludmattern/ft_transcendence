@@ -326,7 +326,6 @@ def create_local_tournament_view(request):
 		organizer_id = body.get("organizer_id")
 		players = body.get("players", [])
 
-		# Vérifications de base
 		if not organizer_id:
 			logger.error("Organizer ID is missing in the request data.")
 			return JsonResponse({"error": "Organizer ID is required"}, status=400)
@@ -334,7 +333,6 @@ def create_local_tournament_view(request):
 			logger.error(f"Invalid tournament size: {len(players)} players provided. Expected 4, 8 ou 16.")
 			return JsonResponse({"error": "Invalid tournament size"}, status=400)
 
-		# Récupération de l'organisateur et vérification de son état
 		try:
 			organizer = ManualUser.objects.get(id=organizer_id)
 			if organizer.tournament_status != "out":
@@ -480,6 +478,8 @@ def abandon_online_tournament(request):
 					else:
 						next_match.player2 = opponent
 					next_match.save()
+     	
+		user.tournament_status = "out"
 		user.current_tournament_id = 0
 		user.save()
 
