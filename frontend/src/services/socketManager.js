@@ -70,7 +70,7 @@ export async function initializeWebSocket(userId) {
 				await updateAndCompareInfoData();
 			} else if (data.action && data.action === 'leavingLobby') {
 				emit('leavingLobby');
-			} else if (data.info && data.info === 'You have been kicked.') {
+			} else if (data.info && data.action === "You have been kicked.") {
 				emit('leavingLobby');
 			} else if (data.action) {
 				await updateAndCompareInfoData();

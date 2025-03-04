@@ -218,10 +218,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{author_username} invited {recipient_username} to the tournament."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": initiator_tournament.id, "player": recipient_username})
 
-			logger.info(f"Sending invite to recipient {recipient_id}")
 			await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": initiator_tournament.id, "player": recipient_username})
 
-			logger.info(f"Sending invite to recipient {recipient_id}")
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "tournament_invite"})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You have been invited to a tournament by {author_username}"})
 		
@@ -243,11 +241,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				return list(tournament.participants.select_related('user').all())
 
 			participants = await get_participants(tournament)
-			logger.info(f"Participants: {participants}")
+			logger.info(f"Participants LIST: {participants}")
 
 			for participant in participants:
-				logger.info(f"Participant: {participant}")
-				if participant.user.id != recipient_id:
+				logger.info(f"Participant LOOP: {participant}")
+				if str(participant.user.id) != recipient_id:
+					logger.info(f"Participant ID_VALUE: {participant.user.id}")
+					logger.info(f"Recipient ID_VALUE: {recipient_id}")
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{recipient_username} has joined the tournament."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 
@@ -317,7 +317,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{recipient_username} has been kicked."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 
-			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
+			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "leavingLobby", "tournament_id": tournament_id, "player": recipient_username})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": "You have been kicked."})
 
 
