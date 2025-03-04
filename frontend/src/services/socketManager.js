@@ -40,7 +40,7 @@ export async function initializeWebSocket(userId) {
 		};
 		ws.send(JSON.stringify(initPayload));
 	};
-	
+
 	ws.onmessage = async (event) => {
 		const data = JSON.parse(event.data);
 		console.log('Message complet reçu :', data);
