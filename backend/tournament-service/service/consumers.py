@@ -143,7 +143,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		serial_key = str(user_id)
 		tournament = await self.create_tournament(serial_key, user, tournament_size)
 		user.current_tournament_id = tournament.id
-		user.save()
+		await sync_to_async(user.save)()
 		await self.add_participant(tournament, user)
 		await self.update_user_status(user, "lobby")
 		await self.channel_layer.group_send(f"user_{user_id}", {
@@ -168,7 +168,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			invited_user.current_tournament_id = 0
 		if (new_status == "accepted"):
 			invited_user.current_tournament_id = invited_tournament
-		invited_user.save()
+		await sync_to_async(invited_user.save)()
 		logger.info(f"Participant {invited_user.username} status updated to {new_status}")
 		logger.info(f"Parameters: {invited_id}, {callback_action}, {invited_tournament}, {invited_id}")
 		await self.send_info(invited_id, callback_action, tournament_id=invited_tournament, recipient=invited_id)
