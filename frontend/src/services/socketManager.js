@@ -8,7 +8,7 @@ import { createNotificationMessage, updateAndCompareInfoData } from '/src/compon
 import { handleLocalTournamentGameEnding } from '/src/services/tournamentHandler.js';
 import componentManagers from '/src/index.js';
 import { tournamentCreation } from '/src/components/pong/play/tournamentCreation.js';
-import { fetchTournamentParticipants, getTournamentIdFromSerialKey } from '/src/components/pong/play/tournamentCreation.js'
+import { fetchTournamentParticipants, getTournamentIdFromSerialKey } from '/src/components/pong/play/onlineTournamentCreation.js'
 import { emit } from '/src/services/eventEmitter.js';
 
 export async function initializeWebSocket(userId) {

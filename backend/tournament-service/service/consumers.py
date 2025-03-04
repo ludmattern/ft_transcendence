@@ -68,7 +68,7 @@ def create_matches_for_tournament(tournament_id, usernames):
 
 	tournament = ManualTournament.objects.get(id=tournament_id)
 	tournament.status = "ongoing"
-	tournament.rounds = n // 2
+	tournament.size = n // 2
 	tournament.save()
 
 	for i in range(0, n, 2):
@@ -86,9 +86,9 @@ def create_matches_for_tournament(tournament_id, usernames):
 			match_key=generate_online_match_key()
 		)
 	
-	rounds_count = int(math.log2(n))
+	size_count = int(math.log2(n))
 	previous_matches = n // 2
-	for round_number in range(2, rounds_count + 1):
+	for round_number in range(2, size_count + 1):
 		num_matches = previous_matches // 2
 		for match_order in range(1, num_matches + 1):
 			TournamentMatch.objects.create(
@@ -281,7 +281,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		return ManualTournament.objects.create(
 			serial_key=serial_key,
 			organizer=user,
-			rounds=tournament_size,
+			size=tournament_size,
 			mode="online",
 		)
 

@@ -63,9 +63,9 @@ def get_current_tournament(request):
 
 	matches = TournamentMatch.objects.filter(tournament=tournament).order_by("round_number", "match_order")
 	
-	rounds = {}
+	size = {}
 	for match in matches:
-		rounds.setdefault(match.round_number, []).append({
+		size.setdefault(match.round_number, []).append({
 			"id": match.id,
 			"player1": match.player1 or "TBD",
 			"player2": match.player2 or "TBD",
@@ -75,11 +75,11 @@ def get_current_tournament(request):
 			"match_key": match.match_key,
 		})
 	
-	rounds_list = []
-	for round_num in sorted(rounds.keys()):
-		rounds_list.append({
+	size_list = []
+	for round_num in sorted(size.keys()):
+		size_list.append({
 			"round": f"Round {round_num}",
-			"matches": rounds[round_num]
+			"matches": size[round_num]
 		})
 
 	data = {
@@ -87,7 +87,7 @@ def get_current_tournament(request):
 		"serial_key": tournament.serial_key,
 		"status": tournament.status,
 		"participants": list(tournament.participants.all().values_list("user__username", flat=True)),
-		"rounds": rounds_list,
+		"size": size_list,
 		"mode": tournament.mode
 	}
 	
@@ -209,6 +209,7 @@ def getCurrentTournamentInformation(request, user_id):
     data = {
         "tournament_id": tournament.id,
         "serial_key": tournament.serial_key,
+		"size": tournament.size,
         "status": tournament.status,
         "participants": participants_list,
         "mode": tournament.mode
@@ -349,7 +350,7 @@ def create_local_tournament_view(request):
 			serial_key=serial_key,
 			name="Local Tournament",
 			organizer_id=organizer_id,
-			rounds=len(players) // 2,
+			size=len(players) // 2,
 			status="ongoing",
 			mode="local"
 		)
@@ -380,7 +381,7 @@ def create_local_tournament_view(request):
 			logger.info(f"✅ Participant ajouté: TournamentID={tournament.id}, User={user.username}, status=accepted")
 
 		n = len(players)
-		rounds_count = int(math.log2(n))
+		size_count = int(math.log2(n))
 		for i in range(0, n, 2):
 			match_order = (i // 2) + 1
 			player1 = players[i]
@@ -396,7 +397,7 @@ def create_local_tournament_view(request):
 			logger.info(f"🏅 Round 1, Match {match_order} créé: {player1} vs {player2}")
 
 		previous_matches = n // 2
-		for round_number in range(2, rounds_count + 1):
+		for round_number in range(2, size_count + 1):
 			num_matches = previous_matches // 2
 			for match_order in range(1, num_matches + 1):
 				TournamentMatch.objects.create(
