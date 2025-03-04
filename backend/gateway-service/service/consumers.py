@@ -134,6 +134,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 			elif data.get("type") in ["matchmaking", "private_event"]:
 				action = data.get("action")
 				user_id = data.get("user_id", self.user_id)
+				logger.info(f"🚀 matchmaking_event/private_event => service : {action} {user_id}")
 				room_code = data.get("room_code") 
 	
 				await self.channel_layer.group_send("matchmaking_service", {
