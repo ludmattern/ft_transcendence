@@ -20,7 +20,7 @@ export async function initializeWebSocket(userId) {
 			closeWebSocket();
 		}
 	}
-	
+
 	let wsUrl = `wss://${window.location.host}/ws/gateway/`;
 
 	console.log('Connexion WebSocket à :', wsUrl);
@@ -40,7 +40,7 @@ export async function initializeWebSocket(userId) {
 		};
 		ws.send(JSON.stringify(initPayload));
 	};
-	
+
 	ws.onmessage = async (event) => {
 		const data = JSON.parse(event.data);
 		console.log('Message complet reçu :', data);
@@ -59,7 +59,7 @@ export async function initializeWebSocket(userId) {
 				handleIncomingMessage(data);
 			}
 		} else if (data.type === 'chat_message' || data.type === 'private_message') {
-			console.log("this is data ;" , data)
+			console.log("this is data ;", data)
 			handleIncomingMessage(data);
 		} else if (data.type === 'private_match_found') {
 			console.log('Private match found:', data);
@@ -70,6 +70,8 @@ export async function initializeWebSocket(userId) {
 			if (data.action && data.action === 'updatePlayerList') {
 				emit('updatePlayerList', data);
 				await updateAndCompareInfoData();
+			} else if (data.action && data.action === 'leavingLobby') {
+				emit('leavingLobby', data);
 			} else if (data.info && data.info === 'You have been kicked.') {
 				console.log('Vous avez été expulsé du lobby.');
 				emit('leavingLobby');
@@ -80,8 +82,7 @@ export async function initializeWebSocket(userId) {
 			}
 		} else if (data.type === 'tournament_message') {
 			console.log('Message de tournoi reçu :', data);
-			if (data.action === 'back_create_online_tournament') 
-			{
+			if (data.action === 'back_create_online_tournament') {
 				renderBracket();
 			}
 			else if (data.action === 'create_tournament_lobby') {
