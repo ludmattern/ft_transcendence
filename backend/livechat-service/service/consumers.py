@@ -250,12 +250,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				if participant.user.id != recipient_id:
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{recipient_username} has joined the tournament."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
-					logger.info(f"Participant {participant.user.id} notified of new player {recipient_username}")
 
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "tournament_invite"})
-			logger.info(f"Recipient {recipient_id} notified of tournament invite")
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You have joined the tournament."})
-			logger.info(f"Recipient {recipient_id} notified of joining tournament")
 
 		elif str(action) == "back_reject_tournament":
 			logger.info(f"Rejecting tournament invite")
