@@ -19,7 +19,7 @@ export async function initializeWebSocket(userId) {
 			closeWebSocket();
 		}
 	}
-	
+
 	let wsUrl = `wss://${window.location.host}/ws/gateway/`;
 	console.log('Connexion WebSocket à :', wsUrl);
 	ws = new WebSocket(wsUrl);
@@ -67,6 +67,8 @@ export async function initializeWebSocket(userId) {
 			if (data.action && data.action === 'updatePlayerList') {
 				emit('updatePlayerList', data);
 				await updateAndCompareInfoData();
+			} else if (data.action && data.action === 'leavingLobby') {
+				emit('leavingLobby', data);
 			} else if (data.info && data.info === 'You have been kicked.') {
 				emit('leavingLobby');
 			} else if (data.action) {

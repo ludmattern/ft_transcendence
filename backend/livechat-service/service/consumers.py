@@ -293,6 +293,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": "Your invite has been cancelled."})
+
+
+		elif str(action) == "back_cancel_tournament":
+			logger.info(f"Cancelling tournament", event)
+			author_id = event.get("author")
+			participant_list = event.get("participant_list")
+			tournament_id = event.get("tournament_id")
+
+			for participant in participant_list:
+				participant_username = await get_username(participant)
+				await self.channel_layer.group_send(f"user_{participant}", {"type": "info_message", "action": "leavingLobby", "tournament_id": tournament_id, "player": participant_username})
+				await self.channel_layer.group_send(f"user_{participant}", {"type": "info_message", "info": "Tournament has been cancelled."})
    
 
 		elif str(action) == "back_kick_tournament":

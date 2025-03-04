@@ -183,14 +183,15 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                         loser_id = game.player1_id
                     logger.info(f"winner_id: {winner_id}")
                     logger.info(f"loser_id: {loser_id}")
-                    winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
-                    loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
+                    
                     
                     if game_id.startswith("tournOnline_"):
+                        winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
+                        loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
                         match = await sync_to_async(TournamentMatch.objects.filter(match_key=game_id).first)()
                         if match:
                             match.winner = str(winner_id)
-                            match.score = f"{game.user_scores[winner_id]}-{game.user_scores[loser_id]}"
+                            match.score = f"{game.user_scores[game.player1_id]}-{game.user_scores[game.player2_id]}"
                             match.status = "completed"
                             await sync_to_async(match.save)()
 
@@ -202,12 +203,15 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                                 match_order=next_match_order
                             ).first)()
 
-                            if next_match:
-                                if match.match_order % 2 == 1:
-                                    next_match.player1 = str(winner_id)
-                                else:
-                                    next_match.player2 = str(winner_id)
-                                await sync_to_async(next_match.save)()
+                        if next_match:
+                            winner_username = await sync_to_async(lambda: ManualUser.objects.get(id=int(winner_id)).username)()
+
+                            if match.match_order % 2 == 1:
+                                next_match.player1 = winner_username  
+                            else:
+                                next_match.player2 = winner_username  
+                            await sync_to_async(next_match.save)()
+
 
                     #TODO REMPLACER ID PAR USERNAME ET REGLER LE PB DU DEUXIEME MATCH QUI SE MET PAS A JOUR
                     

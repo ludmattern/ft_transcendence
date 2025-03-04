@@ -36,6 +36,15 @@ def get_accepted_participants(tournament_id):
 
 	return [p.user.username for p in participants_qs]
 
+@database_sync_to_async
+def get_accepted_participants_id(tournament_id):
+	participants_qs = ManualTournamentParticipants.objects.filter(
+		tournament_id=tournament_id, 
+		status='accepted'
+	).select_related('user')
+
+	return [p.user.id for p in participants_qs]
+
 
 @database_sync_to_async
 def set_tournament_mode(tournament_id, mode):
@@ -205,7 +214,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		tournament = await self.get_initiator_tournament(initiator)
 		if not tournament:
 			logger.warning(f"No active tournament found for initiator {initiator.username}")
-			return
+			return 
 		
 		recipient_user.current_tournament_id = 0
 		await sync_to_async(recipient_user.save)()
@@ -213,21 +222,28 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		await self.send_info(author_id, "back_kick_tournament", author=author_id, recipient=recipient_id, tournament_id=tournament.id)
 		logger.info("%s is kicked from tournament.", event["recipient_username"])
 		
-	# async def handle_cancel_tournament(self, event):
-	#     logger.info("Cancel tournament event received: %s", event)
-	#     author_id = event.get("userId")
-	#     initiator = await self.get_user(author_id)
+	async def handle_cancel_tournament(self, event):
+		logger.info("Cancel tournament event received: %s", event)
+		author_id = event.get("userId")
+		initiator = await self.get_user(author_id)
 		
-	#     tournament = await self.get_initiator_tournament(initiator)
-	#     if not tournament:
-	#         logger.warning(f"No active tournament found for initiator {initiator.username}")
-	#         return
+		tournament = await self.get_initiator_tournament(initiator)
+		if not tournament:
+			logger.warning(f"No active tournament found for initiator {initiator.username}")
+			return
 		
-	# 	participant_list = await get_accepted_participants(tournament.id)
+		tournament_id = tournament.id
 
-	#     await self.kick_participant(tournament, recipient_user)
-	#     await self.send_info(author_id, "back_cancel_tournament", author=author_id, tournament_id=tournament.id, participant_list=participant_list)
-	#     logger.info("%s is kicked from tournament.", event["recipient_username"])
+		participant_list = await get_accepted_participants_id(tournament_id)
+		for participant_id in participant_list:
+			participant = await self.get_user(participant_id)
+			participant.current_tournament_id = 0
+			await sync_to_async(participant.save)()
+
+		logger.info("Participant list: %s", participant_list)
+		await self.cancel_tournament(tournament)
+		await self.send_info(author_id, "back_cancel_tournament", author=author_id, tournament_id=tournament.id, participant_list=participant_list)
+		logger.info("Tournament has been cancelled")
 		
 
 	async def send_info(self, user_id, action, **kwargs):
@@ -250,6 +266,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			rounds=tournament_size,
 			mode="online",
 		)
+
+	#Delete all participants and tournament from the database
+	@database_sync_to_async
+	def cancel_tournament(self, tournament):
+		try:
+			tournament.delete()
+			return f"Tournament '{tournament.name}' and all its participants have been deleted."
+		except ManualTournament.DoesNotExist:
+			return "Tournament not found."
+
 
 	@database_sync_to_async
 	def add_participant(self, tournament, user):

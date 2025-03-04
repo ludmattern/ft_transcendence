@@ -373,7 +373,7 @@ export const onlineTournamentCreation = createComponent({
 			const cancelTournamentButton = controlButtonsContainer.querySelector('#cancel-tournament');
 			cancelTournamentButton.addEventListener('click', async () => {
 				const userId = await getUserIdFromCookieAPI();
-				payload = {
+				const payload = {
 					type: 'tournament_message',
 					action: 'cancel_tournament',
 					userId: userId,

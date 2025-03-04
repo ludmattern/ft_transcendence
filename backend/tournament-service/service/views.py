@@ -245,7 +245,10 @@ def update_match_result(request):
 			return JsonResponse({"error": "Match not found"}, status=404)
 		
 		match.winner = winner_id
-		match.score = f"{final_scores.get(winner_id)}-{final_scores.get(loser_id)}"
+		score1 = final_scores.get(payload_player1, 0)
+		score2 = final_scores.get(payload_player2, 0)
+
+		match.score = f"{score1}-{score2}"		
 		match.status = "completed"
 		match.save()
 
