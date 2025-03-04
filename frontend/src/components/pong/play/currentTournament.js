@@ -260,28 +260,42 @@ export async function renderBracket() {
     `;
 	}
 
-	// --------------------------------
-	// 4) Gestion du bouton "Abandon"
-	// --------------------------------
-	const abandonTournamentButton = document.getElementById('abandon-tournament');
-	if (abandonTournamentButton) {
-		abandonTournamentButton.addEventListener('click', async () => {
-			try {
-				const response = await fetch('/api/tournament-service/abandon_local_tournament/', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify({ tournament_id }),
-				});
-				const result = await response.json();
-				console.log('Tournament abandoned:', result);
-				handleRoute('/pong/play/tournament');
-			} catch (error) {
-				console.error('Error abandoning tournament:', error);
-			}
-		});
-	}
+// --------------------------------
+// 4) Gestion du bouton "Abandon"
+// --------------------------------
+const abandonTournamentButton = document.getElementById("abandon-tournament");
+if (abandonTournamentButton) {
+  abandonTournamentButton.addEventListener("click", async () => {
+    try {
+      const userId = await getUserIdFromCookieAPI();
+
+      if (!tournament_id || !userId) {
+        console.error("Aucun ID de tournoi ou utilisateur trouvé");
+        return;
+      }
+
+      let endpoint = mode === "online"
+        ? "/api/tournament-service/abandon_online_tournament/"
+        : "/api/tournament-service/abandon_local_tournament/";
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ tournament_id: tournament_id, user_id: userId }),
+      });
+
+      const result = await response.json();
+      console.log("Tournament abandoned:", result);
+      handleRoute("/pong/play");
+    } catch (error) {
+      console.error("Error abandoning tournament:", error);
+    }
+  });
+}
+
+
 
 	// --------------------------------
 	// 5) Gestion du bouton "Join Game"
@@ -353,9 +367,13 @@ function createCompletedMatchHtml(match, displayHtml) {
 }
 
 function getCompletedMatchHtml(match) {
-	if (!match.score) {
-		return `${match.player1} vs ${match.player2}`;
-	}
+  if (!match.score) {
+    return `${match.player1} vs ${match.player2}`;
+  }
+
+  if (match.score === "Forfait" && (match.player1 === "TBD" || match.player2 === "TBD")) {
+    return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
+  }
 
 	const [score1, score2] = match.score.split('-').map(Number);
 
@@ -365,3 +383,4 @@ function getCompletedMatchHtml(match) {
 		return `<span class="text-danger">${match.player1}</span> vs <span class="text-success fw-bold">${match.player2}</span>`;
 	}
 }
+

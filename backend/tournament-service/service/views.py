@@ -7,6 +7,8 @@ import logging
 import json
 from cryptography.fernet import Fernet
 from django.conf import settings
+from django.db.models import Q
+from django.db import models
 
 logger = logging.getLogger(__name__)
 cipher = Fernet(settings.FERNET_KEY)
@@ -332,7 +334,6 @@ def create_local_tournament_view(request):
 		organizer_id = body.get("organizer_id")
 		players = body.get("players", [])
 
-		# Vérifications de base
 		if not organizer_id:
 			logger.error("Organizer ID is missing in the request data.")
 			return JsonResponse({"error": "Organizer ID is required"}, status=400)
@@ -340,7 +341,6 @@ def create_local_tournament_view(request):
 			logger.error(f"Invalid tournament size: {len(players)} players provided. Expected 4, 8 ou 16.")
 			return JsonResponse({"error": "Invalid tournament size"}, status=400)
 
-		# Récupération de l'organisateur et vérification de son état
 		try:
 			organizer = ManualUser.objects.get(id=organizer_id)
 			if organizer.tournament_status != "out":
@@ -429,3 +429,76 @@ def create_local_tournament_view(request):
 	except Exception as e:
 		logger.exception("Error creating local tournament:")
 		return JsonResponse({"error": str(e)}, status=500)
+
+
+@csrf_exempt
+def abandon_online_tournament(request):
+	if request.method != "POST":
+		return JsonResponse({"error": "POST method required"}, status=405)
+    
+	try:
+		body = json.loads(request.body.decode("utf-8"))
+		tournament_id = body.get("tournament_id")
+		if not tournament_id:
+			return JsonResponse({"error": "tournament_id is required"}, status=400)
+
+		user_id = body.get("user_id")
+		if not user_id:
+			return JsonResponse({"error": "user_id is required"}, status=400)
+
+		user = ManualUser.objects.get(id=user_id)
+
+		participant = ManualTournamentParticipants.objects.filter(
+            tournament_id=tournament_id, user=user, status="accepted"
+        ).first()
+
+		if not participant:
+			return JsonResponse({"error": "User not found in tournament"}, status=404)
+
+		participant.status = "eliminated"
+		participant.save()
+
+		match = TournamentMatch.objects.filter(
+			tournament_id=tournament_id,
+			status="pending"
+        ).filter(models.Q(player1=user.username) | models.Q(player2=user.username)).first()
+
+		if match:
+			opponent = match.player1 if match.player2 == user.username else match.player2
+			if opponent:
+				match.winner = opponent
+				match.score = "Forfait"
+				match.status = "completed"
+				match.save()
+
+				next_round = match.round_number + 1
+				next_match_order = (match.match_order + 1) // 2
+				next_match = TournamentMatch.objects.filter(
+					tournament_id=tournament_id,
+					round_number=next_round,
+					match_order=next_match_order
+				).first()
+
+				if next_match:
+					if match.match_order % 2 == 1:
+						next_match.player1 = opponent
+					else:
+						next_match.player2 = opponent
+					next_match.save()
+     	
+		user.tournament_status = "out"
+		user.current_tournament_id = 0
+		user.save()
+
+		return JsonResponse({"success": True, "message": "User removed from tournament and match forfeited"})
+
+	except ManualUser.DoesNotExist:
+		return JsonResponse({"error": "User not found"}, status=404)
+	except ManualTournament.DoesNotExist:
+		return JsonResponse({"error": "Tournament not found"}, status=404)
+	except Exception as e:
+		logger.exception("Error handling online tournament abandonment:")
+		return JsonResponse({"error": str(e)}, status=500)
+
+
+
