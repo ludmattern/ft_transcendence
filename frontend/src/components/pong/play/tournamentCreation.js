@@ -4,6 +4,7 @@ import { handleRoute } from '/src/services/router.js';
 import { createTournament } from '/src/services/tournamentHandler.js';
 import { subscribe } from '/src/services/eventEmitter.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
+import { handleTournamentRedirection } from '/src/services/router.js';
 
 // tournamentCreation.js
 export const tournamentCreation = createComponent({
@@ -15,6 +16,9 @@ export const tournamentCreation = createComponent({
 			: onlineTournamentCreation.render();
 	},
 	attachEvents: async (el) => {
+		if (await handleTournamentRedirection('/pong/play/tournament-creation')) {
+			return;
+		}
 		const tournamentMode = sessionStorage.getItem('tournamentMode') || 'local';
 		if (tournamentMode === 'local') {
 			localTournamentCreation.attachEvents(el);
