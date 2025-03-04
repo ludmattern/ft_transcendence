@@ -198,7 +198,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				return ManualTournament.objects.filter(organizer=initiator, status="upcoming").first()
 
 			initiator_tournament = await get_initiator_tournament(initiator)
-			logger.info(f"Initiator tournament: {initiator_tournament}")
 			if not initiator_tournament:
 				logger.warning(f"No active tournament found for initiator {initiator.username}")
 				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "No active tournament upcoming found."})
@@ -208,12 +207,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			def get_participants(tournament):
 				return list(tournament.participants.select_related('user').all())
 
-			logger.info(f"Getting participants for tournament {initiator_tournament}")
 			participants = await get_participants(initiator_tournament)
 
 			for participant in participants:
-				logger.info(f"Participant: {participant}")
-				logger.info(f"Participant user id: {participant.user.id}, recipient: {recipient_id}, author: {author_id}")
 				if participant.user.id != recipient_id and participant.user.id != author_id:
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{author_username} invited {recipient_username} to the tournament."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": initiator_tournament.id, "player": recipient_username})
@@ -225,29 +221,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		
 		elif str(action) == "back_join_tournament":
 			recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
-			logger.info(f"Recipient user: {recipient_user}")
 			recipient_username = await get_username(recipient_id)
-			logger.info(f"Recipient username: {recipient_username}")
 			tournament_id = event.get("tournament_id")
-			logger.info(f"Tournament ID: {tournament_id}")
 			event["recipient_username"] = recipient_username
-			logger.info(f"Event: {event}")
-
 			tournament = await database_sync_to_async(ManualTournament.objects.get)(id=tournament_id)
-			logger.info(f"Tournament: {tournament}")
-
 			@database_sync_to_async
 			def get_participants(tournament):
 				return list(tournament.participants.select_related('user').all())
 
 			participants = await get_participants(tournament)
-			logger.info(f"Participants LIST: {participants}")
 
 			for participant in participants:
-				logger.info(f"Participant LOOP: {participant}")
 				if str(participant.user.id) != recipient_id:
-					logger.info(f"Participant ID_VALUE: {participant.user.id}")
-					logger.info(f"Recipient ID_VALUE: {recipient_id}")
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{recipient_username} has joined the tournament."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 
