@@ -140,6 +140,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.create_online_tournament(event)
 		elif str(action) == "cancel_tournament":
 			await self.handle_cancel_tournament(event)
+		elif str(action) == "leave_tournament":
+			await self.handle_leave_tournament(event)
 		else:
 			logger.warning("Unknown action: %s", action)
 			await self.send(json.dumps({"error": "Unknown action"}))
@@ -246,6 +248,22 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		logger.info("Tournament has been cancelled")
 		
 
+	async def handle_leave_tournament(self, event):
+		author_id = event.get("userId")
+		initiator = await self.get_user(author_id)
+
+		tournament = await self.get_tournament_from_id(initiator.current_tournament_id)
+		if not tournament:
+			logger.warning(f"No active tournament found for initiator {initiator.username}")
+			return 
+		
+		initiator.current_tournament_id = 0
+		await sync_to_async(initiator.save)()
+		await self.kick_participant(tournament, initiator)
+		await self.send_info(author_id, "back_leave_tournament", author=author_id, tournament_id=tournament.id)
+		logger.info("%s has left the tournament.", initiator.username)
+		
+
 	async def send_info(self, user_id, action, **kwargs):
 		logger.info(f"paremeters recieved: {user_id}, {action}, {kwargs}")
 		payload = {"type": "info_message", "action": action, **kwargs}
@@ -313,8 +331,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 	def get_initiator_tournament(self, initiator):
 		return ManualTournament.objects.filter(organizer=initiator, status="upcoming").first()
 
-
-
+	#Get tournament from participant
+	@database_sync_to_async
+	def get_tournament_from_id(self, tournament_id):
+		return ManualTournament.objects.get(id=tournament_id)
+	
 	@database_sync_to_async
 	def update_invited_participant_status(self, user, tournament, new_status):
 		participant = ManualTournamentParticipants.objects.filter(

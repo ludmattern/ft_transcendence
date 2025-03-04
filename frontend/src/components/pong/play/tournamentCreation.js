@@ -382,8 +382,14 @@ export const onlineTournamentCreation = createComponent({
 				<button id="leave-lobby" class="btn btn-pong-danger mt-3">Leave Lobby</button>
 			`;
 			const leaveLobbyButton = controlButtonsContainer.querySelector('#leave-lobby');
-			leaveLobbyButton.addEventListener('click', () => {
-				handleRoute('/pong/play/tournament');
+			leaveLobbyButton.addEventListener('click', async () => {
+				const userId = await getUserIdFromCookieAPI();
+				const payload = {
+					type: 'tournament_message',
+					action: 'leave_tournament',
+					userId: userId,
+				};
+				ws.send(JSON.stringify(payload));
 			});
 		}
 
