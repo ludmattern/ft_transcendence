@@ -4,6 +4,8 @@ import { playGame } from '/src/components/pong/play/utils.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { ws } from '/src/services/socketManager.js';
 import { subscribe } from '/src/services/eventEmitter.js';
+import { handleTournamentRedirection } from '/src/services/router.js';
+
 export const currentTournament = createComponent({
   tag: 'currentTournament',
   render: () => {
@@ -96,27 +98,30 @@ export const currentTournament = createComponent({
     `;
   },
   attachEvents: async (el) => {
-    currentTournament.el = el;
-    const tournamentCreationNeeded = sessionStorage.getItem('tournamentCreationNeeded') === 'true';
-    if (tournamentCreationNeeded) {
-      try {
-        sessionStorage.removeItem('tournamentCreationNeeded');
-        const userId = await getUserIdFromCookieAPI();
-        const payload = {
-          type: "tournament_message",
-          action: "create_online_tournament",
-          organizer_id: userId,
-        };
-        ws.send(JSON.stringify(payload));
-        console.log("Online tournament created:", payload);
-      }
-      catch (error) {
-        console.error("Error creating online tournament:", error);
-      }
-    }
-    else { 
-      renderBracket();
-    }
+	  currentTournament.el = el;
+	  const tournamentCreationNeeded = sessionStorage.getItem('tournamentCreationNeeded') === 'true';
+	  if (tournamentCreationNeeded) {
+		  try {
+			  sessionStorage.removeItem('tournamentCreationNeeded');
+			  const userId = await getUserIdFromCookieAPI();
+			  const payload = {
+				  type: "tournament_message",
+				  action: "create_online_tournament",
+				  organizer_id: userId,
+				};
+				ws.send(JSON.stringify(payload));
+				console.log("Online tournament created:", payload);
+			}
+			catch (error) {
+				console.error("Error creating online tournament:", error);
+			}
+		} else { 
+			if (await handleTournamentRedirection('/pong/play/current-tournament')) {
+				console.log("Tournament redirection has occurred.");
+				return;
+			}
+			renderBracket();
+	}
     subscribe('updateBracket', renderBracket);
   },
 });

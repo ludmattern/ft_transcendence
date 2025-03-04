@@ -4,6 +4,7 @@ import { handleRoute } from '/src/services/router.js';
 import { createTournament } from '/src/services/tournamentHandler.js';
 import { subscribe } from '/src/services/eventEmitter.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
+import { handleTournamentRedirection } from '/src/services/router.js';
 
 // tournamentCreation.js
 export const tournamentCreation = createComponent({
@@ -15,6 +16,9 @@ export const tournamentCreation = createComponent({
 			: onlineTournamentCreation.render();
 	},
 	attachEvents: async (el) => {
+		if (await handleTournamentRedirection('/pong/play/tournament-creation')) {
+			return;
+		}
 		const tournamentMode = sessionStorage.getItem('tournamentMode') || 'local';
 		if (tournamentMode === 'local') {
 			localTournamentCreation.attachEvents(el);
@@ -369,7 +373,7 @@ export const onlineTournamentCreation = createComponent({
 			const cancelTournamentButton = controlButtonsContainer.querySelector('#cancel-tournament');
 			cancelTournamentButton.addEventListener('click', async () => {
 				const userId = await getUserIdFromCookieAPI();
-				payload = {
+				const payload = {
 					type: 'tournament_message',
 					action: 'cancel_tournament',
 					userId: userId,
@@ -382,8 +386,14 @@ export const onlineTournamentCreation = createComponent({
 				<button id="leave-lobby" class="btn btn-pong-danger mt-3">Leave Lobby</button>
 			`;
 			const leaveLobbyButton = controlButtonsContainer.querySelector('#leave-lobby');
-			leaveLobbyButton.addEventListener('click', () => {
-				handleRoute('/pong/play/tournament');
+			leaveLobbyButton.addEventListener('click', async () => {
+				const userId = await getUserIdFromCookieAPI();
+				const payload = {
+					type: 'tournament_message',
+					action: 'leave_tournament',
+					userId: userId,
+				};
+				ws.send(JSON.stringify(payload));
 			});
 		}
 

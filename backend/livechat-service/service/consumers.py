@@ -293,7 +293,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": "Your invite has been cancelled."})
-   
 
 		elif str(action) == "back_kick_tournament":
 			recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
@@ -316,6 +315,44 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": "You have been kicked."})
+
+
+		elif str(action) == "back_cancel_tournament":
+			logger.info(f"Cancelling tournament", event)
+			author_id = event.get("author")
+			participant_list = event.get("participant_list")
+			tournament_id = event.get("tournament_id")
+
+			for participant in participant_list:
+				participant_username = await get_username(participant)
+				await self.channel_layer.group_send(f"user_{participant}", {"type": "info_message", "action": "leavingLobby", "tournament_id": tournament_id, "player": participant_username})
+				await self.channel_layer.group_send(f"user_{participant}", {"type": "info_message", "info": "Tournament has been cancelled."})
+   
+
+
+		elif str(action) == "back_leave_tournament":
+			author_id = event.get("author")	
+			initiator_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+			initiator_username = initiator_user.username
+			initiator_id = initiator_user.id
+			tournament_id = event.get("tournament_id")
+			event["initiator_username"] = initiator_username
+
+			tournament = await database_sync_to_async(ManualTournament.objects.get)(id=tournament_id)
+
+			@database_sync_to_async
+			def get_participants(tournament):
+				return list(tournament.participants.select_related('user').all())
+
+			participants = await get_participants(tournament)
+
+			for participant in participants:
+				if participant.user.id != initiator_id:
+					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{initiator_username} has left the lobby."})
+					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": initiator_username})
+
+			await self.channel_layer.group_send(f"user_{initiator_id}", {"type": "info_message", "info": "You have left the lobby."})
+			await self.channel_layer.group_send(f"user_{initiator_id}", {"type": "info_message", "action": "leavingLobby", "tournament_id": tournament.id,"player": initiator_username})
 
 		else:
 			logger.warning(f"Unknown action: {action}")

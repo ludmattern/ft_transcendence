@@ -2,6 +2,7 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { ws } from '/src/services/socketManager.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { handleTournamentRedirection } from '/src/services/router.js';
 
 export const tournamentContent = createComponent({
 	tag: 'tournamentContent',
@@ -61,7 +62,10 @@ export const tournamentContent = createComponent({
   `,
 
 	attachEvents: async (el) => {
-		// Gestion des onglets
+		if (await handleTournamentRedirection('/pong/play/tournament')) {
+			console.log("Tournament redirection has occurred.");
+			return;
+		}
 		const tabs = el.querySelectorAll('.nav-link');
 		const tabPanes = el.querySelectorAll('.tab-pane');
 
