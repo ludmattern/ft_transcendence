@@ -21,9 +21,7 @@ export async function initializeWebSocket(userId) {
 	}
 	
 	let wsUrl = `wss://${window.location.host}/ws/gateway/`;
-
 	console.log('Connexion WebSocket à :', wsUrl);
-
 	ws = new WebSocket(wsUrl);
 
 	ws.onopen = () => {
@@ -39,7 +37,7 @@ export async function initializeWebSocket(userId) {
 		};
 		ws.send(JSON.stringify(initPayload));
 	};
-	
+
 	ws.onmessage = async (event) => {
 		const data = JSON.parse(event.data);
 		console.log('Message complet reçu :', data);
@@ -49,9 +47,7 @@ export async function initializeWebSocket(userId) {
 		} else if (data.type === 'game_state' || data.type === 'game_over') {
 			if (data.type === 'game_over' && data.game_id.startsWith('tournLocal_')) {
 				handleLocalTournamentGameEnding(data);
-			}
-			else if (data.type === 'game_over' && data.game_id.startsWith('tournOnline_'))
-			{
+			} else if (data.type === 'game_over' && data.game_id.startsWith('tournOnline_')) {
 				emit('updateBracket');
 			}
 			gameManager.handleGameUpdate(data);
@@ -62,10 +58,8 @@ export async function initializeWebSocket(userId) {
 				handleIncomingMessage(data);
 			}
 		} else if (data.type === 'chat_message' || data.type === 'private_message') {
-			console.log("this is data ;" , data)
 			handleIncomingMessage(data);
 		} else if (data.type === 'private_match_found') {
-			console.log('Private match found:', data);
 			startPrivateGame(data.game_id, data.side, data, data.roomCode);
 		} else if (data.type === 'match_found') {
 			startMatchmakingGame(data.game_id, data.side, data);
@@ -74,7 +68,6 @@ export async function initializeWebSocket(userId) {
 				emit('updatePlayerList', data);
 				await updateAndCompareInfoData();
 			} else if (data.info && data.info === 'You have been kicked.') {
-				console.log('Vous avez été expulsé du lobby.');
 				emit('leavingLobby');
 			} else if (data.action) {
 				await updateAndCompareInfoData();
@@ -82,18 +75,12 @@ export async function initializeWebSocket(userId) {
 				createNotificationMessage(data.info);
 			}
 		} else if (data.type === 'tournament_message') {
-			console.log('Message de tournoi reçu :', data);
-			if (data.action === 'back_create_online_tournament') 
-			{
+			if (data.action === 'back_create_online_tournament') {
 				emit('updateBracket');
-			}
-			else if (data.action === 'create_tournament_lobby') {
-				console.log('Lobby créé :', data.tournamentLobbyId);
+			} else if (data.action === 'create_tournament_lobby') {
 				handleRoute('/pong/play/tournament-creation');
 				componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
 				const tournamentDetails = await getTournamentIdFromSerialKey(data.tournamentLobbyId);
-				console.log("Tournament details:", tournamentDetails);
-				console.log("3 -> Tournament ID:", tournamentDetails.tournament_id);
 				fetchTournamentParticipants(tournamentDetails.tournament_id);
 			}
 		}
