@@ -193,60 +193,56 @@ export function notAuthenticatedThenRedirect() {
  * Si la sous-route déterminée correspond déjà à cette valeur, la redirection est évitée.
  */
 export async function handleTournamentRedirection(caller = '') {
-	console.log("Vérification du statut du tournoi...");
+	console.log('Vérification du statut du tournoi...');
 	try {
-	  const userId = await getUserIdFromCookieAPI();
-	  console.log("User ID récupéré :", userId);
-  
-	  const url = `/api/tournament-service/getCurrentTournamentInformation/${encodeURIComponent(userId)}/`;
-	  const response = await fetch(url);
-	  if (!response.ok) {
-		console.error("Erreur lors de la récupération du statut du tournoi :", response);
-		if (caller !== '/pong/play/tournament') {
-		  handleRoute('/pong/play/tournament');
-		  return true;
+		const data = await getCurrentTournamentInformation();
+		let route;
+		if (data.tournament === null) {
+			console.log('Aucun tournoi en cours ou à venir.');
+			route = '/pong/play/tournament';
+			if (caller === '/pong/play/tournament-creation') {
+				console.log('Va créer un tournoi, aucune redirection.');
+				return false;
+			}
+		} else if (data.status === 'ongoing') {
+			route = '/pong/play/current-tournament';
+		} else if (data.status === 'upcoming') {
+			route = '/pong/play/tournament-creation';
+		} else {
+			route = '/pong/play/tournament';
 		}
-		return false;
-	  }
-  
-	  const data = await response.json();
-	  console.log("Statut du tournoi récupéré :", data);
-  
-	  let route;
-	  if (data.tournament === null) {
-		console.log("Aucun tournoi en cours ou à venir.");
-		route = '/pong/play/tournament';
-		if (caller === '/pong/play/tournament-creation') {
-		  console.log("Va créer un tournoi, aucune redirection.");
-		  return false;
+
+		if (data.tournament_id && data.mode && data.mode !== 'local') {
+			sessionStorage.setItem('tournamentMode', data.mode);
 		}
-	  } else if (data.status === "ongoing") {
-		route = '/pong/play/current-tournament';
-	  } else if (data.status === "upcoming") {
-		route = '/pong/play/tournament-creation';
-	  } else {
-		route = '/pong/play/tournament';
-	  }
-  
-	  if (data.tournament_id && data.mode && data.mode !== 'local') {
-		sessionStorage.setItem('tournamentMode', data.mode);
-	  }
-  
-	  if (caller === route) {
-		console.log("Déjà sur la page demandée, aucune redirection effectuée.");
-		return false;
-	  }
-  
-	  console.log("Redirection vers la route :", route);
-	  handleRoute(route);
-	  return true;
-	} catch (error) {
-	  console.error("Erreur lors de la redirection du tournoi :", error);
-	  if (caller !== '/pong/play/tournament') {
-		handleRoute('/pong/play/tournament');
+
+		if (caller === route) {
+			console.log('Déjà sur la page demandée, aucune redirection effectuée.');
+			return false;
+		}
+
+		console.log('Redirection vers la route :', route);
+		handleRoute(route);
 		return true;
-	  }
-	  return false;
+	} catch (error) {
+		console.error('Erreur lors de la redirection du tournoi :', error);
+		if (caller !== '/pong/play/tournament') {
+			handleRoute('/pong/play/tournament');
+			return true;
+		}
+		return false;
 	}
-  }
-  
+}
+
+export async function getCurrentTournamentInformation() {
+	const userId = await getUserIdFromCookieAPI();
+	console.log('User ID récupéré :', userId);
+	const url = `/api/tournament-service/getCurrentTournamentInformation/${encodeURIComponent(userId)}/`;
+	const response = await fetch(url);
+	if (!response.ok) {
+		throw new Error('Impossible de récupérer le statut du tournoi.');
+	}
+	const data = await response.json();
+	console.log('Statut du tournoi récupéré :', data);
+	return data;
+}

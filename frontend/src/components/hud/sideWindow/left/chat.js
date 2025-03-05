@@ -1,6 +1,6 @@
 // src/components/hud/chat.js
 
-import { ws } from '/src/services/socketManager.js';
+import { ws } from '/src/services/wsHandlers.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export async function setupChatInput() {

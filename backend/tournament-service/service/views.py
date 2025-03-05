@@ -65,9 +65,9 @@ def get_current_tournament(request):
 
 	matches = TournamentMatch.objects.filter(tournament=tournament).order_by("round_number", "match_order")
 	
-	rounds = {}
+	size = {}
 	for match in matches:
-		rounds.setdefault(match.round_number, []).append({
+		size.setdefault(match.round_number, []).append({
 			"id": match.id,
 			"player1": match.player1 or "TBD",
 			"player2": match.player2 or "TBD",
@@ -77,11 +77,11 @@ def get_current_tournament(request):
 			"match_key": match.match_key,
 		})
 	
-	rounds_list = []
-	for round_num in sorted(rounds.keys()):
-		rounds_list.append({
+	size_list = []
+	for round_num in sorted(size.keys()):
+		size_list.append({
 			"round": f"Round {round_num}",
-			"matches": rounds[round_num]
+			"matches": size[round_num]
 		})
 
 	data = {
@@ -89,7 +89,7 @@ def get_current_tournament(request):
 		"serial_key": tournament.serial_key,
 		"status": tournament.status,
 		"participants": list(tournament.participants.all().values_list("user__username", flat=True)),
-		"rounds": rounds_list,
+		"size": size_list,
 		"mode": tournament.mode
 	}
 	
@@ -180,42 +180,50 @@ def getStatusOfCurrentTournament(request, user_id):
 	return JsonResponse(data)
 
 def getCurrentTournamentInformation(request, user_id):
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
+	if request.method != "GET":
+		return JsonResponse({"error": "GET method required"}, status=405)
 
-    try:
-        user = ManualUser.objects.get(id=user_id)
-    except ManualUser.DoesNotExist:
-        return JsonResponse({"error": "User not found"}, status=404)
+	try:
+		user = ManualUser.objects.get(id=user_id)
+	except ManualUser.DoesNotExist:
+		return JsonResponse({"error": "User not found"}, status=404)
 
-    if user.current_tournament_id == 0:
-        return JsonResponse({
-            "tournament": None,
-            "message": "User is not participating in any tournament."
-        })
+	if user.current_tournament_id == 0:
+		return JsonResponse({
+			"tournament": None,
+			"message": "User is not participating in any tournament.",
+			"user_id": user.id,
+		})
 
-    try:
-        tournament = ManualTournament.objects.get(id=user.current_tournament_id)
-    except ManualTournament.DoesNotExist:
-        return JsonResponse({
-            "tournament": None,
-            "message": "Tournament not found."
-        })
+	try:
+		tournament = ManualTournament.objects.get(id=user.current_tournament_id)
+	except ManualTournament.DoesNotExist:
+		return JsonResponse({
+				"tournament": None,
+				"message": "Tournament not found.",
+				"user_id": user.id,
+		})
 
-    participants_qs = ManualTournamentParticipants.objects.filter(tournament=tournament).select_related("user")
-    participants_list = [
-        {"id": participant.user.id, "username": participant.user.username} 
-        for participant in participants_qs
-    ]
+	participants_qs = ManualTournamentParticipants.objects.filter(tournament=tournament).exclude(status="rejected").select_related("user")
+	participants_list = [
+		{"id": participant.user.id,
+		"username": participant.user.username,
+		"status": participant.status} 
+		for participant in participants_qs
+	]
 
-    data = {
-        "tournament_id": tournament.id,
-        "serial_key": tournament.serial_key,
-        "status": tournament.status,
-        "participants": participants_list,
-        "mode": tournament.mode
-    }
-    return JsonResponse(data)
+	data = {
+		"user_id": user.id,
+		"tournament_id": tournament.id,
+		"serial_key": tournament.serial_key,
+		"size": tournament.size,
+		"status": tournament.status,
+		"organizer_id": tournament.organizer.id,
+		"participants": participants_list,
+		"participants_count": len(participants_list),
+		"mode": tournament.mode
+	}
+	return JsonResponse(data)
 
 #TODO ici logiquement les modifs seront au niveau du pong et ou matchamking 
 # ou il faudrat ajouter le tournament id dans la requete sinon pas de modif majeur
@@ -349,7 +357,7 @@ def create_local_tournament_view(request):
 			serial_key=serial_key,
 			name="Local Tournament",
 			organizer_id=organizer_id,
-			rounds=len(players) // 2,
+			size=len(players) // 2,
 			status="ongoing",
 			mode="local"
 		)
@@ -380,7 +388,7 @@ def create_local_tournament_view(request):
 			logger.info(f"✅ Participant ajouté: TournamentID={tournament.id}, User={user.username}, status=accepted")
 
 		n = len(players)
-		rounds_count = int(math.log2(n))
+		size_count = int(math.log2(n))
 		for i in range(0, n, 2):
 			match_order = (i // 2) + 1
 			player1 = players[i]
@@ -396,7 +404,7 @@ def create_local_tournament_view(request):
 			logger.info(f"🏅 Round 1, Match {match_order} créé: {player1} vs {player2}")
 
 		previous_matches = n // 2
-		for round_number in range(2, rounds_count + 1):
+		for round_number in range(2, size_count + 1):
 			num_matches = previous_matches // 2
 			for match_order in range(1, num_matches + 1):
 				TournamentMatch.objects.create(

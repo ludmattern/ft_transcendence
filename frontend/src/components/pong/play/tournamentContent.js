@@ -1,7 +1,5 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
-import { ws } from '/src/services/socketManager.js';
-import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { handleTournamentRedirection } from '/src/services/router.js';
 
 export const tournamentContent = createComponent({

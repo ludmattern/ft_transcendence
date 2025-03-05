@@ -10,7 +10,7 @@
     { "playerId": null, "status": null },
     { "playerId": null, "status": null }
   ],
-  "rounds": [
+  "size": [
     {
       "round": 16,
       "matches": [

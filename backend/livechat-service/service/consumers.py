@@ -198,7 +198,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				return ManualTournament.objects.filter(organizer=initiator, status="upcoming").first()
 
 			initiator_tournament = await get_initiator_tournament(initiator)
-
 			if not initiator_tournament:
 				logger.warning(f"No active tournament found for initiator {initiator.username}")
 				await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "No active tournament upcoming found."})
@@ -215,40 +214,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{author_username} invited {recipient_username} to the tournament."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": initiator_tournament.id, "player": recipient_username})
 
+			await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": initiator_tournament.id, "player": recipient_username})
+
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "tournament_invite"})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You have been invited to a tournament by {author_username}"})
 		
 		elif str(action) == "back_join_tournament":
 			recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
-			logger.info(f"Recipient user: {recipient_user}")
 			recipient_username = await get_username(recipient_id)
-			logger.info(f"Recipient username: {recipient_username}")
 			tournament_id = event.get("tournament_id")
-			logger.info(f"Tournament ID: {tournament_id}")
 			event["recipient_username"] = recipient_username
-			logger.info(f"Event: {event}")
-
 			tournament = await database_sync_to_async(ManualTournament.objects.get)(id=tournament_id)
-			logger.info(f"Tournament: {tournament}")
-
 			@database_sync_to_async
 			def get_participants(tournament):
 				return list(tournament.participants.select_related('user').all())
 
 			participants = await get_participants(tournament)
-			logger.info(f"Participants: {participants}")
 
 			for participant in participants:
-				logger.info(f"Participant: {participant}")
-				if participant.user.id != recipient_id:
+				if str(participant.user.id) != recipient_id:
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{recipient_username} has joined the tournament."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
-					logger.info(f"Participant {participant.user.id} notified of new player {recipient_username}")
 
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "tournament_invite"})
-			logger.info(f"Recipient {recipient_id} notified of tournament invite")
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You have joined the tournament."})
-			logger.info(f"Recipient {recipient_id} notified of joining tournament")
 
 		elif str(action) == "back_reject_tournament":
 			logger.info(f"Rejecting tournament invite")
@@ -313,7 +302,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "info": f"{recipient_username} has been kicked."})
 					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 
-			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
+			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "leavingLobby", "tournament_id": tournament_id, "player": recipient_username})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": "You have been kicked."})
 
 

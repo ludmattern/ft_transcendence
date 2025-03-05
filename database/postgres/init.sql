@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS blocks (
 CREATE TABLE IF NOT EXISTS tournaments (
 	id SERIAL PRIMARY KEY,
 	serial_key VARCHAR(255) NOT NULL UNIQUE, -- Unique identifier for the tournament
-	rounds INT DEFAULT 0,
+	size INT DEFAULT 0,
 	name VARCHAR(255) DEFAULT 'TOURNAMENT_DEFAULT_NAME',
 	organizer_id INT NOT NULL,
 	status VARCHAR(50) DEFAULT 'upcoming', -- 'upcoming', 'ongoing', 'completed'

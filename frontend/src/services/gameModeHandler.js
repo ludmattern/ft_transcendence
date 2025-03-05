@@ -1,5 +1,5 @@
 import { gameManager } from '/src/pongGame/gameManager.js';
-import { ws } from '/src/services/socketManager.js';
+import { ws } from '/src/services/wsHandlers.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export async function gameModeSelector(config) {
