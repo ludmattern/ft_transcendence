@@ -85,7 +85,7 @@ def info_getter(request, user_id):
 	next_match_data = [
 		{
 			"type": "tournament_next_game",
-			"opponent": match.player1 if match.player2 == user.username else match.player2,
+			"inviter": match.player1 if match.player2 == user.username else match.player2,
 			"actions": "acknowledge",
 		}
 		for match in next_ready_matches

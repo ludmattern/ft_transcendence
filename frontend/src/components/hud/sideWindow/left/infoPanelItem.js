@@ -39,7 +39,7 @@ export const infoPanelItem = createComponent({
 				behaviorTournament(el, item);
 				break;
 			case 'tournament_next_game':
-				behaviorTournamentGame(el, item);
+				behaviorTournamentGame(el);
 				break;
 			case 'private_game_invite':
 				behaviorPrivateGame();
@@ -82,6 +82,7 @@ function behaviorFriendRequest(el, item) {
 }
 
 function titleType(item) {
+	console.log('************************** item **************************', item);
 	switch (item.type) {
 		case 'friend_request':
 			return `Friend request from: `;
@@ -90,7 +91,7 @@ function titleType(item) {
 		case 'private_game_invite':
 			return `Private game invite from: `;
 		case 'tournament_next_game':
-			return `Next game against ${item.opponent} is ready: `;
+			return `Ready up to fight against: `;
 		case 'miscellaneous':
 			return `Miscellaneous: `;
 	}
@@ -158,13 +159,10 @@ export async function handleTournamentAction(action, item) {
 	ws.send(JSON.stringify(payload));
 }
 
-function behaviorTournamentGame(el, item) {
-	console.log('Next game against', item, 'is ready.');
+function behaviorTournamentGame(el) {
 	const acceptButton = el.querySelector("#accept-action");
 	if (acceptButton) {
 	  acceptButton.addEventListener("click", () => {
-	    console.log(`Accepted ${item.inviter}'s request.`);
-		// verifier si le joueur est dans une partie sinon ne pas lancer la partie
 	    handleRoute(`/pong/play/current-tournament`);
 		createNotificationMessage("You can't be at two places at the same time", 2500, true);
 		createNotificationMessage("idiot...", 2500, true);
