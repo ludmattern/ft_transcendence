@@ -46,7 +46,6 @@ def getTournamentParticipants(request, tournament_id):
 
 	return JsonResponse(data)
 
-
 #TODO ici pas de changement avec le online 
 
 def get_current_tournament(request):
@@ -224,6 +223,7 @@ def getCurrentTournamentInformation(request, user_id):
 		"mode": tournament.mode
 	}
 	return JsonResponse(data)
+
 
 #TODO ici logiquement les modifs seront au niveau du pong et ou matchamking 
 # ou il faudrat ajouter le tournament id dans la requete sinon pas de modif majeur
@@ -502,3 +502,86 @@ def abandon_online_tournament(request):
 
 
 
+#TODO Here we can find logic on how we try to join tournamnet from TournamentContent.js. One with trying to random tournament with a specific size
+# and the other one with trying to join a tournament with a room code (serial_key)
+
+@csrf_exempt
+def try_join_random_tournament(request):
+	if request.method != "POST":
+		return JsonResponse({"message": "POST method required"}, status=405)
+	try:
+		body = json.loads(request.body.decode("utf-8"))
+		logger.info(f"Body: {body}")
+		userId = body.get("userId")
+		if not userId:
+			return JsonResponse({"message": "userId is required"}, status=400)
+		user = ManualUser.objects.get(id=userId)
+		if user.tournament_status != "out":
+			return JsonResponse({"message": "User is already in a tournament"}, status=400)
+		
+		tournamentSize = body.get("tournamentSize")
+		
+		tournament = ManualTournament.objects.filter(
+			status="upcoming",
+			size=tournamentSize
+		).order_by("created_at").first()
+		if not tournament:
+			return JsonResponse({"error": "No upcoming tournament found"}, status=404)		
+
+		participant_count = ManualTournamentParticipants.objects.filter(tournament=tournament).filter(status="accepted" or "pending").count()
+		if str(participant_count) >= tournamentSize:
+			return JsonResponse({"message": "Tournament is full"}, status=400)
+		
+		participant = ManualTournamentParticipants.objects.create(
+			tournament=tournament,
+			user=user,
+			status="pending"
+		)
+		
+		logger.info(f"User {userId} Found {tournament.id} tournament to join")
+		return JsonResponse({"success": True, "message": "User Found a random tournament", "payload": {"userId":userId, "tournament_id": tournament.id}})
+	except ManualUser.DoesNotExist:
+		return JsonResponse({"message": "User not found"}, status=404)
+	except Exception as e:
+		logger.exception("Error joining random tournament:")
+		return JsonResponse({"message": str(e)}, status=500)
+
+@csrf_exempt
+def try_join_tournament_with_room_code(request):
+	if request.method != "POST":
+		return JsonResponse({"message": "POST method required"}, status=405)
+	try:
+		body = json.loads(request.body.decode("utf-8"))
+		logger.info(f"Body: {body}")
+		userId = body.get("userId")
+		roomCode = body.get("roomCode")
+		if not userId or not roomCode:
+			return JsonResponse({"message": "userId and roomCode are required"}, status=400)
+		user = ManualUser.objects.get(id=userId)
+		if user.tournament_status != "out":
+			return JsonResponse({"message": "User is already in a tournament"}, status=400)
+		tournament = ManualTournament.objects.filter(
+			status="upcoming",
+			serial_key=roomCode
+		).first()
+		if not tournament:
+			return JsonResponse({"message": "No upcoming tournament found"}, status=404)		
+
+		participant_count = ManualTournamentParticipants.objects.filter(tournament=tournament).filter(status="accepted" or "pending").count()
+		if participant_count >= tournament.size:
+			return JsonResponse({"message": "Tournament is full"}, status=400)
+		
+		participant = ManualTournamentParticipants.objects.create(
+			tournament=tournament,
+			user=user,
+			status="pending"
+		)
+		
+		logger.info(f"User {userId} Found {tournament.id} tournament to join")
+		return JsonResponse({"success": True, "message": "User Found a random tournament", "payload": {"userId":userId, "tournament_id": tournament.id}})
+	
+	except ManualUser.DoesNotExist:
+		return JsonResponse({"message": "User not found"}, status=404)
+	except Exception as e:
+		logger.exception("Error joining tournament with room code:")
+		return JsonResponse({"message": str(e)}, status=500)
