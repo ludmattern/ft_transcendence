@@ -2,7 +2,7 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { playGame } from '/src/components/pong/play/utils.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
-import { ws } from '/src/services/wsHandlers.js';
+import { ws } from '/src/services/websocket.js';
 import { subscribe } from '/src/services/eventEmitter.js';
 import { handleTournamentRedirection } from '/src/services/router.js';
 
@@ -10,92 +10,92 @@ export const currentTournament = createComponent({
 	tag: 'currentTournament',
 	render: () => {
 		return `
-      <section class="col-12 d-flex flex-column align-items-center text-center p-5" 
-               style="color: white; background-color: #111111; max-height: 700px; overflow: auto;">
-        <h1 class="mb-4">Current Tournament</h1>
+	<section class="col-12 d-flex flex-column align-items-center text-center p-5" 
+			style="color: white; background-color: #111111; max-height: 700px; overflow: auto;">
+		<h1 class="mb-4">Current Tournament</h1>
 
-        <style>
-          /* Conteneur global : on se contente de la largeur ici */
-          #bracket-container {
-            width: 100%;
-          }
-          /* Bloc des titres des size */
-          .round-titles {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8rem;
-            width: 100%;
-            margin-bottom: 20px;
-          }
-          .round-title {
-            min-width: 150px;
-            text-align: center;
-            font-weight: bold;
-            color: white;
-          }
-          /* Bloc des colonnes de size */
-          .size-content {
-            display: flex;
-            align-items: stretch;
-            gap: 20px;
-            width: 100%;
-            justify-content: center;
-          }
-          /* Colonne de round : contient la liste des matchs */
-          .round-column {
-            display: flex;
-            flex-direction: column;
-          }
-          /* Conteneur des matchs, répartis verticalement */
-          .matches-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-          }
-          /* Style pour chaque match */
-          .match {
-            margin-bottom: 8px;
-          }
-          /* Ligne de bracket entre colonnes */
-          .bracket-line {
-            position: relative;
-            width: 50px;
-            height: 120px;
-            margin: auto 0;
-          }
-          .bracket-line::before {
-            content: "";
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: white;
-          }
-          .bracket-line::after {
-            content: "";
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 50%;
-            height: 2px;
-            background: white;
-            transform: translateY(-50%);
-          }
-        </style>
-        
-        <div id="tournament-state" class="mb-4">
-          <p class="text-secondary">The tournament is in progress.</p>
-        </div>
-        
-        <!-- Conteneur du bracket -->
-        <div id="bracket-container"></div>
+		<style>
+		/* Conteneur global : on se contente de la largeur ici */
+		#bracket-container {
+			width: 100%;
+		}
+		/* Bloc des titres des size */
+		.round-titles {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 8rem;
+			width: 100%;
+			margin-bottom: 20px;
+		}
+		.round-title {
+			min-width: 150px;
+			text-align: center;
+			font-weight: bold;
+			color: white;
+		}
+		/* Bloc des colonnes de size */
+		.size-content {
+			display: flex;
+			align-items: stretch;
+			gap: 20px;
+			width: 100%;
+			justify-content: center;
+		}
+		/* Colonne de round : contient la liste des matchs */
+		.round-column {
+			display: flex;
+			flex-direction: column;
+		}
+		/* Conteneur des matchs, répartis verticalement */
+		.matches-container {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-around;
+		}
+		/* Style pour chaque match */
+		.match {
+			margin-bottom: 8px;
+		}
+		/* Ligne de bracket entre colonnes */
+		.bracket-line {
+			position: relative;
+			width: 50px;
+			height: 120px;
+			margin: auto 0;
+		}
+		.bracket-line::before {
+			content: "";
+			position: absolute;
+			left: 50%;
+			top: 0;
+			bottom: 0;
+			width: 2px;
+			background: white;
+		}
+		.bracket-line::after {
+			content: "";
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			width: 50%;
+			height: 2px;
+			background: white;
+			transform: translateY(-50%);
+		}
+		</style>
+		
+		<div id="tournament-state" class="mb-4">
+		<p class="text-secondary">The tournament is in progress.</p>
+		</div>
+		
+		<!-- Conteneur du bracket -->
+		<div id="bracket-container"></div>
 
-        <button id="abandon-tournament" class="btn btn-pong-danger mt-5">Leave Tournament</button>
-      </section>
-    `;
+		<button id="abandon-tournament" class="btn btn-pong-danger mt-5">Leave Tournament</button>
+	</section>
+	`;
 	},
 	attachEvents: async (el) => {
 		currentTournament.el = el;
@@ -144,13 +144,9 @@ export async function renderBracket() {
 	let titlesHtml = '';
 	let sizeHtml = '';
 
-	/* ---------------------------------------------
-     1) LOGIQUE SI MODE = "ONLINE"
-  --------------------------------------------- */
 	if (mode === 'online') {
 		bracketData.forEach((round, roundIndex) => {
 			titlesHtml += `<div class="h4 round-title">${round.round}</div>`;
-
 			const matchesHtml = round.matches
 				.map((match) => {
 					let joinButton = '';
@@ -163,32 +159,25 @@ export async function renderBracket() {
 
 					if (match.status === 'pending' && match.player1 !== 'TBD' && match.player2 !== 'TBD') {
 						if ((match.player1 === username || match.player2 === username) && hasUserCompletedInPreviousRound(bracketData, roundIndex, username)) {
-							joinButton = `
-                <button class="btn btn-pong-blue btn-sm join-match ms-2" 
-                        data-match-key="${matchKey}">
-                  Join Game
-                </button>`;
+							joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2"data-match-key="${matchKey}">
+											Join Game
+										</button>`;
 						}
 					}
 
-					return `
-          <div class="match p-2 bg-dark rounded"
-              data-match-id="${match.id}"
-              data-player1="${match.player1}"
-              data-player2="${match.player2}"
-              data-match-key="${matchKey}">
-            <span class="text-white">${match.player1} vs ${match.player2}</span>
-            ${joinButton === '' ? `<span class="text-secondary ms-2">${match.status}</span>` : joinButton}
-          </div>
-        `;
+					return `<div class="match p-2 bg-dark rounded"
+							data-match-id="${match.id}"
+							data-player1="${match.player1}"
+							data-player2="${match.player2}"
+							data-match-key="${matchKey}">
+							<span class="text-white">${match.player1} vs ${match.player2}</span>
+							${joinButton === '' ? `<span class="text-secondary ms-2">${match.status}</span>` : joinButton}
+						</div>`;
 				})
 				.join('');
-
-			sizeHtml += `
-        <div class="round-column">
-          <div class="matches-container">${matchesHtml}</div>
-        </div>
-      `;
+			sizeHtml += `<div class="round-column">
+							<div class="matches-container">${matchesHtml}</div>
+						</div>`;
 
 			if (roundIndex < bracketData.length - 1) {
 				const bracketCount = Math.pow(2, bracketData.length - 1 - roundIndex) / 2;
@@ -199,10 +188,6 @@ export async function renderBracket() {
 				sizeHtml += `<div class="round-column">${bracketLines}</div>`;
 			}
 		});
-
-		/* ---------------------------------------------
-     2) LOGIQUE SI MODE = "LOCAL"
-  --------------------------------------------- */
 	} else {
 		bracketData.forEach((round, roundIndex) => {
 			titlesHtml += `<div class="h4 round-title">${round.round}</div>`;
@@ -220,23 +205,19 @@ export async function renderBracket() {
 						joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
 					}
 
-					return `
-          <div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
-               data-player1="${match.player1}" data-player2="${match.player2}">
-            <span class="text-white">${match.player1} vs ${match.player2}</span>
-            ${joinButton === '' ? `<span class="text-secondary ms-2">${match.status}</span>` : joinButton}
-          </div>
-        `;
+					return `<div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
+						data-player1="${match.player1}" data-player2="${match.player2}">
+							<span class="text-white">${match.player1} vs ${match.player2}</span>
+							${joinButton === '' ? `<span class="text-secondary ms-2">${match.status}</span>` : joinButton}
+						</div>`;
 				})
 				.join('');
 
 			console.log('roundIndex', roundIndex);
 
-			sizeHtml += `
-        <div class="round-column">
-          <div class="matches-container">${matchesHtml}</div>
-        </div>
-      `;
+			sizeHtml += `<div class="round-column">
+							<div class="matches-container">${matchesHtml}</div>
+						</div>`;
 
 			if (roundIndex < bracketData.length - 1) {
 				const bracketCount = Math.pow(2, bracketData.length - 1 - roundIndex) / 2;
@@ -249,57 +230,42 @@ export async function renderBracket() {
 		});
 	}
 
-	// --------------------------------
-	// 3) Insertion du HTML
-	// --------------------------------
 	const bracketContainer = el.querySelector('#bracket-container');
 	if (bracketContainer) {
-		bracketContainer.innerHTML = `
-      <div class="h4 round-titles">${titlesHtml}</div>
-      <div class="size-content">${sizeHtml}</div>
-    `;
+		bracketContainer.innerHTML = `<div class="h4 round-titles">${titlesHtml}</div>
+									<div class="size-content">${sizeHtml}</div>`;
 	}
 
-// --------------------------------
-// 4) Gestion du bouton "Abandon"
-// --------------------------------
-const abandonTournamentButton = document.getElementById("abandon-tournament");
-if (abandonTournamentButton) {
-  abandonTournamentButton.addEventListener("click", async () => {
-    try {
-      const userId = await getUserIdFromCookieAPI();
+	const abandonTournamentButton = document.getElementById('abandon-tournament');
+	if (abandonTournamentButton) {
+		abandonTournamentButton.addEventListener('click', async () => {
+			try {
+				const userId = await getUserIdFromCookieAPI();
 
-      if (!tournament_id || !userId) {
-        console.error("Aucun ID de tournoi ou utilisateur trouvé");
-        return;
-      }
+				if (!tournament_id || !userId) {
+					console.error('Aucun ID de tournoi ou utilisateur trouvé');
+					return;
+				}
 
-      let endpoint = mode === "online"
-        ? "/api/tournament-service/abandon_online_tournament/"
-        : "/api/tournament-service/abandon_local_tournament/";
+				let endpoint = mode === 'online' ? '/api/tournament-service/abandon_online_tournament/' : '/api/tournament-service/abandon_local_tournament/';
 
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ tournament_id: tournament_id, user_id: userId }),
-      });
+				const response = await fetch(endpoint, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ tournament_id: tournament_id, user_id: userId }),
+				});
 
-      const result = await response.json();
-      console.log("Tournament abandoned:", result);
-      handleRoute("/pong/play");
-    } catch (error) {
-      console.error("Error abandoning tournament:", error);
-    }
-  });
-}
+				const result = await response.json();
+				console.log('Tournament abandoned:', result);
+				handleRoute('/pong/play');
+			} catch (error) {
+				console.error('Error abandoning tournament:', error);
+			}
+		});
+	}
 
-
-
-	// --------------------------------
-	// 5) Gestion du bouton "Join Game"
-	// --------------------------------
 	const joinButtons = el.querySelectorAll('.join-match');
 	joinButtons.forEach((button) => {
 		button.addEventListener('click', () => {
@@ -357,23 +323,21 @@ function hasUserCompletedInPreviousRound(bracketData, roundIndex, username) {
 
 function createCompletedMatchHtml(match, displayHtml) {
 	console.log('score', match.score);
-	return `
-    <div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
-         data-player1="${match.player1}" data-player2="${match.player2}">
-      <span class="text-white">${displayHtml}</span>
-      <span class="badge ms-2">${match.score}</span>
-    </div>
-  `;
+	return `<div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
+			data-player1="${match.player1}" data-player2="${match.player2}">
+				<span class="text-white">${displayHtml}</span>
+				<span class="badge ms-2">${match.score}</span>
+			</div>`;
 }
 
 function getCompletedMatchHtml(match) {
-  if (!match.score) {
-    return `${match.player1} vs ${match.player2}`;
-  }
+	if (!match.score) {
+		return `${match.player1} vs ${match.player2}`;
+	}
 
-  if (match.score === "Forfait" && (match.player1 === "TBD" || match.player2 === "TBD")) {
-    return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
-  }
+	if (match.score === 'Forfait' && (match.player1 === 'TBD' || match.player2 === 'TBD')) {
+		return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
+	}
 
 	const [score1, score2] = match.score.split('-').map(Number);
 
@@ -383,4 +347,3 @@ function getCompletedMatchHtml(match) {
 		return `<span class="text-danger">${match.player1}</span> vs <span class="text-success fw-bold">${match.player2}</span>`;
 	}
 }
-

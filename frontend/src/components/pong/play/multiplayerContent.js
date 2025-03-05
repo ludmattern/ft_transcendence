@@ -1,6 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { notAuthenticatedThenRedirect } from '/src/services/router.js';
-import { ws } from '/src/services/wsHandlers.js';
+import { ws } from '/src/services/websocket.js';
 import { playGame } from '/src/components/pong/play/utils.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 

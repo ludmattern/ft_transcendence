@@ -1,7 +1,7 @@
 // contextMenu.js
 import { createComponent } from '/src/utils/component.js';
 import { waitForElement } from '/src/components/hud/utils/utils.js';
-import { ws } from '/src/services/wsHandlers.js';
+import { ws } from '/src/services/websocket.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { handleRoute } from '/src/services/router.js';
 import { getUsername } from '/src/pongGame/gameManager.js';

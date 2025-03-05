@@ -3,7 +3,7 @@ import { createNotificationMessage } from '/src/components/hud/sideWindow/left/n
 import { showContextMenu } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { handleFriendAction } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
-import { ws } from '/src/services/wsHandlers.js';
+import { ws } from '/src/services/websocket.js';
 
 export const infoPanelItem = createComponent({
 	tag: 'infoPanelItem',

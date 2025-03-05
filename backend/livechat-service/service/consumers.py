@@ -316,9 +316,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				participant_username = await get_username(participant)
 				await self.channel_layer.group_send(f"user_{participant}", {"type": "info_message", "action": "leavingLobby", "tournament_id": tournament_id, "player": participant_username})
 				await self.channel_layer.group_send(f"user_{participant}", {"type": "info_message", "info": "Tournament has been cancelled."})
+
+		elif str(action) == "back_tournament_game_over":
+			logger.info(f"tournament game over", event)
+			tournament_id = event.get("tournament_id")
+			participant_list = event.get("participant_list")
+			next_match_player_ids = event.get("next_match_player_ids")
+
+			for participant in participant_list:
+				logger.info(f"Sending refresh brackets to participant {participant}")
+				await self.channel_layer.group_send(f"user_{participant}", {"type": "info_message", "action": "refresh_brackets", "tournament_id": tournament_id})
+
+			for next_match_player_id in next_match_player_ids:
+				logger.info(f"Sending next match ready to {next_match_player_id}")
+				await self.channel_layer.group_send(f"user_{next_match_player_id}", {"type": "info_message", "info": "Your next game is ready."})
    
-
-
 		elif str(action) == "back_leave_tournament":
 			author_id = event.get("author")	
 			initiator_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
