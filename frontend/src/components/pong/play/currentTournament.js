@@ -366,14 +366,15 @@ function createCompletedMatchHtml(match, displayHtml) {
   `;
 }
 
-function getCompletedMatchHtml(match) {
-  if (!match.score) {
-    return `${match.player1} vs ${match.player2}`;
-  }
+function getCompletedMatchHtml(match) 
+{
+	if (!match.score) {
+		return `${match.player1} vs ${match.player2}`;
+	}
 
-  if (match.score === "Forfait" && (match.player1 === "TBD" || match.player2 === "TBD")) {
-    return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
-  }
+	if (match.score === "Forfait" && (match.player1 === "TBD" || match.player2 === "TBD")) {
+		return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
+	}
 
 	const [score1, score2] = match.score.split('-').map(Number);
 

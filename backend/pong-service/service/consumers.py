@@ -222,7 +222,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                             else:
                                 next_match.player2 = winner_username  
                             await sync_to_async(next_match.save)()
-                        
+                            
+                            
+
                     
                     if str(game_id).startswith("matchmaking_"):
                         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
