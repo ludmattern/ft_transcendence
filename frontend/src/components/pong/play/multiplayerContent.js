@@ -1,9 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { notAuthenticatedThenRedirect } from '/src/services/router.js';
-import { ws } from '/src/services/socketManager.js';
+import { ws } from '/src/services/wsHandlers.js';
 import { playGame } from '/src/components/pong/play/utils.js';
-import componentManagers from '/src/index.js';
-import { pongTuto } from '/src/components/hud/index.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export const multiplayerContent = createComponent({

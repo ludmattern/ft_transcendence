@@ -1,6 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { subscribe } from '/src/services/eventEmitter.js';
-import { ws } from '/src/services/socketManager.js';
+import { ws } from '/src/services/wsHandlers.js';
 import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { handleRoute } from '/src/services/router.js';

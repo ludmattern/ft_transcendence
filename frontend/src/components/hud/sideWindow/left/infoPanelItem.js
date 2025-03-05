@@ -1,10 +1,9 @@
 import { createComponent } from '/src/utils/component.js';
-import { playGame } from '/src/components/pong/play/utils.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { showContextMenu } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { handleFriendAction } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
-import { ws } from '/src/services/socketManager.js';
+import { ws } from '/src/services/wsHandlers.js';
 
 export const infoPanelItem = createComponent({
 	tag: 'infoPanelItem',

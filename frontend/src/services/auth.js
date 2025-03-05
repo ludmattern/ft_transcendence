@@ -1,4 +1,4 @@
-import { initializeWebSocket, closeWebSocket } from '/src/services/socketManager.js';
+import { initializeWebSocket, closeWebSocket } from '/src/services/wsHandlers.js';
 import { handleRoute, resetPreviousRoutes,  } from '/src/services/router.js';
 import componentManagers from '/src/index.js';
 import { switchwindow } from '/src/3d/animation.js';

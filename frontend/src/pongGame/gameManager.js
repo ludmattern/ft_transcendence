@@ -1,7 +1,6 @@
-import { switchwindow } from '/src/3d/animation.js';
 import { buildGameScene } from '/src/3d/pongScene.js';
 import Store from '/src/3d/store.js';
-import { ws } from '/src/services/socketManager.js';
+import { ws } from '/src/services/wsHandlers.js';
 import { endGameScreen, showCountdown } from '/src/components/midScreen.js';
 import * as THREE from 'https://esm.sh/three';
 import componentManagers from '/src/index.js';
