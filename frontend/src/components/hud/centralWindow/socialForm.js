@@ -161,7 +161,7 @@ async function getFriends(userId) {
     const friendListContainer = document.querySelector('.friend-list-container');
     if (friendListContainer && data.friends && data.friends.length > 0) {
       friendListContainer.innerHTML = data.friends
-        .map(friend => createFriendItem('Online', friend.username, 'text-success'))
+        .map(friend => createFriendItem('Online', friend.username, friend.is_connected ? 'text-success' : 'text-danger'))
         .join('');
     }
 	else {
@@ -171,9 +171,6 @@ async function getFriends(userId) {
     console.error("Erreur lors de la récupération de la liste d'amis:", error);
   }
 }
-
-
-
 
 async function fetchPilot(query, container) {
   try {

@@ -199,7 +199,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                         
                         if match:
                             match.winner = str(winner_id)
-                            # RECUPERER PLAYER 1 ET PLAYER 2 DU MATCH ET COMPARER P1 ET P2 DE LA GAME ET REMPLIR LE SCORE
                             if match.player1 == winner.username:
                                 match.score = f"{game.user_scores[winner_id]}-{game.user_scores[loser_id]}"
                             else:
@@ -223,7 +222,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                             else:
                                 next_match.player2 = winner_username  
                             await sync_to_async(next_match.save)()
-
+                        
                     
                     if str(game_id).startswith("matchmaking_"):
                         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)

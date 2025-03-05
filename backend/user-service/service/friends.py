@@ -22,7 +22,7 @@ def get_friends(request):
 		friends = ManualUser.objects.filter(
 			Q(friends_initiated__friend=user, friends_initiated__status="accepted") |
 			Q(friends_received__user=user, friends_received__status="accepted")
-		).distinct().values("id", "username")
+		).distinct().values("id", "username", "is_connected")
 
 		return JsonResponse({"friends": list(friends)}, status=200)
 

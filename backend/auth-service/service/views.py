@@ -419,6 +419,10 @@ import logging
 logger = logging.getLogger(__name__)
 @csrf_exempt
 def oauth_callback(request):
+    
+    error = request.GET.get('error')
+    if error:
+        return redirect(f"https://{SERVER_IP}:8443/login")
     code = request.GET.get('code')
     if not code:
         return JsonResponse({'success': False, 'message': 'No code provided'}, status=400)
@@ -436,13 +440,13 @@ def oauth_callback(request):
     try:
         response = requests.post(token_url, data=urlencode(data), headers=headers)
         response_data = response.json()
-
+        logger.info(f"✅ Nouveau token récupéré : {response_data}")
+        
         if "access_token" not in response_data:
             return JsonResponse({'success': False, 'message': 'Failed to get access token'}, status=400)
 
         access_token = response_data["access_token"]
 
-        # 🔹 Récupérer les infos utilisateur depuis 42
         user_info_url = "https://api.intra.42.fr/v2/me"
         headers = {"Authorization": f"Bearer {access_token}"}
         user_response = requests.get(user_info_url, headers=headers)
