@@ -53,7 +53,7 @@ const handleInfoMessage = async (data) => {
 		emit('updatePlayerList', tournamentData);
 		await updateAndCompareInfoData();
 	} else if (data.action === 'refresh_brackets') {
-		emit('refresh_brackets');
+		emit('updateBracket');
 	} else if (data.action === 'leavingLobby' || (data.info && data.action === 'You have been kicked.')) {
 		emit('leavingLobby');
 	} else if (data.action) {

@@ -242,7 +242,7 @@ export async function renderBracket() {
 			try {
 				const userId = await getUserIdFromCookieAPI();
 
-				if (!tournament_id || !userId) {
+				if (!userId) {
 					console.error('Aucun ID de tournoi ou utilisateur trouvé');
 					return;
 				}
@@ -254,7 +254,7 @@ export async function renderBracket() {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ tournament_id: tournament_id, user_id: userId }),
+					body: JSON.stringify({ user_id: userId }),
 				});
 
 				const result = await response.json();

@@ -438,9 +438,6 @@ def abandon_online_tournament(request):
     
 	try:
 		body = json.loads(request.body.decode("utf-8"))
-		tournament_id = body.get("tournament_id")
-		if not tournament_id:
-			return JsonResponse({"error": "tournament_id is required"}, status=400)
 
 		user_id = body.get("user_id")
 		if not user_id:
@@ -448,14 +445,17 @@ def abandon_online_tournament(request):
 
 		user = ManualUser.objects.get(id=user_id)
 
+		tournament_id = user.current_tournament_id
+		if tournament_id == 0:
+			return JsonResponse({"error": "User is not participating in any tournament"}, status=400)
+
 		participant = ManualTournamentParticipants.objects.filter(
-            tournament_id=tournament_id, user=user, status="accepted"
-        ).first()
+            tournament_id=tournament_id, user=user).first()
 
 		if not participant:
 			return JsonResponse({"error": "User not found in tournament"}, status=404)
 
-		participant.status = "eliminated"
+		participant.status = "left"
 		participant.save()
 
 		match = TournamentMatch.objects.filter(
