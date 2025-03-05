@@ -270,6 +270,14 @@ export function updateOnlinePlayersUI(data) {
 				li.appendChild(kickButton);
 			}
 		}
+		else {
+			if (participant.status === 'pending') {
+				const badge = document.createElement('span');
+				badge.className = 'badge bg-warning ms-2';
+				badge.textContent = 'Pending';
+				li.appendChild(badge);
+			}
+		}
 		participants.appendChild(li);
 	});
 
