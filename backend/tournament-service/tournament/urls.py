@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from service.views import (
     create_local_tournament_view,
     get_current_tournament,
@@ -11,7 +11,9 @@ from service.views import (
 	getStatusOfCurrentTournament,
 	getParticipantStatusInTournament,
 	getCurrentTournamentInformation,
-    abandon_online_tournament
+    abandon_online_tournament,
+    try_join_random_tournament,
+    try_join_tournament_with_room_code,
 )
 
 urlpatterns = [
@@ -27,5 +29,6 @@ urlpatterns = [
 	path('getParticipantStatusInTournament/<str:user_id>/', getParticipantStatusInTournament, name='getParticipantStatusInTournament'),
 	path('getCurrentTournamentInformation/<str:user_id>/', getCurrentTournamentInformation, name='getCurrentTournamentInformation'),
     path("abandon_online_tournament/", abandon_online_tournament, name="abandon_online_tournament"),
-
+    path("try_join_random_tournament/", try_join_random_tournament, name="try_join_random_tournament"),
+    path("try_join_tournament_with_room_code/", try_join_tournament_with_room_code, name="try_join_tournament_with_room_code"),
 ]

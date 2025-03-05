@@ -7,6 +7,8 @@ from channels.db import database_sync_to_async
 from cryptography.fernet import Fernet
 from django.conf import settings
 import secrets
+import random
+import string
 
 logger = logging.getLogger(__name__)
 def generate_online_match_key():
@@ -153,7 +155,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		user_id = event.get("userId")
 		tournament_size = event.get("tournamentSize")
 		user = await self.get_user(user_id)
-		serial_key = str(user_id)
+		serial_key = await self.generate_unique_serial_key()
 		tournament = await self.create_tournament(serial_key, user, tournament_size)
 		user.current_tournament_id = tournament.id
 		await sync_to_async(user.save)()
@@ -395,3 +397,10 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		except Exception as e:
 			logger.exception("Error while creating online tournament bracket:")
 
+	async def generate_unique_serial_key(self, length=8):
+		from service.models import ManualTournament  # adjust import as needed
+		while True:
+			key = ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
+			exists = await sync_to_async(ManualTournament.objects.filter(serial_key=key).exists)()
+			if not exists:
+				return key

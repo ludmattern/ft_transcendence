@@ -242,6 +242,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 							"tournament_id": tournament_id,
 							"participant_list": participant_list,
 							"next_match_player_ids": next_match_player_ids,
+							"current_match_player_ids": [int(winner_id), int(loser_id)],
 						}
 
 						logger.info(f"back_tournament_game_over sent to gateway: {payload}")
