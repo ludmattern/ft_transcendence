@@ -33,7 +33,6 @@ class ManualUser(models.Model):
     def __str__(self):
         return self.username
 
-
 class ManualGameHistory(models.Model):
     id = models.AutoField(primary_key=True)
     winner = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="games_won")

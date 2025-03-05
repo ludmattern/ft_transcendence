@@ -157,7 +157,7 @@ export async function renderBracket() {
 						return createCompletedMatchHtml(match, displayHtml);
 					}
 
-					if (match.status === 'pending' && match.player1 !== 'TBD' && match.player2 !== 'TBD') {
+					if ((match.status === 'pending' || match.status === 'ready') && match.player1 !== 'TBD' && match.player2 !== 'TBD') {
 						if ((match.player1 === username || match.player2 === username) && hasUserCompletedInPreviousRound(bracketData, roundIndex, username)) {
 							joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2"data-match-key="${matchKey}">
 											Join Game
