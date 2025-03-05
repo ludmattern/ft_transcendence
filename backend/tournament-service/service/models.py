@@ -75,6 +75,7 @@ class ManualTournamentParticipants(models.Model):
             ('pending', 'Pending'),
             ('accepted', 'Accepted'),
             ('rejected', 'Rejected'),
+            ('left', 'Left'),
             ('still flying', 'Still Flying'),
             ('eliminated', 'Eliminated')
         ],

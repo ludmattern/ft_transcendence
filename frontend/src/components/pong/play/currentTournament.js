@@ -330,12 +330,13 @@ function createCompletedMatchHtml(match, displayHtml) {
 			</div>`;
 }
 
-function getCompletedMatchHtml(match) {
+function getCompletedMatchHtml(match) 
+{
 	if (!match.score) {
 		return `${match.player1} vs ${match.player2}`;
 	}
 
-	if (match.score === 'Forfait' && (match.player1 === 'TBD' || match.player2 === 'TBD')) {
+	if (match.score === "Forfait" && (match.player1 === "TBD" || match.player2 === "TBD")) {
 		return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
 	}
 
