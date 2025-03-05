@@ -254,7 +254,7 @@ export async function renderBracket() {
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ user_id: userId }),
+					body: JSON.stringify({ user_id: userId, tournament_id: tournament_id }),
 				});
 
 				const result = await response.json();
@@ -330,21 +330,32 @@ function createCompletedMatchHtml(match, displayHtml) {
 			</div>`;
 }
 
-function getCompletedMatchHtml(match) 
-{
-	if (!match.score) {
+function getCompletedMatchHtml(match) {
+	if (!match.score) 
+	{
 		return `${match.player1} vs ${match.player2}`;
 	}
 
-	if (match.score === "Forfait" && (match.player1 === "TBD" || match.player2 === "TBD")) {
+	if (match.score === "Forfeit" && (match.player1 === "TBD" || match.player2 === "TBD")) {
 		return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
 	}
 
-	const [score1, score2] = match.score.split('-').map(Number);
+	if (match.score === "Forfeit") 
+	{
+		const winner = match.winner;
+		console.log('winner:', winner);
+		if (winner === match.player1) {
+			return `<span class="text-success fw-bold">${match.player1}</span> vs <span class="text-danger">${match.player2}</span>`;
+		} else {
+			return `<span class="text-danger">${match.player1}</span> vs <span class="text-success fw-bold">${match.player2}</span>`;
+		}
+	}
 
+	const [score1, score2] = match.score.split('-').map(Number);
 	if (score1 > score2) {
 		return `<span class="text-success fw-bold">${match.player1}</span> vs <span class="text-danger">${match.player2}</span>`;
 	} else {
 		return `<span class="text-danger">${match.player1}</span> vs <span class="text-success fw-bold">${match.player2}</span>`;
 	}
 }
+

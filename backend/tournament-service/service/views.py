@@ -460,18 +460,19 @@ def abandon_online_tournament(request):
 		participant.save()
 
 		match = TournamentMatch.objects.filter(
-			tournament_id=tournament_id,
-			status="pending"
-        ).filter(models.Q(player1=user.username) | models.Q(player2=user.username)).first()
+			tournament_id=tournament_id
+		).filter(
+			Q(status="pending") | Q(status="ready"),
+			Q(player1=user.username) | Q(player2=user.username)
+		).first()
 
 		if match:
 			opponent = match.player1 if match.player2 == user.username else match.player2
 			if opponent:
 				match.winner = opponent
-				match.score = "Forfait"
+				match.score = "Forfeit"
 				match.status = "completed"
 				match.save()
-
 				next_round = match.round_number + 1
 				next_match_order = (match.match_order + 1) // 2
 				next_match = TournamentMatch.objects.filter(
