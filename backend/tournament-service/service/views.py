@@ -220,6 +220,7 @@ def getCurrentTournamentInformation(request, user_id):
 		"organizer_id": tournament.organizer.id,
 		"participants": participants_list,
 		"participants_count": len(participants_list),
+		"participants_accepted": len([p for p in participants_list if p["status"] == "accepted"]),
 		"mode": tournament.mode
 	}
 	return JsonResponse(data)

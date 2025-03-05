@@ -64,7 +64,7 @@ export const onlineTournamentCreation = createComponent({
 		}
 
 		const isOrganizer = data.user_id === data.organizer_id;
-		if (isOrganizer) {
+		if (isOrganizer && (data.participants_count < data.size)) {
 			const inviteContainerHTML = `
 			<div id="invite-container" class="w-50 mb-4">
 			<div class="input-group">
@@ -101,7 +101,6 @@ export const onlineTournamentCreation = createComponent({
 					console.log('Vous ne pouvez pas vous inviter vous-même');
 					return;
 				}
-
 				const payload = {
 					type: 'tournament_message',
 					action: 'tournament_invite',
@@ -216,7 +215,7 @@ export function updateOnlinePlayersUI(data) {
 		} else if (data.user_id === data.organizer_id) {
 			const controlButtonsContainer = document.querySelector('#control-buttons-container');
 			let createTournamentButton = document.querySelector('#create-tournament');
-			if (data.participants_count === data.size) {
+			if (data.participants_accepted === data.size) {
 				if (!createTournamentButton) {
 					createTournamentButton = document.createElement('button');
 					createTournamentButton.id = 'create-tournament';
@@ -232,6 +231,17 @@ export function updateOnlinePlayersUI(data) {
 			} else {
 				if (createTournamentButton) {
 					createTournamentButton.remove();
+				}
+			}
+			let sendInviteButton = document.querySelector('#send-invite');
+			if (data.participants_count < data.size) {
+				if (sendInviteButton) {
+					sendInviteButton.disabled = false;
+				}
+			}
+			else {
+				if (sendInviteButton) {
+					sendInviteButton.disabled = true;
 				}
 			}
 			if (participant.status === 'pending') {
@@ -282,6 +292,6 @@ export function updateOnlinePlayersUI(data) {
 	});
 
 	if (createTournamentButton) {
-		createTournamentButton.disabled = data.participants_count !== data.size;
+		createTournamentButton.disabled = data.participants_accepted !== data.size;
 	}
 }
