@@ -117,7 +117,7 @@ class TournamentMatch(models.Model):
     match_order = models.IntegerField()    # l'ordre dans le round
     player1 = models.CharField(max_length=50, blank=True, null=True)
     player2 = models.CharField(max_length=50, blank=True, null=True)
-    status = models.CharField(max_length=20, default='pending')  # 'pending', 'completed', etc.
+    status = models.CharField(max_length=20, default='pending')  # 'pending', 'ready' ,'completed', etc.
     winner = models.CharField(max_length=50, blank=True, null=True)
     score = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

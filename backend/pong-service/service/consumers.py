@@ -231,6 +231,8 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 						if next_match:
 							if next_match.player1 != "TBD" and next_match.player2 != "TBD":
 								next_match_player_ids = await sync_to_async(lambda: [ManualUser.objects.get(username=next_match.player1).id, ManualUser.objects.get(username=next_match.player2).id])()
+								next_match.status = "ready"
+								await sync_to_async(next_match.save)()
 						
 						participant_list = await sync_to_async(lambda: list(ManualTournamentParticipants.objects.filter(tournament_id=tournament_id).exclude(Q(status="rejected") | Q(status="left")).values_list('id', flat=True)))()
 

@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from .models import (
 	ManualUser, ManualBlockedRelations, ManualFriendsRelations, 
-	ManualTournamentParticipants, ManualNotifications, ManualTournament
+	ManualTournamentParticipants, ManualNotifications, ManualTournament, TournamentMatch
 )
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ def info_getter(request, user_id):
 			"type": "friend_request",
 			"inviter_id": fr["initiator__id"], 
 			"inviter": fr["initiator__username"], 
-			"actions": True,
+			"actions": "choice",
 		}
 		for fr in friend_requests
 	]
@@ -64,16 +64,38 @@ def info_getter(request, user_id):
 			"inviter": invite.tournament.organizer.username, 
 			"tournament_id": invite.tournament.id,
 			"tournament_name": invite.tournament.name,
-			"actions": True,
+			"actions": "choice",
 		}
 		for invite in pending_invites
 	]
 
 	logger.info(f"Tournament invite data: {tournament_invite_data}")
 
+	if not user.current_tournament_id:
+		logger.info("No current tournament")
+		return JsonResponse({"success": True, "info": friend_request_data + tournament_invite_data})
+
+	next_ready_matches = TournamentMatch.objects.filter(
+		Q(player1=user.username) | Q(player2=user.username),
+		status='ready',
+		tournament_id=user.current_tournament_id
+	)
+	logger.info(f"Pending matches: {next_ready_matches}")
+
+	next_match_data = [
+		{
+			"type": "tournament_next_game",
+			"opponent": match.player1 if match.player2 == user.username else match.player2,
+			"actions": "acknowledge",
+		}
+		for match in next_ready_matches
+	]
+
+	logger.info(f"next match data: {next_match_data}")
+
 	response_data = {
 		"success": True,
-		"info": friend_request_data + tournament_invite_data
+		"info": friend_request_data + tournament_invite_data + next_match_data
 	}
 
 	logger.info(f"Response data: {json.dumps(response_data, indent=4)}")

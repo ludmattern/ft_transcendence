@@ -329,6 +329,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			for next_match_player_id in next_match_player_ids:
 				logger.info(f"Sending next match ready to {next_match_player_id}")
+				await self.channel_layer.group_send(f"user_{next_match_player_id}", {"type": "info_message", "action": "next_match_ready"})
 				await self.channel_layer.group_send(f"user_{next_match_player_id}", {"type": "info_message", "info": "Your next game is ready."})
    
 		elif str(action) == "back_leave_tournament":

@@ -4,24 +4,27 @@ import { showContextMenu } from '/src/components/hud/sideWindow/left/contextMenu
 import { handleFriendAction } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { ws } from '/src/services/websocket.js';
+import { handleRoute } from '/src/services/router.js';
 
 export const infoPanelItem = createComponent({
 	tag: 'infoPanelItem',
 
 	render: (item) => {
-		const content = titleType(item.type);
+		const content = titleType(item);
 		console.log('item', item);
 
 		return `
 	<div class="panel-item" data-notification-id="${item.type}-${item.inviter_id}">
 		<span>${content}<b class="author" style="cursor: pointer;">${item.inviter}</b></span>
 		${
-			item.actions
+			item.actions === 'choice'
 				? `<div class="actions">
 						<button class="btn bi bi-check" id="accept-action">Accept</button>
 						<button class="btn bi bi-x" id="refuse-action">Refuse</button>
 					</div>`
-				: ''
+				: `<div class="actions">
+						<button class="btn bi bi-check" id="accept-action">Fight</button>
+					</div>`
 		}
 	</div>`;
 	},
@@ -36,7 +39,7 @@ export const infoPanelItem = createComponent({
 				behaviorTournament(el, item);
 				break;
 			case 'tournament_next_game':
-				behaviorTournamentGame();
+				behaviorTournamentGame(el, item);
 				break;
 			case 'private_game_invite':
 				behaviorPrivateGame();
@@ -78,8 +81,8 @@ function behaviorFriendRequest(el, item) {
 	}
 }
 
-function titleType(type) {
-	switch (type) {
+function titleType(item) {
+	switch (item.type) {
 		case 'friend_request':
 			return `Friend request from: `;
 		case 'tournament_invite':
@@ -87,7 +90,7 @@ function titleType(type) {
 		case 'private_game_invite':
 			return `Private game invite from: `;
 		case 'tournament_next_game':
-			return `Next game in tournament: `;
+			return `Next game against ${item.opponent} is ready: `;
 		case 'miscellaneous':
 			return `Miscellaneous: `;
 	}
@@ -156,20 +159,17 @@ export async function handleTournamentAction(action, item) {
 }
 
 function behaviorTournamentGame(el, item) {
-	// const acceptButton = el.querySelector("#accept-action");
-	// const refuseButton = el.querySelector("#refuse-action");
-	// if (acceptButton) {
-	//   acceptButton.addEventListener("click", () => {
-	//     console.log(`Accepted ${item.inviter}'s request.`);
-	//     // Logique pour accepter la demande
-	//   });
-	// }
-	// if (refuseButton) {
-	//   refuseButton.addEventListener("click", () => {
-	//     console.log(`Refused ${item.inviter}'s request.`);
-	//     // Logique pour refuser la demande
-	//   });
-	// }
+	console.log('Next game against', item, 'is ready.');
+	const acceptButton = el.querySelector("#accept-action");
+	if (acceptButton) {
+	  acceptButton.addEventListener("click", () => {
+	    console.log(`Accepted ${item.inviter}'s request.`);
+		// verifier si le joueur est dans une partie sinon ne pas lancer la partie
+	    handleRoute(`/pong/play/current-tournament`);
+		createNotificationMessage("You can't be at two places at the same time", 2500, true);
+		createNotificationMessage("idiot...", 2500, true);
+	  });
+	}
 }
 
 function behaviorPrivateGame(el, item) {
