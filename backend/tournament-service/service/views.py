@@ -523,6 +523,7 @@ def try_join_random_tournament(request):
 		
 		tournament = ManualTournament.objects.filter(
 			status="upcoming",
+			mode="online",
 			size=tournamentSize
 		).order_by("created_at").first()
 		if not tournament:
@@ -562,6 +563,7 @@ def try_join_tournament_with_room_code(request):
 			return JsonResponse({"message": "User is already in a tournament"}, status=400)
 		tournament = ManualTournament.objects.filter(
 			status="upcoming",
+			mode="online",
 			serial_key=roomCode
 		).first()
 		if not tournament:
