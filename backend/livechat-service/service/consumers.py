@@ -322,6 +322,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			tournament_id = event.get("tournament_id")
 			participant_list = event.get("participant_list")
 			next_match_player_ids = event.get("next_match_player_ids")
+			current_match_player_ids = event.get("current_match_player_ids")
 
 			for participant in participant_list:
 				logger.info(f"Sending refresh brackets to participant {participant}")
@@ -331,6 +332,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				logger.info(f"Sending next match ready to {next_match_player_id}")
 				await self.channel_layer.group_send(f"user_{next_match_player_id}", {"type": "info_message", "action": "next_match_ready"})
 				await self.channel_layer.group_send(f"user_{next_match_player_id}", {"type": "info_message", "info": "Your next game is ready."})
+
+			for current_match_player_id in current_match_player_ids:
+				logger.info(f"gameover ready to {current_match_player_id}")
+				await self.channel_layer.group_send(f"user_{current_match_player_id}", {"type": "info_message", "action": "gameover"})
    
 		elif str(action) == "back_leave_tournament":
 			author_id = event.get("author")	

@@ -38,7 +38,7 @@ export const tournamentContent = createComponent({
             </div>
 
             <div class="tab-pane fade" id="joinTournament">
-                <legend class="h4 text-white">Join an Existing Tournament</legend>
+                <legend class="h4 text-white">Join an specific tournament</legend>
                 <p class="text-secondary">You want to join? Great, another victim enters the arena.</p>
 
                 <div class="mb-3">
@@ -50,10 +50,10 @@ export const tournamentContent = createComponent({
                 
                 <hr class="text-secondary my-4">
                 
-                <h4 class="text-white text-center">Or Join a Random Tournament</h4>
+                <h4 class="h4 text-white">Or Join a random tournament</h4>
                 ${generateTournamentSizeSelector('random')}
                 <div class="text-center">
-                    <button class="btn btn-pong" id="joinRandom">Find a Random Tournament</button>
+                    <button class="btn btn-pong" id="joinRandom">Find a tournament</button>
                 </div>
             </div>
         </div>
