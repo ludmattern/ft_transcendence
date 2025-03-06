@@ -267,6 +267,7 @@ export async function renderBracket() {
 						action: 'leave_online_tournament',
 						user_id: await getUserIdFromCookieAPI(),
 					};
+					
 					ws.send(JSON.stringify(payload));
 					console.log('Online tournament abandoned:', payload);
 					handleRoute('/pong/play');
