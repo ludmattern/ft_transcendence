@@ -1,5 +1,5 @@
 import { initializeWebSocket, closeWebSocket } from '/src/services/websocket.js';
-import { handleRoute, resetPreviousRoutes,  } from '/src/services/router.js';
+import { handleRoute, resetPreviousRoutes } from '/src/services/router.js';
 import componentManagers from '/src/index.js';
 import { switchwindow } from '/src/3d/animation.js';
 
@@ -18,7 +18,6 @@ export async function isClientAuthenticated() {
 		if (!data.success) {
 			return false;
 		}
-
 
 		sessionStorage.setItem('userId', data.id);
 		sessionStorage.setItem('username', data.username);
@@ -125,24 +124,21 @@ export async function verifyTwoFACode(username, twofaCode) {
 	return data;
 }
 
-
 export async function getUserIdFromCookieAPI() {
 	try {
-	  const response = await fetch('/api/auth-service/get_user_id_from_cookie/');
-	  if (!response.ok) {
-		throw new Error(`HTTP error ${response.status}`);
-	  }
-	  const data = await response.json();
-	  if (data.success) {
-		return data.user_id;
-	  } else {
-		console.error('Erreur dans la réponse:', data.error);
-		return null;
-	  }
+		const response = await fetch('/api/auth-service/get_user_id_from_cookie/');
+		if (!response.ok) {
+			throw new Error(`HTTP error ${response.status}`);
+		}
+		const data = await response.json();
+		if (data.success) {
+			return data.user_id;
+		} else {
+			console.error('Erreur dans la réponse:', data.error);
+			return null;
+		}
 	} catch (error) {
-	  console.error('Erreur lors de la récupération de l\'user ID:', error);
-	  return null;
+		console.error("Erreur lors de la récupération de l'user ID:", error);
+		return null;
 	}
-  }
-  
-  
+}

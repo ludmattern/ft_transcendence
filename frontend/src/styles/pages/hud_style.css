@@ -994,12 +994,11 @@ p {
 }
 
 #hud-body .message .profile-picture {
-	width: 12% ;
-	height: 12% ;
+	width: 12%;
+	height: 12%;
 }
 
-
-#hud-body  #central-window .profile-pic {
+#hud-body #central-window .profile-pic {
 	width: 150px;
 	height: 150px;
 }

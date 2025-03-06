@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import ManualUser, ManualBlockedRelations
 
+
 @csrf_exempt
 def is_blocked(request):
     """Check if a user is blocked."""
@@ -10,18 +11,25 @@ def is_blocked(request):
         try:
             body = json.loads(request.body.decode("utf-8"))
             user = ManualUser.objects.filter(username=body.get("username")).first()
-            blocked_user = ManualUser.objects.filter(username=body.get("selecteduser")).first()
+            blocked_user = ManualUser.objects.filter(
+                username=body.get("selecteduser")
+            ).first()
 
             if not user or not blocked_user:
-                return JsonResponse({"error": "User or blocked user not found"}, status=404)
+                return JsonResponse(
+                    {"error": "User or blocked user not found"}, status=404
+                )
 
-            is_blocked = ManualBlockedRelations.objects.filter(user=user, blocked_user=blocked_user).exists()
+            is_blocked = ManualBlockedRelations.objects.filter(
+                user=user, blocked_user=blocked_user
+            ).exists()
             return JsonResponse({"is_blocked": is_blocked}, status=200)
 
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
 
 # WILL NEED TO GET THOSE IN CONSUMERS.PY
 # @csrf_exempt

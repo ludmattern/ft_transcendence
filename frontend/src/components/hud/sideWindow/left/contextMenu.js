@@ -99,7 +99,7 @@ function handleInviteAction(author) {
 }
 
 async function handleProfileAction(author) {
-	const username = await getUsername(author)
+	const username = await getUsername(author);
 	handleRoute(`/social/pilot=${username}`);
 }
 

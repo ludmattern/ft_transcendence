@@ -1,7 +1,6 @@
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { handleRoute } from '/src/services/router.js';
 
-
 function parseGameId(gameId) {
 	const regex = /^tournLocal_(.+)_vs_tournLocal_(.+)_id_(.+)$/;
 	const match = gameId.match(regex);
@@ -48,28 +47,26 @@ export function handleLocalTournamentGameEnding(data) {
 	}
 }
 
-
 export async function createTournament(players) {
-  const organizerId = await getUserIdFromCookieAPI();
-  const payload = {
-    organizer_id: organizerId,
-    players: players,
-  };
+	const organizerId = await getUserIdFromCookieAPI();
+	const payload = {
+		organizer_id: organizerId,
+		players: players,
+	};
 
-  try {
-    const response = await fetch("/api/tournament-service/create_local_tournament/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await response.json();
-    console.log("Tournament created:", data);
-	handleRoute('/pong/play/current-tournament');
+	try {
+		const response = await fetch('/api/tournament-service/create_local_tournament/', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload),
+		});
+		const data = await response.json();
+		console.log('Tournament created:', data);
+		handleRoute('/pong/play/current-tournament');
 
-   
-    return data;
-  } catch (error) {
-    console.error("Error creating tournament:", error);
-    throw error;
-  }
+		return data;
+	} catch (error) {
+		console.error('Error creating tournament:', error);
+		throw error;
+	}
 }

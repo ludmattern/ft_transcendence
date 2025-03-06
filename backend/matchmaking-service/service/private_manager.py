@@ -2,13 +2,14 @@ import uuid
 import logging
 
 logger = logging.getLogger(__name__)
+
+
 class PrivateManager:
     def __init__(self):
         self.waiting_rooms = {}
         self.match_found = {}
 
     def join_room(self, room_code, user_id):
-
         logging.info(f"User {user_id} joined room {room_code}")
         if room_code not in self.waiting_rooms:
             self.waiting_rooms[room_code] = []
@@ -24,13 +25,13 @@ class PrivateManager:
                 "game_id": game_id,
                 "players": [p1, p2],
                 "opponent_id": p2,
-                "side": "left"
+                "side": "left",
             }
             match_info_p2 = {
                 "game_id": game_id,
                 "players": [p1, p2],
                 "opponent_id": p1,
-                "side": "right"
+                "side": "right",
             }
             self.match_found[p1] = match_info_p1
             self.match_found[p2] = match_info_p2
@@ -43,5 +44,6 @@ class PrivateManager:
             self.waiting_rooms[room_code].remove(user_id)
         if user_id in self.match_found:
             del self.match_found[user_id]
+
 
 private_manager = PrivateManager()
