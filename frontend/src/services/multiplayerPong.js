@@ -10,7 +10,7 @@ export async function startPrivateGame(gameId, side, data, roomCode) {
 		user_id: data.user_id,
 		opponent_id: data.opponent_id,
 	};
-	console.log("here : ", gameConfig);
+	console.log('here : ', gameConfig);
 	gameManager.startGame(gameConfig);
 }
 

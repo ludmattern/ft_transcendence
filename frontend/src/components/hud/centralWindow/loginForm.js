@@ -9,29 +9,24 @@ export const loginForm = createComponent({
     <div id="login-form" class="form-container flex-column justify-content-around text-center active">
       <h5>PILOT IDENTIFICATION - LOG IN</h5>
       <span class="background-central-span">
-        <form action="#" method="post" class="w-100">
-          <div class="form-group">
-            <label class="mb-3" for="pilot-id">ID</label>
-            <input type="text" id="pilot-id" name="pilot-id" class="form-control" required />
-          </div>
-          <div class="form-group">
-            <label class="mb-3" for="password">Password</label>
-            <input type="password" id="password" name="password" class="form-control" required />
-            <div id="error-message-co" class="text-danger mt-2 d-none">User already connected</div>
-            <div id="error-message" class="text-danger mt-2 d-none">Invalid credentials</div>
-			<span>
-				<p class="text-end"><a href="#" id="forgot-password-link" class="text-info ">Forgot password?</a></p>
-			</span>
-          </div>
-          <button class="btn bi bi-check">accept</button>
-        </form>
-        <div>
-          <button id="login-42" class="btn btn-outline-primary w-100">
-            Sign in with    
-			 <img src="/src/assets/img/42.png" alt="42 logo" style="filter: invert(1); height: 20px; vertical-align: middle; margin-right: 8px;">
-          </button>
-        </div>
-        <div>
+	  <form action="#" method="post" class="w-100">
+	  <div class="form-group">
+	  <label class="mb-3" for="pilot-id">ID</label>
+	  <input type="text" id="pilot-id" name="pilot-id" class="form-control" required />
+	  </div>
+	  <div class="form-group">
+	  <label class="mb-3" for="password">Password</label>
+	  <input type="password" id="password" name="password" class="form-control" required />
+	  <p class="text-end"><a href="#" id="forgot-password-link" class="text-info ">Forgot password?</a></p>
+	  <div id="error-message-co" class="text-danger mt-2 d-none">User already connected</div>
+	  <div id="error-message" class="text-danger mt-2 d-none">Invalid credentials</div>
+	  </div>
+	  <button class="btn bi bi-check">accept</button>
+	  </form>
+	  <div>
+	  <button id="login-42" class="btn"> Sign in with    
+		 <img src="/src/assets/img/42.png" alt="42 logo" style="filter: invert(1); height: 20px; vertical-align: middle; margin-right: 8px;">
+	  </button>
           <span>
             <p>New pilot? <a href="#" id="enlist-link" class="text-info">Enlist</a></p>
           </span>
@@ -45,7 +40,6 @@ export const loginForm = createComponent({
 			e.preventDefault();
 			handleRoute('/subscribe');
 		});
-
 
 		el.querySelector('#forgot-password-link').addEventListener('click', (e) => {
 			e.preventDefault();
@@ -77,12 +71,12 @@ export const loginForm = createComponent({
 				document.getElementById('error-message').classList.remove('d-none');
 			}
 		});
-		
+
 		document.querySelector('#login-42').addEventListener('click', async () => {
 			try {
 				const response = await fetch('/api/auth-service/get-42-url/');
 				const data = await response.json();
-				console.log(data)
+				console.log(data);
 				if (data.url) {
 					window.location.href = data.url;
 				} else {
@@ -92,6 +86,5 @@ export const loginForm = createComponent({
 				console.error("Erreur lors de l'appel API :", error);
 			}
 		});
-		
 	},
 });

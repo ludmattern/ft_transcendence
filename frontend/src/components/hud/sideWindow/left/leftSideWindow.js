@@ -92,26 +92,24 @@ export const leftSideWindow = createComponent({
 
 function updateNotifications(messagesToAdd, messagesToRemove, container) {
 	messagesToRemove.forEach((msg) => {
-	  const notificationId = `${msg.type}-${msg.inviter_id}`;
-	  const existingNotification = container.querySelector(`[data-notification-id="${notificationId}"]`);
-	  if (existingNotification) {
-		existingNotification.remove();
-	  }
+		const notificationId = `${msg.type}-${msg.inviter_id}`;
+		const existingNotification = container.querySelector(`[data-notification-id="${notificationId}"]`);
+		if (existingNotification) {
+			existingNotification.remove();
+		}
 	});
-  
+
 	messagesToAdd.forEach((msg) => {
 		const notificationId = `${msg.type}-${msg.inviter_id}`;
 		const notificationWrapper = document.createElement('div');
-		
+
 		notificationWrapper.innerHTML = infoPanelItem.render(msg);
-		
+
 		const renderedElement = notificationWrapper.firstElementChild;
 		renderedElement.setAttribute('data-notification-id', notificationId);
-		
+
 		infoPanelItem.attachEvents(renderedElement, msg);
-		
+
 		container.appendChild(renderedElement);
-	  });
-	  
-  }
-  
+	});
+}

@@ -185,14 +185,19 @@ export function updateOnlinePlayersUI(data) {
 	const participants = document.querySelector('#online-players-list');
 	const participantsCountSpan = document.querySelector('#online-players-count');
 	const createTournamentButton = document.querySelector('#create-tournament');
+	const maxPlayersOnlineSpan = document.querySelector('#max-players-online');
+	const roomCodeElement = document.querySelector('#room-code');
 
-	if (!participants || !participantsCountSpan) {
+	if (!participants || !participantsCountSpan || !maxPlayersOnlineSpan || !roomCodeElement) {
 		console.warn('updateOnlinePlayersUI: Certains éléments DOM sont manquants.');
 		return;
 	}
 
 	participantsCountSpan.textContent = data.participants_count;
 	participants.innerHTML = '';
+	roomCodeElement.textContent = data.serial_key;
+	maxPlayersOnlineSpan.textContent = data.size;
+
 
 	const sortedParticipants = data.participants.sort((a, b) => {
 		console.log('a:', a);

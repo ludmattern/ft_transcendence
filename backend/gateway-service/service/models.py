@@ -6,7 +6,6 @@ class ManualUser(models.Model):
     username = models.CharField(max_length=50, unique=True)
     is_connected = models.BooleanField(default=False)
 
-
     class Meta:
         db_table = "users"
         managed = True

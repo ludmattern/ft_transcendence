@@ -60,7 +60,6 @@ export const infoPanelItem = createComponent({
 	},
 });
 
-
 function behaviorFriendRequest(el, item) {
 	const acceptButton = el.querySelector('#accept-action');
 	const refuseButton = el.querySelector('#refuse-action');
@@ -97,7 +96,6 @@ function titleType(item) {
 	}
 }
 
-
 function behaviorTournament(el, item) {
 	const acceptButton = el.querySelector('#accept-action');
 	const refuseButton = el.querySelector('#refuse-action');
@@ -124,24 +122,24 @@ export async function handleTournamentAction(action, item) {
 		try {
 			console.log("Vérification de l'existence d'un lobby...");
 			const userId = await getUserIdFromCookieAPI();
-			console.log("User ID récupéré :", userId);
-	
+			console.log('User ID récupéré :', userId);
+
 			let url = `/api/tournament-service/getParticipantStatusInTournament/${encodeURIComponent(userId)}/`;
 			console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
-	
+
 			let response = await fetch(url);
 			if (!response.ok) {
 				throw new Error(`Erreur HTTP lors de la vérification du lobby (code ${response.status})`);
 			}
 			let data = await response.json();
-			console.log("status de tournoi récupérée :", data.status);
-	
+			console.log('status de tournoi récupérée :', data.status);
+
 			if (data.status === 'accepted') {
-				createNotificationMessage("You are already in a tournament", 2500, true);
+				createNotificationMessage('You are already in a tournament', 2500, true);
 				return;
 			}
 		} catch (error) {
-			console.error("Erreur dans checkOrCreateLobby :", error);
+			console.error('Erreur dans checkOrCreateLobby :', error);
 		}
 		action = 'join_tournament';
 		console.log(`joining tournament...`);
@@ -160,13 +158,13 @@ export async function handleTournamentAction(action, item) {
 }
 
 function behaviorTournamentGame(el) {
-	const acceptButton = el.querySelector("#accept-action");
+	const acceptButton = el.querySelector('#accept-action');
 	if (acceptButton) {
-	  acceptButton.addEventListener("click", () => {
-	    handleRoute(`/pong/play/current-tournament`);
-		createNotificationMessage("You can't be at two places at the same time", 2500, true);
-		createNotificationMessage("idiot...", 2500, true);
-	  });
+		acceptButton.addEventListener('click', () => {
+			handleRoute(`/pong/play/current-tournament`);
+			createNotificationMessage("You can't be at two places at the same time", 2500, true);
+			createNotificationMessage('idiot...', 2500, true);
+		});
 	}
 }
 

@@ -2,6 +2,7 @@ from django.db import models
 import pyotp
 from django.core.validators import FileExtensionValidator
 
+
 class ManualUser(models.Model):
     id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50, unique=True)
@@ -18,9 +19,9 @@ class ManualUser(models.Model):
     profile_picture = models.ImageField(
         upload_to="profile_pics/",
         default="profile_pics/default-profile-150.png",
-        validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])]
+        validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])],
     )
-    oauth_id = models.CharField(max_length=255, null=True, blank=True, unique=True)  
+    oauth_id = models.CharField(max_length=255, null=True, blank=True, unique=True)
     totp_secret = models.CharField(max_length=32, default=pyotp.random_base32)
     token_expiry = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,10 +34,15 @@ class ManualUser(models.Model):
     def __str__(self):
         return self.username
 
+
 class ManualGameHistory(models.Model):
     id = models.AutoField(primary_key=True)
-    winner = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="games_won")
-    loser = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="games_lost")
+    winner = models.ForeignKey(
+        ManualUser, on_delete=models.CASCADE, related_name="games_won"
+    )
+    loser = models.ForeignKey(
+        ManualUser, on_delete=models.CASCADE, related_name="games_lost"
+    )
     winner_score = models.IntegerField(default=0)
     loser_score = models.IntegerField(default=0)
 
@@ -50,10 +56,24 @@ class ManualGameHistory(models.Model):
 
 class ManualFriendsRelations(models.Model):
     id = models.AutoField(primary_key=True)  # Added primary key for Django ORM
-    user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friends_initiated")
-    friend = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friends_received")
-    initiator = models.ForeignKey(ManualUser,on_delete=models.CASCADE, related_name="friend_requests_sent")
-    status = models.CharField(max_length=20, choices=[("pending", "Pending"), ("accepted", "Accepted"), ("rejected", "Rejected")], default="pending")
+    user = models.ForeignKey(
+        ManualUser, on_delete=models.CASCADE, related_name="friends_initiated"
+    )
+    friend = models.ForeignKey(
+        ManualUser, on_delete=models.CASCADE, related_name="friends_received"
+    )
+    initiator = models.ForeignKey(
+        ManualUser, on_delete=models.CASCADE, related_name="friend_requests_sent"
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("pending", "Pending"),
+            ("accepted", "Accepted"),
+            ("rejected", "Rejected"),
+        ],
+        default="pending",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -69,15 +89,21 @@ class ManualFriendsRelations(models.Model):
 
 class ManualBlockedRelations(models.Model):
     id = models.AutoField(primary_key=True)  # Added primary key
-    user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="blocked_users")
-    blocked_user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="blocked_by")
+    user = models.ForeignKey(
+        ManualUser, on_delete=models.CASCADE, related_name="blocked_users"
+    )
+    blocked_user = models.ForeignKey(
+        ManualUser, on_delete=models.CASCADE, related_name="blocked_by"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "blocks"
         managed = True
         constraints = [
-            models.UniqueConstraint(fields=["user", "blocked_user"], name="unique_block")
+            models.UniqueConstraint(
+                fields=["user", "blocked_user"], name="unique_block"
+            )
         ]
 
     def __str__(self):
@@ -88,16 +114,18 @@ class ManualTournament(models.Model):
     id = models.AutoField(primary_key=True)
     serial_key = models.CharField(max_length=255, unique=True)
     size = models.IntegerField(default=0)
-    name = models.CharField(max_length=255, default='TOURNAMENT_DEFAULT_NAME')
-    organizer = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name='organized_tournaments')
+    name = models.CharField(max_length=255, default="TOURNAMENT_DEFAULT_NAME")
+    organizer = models.ForeignKey(
+        ManualUser, on_delete=models.CASCADE, related_name="organized_tournaments"
+    )
     status = models.CharField(
         max_length=50,
         choices=[
-            ('upcoming', 'Upcoming'),
-            ('ongoing', 'Ongoing'),
-            ('completed', 'Completed')
+            ("upcoming", "Upcoming"),
+            ("ongoing", "Ongoing"),
+            ("completed", "Completed"),
         ],
-        default='upcoming'
+        default="upcoming",
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -112,18 +140,22 @@ class ManualTournament(models.Model):
 
 class ManualTournamentParticipants(models.Model):
     id = models.AutoField(primary_key=True)  # Added primary key
-    tournament = models.ForeignKey(ManualTournament, on_delete=models.CASCADE, related_name='participants')
-    user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name='tournaments')
+    tournament = models.ForeignKey(
+        ManualTournament, on_delete=models.CASCADE, related_name="participants"
+    )
+    user = models.ForeignKey(
+        ManualUser, on_delete=models.CASCADE, related_name="tournaments"
+    )
     status = models.CharField(
         max_length=20,
         choices=[
-            ('pending', 'Pending'),
-            ('accepted', 'Accepted'),
-            ('rejected', 'Rejected'),
-            ('still flying', 'Still Flying'),
-            ('eliminated', 'Eliminated')
+            ("pending", "Pending"),
+            ("accepted", "Accepted"),
+            ("rejected", "Rejected"),
+            ("still flying", "Still Flying"),
+            ("eliminated", "Eliminated"),
         ],
-        default='pending'
+        default="pending",
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -131,7 +163,9 @@ class ManualTournamentParticipants(models.Model):
         db_table = "tournament_participants"
         managed = True
         constraints = [
-            models.UniqueConstraint(fields=["tournament", "user"], name="unique_tournament_participant")
+            models.UniqueConstraint(
+                fields=["tournament", "user"], name="unique_tournament_participant"
+            )
         ]
 
     def __str__(self):
@@ -140,29 +174,45 @@ class ManualTournamentParticipants(models.Model):
 
 class ManualNotifications(models.Model):
     id = models.AutoField(primary_key=True)
-    sender = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name='sent_notifications')
-    receiver = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name='received_notifications')
+    sender = models.ForeignKey(
+        ManualUser, on_delete=models.CASCADE, related_name="sent_notifications"
+    )
+    receiver = models.ForeignKey(
+        ManualUser, on_delete=models.CASCADE, related_name="received_notifications"
+    )
     type = models.CharField(
         max_length=50,
         choices=[
-            ('private_game', 'Private Game'),
-            ('tournament_invite', 'Tournament Invite'),
-            ('tournament_turn', 'Tournament Turn')
+            ("private_game", "Private Game"),
+            ("tournament_invite", "Tournament Invite"),
+            ("tournament_turn", "Tournament Turn"),
         ],
-        default='private_game'
+        default="private_game",
     )
     status = models.CharField(
         max_length=20,
         choices=[
-            ('pending', 'Pending'),
-            ('accepted', 'Accepted'),
-            ('rejected', 'Rejected'),
-            ('expired', 'Expired')
+            ("pending", "Pending"),
+            ("accepted", "Accepted"),
+            ("rejected", "Rejected"),
+            ("expired", "Expired"),
         ],
-        default='pending'
+        default="pending",
     )
-    tournament = models.ForeignKey(ManualTournament, on_delete=models.CASCADE, null=True, blank=True, related_name='notifications')
-    game = models.ForeignKey(ManualGameHistory, on_delete=models.CASCADE, null=True, blank=True, related_name='notifications')
+    tournament = models.ForeignKey(
+        ManualTournament,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="notifications",
+    )
+    game = models.ForeignKey(
+        ManualGameHistory,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="notifications",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -172,35 +222,41 @@ class ManualNotifications(models.Model):
 
     def __str__(self):
         return f"Notification from {self.sender.username} to {self.receiver.username} ({self.type})"
-        
-        
+
+
 class GameHistory(models.Model):
     id = models.AutoField(primary_key=True)
     winner_id = models.IntegerField(default=0)
     loser_id = models.IntegerField(default=0)
     winner_score = models.IntegerField(default=0)
     loser_score = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True) 
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "game_history"
 
     def __str__(self):
-        return f"GameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
+        return (
+            f"GameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
+        )
 
 
 class TournamentMatch(models.Model):
     id = models.AutoField(primary_key=True)
-    tournament = models.ForeignKey('ManualTournament', on_delete=models.CASCADE, related_name='matches')
-    round_number = models.IntegerField() 
-    match_order = models.IntegerField()    # l'ordre dans le round
+    tournament = models.ForeignKey(
+        "ManualTournament", on_delete=models.CASCADE, related_name="matches"
+    )
+    round_number = models.IntegerField()
+    match_order = models.IntegerField()  # l'ordre dans le round
     player1 = models.CharField(max_length=50, blank=True, null=True)
     player2 = models.CharField(max_length=50, blank=True, null=True)
-    status = models.CharField(max_length=20, default='pending')  # 'pending', 'ready' ,'completed', etc.
+    status = models.CharField(
+        max_length=20, default="pending"
+    )  # 'pending', 'ready' ,'completed', etc.
     winner = models.CharField(max_length=50, blank=True, null=True)
     score = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    match_key = models.CharField(max_length=100, null=True, blank=True)  
+    match_key = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return f"Round {self.round_number} Match {self.match_order}: {self.player1} vs {self.player2}"
