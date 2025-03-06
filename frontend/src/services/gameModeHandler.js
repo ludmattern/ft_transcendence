@@ -26,7 +26,6 @@ export async function gameModeSelector(config) {
 		);
 		console.log('launch matchmaking');
 	} else if (config.gameMode === 'private') {
-		
 		const userId = await getUserIdFromCookieAPI();
 		console.log('private game');
 		if (config.action === 'create') {

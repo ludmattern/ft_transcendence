@@ -2,10 +2,10 @@ import { createComponent } from '/src/utils/component.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export const profileForm = createComponent({
-  tag: 'profileForm',
+	tag: 'profileForm',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
     <div id="profile-form" class="form-container">
       <h5 class="text-center">Pilot Profile</h5>
       <span class="background-central-span d-flex flex-column align-items-center flex-grow-1 p-4">
@@ -60,28 +60,28 @@ export const profileForm = createComponent({
     </div>
   `,
 
-  attachEvents: async (el) => {
-    const userId = await getUserIdFromCookieAPI();
-    console.log("hre",userId)
+	attachEvents: async (el) => {
+		const userId = await getUserIdFromCookieAPI();
+		console.log('hre', userId);
 
-	loadMatchHistory(userId);
-	loadUserProfile(userId);
-	attachProfilePicUpload();
-    
-    // Gestion du clic sur un lien vers un autre profil
-    // el.addEventListener('click', (e) => {
-    //   if (e.target.matches('#other-profile-link')) {
-    //     e.preventDefault();
-    //     // testloadComponent('#central-window', otherProfileForm); // Charger OtherProfileForm
-    //     console.info('OtherProfileForm loaded on click.');
-    //   }
-    // });
+		loadMatchHistory(userId);
+		loadUserProfile(userId);
+		attachProfilePicUpload();
 
-    // // Exemple d'événement supplémentaire pour les statistiques
-    // el.querySelector('.profile-pseudo-input').addEventListener('change', (e) => {
-    //   console.log(`Pseudo changé en : ${e.target.value}`);
-    // });
-  },
+		// Gestion du clic sur un lien vers un autre profil
+		// el.addEventListener('click', (e) => {
+		//   if (e.target.matches('#other-profile-link')) {
+		//     e.preventDefault();
+		//     // testloadComponent('#central-window', otherProfileForm); // Charger OtherProfileForm
+		//     console.info('OtherProfileForm loaded on click.');
+		//   }
+		// });
+
+		// // Exemple d'événement supplémentaire pour les statistiques
+		// el.querySelector('.profile-pseudo-input').addEventListener('change', (e) => {
+		//   console.log(`Pseudo changé en : ${e.target.value}`);
+		// });
+	},
 });
 
 /**
@@ -96,88 +96,85 @@ export const profileForm = createComponent({
  * @returns {string} - HTML du match
  */
 
-
 function attachProfilePicUpload() {
-  const profilePicLink = document.getElementById("profile-pic-link");
-  const fileInput = document.getElementById("profile-image-input");
+	const profilePicLink = document.getElementById('profile-pic-link');
+	const fileInput = document.getElementById('profile-image-input');
 
-  if (profilePicLink && fileInput) {
-    profilePicLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      fileInput.click();
-    });
+	if (profilePicLink && fileInput) {
+		profilePicLink.addEventListener('click', (e) => {
+			e.preventDefault();
+			fileInput.click();
+		});
 
-    fileInput.addEventListener("change", async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
+		fileInput.addEventListener('change', async (e) => {
+			const file = e.target.files[0];
+			if (!file) return;
 
-      const formData = new FormData();
-      formData.append("profile_picture", file);
-      formData.append("user_id", sessionStorage.getItem("userId"));
+			const formData = new FormData();
+			formData.append('profile_picture', file);
+			formData.append('user_id', sessionStorage.getItem('userId'));
 
-      try {
-        const response = await fetch("/api/user-service/upload_profile_picture/", {
-          method: "POST",
-          body: formData
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error ${response.status}`);
-        }
-        const data = await response.json();
-        console.log("Profile picture updated:", data);
-        if (data.success && data.profile_picture) {
-          const profilePicImg = document.querySelector(".profile-pic");
-          if (profilePicImg) {
-            profilePicImg.src = data.profile_picture;
-          }
-        }
-      } catch (error) {
-        console.log("Erreur lors de l'upload de l'image.");
-      }
-    });
-  }
+			try {
+				const response = await fetch('/api/user-service/upload_profile_picture/', {
+					method: 'POST',
+					body: formData,
+				});
+				if (!response.ok) {
+					throw new Error(`HTTP error ${response.status}`);
+				}
+				const data = await response.json();
+				console.log('Profile picture updated:', data);
+				if (data.success && data.profile_picture) {
+					const profilePicImg = document.querySelector('.profile-pic');
+					if (profilePicImg) {
+						profilePicImg.src = data.profile_picture;
+					}
+				}
+			} catch (error) {
+				console.log("Erreur lors de l'upload de l'image.");
+			}
+		});
+	}
 }
 
 export async function loadMatchHistory(userId) {
+	try {
+		const response = await fetch(`/api/user-service/get_game_history/?user_id=${userId}`);
+		if (!response.ok) {
+			throw new Error(`HTTP error ${response.status}`);
+		}
+		const data = await response.json();
+		console.log('Game history data:', data);
+		if (data.success) {
+			const winrateElement = document.getElementById('winrate');
+			if (winrateElement) {
+				winrateElement.textContent = `${data.winrate.toFixed(0)}%`;
+			}
+			const historyContainer = document.querySelector('.match-history-container');
+			if (!historyContainer) return;
 
-  try {
-    const response = await fetch(`/api/user-service/get_game_history/?user_id=${userId}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
-    }
-    const data = await response.json();
-    console.log("Game history data:", data);
-    if (data.success) {
-      const winrateElement = document.getElementById("winrate");
-      if (winrateElement) 
-      {
-        winrateElement.textContent = `${data.winrate.toFixed(0)}%`;
-      }
-      const historyContainer = document.querySelector(".match-history-container");
-      if (!historyContainer) return;
-      
-      historyContainer.innerHTML = "";
-      
-      data.history.forEach(match => {
-        const outcome = (String(match.winner_id) == userId) ? "Win" : "Loss";
-        const date = match.created_at;
-        const opponents = `${match.winner_username} vs ${match.loser_username}`;
-        const outcomeClass = (String(match.winner_id) == userId) ? "text-success" : "text-danger";
-        const score = `${match.winner_score} - ${match.loser_score}`;
-        
-        const matchHtml = createMatchItem(outcome, date, opponents, outcomeClass, score);
-        historyContainer.innerHTML += matchHtml;
-      });
-    } else {
-      console.error("Erreur lors du chargement de l'historique :", data.error);
-    }
-  } catch (error) {
-    console.error("Error loading match history:", error);
-  }
+			historyContainer.innerHTML = '';
+
+			data.history.forEach((match) => {
+				const outcome = String(match.winner_id) == userId ? 'Win' : 'Loss';
+				const date = match.created_at;
+				const opponents = `${match.winner_username} vs ${match.loser_username}`;
+				const outcomeClass = String(match.winner_id) == userId ? 'text-success' : 'text-danger';
+				const score = `${match.winner_score} - ${match.loser_score}`;
+
+				const matchHtml = createMatchItem(outcome, date, opponents, outcomeClass, score);
+				historyContainer.innerHTML += matchHtml;
+			});
+		} else {
+			console.error("Erreur lors du chargement de l'historique :", data.error);
+		}
+	} catch (error) {
+		console.error('Error loading match history:', error);
+	}
 }
 
 function createMatchItem(outcome, date, opponents, outcomeClass, score) {
-  return `
+	return `
     <div class="match-item d-flex">
       <span class="col-3 ${outcomeClass} fw-bold">${outcome}</span>
       <span class="col-3">${date}</span>
@@ -187,56 +184,52 @@ function createMatchItem(outcome, date, opponents, outcomeClass, score) {
   `;
 }
 
-
-
 export async function loadUserProfile(userId) {
-  try {
-    const response = await fetch(`/api/user-service/get_profile/?user_id=${userId}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
-    }
-    const data = await response.json();
-    console.log("User profile data:", data);
+	try {
+		const response = await fetch(`/api/user-service/get_profile/?user_id=${userId}`);
+		if (!response.ok) {
+			throw new Error(`HTTP error ${response.status}`);
+		}
+		const data = await response.json();
+		console.log('User profile data:', data);
 
-    if (data.success && data.profile) {
-      const profilePicImg = document.querySelector(".profile-pic");
-      if (profilePicImg) {
-        profilePicImg.src = data.profile.profile_picture;
-        profilePicImg.alt = data.profile.username + "'s profile picture";
-        profilePicImg.style.width = "150px";
-        profilePicImg.style.height = "150px";
-      }
-      profilePicImg.classList.remove("d-none");
+		if (data.success && data.profile) {
+			const profilePicImg = document.querySelector('.profile-pic');
+			if (profilePicImg) {
+				profilePicImg.src = data.profile.profile_picture;
+				profilePicImg.alt = data.profile.username + "'s profile picture";
+				profilePicImg.style.width = '150px';
+				profilePicImg.style.height = '150px';
+			}
+			profilePicImg.classList.remove('d-none');
 
-      const pseudoElement = document.getElementById("pseudo");
-      if (pseudoElement && data.profile.username) {
-        pseudoElement.textContent = data.profile.username;
-      }
-      console.log(data.profile.elo)
-      const eloElement = document.getElementById("elo");
-      if (eloElement)
-      {
-        eloElement.textContent = `Elo: ${data.profile.elo}`;
-      }
+			const pseudoElement = document.getElementById('pseudo');
+			if (pseudoElement && data.profile.username) {
+				pseudoElement.textContent = data.profile.username;
+			}
+			console.log(data.profile.elo);
+			const eloElement = document.getElementById('elo');
+			if (eloElement) {
+				eloElement.textContent = `Elo: ${data.profile.elo}`;
+			}
 
-      const statusIndicator = document.querySelector(".status-indicator");
-      if (statusIndicator) {
-        if (data.profile.is_connected) {
-          statusIndicator.classList.remove("text-danger");
-          statusIndicator.classList.add("text-success");
-        } else {
-          statusIndicator.classList.remove("text-success");
-          statusIndicator.classList.add("text-danger");
-        }
-      }
-    } else {
-      console.error("Error loading profile:", data.error);
-    }
-  } catch (error) {
-    console.error("Error loading user profile:", error);
-  }
+			const statusIndicator = document.querySelector('.status-indicator');
+			if (statusIndicator) {
+				if (data.profile.is_connected) {
+					statusIndicator.classList.remove('text-danger');
+					statusIndicator.classList.add('text-success');
+				} else {
+					statusIndicator.classList.remove('text-success');
+					statusIndicator.classList.add('text-danger');
+				}
+			}
+		} else {
+			console.error('Error loading profile:', data.error);
+		}
+	} catch (error) {
+		console.error('Error loading user profile:', error);
+	}
 }
-
 
 // import { subscribe } from '/src/services/eventEmitter.js';
 
@@ -244,5 +237,3 @@ export async function loadUserProfile(userId) {
 // //recharger le bloc d'amis
 
 // });
-
-

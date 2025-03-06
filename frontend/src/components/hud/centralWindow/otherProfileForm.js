@@ -73,20 +73,20 @@ export const otherProfileForm = createComponent({
   `,
 
 	// Ajouter les événements après le chargement
-  attachEvents: async (el) => {
-    function getUsernameFromUrl() {
-      const path = window.location.pathname;
-      const prefix = "/social/pilot=";
-      if (path.startsWith(prefix)) {
-        return decodeURIComponent(path.substring(prefix.length));
-      }
-      return null;
-    }
-    
-    const profile_id = await fetchUserId(getUsernameFromUrl());
-    console.log(profile_id);
-    loadUserProfile(profile_id);
-    loadMatchHistory(profile_id);
+	attachEvents: async (el) => {
+		function getUsernameFromUrl() {
+			const path = window.location.pathname;
+			const prefix = '/social/pilot=';
+			if (path.startsWith(prefix)) {
+				return decodeURIComponent(path.substring(prefix.length));
+			}
+			return null;
+		}
+
+		const profile_id = await fetchUserId(getUsernameFromUrl());
+		console.log(profile_id);
+		loadUserProfile(profile_id);
+		loadMatchHistory(profile_id);
 
 		el.addEventListener('click', (e) => {
 			if (e.target.matches('#invite-link')) {
@@ -120,21 +120,18 @@ export const otherProfileForm = createComponent({
  * @returns {string} - HTML du match
  */
 
-
-
 export async function fetchUserId(username) {
-  try {
-    const response = await fetch(`/api/user-service/get_user_id/${username}/`);
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
-    }
-    const data = await response.json();
-    return data.user_id;
-  } catch (error) {
-    console.error("Error fetching user ID:", error);
-  }
+	try {
+		const response = await fetch(`/api/user-service/get_user_id/${username}/`);
+		if (!response.ok) {
+			throw new Error(`HTTP error ${response.status}`);
+		}
+		const data = await response.json();
+		return data.user_id;
+	} catch (error) {
+		console.error('Error fetching user ID:', error);
+	}
 }
-
 
 /*
 SI LE USER EXISTE PAS FAIRE UNE PAGE SPECIALE 

@@ -1,5 +1,5 @@
 import { createComponent } from '/src/utils/component.js';
-import { handleRoute, getPreviousRoute,  } from '/src/services/router.js';
+import { handleRoute, getPreviousRoute } from '/src/services/router.js';
 import { logoutUser } from '/src/services/auth.js';
 
 export const logoutForm = createComponent({

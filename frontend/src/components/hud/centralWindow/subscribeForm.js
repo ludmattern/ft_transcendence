@@ -42,14 +42,6 @@ export const subscribeForm = createComponent({
             <div id="error-message-mail2" class="text-danger mt-2" style="display: none;">E-mail does not match</div>
           </div>
           <div class="form-group">
-            <label class="mb-3" for="language">Language</label>
-            <select id="language" name="language" class="form-control p-3" required>
-              <option value="french">French</option>
-              <option value="english">English</option>
-              <option value="german">German</option>
-            </select>
-          </div>
-          <div class="form-group">
             <label for="enable-2fa">
               <input type="checkbox" id="enable-2fa" name="enable-2fa" />
               Enable Two-Factor Authentication (2FA)

@@ -2,6 +2,7 @@ from django.db import models
 import pyotp
 from django.core.validators import FileExtensionValidator
 
+
 class ManualUser(models.Model):
     id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50, unique=True)
@@ -20,11 +21,9 @@ class ManualUser(models.Model):
     profile_picture = models.ImageField(
         upload_to="profile_pics/",
         default="profile_pics/default-profile-150.png",
-        validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])]
+        validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])],
     )
     oauth_id = models.CharField(max_length=255, null=True, blank=True, unique=True)
-
-
 
     class Meta:
         db_table = "users"
@@ -32,5 +31,3 @@ class ManualUser(models.Model):
 
     def __str__(self):
         return self.username
-
-

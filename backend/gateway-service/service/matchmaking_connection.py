@@ -6,6 +6,7 @@ import ssl
 
 logger = logging.getLogger(__name__)
 
+
 async def connect_dummy_matchmaking():
     ws_url = "wss://matchmaking_service:3005/ws/matchmaking/"
     while True:
@@ -14,7 +15,7 @@ async def connect_dummy_matchmaking():
             ssl_context.load_verify_locations("/data/certs/selfsigned.crt")
             ssl_context.check_hostname = False
             ssl_context.verify_mode = ssl.CERT_NONE
-            
+
             logger.info("Tentative de connexion au MatchmakingConsumer via %s", ws_url)
             async with websockets.connect(ws_url, ssl=ssl_context) as websocket:
                 logger.info("Connexion dummy établie au MatchmakingConsumer.")
@@ -25,9 +26,11 @@ async def connect_dummy_matchmaking():
             logger.error("Erreur de connexion dummy au MatchmakingConsumer : %s", e)
             await asyncio.sleep(5)
 
+
 def run_loop(loop):
     asyncio.set_event_loop(loop)
     loop.run_forever()
+
 
 def start_dummy_matchmaking_connection():
     new_loop = asyncio.new_event_loop()

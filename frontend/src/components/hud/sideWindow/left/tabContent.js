@@ -54,7 +54,7 @@ export async function loadTabContent(tabName, container) {
 		const userIdRaw = await getUserIdFromCookieAPI();
 		const userId = userIdRaw ? userIdRaw.toString() : 'unknown';
 
-		console.log("UserId récupéré :", userId);
+		console.log('UserId récupéré :', userId);
 		tabItems.forEach((item) => {
 			renderCommMessage(item, container, userId);
 		});
@@ -81,12 +81,11 @@ export async function fetchAndStoreInfoData(container) {
 	}
 }
 
-
 function renderInfoTab(tabItems, container) {
 	tabItems.forEach((item) => {
 		const panelItem = infoPanelItem.render(item);
 		container.insertAdjacentHTML('beforeend', panelItem);
-		infoPanelItem.attachEvents(container.lastElementChild, item);	
+		infoPanelItem.attachEvents(container.lastElementChild, item);
 	});
 }
 

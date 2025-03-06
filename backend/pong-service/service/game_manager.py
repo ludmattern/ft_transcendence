@@ -1,12 +1,13 @@
 # service/game_manager.py
 from .games import BasePongGame
 
+
 class GameManager:
     def __init__(self):
-        self.games = {} 
+        self.games = {}
 
     def get_or_create_game(self, game_id, player1_id=None, player2_id=None):
-        """ Récupère une partie existante ou en crée une nouvelle avec les IDs des joueurs. """
+        """Récupère une partie existante ou en crée une nouvelle avec les IDs des joueurs."""
         if game_id not in self.games:
             self.games[game_id] = BasePongGame(game_id, player1_id, player2_id)
         else:
@@ -23,5 +24,6 @@ class GameManager:
     def cleanup_game(self, game_id):
         if game_id in self.games:
             del self.games[game_id]
+
 
 game_manager = GameManager()

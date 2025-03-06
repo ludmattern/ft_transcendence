@@ -64,7 +64,9 @@ export function createNotificationMessage(message, duration = 2500, error = fals
 
 	setTimeout(() => {
 		notification.classList.remove('visible');
-		setTimeout(() => { collapseNotification(notification);}, 300);
+		setTimeout(() => {
+			collapseNotification(notification);
+		}, 300);
 	}, duration);
 }
 

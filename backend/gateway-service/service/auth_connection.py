@@ -7,6 +7,7 @@ import ssl
 
 logger = logging.getLogger(__name__)
 
+
 async def connect_dummy_auth():
     ws_url = "wss://auth_service:3001/ws/auth/"
     while True:
@@ -15,7 +16,7 @@ async def connect_dummy_auth():
             ssl_context.load_verify_locations("/data/certs/selfsigned.crt")
             ssl_context.check_hostname = False
             ssl_context.verify_mode = ssl.CERT_NONE
-            
+
             logger.info("Tentative de connexion au AuthGroupConsumer via %s", ws_url)
             async with websockets.connect(ws_url, ssl=ssl_context) as websocket:
                 logger.info("Connexion dummy établie au AuthGroupConsumer.")
@@ -26,9 +27,11 @@ async def connect_dummy_auth():
             logger.error("Erreur de connexion dummy au AuthGroupConsumer : %s", e)
             await asyncio.sleep(5)
 
+
 def run_loop(loop):
     asyncio.set_event_loop(loop)
     loop.run_forever()
+
 
 def start_dummy_auth_connection():
     new_loop = asyncio.new_event_loop()

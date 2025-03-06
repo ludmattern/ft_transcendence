@@ -6,7 +6,7 @@ import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { handleRoute } from '/src/services/router.js';
 import { getUsername } from '/src/pongGame/gameManager.js';
 export const contextMenu = createComponent({
-	tag: 'contextMenu', 
+	tag: 'contextMenu',
 
 	// Génère le HTML du menu contextuel en fonction de l'item et d'un objet userStatus
 	render: (item, userStatus) => `
@@ -116,7 +116,7 @@ function handleInviteAction(author) {
 }
 
 async function handleProfileAction(author) {
-	const username = await getUsername(author)
+	const username = await getUsername(author);
 	handleRoute(`/social/pilot=${username}`);
 }
 

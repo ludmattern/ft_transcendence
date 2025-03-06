@@ -8,8 +8,9 @@ import ssl
 
 logger = logging.getLogger(__name__)
 
+
 async def connect_dummy_chat():
-    ws_url = "wss://livechat_service:3003/ws/chat/"  
+    ws_url = "wss://livechat_service:3003/ws/chat/"
     while True:
         try:
             ssl_context = ssl.create_default_context()
@@ -18,7 +19,7 @@ async def connect_dummy_chat():
             ssl_context.verify_mode = ssl.CERT_NONE
             logger.info("Tentative de connexion au ChatConsumer via %s", ws_url)
             async with websockets.connect(ws_url, ssl=ssl_context) as websocket:
-            # async with websockets.connect(ws_url) as websocket:
+                # async with websockets.connect(ws_url) as websocket:
                 logger.info("Connexion dummy établie au ChatConsumer.")
                 while True:
                     message = await websocket.recv()
@@ -27,10 +28,12 @@ async def connect_dummy_chat():
             logger.error("Erreur de connexion dummy au ChatConsumer : %s", e)
             await asyncio.sleep(5)
 
+
 def run_loop(loop):
     """Fonction qui exécute un event loop dans un thread."""
     asyncio.set_event_loop(loop)
     loop.run_forever()
+
 
 def start_dummy_chat_connection():
     new_loop = asyncio.new_event_loop()

@@ -7,6 +7,7 @@ import ssl
 
 logger = logging.getLogger(__name__)
 
+
 async def connect_dummy_pong():
     ws_url = "wss://pong_service:3004/ws/pong/"
     while True:
@@ -15,7 +16,7 @@ async def connect_dummy_pong():
             ssl_context.load_verify_locations("/data/certs/selfsigned.crt")
             ssl_context.check_hostname = False
             ssl_context.verify_mode = ssl.CERT_NONE
-            
+
             logger.info("Tentative de connexion au PongGroupConsumer via %s", ws_url)
             async with websockets.connect(ws_url, ssl=ssl_context) as websocket:
                 logger.info("Connexion dummy établie au PongGroupConsumer.")
@@ -26,9 +27,11 @@ async def connect_dummy_pong():
             logger.error("Erreur de connexion dummy au PongGroupConsumer : %s", e)
             await asyncio.sleep(5)
 
+
 def run_loop(loop):
     asyncio.set_event_loop(loop)
     loop.run_forever()
+
 
 def start_dummy_pong_connection():
     new_loop = asyncio.new_event_loop()
