@@ -16,6 +16,7 @@ import {
 	navigateBackToPong,
 	navigateToSettings2FA,
 	navigateToLoading,
+	navigateToForgotPassword
 } from '/src/services/navigation.js';
 import { render } from '/src/pongGame/gameNavigation.js';
 import { emit } from '/src/services/eventEmitter.js';
@@ -39,9 +40,10 @@ const routeMappings = {
 	'/subscribe': navigateToSubscribe,
 	'/topong': navigateBackToPong,
 	'/loading': navigateToLoading,
+	'/forgot-password': navigateToForgotPassword
 };
 
-const publicRoutes = new Set(['/login', '/login/2fa', '/subscribe', '/register/qr']);
+const publicRoutes = new Set(['/login', '/login/2fa', '/subscribe', '/register/qr', '/forgot-password']);
 
 export function setPreviousPongPlaySubRoute(subroute) {
 	previousPongPlaySubRoute = subroute;

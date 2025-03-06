@@ -118,12 +118,12 @@ export const multiplayerContent = createComponent({
 
 export async function leaveMatchmaking() {
 	const userId = await getUserIdFromCookieAPI();
-	ws.send(
-		JSON.stringify({
-			type: 'matchmaking',
-			action: 'leave',
-			user_id: userId,
-		})
-	);
+	payload = {
+		type: 'matchmaking',
+		action: 'leave',
+		user_id: userId,
+	};
+
+	ws.send(JSON.stringify(payload));
 	console.log("Sent 'leave matchmaking' via WebSocket");
 }

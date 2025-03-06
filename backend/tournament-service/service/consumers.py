@@ -262,10 +262,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		author_id = event.get("userId")
 		initiator = await self.get_user(author_id)
 
+		if not initiator.current_tournament_id:
+			logger.warning(f"No active tournament found for initiator {initiator.username}")
+			return
+
 		tournament = await self.get_tournament_from_id(initiator.current_tournament_id)
 		if not tournament:
 			logger.warning(f"No active tournament found for initiator {initiator.username}")
-			return 
+			return
 		
 		initiator.current_tournament_id = 0
 		await sync_to_async(initiator.save)()
