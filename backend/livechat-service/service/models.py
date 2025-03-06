@@ -67,6 +67,7 @@ class ManualBlockedRelations(models.Model):
 	id = models.AutoField(primary_key=True)  # Added primary key
 	user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="blocked_users")
 	blocked_user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="blocked_by")
+	initiator_id = models.IntegerField(default=0)
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	class Meta:

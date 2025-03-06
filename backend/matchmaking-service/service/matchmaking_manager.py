@@ -46,7 +46,7 @@ class MatchmakingManager:
 	def remove_from_queue(self, user_id):
 		if user_id in self.waiting_players:
 			self.waiting_players.remove(user_id)
-		else
+		else:
 			logger.info(f"user_id={user_id} n'est pas dans la queue")
 		if user_id in self.match_found:
 			del self.match_found[user_id]

@@ -5,7 +5,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db.models import Q
-from .models import ManualUser, ManualFriendsRelations, ManualTournamentParticipants, ManualTournament
+from .models import ManualUser, ManualFriendsRelations, ManualTournamentParticipants, ManualTournament, ManualBlockedRelations
 from asgiref.sync import sync_to_async
 
 logger = logging.getLogger(__name__)
@@ -255,7 +255,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			participants = await get_participants(tournament)
 
 			for participant in participants:
-					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
+				await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 
 			await self.channel_layer.group_send(f"user_{tournament.organizer_id}", {"type": "info_message", "info": f"{recipient_username} refused your tournament invite."})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You refused the tournament invite."})
@@ -360,6 +360,46 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			await self.channel_layer.group_send(f"user_{initiator_id}", {"type": "info_message", "info": "You have left the lobby."})
 			await self.channel_layer.group_send(f"user_{initiator_id}", {"type": "info_message", "action": "leavingLobby", "tournament_id": tournament.id,"player": initiator_username})
+		
+		elif str(action) == "block_user":
+			author_id = event.get("author")
+			recipient_id = event.get("recipient")
+			try:
+				author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+				recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 
+				if author_user.id > recipient_user.id:
+					user, friend = recipient_user, author_user
+				else:
+					user, friend = author_user, recipient_user
+
+				# Check if a block already exists in either direction
+				qs = ManualBlockedRelations.objects.filter(user=user, blocked_user=friend)
+
+				if await database_sync_to_async(qs.exists)():
+					relation = await database_sync_to_async(qs.first)()
+					initiator_id = await database_sync_to_async(lambda: relation.initiator_id)()
+
+					if str(initiator_id) != str(author_id):
+						await self.channel_layer.group_send(
+							f"user_{author_id}",
+							{"type": "info_message", "info": f"You have already been blocked by {recipient_user.username}."}
+						)
+					else:
+						await self.channel_layer.group_send(
+							f"user_{author_id}",
+							{"type": "info_message", "info": f"You have already blocked {recipient_user.username}."}
+						)
+				
+				else:
+					await database_sync_to_async(ManualBlockedRelations.objects.create)(user=author_user, blocked_user=recipient_user, initiator_id=author_user)
+
+				await database_sync_to_async(ManualFriendsRelations.objects.filter(
+					user=author_user, friend=recipient_user
+				).delete)()
+			except ManualUser.DoesNotExist:
+				await self.channel_layer.group_send(f"user_{author_user.id}", {"type": "error_message", "error": "No user has been found."})
 		else:
 			logger.warning(f"Unknown action: {action}")
+
+
