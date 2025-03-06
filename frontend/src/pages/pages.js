@@ -19,6 +19,7 @@ import {
 	hudSVG,
 	HelmetSVG,
 	loadingScreen,
+	forgotPassword,
 } from '/src/components/hud/index.js';
 
 import {
@@ -72,6 +73,9 @@ export const globalComponents = [
 export const hudPages = {
 	login: {
 		components: [...backgroundComponents, ...persistentComponents, { selector: '#central-window', component: loginForm }],
+	},
+	forgotPassword: {
+		components: [...backgroundComponents, ...persistentComponents, { selector: '#central-window', component: forgotPassword }],
 	},
 	twoFAForm: {
 		components: [...backgroundComponents, ...persistentComponents, { selector: '#central-window', component: twoFAForm }],

@@ -19,6 +19,9 @@ export const loginForm = createComponent({
             <input type="password" id="password" name="password" class="form-control" required />
             <div id="error-message-co" class="text-danger mt-2 d-none">User already connected</div>
             <div id="error-message" class="text-danger mt-2 d-none">Invalid credentials</div>
+			<span>
+				<p class="text-end"><a href="#" id="forgot-password-link" class="text-info ">Forgot password?</a></p>
+			</span>
           </div>
           <button class="btn bi bi-check">accept</button>
         </form>
@@ -41,6 +44,12 @@ export const loginForm = createComponent({
 		el.querySelector('#enlist-link').addEventListener('click', (e) => {
 			e.preventDefault();
 			handleRoute('/subscribe');
+		});
+
+
+		el.querySelector('#forgot-password-link').addEventListener('click', (e) => {
+			e.preventDefault();
+			handleRoute('/forgot-password');
 		});
 
 		el.querySelector('form').addEventListener('submit', async (e) => {
