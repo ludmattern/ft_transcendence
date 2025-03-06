@@ -487,7 +487,7 @@ def abandon_online_tournament(request):
 					else:
 						next_match.player2 = opponent
 					next_match.save()
-     	
+
 		user.tournament_status = "out"
 		user.current_tournament_id = 0
 		user.save()
@@ -501,8 +501,6 @@ def abandon_online_tournament(request):
 	except Exception as e:
 		logger.exception("Error handling online tournament abandonment:")
 		return JsonResponse({"error": str(e)}, status=500)
-
-
 
 #TODO Here we can find logic on how we try to join tournamnet from TournamentContent.js. One with trying to random tournament with a specific size
 # and the other one with trying to join a tournament with a room code (serial_key)

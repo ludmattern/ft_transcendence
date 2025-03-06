@@ -9,6 +9,7 @@ from django.conf import settings
 import secrets
 import random
 import string
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 def generate_online_match_key():
@@ -75,6 +76,8 @@ def create_matches_for_tournament(tournament_id, usernames):
 	tournament.status = "ongoing"
 	tournament.size = n // 2
 	tournament.save()
+
+	random.shuffle(usernames)
 
 	for i in range(0, n, 2):
 		match_order = (i // 2) + 1
@@ -143,6 +146,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			await self.handle_kick_tournament(event)
 		elif str(action) == "create_online_tournament":
 			await self.create_online_tournament(event)
+		elif str(action) == "leave_online_tournament":
+			await self.handle_leave_online_tournament(event)
 		elif str(action) == "cancel_tournament":
 			await self.handle_cancel_tournament(event)
 		elif str(action) == "leave_tournament":
@@ -394,15 +399,105 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				}
 			)
 
-
 		except ValueError as ve:
 			logger.error(f"Bracket creation failed: {str(ve)}")
 
 		except Exception as e:
 			logger.exception("Error while creating online tournament bracket:")
+   
+   
+	async def handle_leave_online_tournament(self, event):
+		"""Gère l'abandon d'un tournoi en ligne via WebSocket."""
+		try:
+			user_id = event.get("user_id")
+			if not user_id:
+				await self.send(json.dumps({"error": "user_id is required"}))
+				return
+
+			user = await self.get_user(user_id)
+			if not user:
+				await self.send(json.dumps({"error": "User not found"}))
+				return
+
+			tournament_id = user.current_tournament_id
+			if tournament_id == 0:
+				await self.send(json.dumps({"error": "User is not participating in any tournament"}))
+				return
+
+			participant = await sync_to_async(lambda: ManualTournamentParticipants.objects.filter(
+				tournament_id=tournament_id, user=user
+			).first())()
+
+
+			if not participant:
+				await self.send(json.dumps({"error": "User not found in tournament"}))
+				return
+
+			participant.status = "left"
+			await sync_to_async(participant.save)()
+   
+			match = await sync_to_async(lambda: TournamentMatch.objects.filter(
+				tournament_id=tournament_id
+			).filter(
+				Q(status="pending") | Q(status="ready"),
+				Q(player1=user.username) | Q(player2=user.username)
+			).first())()
+
+
+			if match:
+				opponent = match.player1 if match.player2 == user.username else match.player2
+				if opponent:
+					match.winner = opponent
+					match.score = "Forfeit"
+					match.status = "completed"
+					await sync_to_async(match.save)()
+
+					next_round = match.round_number + 1
+					next_match_order = (match.match_order + 1) // 2
+					next_match = await sync_to_async(lambda: TournamentMatch.objects.filter(
+						tournament_id=tournament_id,
+						round_number=next_round,
+						match_order=next_match_order
+					).first())()
+
+   
+					if next_match:
+						if match.match_order % 2 == 1:
+							next_match.player1 = opponent
+						else:
+							next_match.player2 = opponent
+						await sync_to_async(next_match.save)()
+
+			user.tournament_status = "out"
+			user.current_tournament_id = 0
+			await sync_to_async(user.save)()
+
+			next_match_player_ids = []
+			if next_match:
+				if next_match.player1 != "TBD" and next_match.player2 != "TBD":
+					next_match_player_ids = await sync_to_async(lambda: [ManualUser.objects.get(username=next_match.player1).id, ManualUser.objects.get(username=next_match.player2).id])()
+
+			participant_list = await sync_to_async(lambda: list(ManualTournamentParticipants.objects.filter(tournament_id=tournament_id).exclude(Q(status="rejected") | Q(status="left")).values_list('id', flat=True)))()
+
+			payload = {
+				"type": "info_message",
+				"action": "back_tournament_game_over",
+				"tournament_id": tournament_id,
+				"participant_list": participant_list,
+				"next_match_player_ids": next_match_player_ids,
+				# "current_match_player_ids": [int(winner_id), int(loser_id)],
+			}
+			logger.info(f"back_tournament_game_over sent to gateway: {payload}")
+			await self.channel_layer.group_send(f"user_{0}", payload)
+
+		except Exception as e:
+			logger.exception("Error handling online tournament abandonment:")
+			await self.send(json.dumps({"error": str(e)}))
+
+
 
 	async def generate_unique_serial_key(self, length=8):
-		from service.models import ManualTournament  # adjust import as needed
+		from service.models import ManualTournament  
 		while True:
 			key = ''.join(random.choices(string.ascii_uppercase + string.digits, k=length))
 			exists = await sync_to_async(ManualTournament.objects.filter(serial_key=key).exists)()
