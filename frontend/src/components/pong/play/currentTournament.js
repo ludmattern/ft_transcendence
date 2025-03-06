@@ -247,9 +247,9 @@ export async function renderBracket() {
 					return;
 				}
 
-				let endpoint = mode === 'online' ? '/api/tournament-service/abandon_online_tournament/' : '/api/tournament-service/abandon_local_tournament/';
 
-				const response = await fetch(endpoint, {
+				if (mode === 'local') {
+				const response = await fetch("/api/tournament-service/abandon_local_tournament/", {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -260,6 +260,17 @@ export async function renderBracket() {
 				const result = await response.json();
 				console.log('Tournament abandoned:', result);
 				handleRoute('/pong/play');
+				}
+				else if (mode === 'online') {
+					const payload = {
+						type: 'tournament_message',
+						action: 'leave_online_tournament',
+						user_id: await getUserIdFromCookieAPI(),
+					};
+					ws.send(JSON.stringify(payload));
+					console.log('Online tournament abandoned:', payload);
+					handleRoute('/pong/play');
+				}
 			} catch (error) {
 				console.error('Error abandoning tournament:', error);
 			}
