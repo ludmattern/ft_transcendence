@@ -30,6 +30,7 @@ function navigateTo(type, pageKey, blurEffect = true, waitingScreen = false, win
 	}
 }
 
+export const navigateToForgotPassword = () => navigateTo('HUD', 'forgotPassword', false, true);
 export const navigateToDeleteAccount = () => navigateTo('HUD', 'deleteAccount');
 export const navigateToOtherProfile = () => navigateTo('HUD', 'otherprofile');
 export const navigateToSettings2FA = () => navigateTo('HUD', 'qrcode');
