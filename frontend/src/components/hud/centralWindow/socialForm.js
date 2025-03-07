@@ -2,6 +2,9 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.js';
+import { subscribe } from '/src/services/eventEmitter.js';
+import { ws } from '/src/services/websocket.js';
 
 export const socialForm = createComponent({
 	tag: 'socialForm',
@@ -44,10 +47,20 @@ export const socialForm = createComponent({
 
 	// Ajouter les événements après le chargement du composant dans le DOM
 	attachEvents: async (el) => {
+		// Subscribe to the event to update the friends list dynamically
+		subscribe('updateFriendsList', async () => {
+			getFriends(await getUserIdFromCookieAPI());
+		});
+	
+		// Fetch the initial friend list
 		getFriends(await getUserIdFromCookieAPI());
-		el.addEventListener('click', (e) => {
+	
+		// Add a single event listener for all clicks within `el`
+		el.addEventListener('click', async (e) => {
+			e.preventDefault();
+	
+			// Handle "View Profile" button click
 			if (e.target.matches('#other-profile-link')) {
-				e.preventDefault();
 				const item = e.target.closest('.friend-item') || e.target.closest('.pilot-item');
 				if (item) {
 					const pseudoEl = item.querySelector('.profile-pseudo');
@@ -56,31 +69,70 @@ export const socialForm = createComponent({
 						handleRoute(`/social/pilot=${friendUsername}`);
 					}
 				}
+				return;
 			}
-		});
-
-		// Gestion du clic sur "Ajouter" dans la liste des pilotes
-		el.addEventListener('click', (e) => {
+	
+			// Handle "Add Friend" button click
 			if (e.target.matches('#add-link')) {
-				e.preventDefault();
-				console.log('Add friend clicked.');
-				// Ajoutez ici la logique pour ajouter un ami
+				const pilotItem = e.target.closest('.pilot-item');
+				const authorElement = pilotItem?.querySelector('.profile-pseudo');
+	
+				if (!authorElement) {
+					console.error("Author username not found!");
+					return;
+				}
+	
+				const author = authorElement.textContent.trim();
+				const payload = {
+					type: 'info_message',
+					action: "send_friend_request",
+					author: await getUserIdFromCookieAPI(),
+					recipient: await fetchUserId(author),
+					initiator: await getUserIdFromCookieAPI(),
+					timestamp: new Date().toISOString(),
+				};
+	
+				ws.send(JSON.stringify(payload));
+				return;
+			}
+	
+			// Handle "Remove Friend" button click
+			if (e.target.matches('#remove-link')) {
+				const item = e.target.closest('.friend-item');
+				if (item) {
+					const pseudoEl = item.querySelector('.profile-pseudo');
+					if (pseudoEl) {
+						const friendUsername = pseudoEl.textContent.trim();
+						const payload = {
+							type: 'info_message',
+							action: "remove_friend",
+							author: await getUserIdFromCookieAPI(),
+							recipient: await fetchUserId(friendUsername),
+							initiator: await getUserIdFromCookieAPI(),
+							timestamp: new Date().toISOString(),
+						};
+	
+						ws.send(JSON.stringify(payload));
+					}
+				}
+				return;
+			}
+	
+			// Handle "Search" button click
+			if (e.target.matches('#search-link')) {
+				const searchBar = el.querySelector('#search-bar');
+				if (searchBar) {
+					const query = searchBar.value.trim();
+					console.log(`Search for: ${query}`);
+					const pilotListContainer = el.querySelector('.pilot-list-container');
+					fetchPilot(query, pilotListContainer);
+				}
+				return;
 			}
 		});
-
-		const searchLink = el.querySelector('#search-link');
+	
+		// Handle "Enter" key press for search bar
 		const searchBar = el.querySelector('#search-bar');
-
-		if (searchLink) {
-			searchLink.addEventListener('click', (e) => {
-				e.preventDefault();
-				const query = searchBar.value.trim();
-				console.log(`Search for: ${query}`);
-				const pilotListContainer = el.querySelector('.pilot-list-container');
-				fetchPilot(query, pilotListContainer);
-			});
-		}
-
 		if (searchBar) {
 			searchBar.addEventListener('keydown', (e) => {
 				if (e.key === 'Enter') {
@@ -93,6 +145,7 @@ export const socialForm = createComponent({
 			});
 		}
 	},
+	
 });
 
 /**
@@ -160,7 +213,7 @@ async function getFriends(userId) {
 		const friendListContainer = document.querySelector('.friend-list-container');
 		if (friendListContainer && data.friends && data.friends.length > 0) {
 			friendListContainer.innerHTML = data.friends.map((friend) => createFriendItem('Online', friend.username, friend.is_connected ? 'text-success' : 'text-danger')).join('');
-		} else {
+		} else if (friendListContainer && data.friends && data.friends.length === 0){
 			friendListContainer.innerHTML = `<p style="opacity: 0.7;">It's a lonely world...</p>`;
 		}
 	} catch (error) {
@@ -170,7 +223,8 @@ async function getFriends(userId) {
 
 async function fetchPilot(query, container) {
 	try {
-		const response = await fetch(`/api/user-service/search_pilots/?query=${encodeURIComponent(query)}`);
+		const userId = await getUserIdFromCookieAPI();
+		const response = await fetch(`/api/user-service/search_pilots/?query=${encodeURIComponent(query)}&user_id=${encodeURIComponent(userId)}`);
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}

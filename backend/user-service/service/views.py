@@ -2,7 +2,7 @@ import json
 import bcrypt
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import ManualUser, GameHistory
+from .models import ManualUser, GameHistory, ManualBlockedRelations
 from django.db.models import Q
 import os
 
@@ -432,12 +432,17 @@ def upload_profile_picture(request):
 def search_pilots(request):
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
-
     query = request.GET.get("query")
     if not query:
-        return JsonResponse({"error": "Query parameter is required"}, status=400)
+        return JsonResponse({"message": "Query parameter is required"}, status=400)
+    user_id = request.GET.get("user_id")
+    if not user_id:
+        return JsonResponse({"message": "user_id parameter is required"}, status=400)
+    
+    # Get all users who have blocked the current user
+    blocked_users = ManualBlockedRelations.objects.filter(blocked_user_id=user_id).values_list("user_id", flat=True)
 
-    pilots = ManualUser.objects.filter(username__istartswith=query)
+    pilots = ManualUser.objects.filter(username__istartswith=query).exclude(id__in=blocked_users)
     results = []
     for pilot in pilots:
         results.append(
@@ -447,7 +452,6 @@ def search_pilots(request):
                 "is_connected": pilot.is_connected,
             }
         )
-
     return JsonResponse({"success": True, "pilots": results})
 
 
