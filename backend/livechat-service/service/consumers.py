@@ -36,6 +36,28 @@ async def get_profile_picture(user_id):
 	except ManualUser.DoesNotExist:
 		return "/media/profile_pics/default-profile-150.png"
 
+
+async def get_non_blocked_users_id(author_id):
+    """Get a list of users who have not blocked the author and whom the author has not blocked."""
+    users_blocked_by_author = await database_sync_to_async(
+        lambda: list(
+            ManualBlockedRelations.objects.filter(initiator_id=author_id)
+            .values_list("blocked_user_id", flat=True)
+        )
+    )()
+    users_who_blocked_author = await database_sync_to_async(
+        lambda: list(
+            ManualBlockedRelations.objects.filter(blocked_user_id=author_id)
+            .values_list("user_id", flat=True)
+        )
+    )()
+
+    blocked_set = set(users_blocked_by_author + users_who_blocked_author)
+    all_users = await get_users_id()
+    non_blocked_users = [user_id for user_id in all_users if user_id not in blocked_set and user_id != author_id]
+
+    return non_blocked_users
+
 class ChatConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		await self.accept()
@@ -52,11 +74,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		profile_picture = await get_profile_picture(author_id)
 		event["username"] = username
 		event["profilePicture"] = profile_picture
-		users = await get_users_id()  
+		non_blocked_users = await get_non_blocked_users_id(author_id)
 
-		for userid in users:
-			if userid != author_id:
-				await self.channel_layer.group_send(f"user_{userid}", event)
+		for userid in non_blocked_users:
+			await self.channel_layer.group_send(f"user_{userid}", event)
 		logger.info(f"Message transmis aux active users depuis chat_service (General): {event}")
 
 
@@ -81,7 +102,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		event["recipient_id"] = recipient_id
 
 		if str(author_id) == str(recipient_id):
-			logger.info(f"Skipping message sending because author_id ({author_id}) equals recipient_id ({recipient_id})")
 			message = {"type": "error_message", "error": "You can't send a message to yourself."}
 			await self.channel_layer.group_send(f"user_{author_id}", message)
 			return
