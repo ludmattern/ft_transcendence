@@ -2,6 +2,7 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.js';
+import { subscribe } from '/src/services/eventEmitter.js';
 import { ws } from '/src/services/websocket.js';
 
 export const socialForm = createComponent({
@@ -46,6 +47,9 @@ export const socialForm = createComponent({
 
 	// Ajouter les événements après le chargement du composant dans le DOM
 	attachEvents: async (el) => {
+		subscribe('updateFriendsList', async () => {
+			getFriends(await getUserIdFromCookieAPI());
+		});
 		getFriends(await getUserIdFromCookieAPI());
 		el.addEventListener('click', (e) => {
 			if (e.target.matches('#other-profile-link')) {
@@ -65,8 +69,16 @@ export const socialForm = createComponent({
 		el.addEventListener('click', async (e) => {
 			if (e.target.matches('#add-link')) {
 				e.preventDefault();
-				// Get the author's username from the span element
-				const author = document.querySelector('.profile-pseudo')?.textContent.trim();
+				// Find the closest parent `.pilot-item` to get the correct username
+				const pilotItem = e.target.closest('.pilot-item');
+				const authorElement = pilotItem?.querySelector('.profile-pseudo');
+
+				if (!authorElement) {
+					console.error("Author username not found!");
+					return;
+				}
+
+				const author = authorElement.textContent.trim();
 				const payload = {
 					type: 'info_message',
 					action: "send_friend_request",
@@ -81,6 +93,34 @@ export const socialForm = createComponent({
 
 		const searchLink = el.querySelector('#search-link');
 		const searchBar = el.querySelector('#search-bar');
+		document.addEventListener('click', async (e) => {
+			if (e.target.matches('#remove-link')) { // ✅ Detect clicks on "Remove" button
+				e.preventDefault();
+		
+				console.log('Remove friend');
+		
+				// Find the closest friend item container
+				const item = e.target.closest('.friend-item');
+				if (item) {
+					const pseudoEl = item.querySelector('.profile-pseudo');
+					if (pseudoEl) {
+						const friendUsername = pseudoEl.textContent.trim();
+						
+						const payload = {
+							type: 'info_message',
+							action: "remove_friend",
+							author: await getUserIdFromCookieAPI(),
+							recipient: await fetchUserId(friendUsername),
+							initiator: await getUserIdFromCookieAPI(),
+							timestamp: new Date().toISOString(),
+						};
+		
+						ws.send(JSON.stringify(payload));
+					}
+				}
+			}
+		});
+		
 
 		if (searchLink) {
 			searchLink.addEventListener('click', (e) => {
