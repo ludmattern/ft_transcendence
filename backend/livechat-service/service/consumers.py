@@ -1,6 +1,6 @@
 import json
 import logging
-from .models import ManualUser
+from django.db import models  # Import models
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -374,7 +374,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					user, friend = author_user, recipient_user
 
 				# Check if a block already exists in either direction
-				qs = ManualBlockedRelations.objects.filter(user=user, blocked_user=friend)
+				qs = ManualBlockedRelations.objects.filter(
+					models.Q(user=user, blocked_user=friend) |
+				  	models.Q(user=friend, blocked_user=user)
+				)
 
 				if await database_sync_to_async(qs.exists)():
 					relation = await database_sync_to_async(qs.first)()
@@ -392,11 +395,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 						)
 				
 				else:
-					await database_sync_to_async(ManualBlockedRelations.objects.create)(user=author_user, blocked_user=recipient_user, initiator_id=author_user)
+					await database_sync_to_async(ManualBlockedRelations.objects.create)(user=author_user, blocked_user=recipient_user, initiator_id=author_user.id)
+					await self.channel_layer.group_send(
+							f"user_{author_id}",
+							{"type": "info_message", "info": f"You have blocked {recipient_user.username}."}
+						)
 
-				await database_sync_to_async(ManualFriendsRelations.objects.filter(
-					user=author_user, friend=recipient_user
-				).delete)()
+				# Remove friendship if it exists (both directions)
+				await database_sync_to_async(lambda: ManualFriendsRelations.objects.filter(
+					models.Q(user=author_user, friend=recipient_user) |
+					models.Q(user=recipient_user, friend=author_user)
+				).delete())()
 			except ManualUser.DoesNotExist:
 				await self.channel_layer.group_send(f"user_{author_user.id}", {"type": "error_message", "error": "No user has been found."})
 		else:
