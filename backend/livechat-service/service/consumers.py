@@ -36,9 +36,7 @@ async def get_profile_picture(user_id):
 	except ManualUser.DoesNotExist:
 		return "/media/profile_pics/default-profile-150.png"
 
-
 async def get_non_blocked_users_id(author_id):
-    """Get a list of users who have not blocked the author and whom the author has not blocked."""
     users_blocked_by_author = await database_sync_to_async(
         lambda: list(
             ManualBlockedRelations.objects.filter(initiator_id=author_id)
@@ -51,7 +49,6 @@ async def get_non_blocked_users_id(author_id):
             .values_list("user_id", flat=True)
         )
     )()
-
     blocked_set = set(users_blocked_by_author + users_who_blocked_author)
     all_users = await get_users_id()
     non_blocked_users = [user_id for user_id in all_users if user_id not in blocked_set and user_id != author_id]
@@ -59,15 +56,12 @@ async def get_non_blocked_users_id(author_id):
     return non_blocked_users
 
 async def is_blocked(author_id, recipient_id):
-    """Check if the author has blocked the recipient OR if the recipient has blocked the author."""
-    
     blocked_relation = await database_sync_to_async(
         lambda: ManualBlockedRelations.objects.filter(
             models.Q(initiator_id=author_id, blocked_user_id=recipient_id) |  # Author blocked recipient
             models.Q(initiator_id=recipient_id, blocked_user_id=author_id)   # Recipient blocked author
         ).exists()
     )()
-
     return blocked_relation
 
 
@@ -162,6 +156,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				user, friend = recipient_user, initiator
 			else:
 				user, friend = initiator, recipient_user
+
+			if await is_blocked(author_id, recipient_id):
+				message = {"type": "error_message", "error": "You cannot send a friend request to this user."}
+				await self.channel_layer.group_send(f"user_{author_id}", message)
+				return
 
 			qs = ManualFriendsRelations.objects.filter(user=user, friend=friend)
 			if await database_sync_to_async(qs.exists)():
