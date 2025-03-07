@@ -58,6 +58,19 @@ async def get_non_blocked_users_id(author_id):
 
     return non_blocked_users
 
+async def is_blocked(author_id, recipient_id):
+    """Check if the author has blocked the recipient OR if the recipient has blocked the author."""
+    
+    blocked_relation = await database_sync_to_async(
+        lambda: ManualBlockedRelations.objects.filter(
+            models.Q(initiator_id=author_id, blocked_user_id=recipient_id) |  # Author blocked recipient
+            models.Q(initiator_id=recipient_id, blocked_user_id=author_id)   # Recipient blocked author
+        ).exists()
+    )()
+
+    return blocked_relation
+
+
 class ChatConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		await self.accept()
@@ -103,6 +116,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 		if str(author_id) == str(recipient_id):
 			message = {"type": "error_message", "error": "You can't send a message to yourself."}
+			await self.channel_layer.group_send(f"user_{author_id}", message)
+			return
+
+		if await is_blocked(author_id, recipient_id):
+			message = {"type": "error_message", "error": "You cannot send a message to this user."}
 			await self.channel_layer.group_send(f"user_{author_id}", message)
 			return
 
