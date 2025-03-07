@@ -170,7 +170,8 @@ async function getFriends(userId) {
 
 async function fetchPilot(query, container) {
 	try {
-		const response = await fetch(`/api/user-service/search_pilots/?query=${encodeURIComponent(query)}`);
+		const userId = await getUserIdFromCookieAPI();
+		const response = await fetch(`/api/user-service/search_pilots/?query=${encodeURIComponent(query)}&user_id=${encodeURIComponent(userId)}`);
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
