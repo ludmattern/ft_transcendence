@@ -1,6 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { gameModeSelector, cancelMode } from '/src/services/gameModeHandler.js';
+import { pushInfo, getInfo, deleteInfo } from '/src/services/infoStorage.js';
 
 export const pongTuto = (config) =>
 	createComponent({
@@ -14,7 +15,7 @@ export const pongTuto = (config) =>
         <p class="mb-3">${config.type !== 'fullScreen' ? 'Here are the controls for each player:' : 'Here are your controls:'}</p>
 
         <div class="mb-3">
-          <h6>Player 1: <strong>${sessionStorage.getItem('username') || 'Guest'}</strong></h6>
+          <h6>Player 1: <strong id="username-placeholder">Loading...</strong></h6>
           <p><strong class="border p-2">W</strong> up</p>
           <p><strong class="border p-2">A</strong> left <strong class="border p-2">S</strong> down <strong class="border p-2">D</strong> right</p>
         </div>
@@ -45,17 +46,26 @@ export const pongTuto = (config) =>
     </div>
   `,
 
-		attachEvents: (el) => {
+		attachEvents: async (el) => {
+			// Récupérer dynamiquement le pseudo
+			const usernameData = await getInfo('username');
+			const username = usernameData.success ? usernameData.value : 'Guest';
+			const usernamePlaceholder = el.querySelector('#username-placeholder');
+			if (usernamePlaceholder) {
+				usernamePlaceholder.textContent = username;
+			}
+
+			// Gestion du bouton "Cancel"
 			el.querySelector('#close').addEventListener('click', (e) => {
 				e.preventDefault();
 				cancelMode(config);
 				handleRoute('/topong');
 			});
 
+			// Gestion du bouton "Ready"
 			el.querySelector('#ready').addEventListener('click', () => {
 				console.log('Player is ready');
 				gameModeSelector(config);
-				// componentManagers['HUD'].unloadComponent('pongTuto');
 				el.querySelector('#ready').remove();
 				el.querySelector('.ready-question').remove();
 				el.querySelector('.pong-loader').classList.remove('d-none');

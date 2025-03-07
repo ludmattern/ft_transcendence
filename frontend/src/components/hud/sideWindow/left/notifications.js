@@ -1,6 +1,7 @@
 // src/components/hud/notifications.js
 import { emit } from '/src/services/eventEmitter.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 let notificationBuffer = [];
 
@@ -91,7 +92,7 @@ export async function updateAndCompareInfoData() {
 		console.log('Info getter result:', result);
 		if (result.info) {
 			let localInfo = [];
-			const localInfoStr = sessionStorage.getItem('infoTabData');
+			const localInfoStr = (await getInfo("infoTabData")).success ? (await getInfo("infoTabData")).value : null;
 			if (localInfoStr) {
 				try {
 					const parsedInfo = JSON.parse(localInfoStr);
@@ -116,7 +117,7 @@ export async function updateAndCompareInfoData() {
 				console.log('Aucun nouveau message.');
 			}
 
-			sessionStorage.setItem('infoTabData', JSON.stringify(serverInfo));
+			await pushInfo("infoTabData", JSON.stringify(serverInfo));
 		} else {
 			console.log('Erreur lors de la récupération des informations depuis le serveur.');
 		}

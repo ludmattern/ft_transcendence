@@ -1,5 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const profileForm = createComponent({
 	tag: 'profileForm',
@@ -112,7 +113,7 @@ function attachProfilePicUpload() {
 
 			const formData = new FormData();
 			formData.append('profile_picture', file);
-			formData.append('user_id', sessionStorage.getItem('userId'));
+			formData.append('user_id', await getUserIdFromCookieAPI());
 
 			try {
 				const response = await fetch('/api/user-service/upload_profile_picture/', {

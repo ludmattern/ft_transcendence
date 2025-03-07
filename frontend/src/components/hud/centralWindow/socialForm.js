@@ -1,13 +1,13 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const socialForm = createComponent({
 	tag: 'socialForm',
 
 	// Générer le HTML du composant
 	render: () => {
-		// On récupère l'ID utilisateur depuis le sessionStorage
 
 		// Le contenu HTML initial. La liste d'amis sera mise à jour après rendu.
 		return `

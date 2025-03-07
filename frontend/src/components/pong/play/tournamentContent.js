@@ -2,6 +2,7 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute, handleTournamentRedirection, getCurrentTournamentInformation } from '/src/services/router.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { ws } from '/src/services/websocket.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const tournamentContent = createComponent({
     tag: 'tournamentContent',
@@ -68,7 +69,7 @@ export const tournamentContent = createComponent({
         const tabs = el.querySelectorAll('.nav-link');
         const tabPanes = el.querySelectorAll('.tab-pane');
 
-        const savedTabId = sessionStorage.getItem('activeTournamentTab');
+        const savedTabId = (await getInfo("activeTournamentTab")).success ? (await getInfo("activeTournamentTab")).value : null;
         if (savedTabId) {
             tabs.forEach((tab) => tab.classList.remove('active'));
             tabPanes.forEach((pane) => pane.classList.remove('show', 'active'));
@@ -82,7 +83,7 @@ export const tournamentContent = createComponent({
         }
 
         tabs.forEach((tab) => {
-            tab.addEventListener('click', (e) => {
+            tab.addEventListener('click', async (e) => {
                 e.preventDefault();
                 const target = tab.getAttribute('href').substring(1);
 
@@ -92,7 +93,7 @@ export const tournamentContent = createComponent({
                 tab.classList.add('active');
                 el.querySelector(`#${target}`).classList.add('show', 'active');
 
-                sessionStorage.setItem('activeTournamentTab', target);
+                await pushInfo("activeTournamentTab", target);
             });
         });
 
@@ -165,11 +166,17 @@ export const tournamentContent = createComponent({
         createButton.addEventListener('click', async () => {
             const mode = document.getElementById('tournamentMode').value;
             const size = document.getElementById('tournamentSize').value;
-            sessionStorage.setItem('tournamentMode', mode);
-            sessionStorage.setItem('tournamentSize', size);
+        
             console.log(`Creating a tournament with mode: ${mode} and size: ${size}`);
+        
+            await pushInfo("tournamentMode", mode);
+            await pushInfo("tournamentSize", size);
+        
+            console.log("Tournament mode and size stored. Redirecting now...");
+            
             handleRoute('/pong/play/tournament-creation');
         });
+        
     },
 });
 

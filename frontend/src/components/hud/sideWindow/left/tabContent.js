@@ -4,6 +4,7 @@ import { commMessage, infoPanelItem } from '/src/components/hud/index.js';
 import { setupChatInput, removeChatInput } from '/src/components/hud/sideWindow/left/chat.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 /**
  * Charge dynamiquement le contenu de l'onglet spécifié.
@@ -15,7 +16,7 @@ export async function loadTabContent(tabName, container) {
 	container.innerHTML = '';
 
 	if (tabName === 'info') {
-		let infoTabData = sessionStorage.getItem('infoTabData');
+		let infoTabData = (await getInfo("infoTabData")).success ? (await getInfo("infoTabData")).value : null;
 		console.log('Info tab loading');
 
 		if (infoTabData && infoTabData !== '[]') {
@@ -25,7 +26,6 @@ export async function loadTabContent(tabName, container) {
 					throw new Error('Données corrompues ou incomplètes !');
 				}
 				renderInfoTab(parsedData, container);
-				console.log('Info tab loaded from sessionStorage');
 				console.log(parsedData);
 			} catch (err) {
 				console.warn('SessionStorage corrompu, rechargement depuis le serveur...', err);
@@ -39,14 +39,14 @@ export async function loadTabContent(tabName, container) {
 		removeChatInput();
 	} else if (tabName === 'comm') {
 		let tabItems = [];
-		const storedHistory = sessionStorage.getItem('chatHistory');
+		const storedHistory = (await getInfo("chatHistory")).success ? (await getInfo("chatHistory")).value : null;
 
 		if (storedHistory) {
 			try {
 				tabItems = JSON.parse(storedHistory);
 			} catch (err) {
 				console.warn("Erreur lors de la récupération de 'chatHistory', réinitialisation...", err);
-				sessionStorage.removeItem('chatHistory');
+				deleteInfo("chatHistory");
 				tabItems = [];
 			}
 		}
@@ -74,7 +74,7 @@ export async function fetchAndStoreInfoData(container) {
 	const data = await response.json();
 	if (data.info) {
 		console.log('Information received from the server:', data);
-		sessionStorage.setItem('infoTabData', JSON.stringify(data.info));
+		pushInfo("infoTabData", JSON.stringify(data.info));
 		renderInfoTab(data.info, container);
 	} else {
 		console.log('Error getting information');
@@ -155,17 +155,17 @@ function renderCommMessage(item, container, currentUserId) {
 	container.scrollTop = container.scrollHeight;
 }
 
-export function storeMessageInSessionStorage(msg) {
+export async function storeMessageInSessionStorage(msg) {
 	try {
-		const historyString = sessionStorage.getItem('chatHistory');
+		const historyString = (await getInfo("chatHistory")).success ? (await getInfo("chatHistory")).value : null;
 		let history = [];
 		if (historyString) {
 			history = JSON.parse(historyString);
 		}
 		history.push(msg);
-		sessionStorage.setItem('chatHistory', JSON.stringify(history));
+		pushInfo("chatHistory", JSON.stringify(history));
 	} catch (err) {
-		console.error('Failed to store message in sessionStorage:', err);
+		console.error('Failed to store message:', err);
 	}
 }
 

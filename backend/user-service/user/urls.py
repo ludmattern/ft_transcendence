@@ -16,6 +16,7 @@ from service.views import (
 from service.friends import is_friend, get_friends
 from service.profile import profile_info
 from service.info import info_getter
+from service.views_info_storage import push_info_storage, get_info_storage, delete_info_storage
 
 urlpatterns = [
     path("register/", register_user, name="register_user"),
@@ -33,4 +34,7 @@ urlpatterns = [
     path("get_user_id/<str:username>/", get_user_id, name="get_user_id"),
     path("search_pilots/", search_pilots, name="search_pilots"),
     path("leaderboard/", get_leaderboard, name="leaderboard"),
+    path("storage/push/", push_info_storage, name="push_info_storage"),
+    path("storage/get/", get_info_storage, name="get_info_storage"),
+    path("storage/delete/", delete_info_storage, name="delete_info_storage"),
 ]

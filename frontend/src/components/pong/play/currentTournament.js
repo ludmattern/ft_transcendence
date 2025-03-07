@@ -5,6 +5,7 @@ import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { ws } from '/src/services/websocket.js';
 import { subscribe } from '/src/services/eventEmitter.js';
 import { handleTournamentRedirection } from '/src/services/router.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const currentTournament = createComponent({
 	tag: 'currentTournament',
@@ -98,11 +99,12 @@ export const currentTournament = createComponent({
 	`;
 	},
 	attachEvents: async (el) => {
+		console.log('currentTournament attachEvents');
 		currentTournament.el = el;
-		const tournamentCreationNeeded = sessionStorage.getItem('tournamentCreationNeeded') === 'true';
-		if (tournamentCreationNeeded) {
+			const data = await getInfo('TournamentCreationNeeded');
+		if (data.success && data.value === 'True') {
 			try {
-				sessionStorage.removeItem('tournamentCreationNeeded');
+				await deleteInfo('TournamentCreationNeeded');
 				const userId = await getUserIdFromCookieAPI();
 				const payload = {
 					type: 'tournament_message',
@@ -121,13 +123,14 @@ export const currentTournament = createComponent({
 			}
 			renderBracket();
 		}
+	
 		subscribe('updateBracket', renderBracket);
 	},
 });
 
 export async function renderBracket() {
 	const el = currentTournament.el;
-	const username = sessionStorage.getItem('username');
+	const username = (await getInfo("username")).success ? (await getInfo("username")).value : null;
 	const userId = await getUserIdFromCookieAPI();
 	const data = await getBracketData();
 	if (!data || !data.size) {

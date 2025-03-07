@@ -7,6 +7,7 @@ import { createNotificationMessage, removePrivateNotifications } from '/src/comp
 import { createNavItem } from '/src/components/hud/sideWindow/left/navigation.js';
 import { subscribe } from '/src/services/eventEmitter.js';
 import { infoPanelItem } from '/src/components/hud/index.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const leftSideWindow = createComponent({
 	tag: 'leftSideWindow',
@@ -36,7 +37,7 @@ export const leftSideWindow = createComponent({
 	</div>
 `,
 
-	attachEvents: (el) => {
+	attachEvents: async (el) => {
 		const tabContentContainer = el.querySelector('#l-tab-content');
 		const tabs = el.querySelectorAll('.nav-link');
 		const expanders = el.querySelectorAll('.left-side-window-expander');
@@ -78,8 +79,9 @@ export const leftSideWindow = createComponent({
 		const parentContainer = el.parentElement;
 		startAnimation(parentContainer, 'light-animation', 1000);
 
-		createNotificationMessage(`Welcome to your spaceship ${sessionStorage.getItem('username')} !`, 15000);
-
+		const usernameData = await getInfo("username");
+		createNotificationMessage(`Welcome to your spaceship ${usernameData.success ? usernameData.value : 'Guest'} !`, 15000);
+		
 		subscribe('updatenotifications', (data) => {
 			const activeTab = el.querySelector('.nav-link.active');
 			if (activeTab && activeTab.dataset.tab === 'info') {

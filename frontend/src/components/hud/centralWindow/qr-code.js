@@ -1,5 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const qrcode = createComponent({
 	tag: 'qrcode',
@@ -24,12 +25,13 @@ export const qrcode = createComponent({
   `,
 
 	attachEvents: async (el) => {
-		el.querySelector('#back').addEventListener('click', (e) => {
+		el.querySelector('#back').addEventListener('click', async (e) => {
 			e.preventDefault();
-			sessionStorage.removeItem('registered_user');
+			await deleteInfo("registered_user");
 			handleRoute('/login');
 		});
-		const username = sessionStorage.getItem('registered_user');
+		const usernameData = await getInfo("registered_user");
+		const username = usernameData.success ? usernameData.value : null;
 		const qrCodeContainer = el.querySelector('#qr-code-container');
 		const qrCodeImage = el.querySelector('#qr-code');
 

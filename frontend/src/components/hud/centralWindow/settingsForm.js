@@ -6,6 +6,7 @@ import { validateId } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { checkPasswordConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { checkEmailConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const settingsForm = createComponent({
 	tag: 'settingsForm',
@@ -73,8 +74,8 @@ export const settingsForm = createComponent({
 					const data = await response.json();
 					if (data.success) {
 						if (formData.newUsername) {
-							sessionStorage.setItem('registered_user', formData.newUsername);
-							sessionStorage.setItem('username', formData.newUsername);
+							await pushInfo("registered_user", formData.newUsername);
+							await pushInfo("username", formData.newUsername);							
 						}
 						alert('Information updated successfully.');
 						resetErrorMessages();
@@ -196,9 +197,9 @@ function createFormGroup(id, type, label) {
  * @param {HTMLElement} el - Élément racine du formulaire
  * @returns {Object} - Données collectées du formulaire
  */
-function collectFormData(el) {
+async function collectFormData(el) {
 	return {
-		username: sessionStorage.getItem('username'),
+		username: (await getInfo("username")).success ? (await getInfo("username")).value : null,
 		newUsername: el.querySelector('#new-username').value,
 		oldPassword: el.querySelector('#old-password').value,
 		newPassword: el.querySelector('#new-password').value,

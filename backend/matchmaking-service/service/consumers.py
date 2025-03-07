@@ -31,9 +31,12 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 if result:
                     p1, p2 = result["players"][0], result["players"][1]
                     match_info_p1 = private_manager.match_found[p1]
+                    if match_info_p1 is None:
+                        return
                     match_info_p2 = private_manager.match_found[p2]
+                    if match_info_p2 is None:
+                        return 
 
-                    # Notifier p1
                     await self.channel_layer.group_send(f"user_{p1}", {
                         "type": "private_match_found", 
                         "game_id": match_info_p1["game_id"],
@@ -68,8 +71,11 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                     p2 = result["players"][1]
                     
                     match_info_p1 = matchmaking_manager.match_found[p1]
+                    if match_info_p1 is None:
+                        return
                     match_info_p2 = matchmaking_manager.match_found[p2]
-                        
+                    if match_info_p1 is None:
+                        return
                     await self.channel_layer.group_send(f"user_{p1}", {
                         "type": "match_found",
                         "game_id": match_info_p1["game_id"],

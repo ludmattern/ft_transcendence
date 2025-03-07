@@ -1,12 +1,14 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const tournamentJoin = createComponent({
 	tag: 'tournamentJoin',
-	render: () => {
-		const roomCode = sessionStorage.getItem('roomCode') || 'UNKNOWN';
-		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
-		const username = sessionStorage.getItem('username') || 'You';
+	render: async () => {
+		const roomCode = (await getInfo("roomCode")).success ? (await getInfo("roomCode")).value : "UNKNOWN";
+		const tournamentSize = parseInt((await getInfo("tournamentSize")).success ? (await getInfo("tournamentSize")).value : 16, 10);
+		const username = (await getInfo("username")).success ? (await getInfo("username")).value : "You";
+		
 
 		return `
       <section class="col-12 d-flex flex-column align-items-center text-center p-5"
@@ -33,7 +35,7 @@ export const tournamentJoin = createComponent({
       </section>
     `;
 	},
-	attachEvents: (el) => {
+	attachEvents: async (el) => {
 		const roomCodeElement = el.querySelector('#room-code');
 		const roomCode = roomCodeElement.textContent;
 		const copyRoomCodeButton = el.querySelector('#copy-room-code');
@@ -42,8 +44,9 @@ export const tournamentJoin = createComponent({
 		const onlinePlayersList = el.querySelector('#online-players-list');
 		const onlinePlayersCountSpan = el.querySelector('#online-players-count');
 
-		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
-		const username = sessionStorage.getItem('username') || 'You';
+		const tournamentSize = parseInt((await getInfo("tournamentSize")).success ? (await getInfo("tournamentSize")).value : 16, 10);
+		const username = (await getInfo("username")).success ? (await getInfo("username")).value : "You";
+		
 
 		// Dans un vrai environnement, cette liste serait gérée en temps réel via Redis ou WebSocket.
 		// Ici, on simule avec une liste locale qui inclut d'office l'utilisateur.
