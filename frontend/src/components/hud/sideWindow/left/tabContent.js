@@ -16,7 +16,7 @@ export async function loadTabContent(tabName, container) {
 	container.innerHTML = '';
 
 	if (tabName === 'info') {
-		let infoTabData = (await getInfo("infoTabData")).success ? (await getInfo("infoTabData")).value : null;
+		let infoTabData = sessionStorage.getItem("infoTabData") ? JSON.parse(sessionStorage.getItem("infoTabData")) : null;
 		console.log('Info tab loading');
 
 		if (infoTabData && infoTabData !== '[]') {
@@ -39,14 +39,15 @@ export async function loadTabContent(tabName, container) {
 		removeChatInput();
 	} else if (tabName === 'comm') {
 		let tabItems = [];
-		const storedHistory = (await getInfo("chatHistory")).success ? (await getInfo("chatHistory")).value : null;
+		const storedHistory = sessionStorage.getItem("chatHistory") || null;
+
 
 		if (storedHistory) {
 			try {
 				tabItems = JSON.parse(storedHistory);
 			} catch (err) {
 				console.warn("Erreur lors de la récupération de 'chatHistory', réinitialisation...", err);
-				deleteInfo("chatHistory");
+				sessionStorage.removeItem("chatHistory");
 				tabItems = [];
 			}
 		}
@@ -74,7 +75,7 @@ export async function fetchAndStoreInfoData(container) {
 	const data = await response.json();
 	if (data.info) {
 		console.log('Information received from the server:', data);
-		pushInfo("infoTabData", JSON.stringify(data.info));
+		sessionStorage.setItem("infoTabData", JSON.stringify(data.info));
 		renderInfoTab(data.info, container);
 	} else {
 		console.log('Error getting information');
@@ -157,13 +158,13 @@ function renderCommMessage(item, container, currentUserId) {
 
 export async function storeMessageInSessionStorage(msg) {
 	try {
-		const historyString = (await getInfo("chatHistory")).success ? (await getInfo("chatHistory")).value : null;
+		const historyString = sessionStorage.getItem("chatHistory") || null;
 		let history = [];
 		if (historyString) {
 			history = JSON.parse(historyString);
 		}
 		history.push(msg);
-		pushInfo("chatHistory", JSON.stringify(history));
+		sessionStorage.setItem("chatHistory", JSON.stringify(history));
 	} catch (err) {
 		console.error('Failed to store message:', err);
 	}

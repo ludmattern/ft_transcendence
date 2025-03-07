@@ -39,9 +39,9 @@ export async function logoutUser() {
 		deleteInfo("tournamentMode");
 		deleteInfo("tournamentSize");
 		deleteInfo("roomCode");
-		deleteInfo("chatHistory");
+		//deleteInfo("chatHistory");
 		deleteInfo("activeTournamentTab");
-		deleteInfo("infoTabData");
+		//deleteInfo("infoTabData");
 		deleteInfo("difficulty");
 		deleteInfo("liabilityCheckbox");
 		deleteInfo("pending2FA_user");

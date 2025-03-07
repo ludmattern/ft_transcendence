@@ -92,7 +92,7 @@ export async function updateAndCompareInfoData() {
 		console.log('Info getter result:', result);
 		if (result.info) {
 			let localInfo = [];
-			const localInfoStr = (await getInfo("infoTabData")).success ? (await getInfo("infoTabData")).value : null;
+			const localInfoStr = sessionStorage.getItem("infoTabData") || null;
 			if (localInfoStr) {
 				try {
 					const parsedInfo = JSON.parse(localInfoStr);
@@ -117,7 +117,7 @@ export async function updateAndCompareInfoData() {
 				console.log('Aucun nouveau message.');
 			}
 
-			await pushInfo("infoTabData", JSON.stringify(serverInfo));
+			sessionStorage.setItem("infoTabData", JSON.stringify(serverInfo));
 		} else {
 			console.log('Erreur lors de la récupération des informations depuis le serveur.');
 		}
