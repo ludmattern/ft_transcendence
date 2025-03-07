@@ -1,5 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { loadUserProfile, loadMatchHistory } from '/src/components/hud/centralWindow/profileForm.js';
+import { ws } from '/src/services/websocket.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export const otherProfileForm = createComponent({
   tag: 'otherProfileForm',
@@ -89,7 +91,7 @@ export const otherProfileForm = createComponent({
       return;
     }
 
-    const profile_id = fetchUserId(profileUsername);
+    const profile_id = await fetchUserId(profileUsername);
     console.log(`Profile ID: ${profile_id}`);
 
     // Load profile details

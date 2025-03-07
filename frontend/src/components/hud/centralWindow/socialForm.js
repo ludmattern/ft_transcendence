@@ -213,7 +213,7 @@ async function getFriends(userId) {
 		const friendListContainer = document.querySelector('.friend-list-container');
 		if (friendListContainer && data.friends && data.friends.length > 0) {
 			friendListContainer.innerHTML = data.friends.map((friend) => createFriendItem('Online', friend.username, friend.is_connected ? 'text-success' : 'text-danger')).join('');
-		} else {
+		} else if (friendListContainer && data.friends && data.friends.length === 0){
 			friendListContainer.innerHTML = `<p style="opacity: 0.7;">It's a lonely world...</p>`;
 		}
 	} catch (error) {

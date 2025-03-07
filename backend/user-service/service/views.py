@@ -434,10 +434,10 @@ def search_pilots(request):
         return JsonResponse({"error": "GET method required"}, status=405)
     query = request.GET.get("query")
     if not query:
-        return JsonResponse({"error": "Query parameter is required"}, status=400)
+        return JsonResponse({"message": "Query parameter is required"}, status=400)
     user_id = request.GET.get("user_id")
     if not user_id:
-        return JsonResponse({"error": "user_id parameter is required"}, status=400)
+        return JsonResponse({"message": "user_id parameter is required"}, status=400)
     
     # Get all users who have blocked the current user
     blocked_users = ManualBlockedRelations.objects.filter(blocked_user_id=user_id).values_list("user_id", flat=True)
