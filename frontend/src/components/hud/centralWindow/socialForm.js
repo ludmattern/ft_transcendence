@@ -47,13 +47,20 @@ export const socialForm = createComponent({
 
 	// Ajouter les événements après le chargement du composant dans le DOM
 	attachEvents: async (el) => {
+		// Subscribe to the event to update the friends list dynamically
 		subscribe('updateFriendsList', async () => {
 			getFriends(await getUserIdFromCookieAPI());
 		});
+	
+		// Fetch the initial friend list
 		getFriends(await getUserIdFromCookieAPI());
-		el.addEventListener('click', (e) => {
+	
+		// Add a single event listener for all clicks within `el`
+		el.addEventListener('click', async (e) => {
+			e.preventDefault();
+	
+			// Handle "View Profile" button click
 			if (e.target.matches('#other-profile-link')) {
-				e.preventDefault();
 				const item = e.target.closest('.friend-item') || e.target.closest('.pilot-item');
 				if (item) {
 					const pseudoEl = item.querySelector('.profile-pseudo');
@@ -62,22 +69,19 @@ export const socialForm = createComponent({
 						handleRoute(`/social/pilot=${friendUsername}`);
 					}
 				}
+				return;
 			}
-		});
-
-		// Gestion du clic sur "Ajouter" dans la liste des pilotes
-		el.addEventListener('click', async (e) => {
+	
+			// Handle "Add Friend" button click
 			if (e.target.matches('#add-link')) {
-				e.preventDefault();
-				// Find the closest parent `.pilot-item` to get the correct username
 				const pilotItem = e.target.closest('.pilot-item');
 				const authorElement = pilotItem?.querySelector('.profile-pseudo');
-
+	
 				if (!authorElement) {
 					console.error("Author username not found!");
 					return;
 				}
-
+	
 				const author = authorElement.textContent.trim();
 				const payload = {
 					type: 'info_message',
@@ -87,25 +91,18 @@ export const socialForm = createComponent({
 					initiator: await getUserIdFromCookieAPI(),
 					timestamp: new Date().toISOString(),
 				};
+	
 				ws.send(JSON.stringify(payload));
+				return;
 			}
-		});
-
-		const searchLink = el.querySelector('#search-link');
-		const searchBar = el.querySelector('#search-bar');
-		document.addEventListener('click', async (e) => {
-			if (e.target.matches('#remove-link')) { // ✅ Detect clicks on "Remove" button
-				e.preventDefault();
-		
-				console.log('Remove friend');
-		
-				// Find the closest friend item container
+	
+			// Handle "Remove Friend" button click
+			if (e.target.matches('#remove-link')) {
 				const item = e.target.closest('.friend-item');
 				if (item) {
 					const pseudoEl = item.querySelector('.profile-pseudo');
 					if (pseudoEl) {
 						const friendUsername = pseudoEl.textContent.trim();
-						
 						const payload = {
 							type: 'info_message',
 							action: "remove_friend",
@@ -114,24 +111,28 @@ export const socialForm = createComponent({
 							initiator: await getUserIdFromCookieAPI(),
 							timestamp: new Date().toISOString(),
 						};
-		
+	
 						ws.send(JSON.stringify(payload));
 					}
 				}
+				return;
+			}
+	
+			// Handle "Search" button click
+			if (e.target.matches('#search-link')) {
+				const searchBar = el.querySelector('#search-bar');
+				if (searchBar) {
+					const query = searchBar.value.trim();
+					console.log(`Search for: ${query}`);
+					const pilotListContainer = el.querySelector('.pilot-list-container');
+					fetchPilot(query, pilotListContainer);
+				}
+				return;
 			}
 		});
-		
-
-		if (searchLink) {
-			searchLink.addEventListener('click', (e) => {
-				e.preventDefault();
-				const query = searchBar.value.trim();
-				console.log(`Search for: ${query}`);
-				const pilotListContainer = el.querySelector('.pilot-list-container');
-				fetchPilot(query, pilotListContainer);
-			});
-		}
-
+	
+		// Handle "Enter" key press for search bar
+		const searchBar = el.querySelector('#search-bar');
 		if (searchBar) {
 			searchBar.addEventListener('keydown', (e) => {
 				if (e.key === 'Enter') {
@@ -144,6 +145,7 @@ export const socialForm = createComponent({
 			});
 		}
 	},
+	
 });
 
 /**
