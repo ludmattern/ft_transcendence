@@ -119,6 +119,7 @@ services:
       - 42_uid
       - 42_secret
       - hostname
+      - jwt_secret
     ports:
       - "3001:3001"
 
@@ -242,3 +243,5 @@ secrets:
     file: ./secret/42_uid.txt
   hostname:
     file: ./secret/hostname.txt
+  jwt_secret:
+    file: ./secret/jwt_secret.txt
