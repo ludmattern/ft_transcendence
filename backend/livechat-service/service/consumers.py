@@ -445,6 +445,38 @@ class ChatConsumer(AsyncWebsocketConsumer):
 				).delete())()
 			except ManualUser.DoesNotExist:
 				await self.channel_layer.group_send(f"user_{author_user.id}", {"type": "error_message", "error": "No user has been found."})
+
+		elif str(action) == "unblock_user":
+			author_id = event.get("author")
+			recipient_id = event.get("recipient")
+
+			try:
+				author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+				recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
+				# Check if the author has blocked the recipient (using initiator_id)
+				qs = ManualBlockedRelations.objects.filter(
+					initiator_id=author_id, blocked_user=recipient_id
+				)
+				if await database_sync_to_async(qs.exists)():
+					# If the block exists and the author is the initiator, delete the block
+					await database_sync_to_async(qs.delete)()
+
+					await self.channel_layer.group_send(
+						f"user_{author_id}",
+						{"type": "info_message", "info": f"You have unblocked {recipient_user.username}."}
+					)
+				else:
+					# If no block exists or the recipient initiated the block, inform the user
+					await self.channel_layer.group_send(
+						f"user_{author_id}",
+						{"type": "error_message", "error": f"You cannot unblock {recipient_user.username}."}
+					)
+			except ManualUser.DoesNotExist:
+				await self.channel_layer.group_send(
+					f"user_{author_id}",
+					{"type": "error_message", "error": "User not found."}
+				)
+
 		else:
 			logger.warning(f"Unknown action: {action}")
 
