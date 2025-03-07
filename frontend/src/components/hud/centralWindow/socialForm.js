@@ -1,6 +1,8 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.js';
+import { ws } from '/src/services/websocket.js';
 
 export const socialForm = createComponent({
 	tag: 'socialForm',
@@ -60,11 +62,20 @@ export const socialForm = createComponent({
 		});
 
 		// Gestion du clic sur "Ajouter" dans la liste des pilotes
-		el.addEventListener('click', (e) => {
+		el.addEventListener('click', async (e) => {
 			if (e.target.matches('#add-link')) {
 				e.preventDefault();
-				console.log('Add friend clicked.');
-				// Ajoutez ici la logique pour ajouter un ami
+				// Get the author's username from the span element
+				const author = document.querySelector('.profile-pseudo')?.textContent.trim();
+				const payload = {
+					type: 'info_message',
+					action: "send_friend_request",
+					author: await getUserIdFromCookieAPI(),
+					recipient: await fetchUserId(author),
+					initiator: await getUserIdFromCookieAPI(),
+					timestamp: new Date().toISOString(),
+				};
+				ws.send(JSON.stringify(payload));
 			}
 		});
 

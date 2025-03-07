@@ -178,6 +178,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					else:
 						await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "Friend request already sent"})
 					return
+				if relation.status == "accepted":
+					await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "You are already friends"})
+					return
 
 			await database_sync_to_async(ManualFriendsRelations.objects.create)(
 				user=user, friend=friend, status="pending", initiator=initiator
