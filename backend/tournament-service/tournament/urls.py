@@ -11,7 +11,6 @@ from service.views import (
 	getStatusOfCurrentTournament,
 	getParticipantStatusInTournament,
 	getCurrentTournamentInformation,
-    abandon_online_tournament,
     try_join_random_tournament,
     try_join_tournament_with_room_code,
 )
@@ -28,7 +27,6 @@ urlpatterns = [
 	path('getStatusOfCurrentTournament/<str:user_id>/', getStatusOfCurrentTournament, name='getStatusOfCurrentTournament'),
 	path('getParticipantStatusInTournament/<str:user_id>/', getParticipantStatusInTournament, name='getParticipantStatusInTournament'),
 	path('getCurrentTournamentInformation/<str:user_id>/', getCurrentTournamentInformation, name='getCurrentTournamentInformation'),
-    path("abandon_online_tournament/", abandon_online_tournament, name="abandon_online_tournament"),
     path("try_join_random_tournament/", try_join_random_tournament, name="try_join_random_tournament"),
     path("try_join_tournament_with_room_code/", try_join_tournament_with_room_code, name="try_join_tournament_with_room_code"),
 ]

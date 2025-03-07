@@ -45,63 +45,74 @@ export const settingsForm = createComponent({
 	</div>
 `,
 
-	// Ajouter les événements après le chargement
-	attachEvents: async (el) => {
-		// Gestionnaire pour le bouton "Update"
-		el.querySelector('#update-button').addEventListener('click', async (e) => {
-			e.preventDefault();
-			const formData = collectFormData(el);
+attachEvents: async (el) => {
+    el.querySelector('#update-button').addEventListener('click', async (e) => {
+        e.preventDefault();
+        const formData = collectFormData(el);
 
-			console.log('Form data:', formData);
-			// TODO: Appel API pour la mise à jour des paramètres.
+        console.log('Form data:', formData);
 
-			resetErrorMessages();
+        resetErrorMessages();
 
-			let canRegister = true;
+        let canUpdate = true;
 
-			if (!validateId(formData.username)) canRegister = false;
-			if (canRegister && formData.newEmail) if (!validateMail(formData.newEmail)) canRegister = false;
-			if (canRegister && formData.newPassword && !validatePassword(formData.newPassword)) canRegister = false;
-			if (canRegister && formData.newPassword && formData.confirmPassword && !checkPasswordConfirmation(formData.newPassword, formData.confirmPassword)) canRegister = false;
-			if (canRegister && formData.newEmail && formData.confirmMail && !checkEmailConfirmation(formData.newEmail, formData.confirmMail)) canRegister = false;
-			if (canRegister) {
-				try {
-					const response = await fetch('/api/user-service/update/', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify(formData),
-					});
-					const data = await response.json();
-					if (data.success) {
-						if (formData.newUsername) {
-							await pushInfo("registered_user", formData.newUsername);
-							await pushInfo("username", formData.newUsername);							
-						}
-						alert('Information updated successfully.');
-						resetErrorMessages();
-						emptyFields();
-					} else {
-						passwordError(data);
-						usernameError(data);
-						emailError(data);
-						emptyFormError(data);
-					}
-				} catch (error) {
-					console.error('Error updating information:', error);
-					alert('An unexpected error occurred.');
-				}
-			}
-		});
-		// Gestionnaire pour le lien "Delete Account"
-		el.querySelector('#delete-account-link').addEventListener('click', (e) => {
-			e.preventDefault();
-			handleRoute('/settings/delete-account'); // Redirige vers la page de suppression de compte
-		});
-	},
+        if (canUpdate && formData.newEmail) {
+            if (!validateMail(formData.newEmail)) canUpdate = false;
+        }
+        if (canUpdate && formData.newPassword && !validatePassword(formData.newPassword)) {
+            canUpdate = false;
+        }
+        if (canUpdate && formData.newPassword && formData.confirmPassword && 
+            !checkPasswordConfirmation(formData.newPassword, formData.confirmPassword)) {
+            canUpdate = false;
+        }
+        if (canUpdate && formData.newEmail && formData.confirmMail && 
+            !checkEmailConfirmation(formData.newEmail, formData.confirmMail)) {
+            canUpdate = false;
+        }
+
+        if (canUpdate) {
+            try {
+                const response = await fetch('/api/user-service/update/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    if (formData.newUsername) {
+                        await pushInfo("registered_user", formData.newUsername);
+                        await pushInfo("username", formData.newUsername);
+                    }
+                    alert('Information updated successfully.');
+                    resetErrorMessages();
+                    emptyFields();
+                } else {
+                    passwordError(data);
+                    usernameError(data);
+                    emailError(data);
+                    emptyFormError(data);
+                }
+            } catch (error) {
+                console.error('Error updating information:', error);
+                alert('An unexpected error occurred.');
+            }
+        }
+    });
+
+    el.querySelector('#delete-account-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleRoute('/settings/delete-account');
+    });
+}
 });
 
+
 function emptyFormError(data) {
-	if (data.message.includes('No changes to update')) {
+	if (data.message.includes('No changes to update')) 
+	{
 		alert('No changes to update');
 	}
 }

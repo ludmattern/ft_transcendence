@@ -98,44 +98,45 @@ export const profileForm = createComponent({
  */
 
 function attachProfilePicUpload() {
-	const profilePicLink = document.getElementById('profile-pic-link');
-	const fileInput = document.getElementById('profile-image-input');
+    const profilePicLink = document.getElementById('profile-pic-link');
+    const fileInput = document.getElementById('profile-image-input');
 
-	if (profilePicLink && fileInput) {
-		profilePicLink.addEventListener('click', (e) => {
-			e.preventDefault();
-			fileInput.click();
-		});
+    if (profilePicLink && fileInput) {
+        profilePicLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            fileInput.click();
+        });
 
-		fileInput.addEventListener('change', async (e) => {
-			const file = e.target.files[0];
-			if (!file) return;
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-			const formData = new FormData();
-			formData.append('profile_picture', file);
-			formData.append('user_id', await getUserIdFromCookieAPI());
+            const formData = new FormData();
+            formData.append('profile_picture', file);
 
-			try {
-				const response = await fetch('/api/user-service/upload_profile_picture/', {
-					method: 'POST',
-					body: formData,
-				});
-				if (!response.ok) {
-					throw new Error(`HTTP error ${response.status}`);
-				}
-				const data = await response.json();
-				console.log('Profile picture updated:', data);
-				if (data.success && data.profile_picture) {
-					const profilePicImg = document.querySelector('.profile-pic');
-					if (profilePicImg) {
-						profilePicImg.src = data.profile_picture;
-					}
-				}
-			} catch (error) {
-				console.log("Erreur lors de l'upload de l'image.");
-			}
-		});
-	}
+            try {
+                const response = await fetch('/api/user-service/upload_profile_picture/', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('Profile picture updated:', data);
+
+                if (data.success && data.profile_picture) {
+                    const profilePicImg = document.querySelector('.profile-pic');
+                    if (profilePicImg) {
+                        profilePicImg.src = data.profile_picture;
+                    }
+                }
+            } catch (error) {
+                console.error("Erreur lors de l'upload de l'image:", error);
+            }
+        });
+    }
 }
 
 export async function loadMatchHistory(userId) {

@@ -133,6 +133,7 @@ services:
       <<: *postgres_env
     secrets:
       - fernet_key
+      - jwt_secret
     ports:
       - "3002:3002"
     volumes:
@@ -184,6 +185,7 @@ services:
       <<: *postgres_env
     secrets:
       - fernet_key
+      - jwt_secret
     ports:
       - "3007:3007"
 

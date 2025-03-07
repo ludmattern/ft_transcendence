@@ -38,8 +38,6 @@ def push_info_storage(request):
     })
 
 
-
-
 @csrf_exempt
 def get_info_storage(request):
     """

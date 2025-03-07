@@ -97,7 +97,6 @@ export const tournamentContent = createComponent({
             });
         });
 
-        // Rejoindre par code
         const joinWithCodeButton = el.querySelector('#joinWithCode');
         joinWithCodeButton.addEventListener('click', async () => {
             const roomCode = document.getElementById('tournamentRoomCode').value;
@@ -105,61 +104,73 @@ export const tournamentContent = createComponent({
                 console.log('Enter a valid room code');
                 return;
             }
-            const userId = await getUserIdFromCookieAPI();
-
-            console.log(`Trying to join tournament with userID:${userId} and roomcode: ${roomCode}`);
-            const response = await fetch("/api/tournament-service/try_join_tournament_with_room_code/", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ roomCode: roomCode, userId: userId }),
-                credentials: 'include',
-            });
-            const data = await response.json();
-            console.log(`Waiting to join tournament with userID:${userId} and roomcode: ${roomCode}`);
-            if (data.success) {
-                const payload = {
-                    type: 'tournament_message',
-                    action: 'join_tournament',
-                    userId: userId,
-                    tournamentId: data.payload.tournament_id,
+            console.log(`Trying to join tournament with room code: ${roomCode}`);
+            try {
+                const response = await fetch("/api/tournament-service/try_join_tournament_with_room_code/", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ roomCode: roomCode }),
+                    credentials: 'include',
+                });
+                const data = await response.json();
+                console.log(`Response:`, data);
+                if (data.success) {
+                    const payload = {
+                        type: 'tournament_message',
+                        action: 'join_tournament',
+                        userId: data.payload.userId,
+                        tournamentId: data.payload.tournament_id,
+                    };
+                    ws.send(JSON.stringify(payload));
+                    handleRoute('/pong/play/tournament-creation');
+                } else {
+                    console.log(data);
+                    alert(data.message);
                 }
-                ws.send(JSON.stringify(payload));
-                handleRoute('/pong/play/tournament-creation');
-            } else {
-                console.log(data);
-                return data.message;
+            } catch (error) {
+                console.error('Error joining tournament:', error);
             }
-
         });
+        
 
-        // Rejoindre un tournoi aléatoire
         const joinRandomButton = el.querySelector('#joinRandom');
         joinRandomButton.addEventListener('click', async () => {
-            const userId = await getUserIdFromCookieAPI();
-            const tournamentSize = document.getElementById('tournamentSize-random').value;
-            console.log(`Joining a random tournament with userId: ${userId} and size: ${tournamentSize}`);
-            const response = await fetch("/api/tournament-service/try_join_random_tournament/", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: userId, tournamentSize: tournamentSize }),
-                credentials: 'include',
-            });
-            const data = await response.json();
-            console.log(`Waiting a random tournament with userId: ${userId} and size: ${tournamentSize}`);
-            if (data.success) {
-                const payload = {
-                    type: 'tournament_message',
-                    action: 'join_tournament',
-                    userId: userId,
-                    tournamentId: data.payload.tournament_id,
+            let tournamentSize = document.getElementById('tournamentSize-random').value;
+            tournamentSize = parseInt(tournamentSize, 10);
+            if (isNaN(tournamentSize) || tournamentSize <= 0) {
+                console.error("Invalid tournament size:", tournamentSize);
+                alert("Please enter a valid tournament size.");
+                return;
+            }
+            console.log(`Joining a random tournament with size: ${tournamentSize}`);
+            try {
+                const response = await fetch("/api/tournament-service/try_join_random_tournament/", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tournamentSize: tournamentSize }),
+                    credentials: 'include',
+                });
+                const data = await response.json();
+                console.log(`Response:`, data);
+                if (data.success) {
+                    const payload = {
+                        type: 'tournament_message',
+                        action: 'join_tournament',
+                        userId: data.payload.userId,
+                        tournamentId: data.payload.tournament_id,
+                    };
+                    ws.send(JSON.stringify(payload));
+                    handleRoute('/pong/play/tournament-creation');
+                } else {
+                    console.log(data);
+                    alert(data.message);
                 }
-                ws.send(JSON.stringify(payload));
-                handleRoute('/pong/play/tournament-creation');
-            } else {
-                console.log(data);
-                return data.message;
+            } catch (error) {
+                console.error('Error joining tournament:', error);
             }
         });
+        
+        
 
         // Création d'un tournoi
         const createButton = el.querySelector('#createbutton');

@@ -119,7 +119,7 @@ def check_auth_view(request):
 def jwt_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        token = request.COOKIES.get("access_token", None)
+        token = request.COOKIES.get("access_token")
         if not token:
             return JsonResponse(
                 {"success": False, "message": "No access_token cookie"}, status=401
@@ -129,6 +129,32 @@ def jwt_required(view_func):
             payload = jwt.decode(
                 token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
             )
+            user_id = payload.get("sub")
+            if not user_id:
+                return JsonResponse(
+                    {"success": False, "message": "Invalid token: no sub"}, status=401
+                )
+
+            try:
+                user = ManualUser.objects.get(pk=user_id)
+            except ManualUser.DoesNotExist:
+                return JsonResponse(
+                    {"success": False, "message": "User not found"}, status=404
+                )
+
+            if user.session_token != token:
+                return JsonResponse(
+                    {"success": False, "message": "Invalid or outdated token"}, status=401
+                )
+
+            now = datetime.datetime.utcnow()
+            if user.token_expiry is None or user.token_expiry < now:
+                return JsonResponse(
+                    {"success": False, "message": "Token expired in DB"}, status=401
+                )
+
+            request.user = user
+
         except jwt.ExpiredSignatureError:
             return JsonResponse(
                 {"success": False, "message": "Token expired"}, status=401
@@ -136,10 +162,10 @@ def jwt_required(view_func):
         except jwt.InvalidTokenError as e:
             return JsonResponse({"success": False, "message": str(e)}, status=401)
 
-        request.jwt_payload = payload
         return view_func(request, *args, **kwargs)
 
     return wrapper
+
 
 
 @jwt_required
