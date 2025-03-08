@@ -1,7 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { registerUser } from '/src/services/auth.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const subscribeForm = createComponent({
 	tag: 'subscribeForm',
@@ -119,7 +118,7 @@ export const subscribeForm = createComponent({
 				try {
 					const check_register = await registerUser(id, password, mail, is2FAEnabled, twoFAMethod, phoneNumber);
 					if (check_register && twoFAMethod === 'authenticator-app') {
-						pushInfo('registered_user', id);
+						sessionStorage.setItem("registered_user", id);
 						handleRoute('/register/qr');
 					} else if (check_register) {
 						handleRoute('/login');

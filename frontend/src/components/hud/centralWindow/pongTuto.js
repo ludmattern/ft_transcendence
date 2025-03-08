@@ -1,7 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { gameModeSelector, cancelMode } from '/src/services/gameModeHandler.js';
-import { pushInfo, getInfo, deleteInfo } from '/src/services/infoStorage.js';
+import { getInfo } from '/src/services/infoStorage.js';
 
 export const pongTuto = (config) =>
 	createComponent({

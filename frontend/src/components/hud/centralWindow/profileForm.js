@@ -1,6 +1,5 @@
 import { createComponent } from '/src/utils/component.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const profileForm = createComponent({
 	tag: 'profileForm',
@@ -68,20 +67,6 @@ export const profileForm = createComponent({
 		loadMatchHistory(userId);
 		loadUserProfile(userId);
 		attachProfilePicUpload();
-
-		// Gestion du clic sur un lien vers un autre profil
-		// el.addEventListener('click', (e) => {
-		//   if (e.target.matches('#other-profile-link')) {
-		//     e.preventDefault();
-		//     // testloadComponent('#central-window', otherProfileForm); // Charger OtherProfileForm
-		//     console.info('OtherProfileForm loaded on click.');
-		//   }
-		// });
-
-		// // Exemple d'événement supplémentaire pour les statistiques
-		// el.querySelector('.profile-pseudo-input').addEventListener('change', (e) => {
-		//   console.log(`Pseudo changé en : ${e.target.value}`);
-		// });
 	},
 });
 
@@ -232,10 +217,3 @@ export async function loadUserProfile(userId) {
 		console.error('Error loading user profile:', error);
 	}
 }
-
-// import { subscribe } from '/src/services/eventEmitter.js';
-
-// subscribe('updatenotifications', (data) => {
-// //recharger le bloc d'amis
-
-// });

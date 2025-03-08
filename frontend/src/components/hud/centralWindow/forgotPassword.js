@@ -78,7 +78,7 @@ export const forgotPassword = (() => {
 					const response = await fetch('/api/auth-service/request-password-reset/', {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({ email })
+						body: JSON.stringify({ email }),
 					});
 					const data = await response.json();
 					if (data.success) {
@@ -104,7 +104,7 @@ export const forgotPassword = (() => {
 					const response = await fetch('/api/auth-service/verify-reset-code/', {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({ email: state.email, code })
+						body: JSON.stringify({ email: state.email, code }),
 					});
 					const data = await response.json();
 					if (data.success) {
@@ -128,7 +128,7 @@ export const forgotPassword = (() => {
 						const response = await fetch('/api/auth-service/request-password-reset/', {
 							method: 'POST',
 							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify({ email: state.email })
+							body: JSON.stringify({ email: state.email }),
 						});
 						const data = await response.json();
 						if (!data.success) {
@@ -157,8 +157,8 @@ export const forgotPassword = (() => {
 							headers: { 'Content-Type': 'application/json' },
 							body: JSON.stringify({
 								new_password: newPassword.value,
-								reset_token: state.resetToken
-							})
+								reset_token: state.resetToken,
+							}),
 						});
 						const data = await response.json();
 						if (data.success) {

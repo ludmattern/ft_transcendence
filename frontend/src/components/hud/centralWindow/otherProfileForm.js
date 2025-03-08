@@ -5,10 +5,10 @@ import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { playGame } from '/src/components/pong/play/utils.js';
 
 export const otherProfileForm = createComponent({
-  tag: 'otherProfileForm',
+	tag: 'otherProfileForm',
 
-  // Générer le HTML
-  render: () => `
+	// Générer le HTML
+	render: () => `
     <div id="profile-form" class="form-container">
       <h5 class="text-center">Pilot Profile</h5>
       <span class="background-central-span d-flex flex-column align-items-center flex-grow-1 p-4">
@@ -75,84 +75,87 @@ export const otherProfileForm = createComponent({
     </div>
   `,
 
-  // Ajouter les événements après le chargement
-  attachEvents: async (el) => {
-    function getUsernameFromUrl() {
-      const path = window.location.pathname;
-      const prefix = '/social/pilot=';
-      if (path.startsWith(prefix)) {
-        return decodeURIComponent(path.substring(prefix.length));
-      }
-      return null;
-    }
+	// Ajouter les événements après le chargement
+	attachEvents: async (el) => {
+		function getUsernameFromUrl() {
+			const path = window.location.pathname;
+			const prefix = '/social/pilot=';
+			if (path.startsWith(prefix)) {
+				return decodeURIComponent(path.substring(prefix.length));
+			}
+			return null;
+		}
 
-    const profileUsername = getUsernameFromUrl();
-    if (!profileUsername) {
-      console.error('Username not found in URL');
-      return;
-    }
+		const profileUsername = getUsernameFromUrl();
+		if (!profileUsername) {
+			console.error('Username not found in URL');
+			return;
+		}
 
-    const profile_id = await fetchUserId(profileUsername);
-    console.log(`Profile ID: ${profile_id}`);
+		const profile_id = await fetchUserId(profileUsername);
+		console.log(`Profile ID: ${profile_id}`);
 
-    // Load profile details
-    loadUserProfile(profile_id);
-    loadMatchHistory(profile_id);
+		if (!profile_id) {
+			console.error('Profile ID not found');
+			handleRoute('/lost');
+			return;
+		}
 
-    el.addEventListener('click', async (e) => {
-      e.preventDefault();
+		// Load profile details
+		loadUserProfile(profile_id);
+		loadMatchHistory(profile_id);
 
-      let action = null;
-      if (e.target.matches('#invite-link')) {
-        console.debug('Invite sent.');
-        const payload = {
-          type: 'info_message',
-          action: 'private_game_invite',
-          author: await getUserIdFromCookieAPI(),
-          recipient: profile_id,
-          initiator: await getUserIdFromCookieAPI(),
-          timestamp: new Date().toISOString(),
-        };
-        ws.send(JSON.stringify(payload));
-        clearPageContent();
+		el.addEventListener('click', async (e) => {
+			e.preventDefault();
+
+			let action = null;
+			if (e.target.matches('#invite-link')) {
+				console.debug('Invite sent.');
+				const payload = {
+					type: 'info_message',
+					action: 'private_game_invite',
+					author: await getUserIdFromCookieAPI(),
+					recipient: profile_id,
+					initiator: await getUserIdFromCookieAPI(),
+					timestamp: new Date().toISOString(),
+				};
+				ws.send(JSON.stringify(payload));
+				clearPageContent();
 				const config = {
-          gameMode: 'private',
+					gameMode: 'private',
 					action: 'create',
 					matchkey: await getUserIdFromCookieAPI(), // ID of current User
 					type: 'fullScreen',
 				};
-        playGame(config);
-      }
-      if (e.target.matches('#remove-link')) {
-        action = 'remove_friend';
-        console.debug('Friend removed.');
-      }
-      else if (e.target.matches('#add-link')) {
-        action = 'send_friend_request';
-        console.debug('Friend added.');
-      }
-      else if (e.target.matches('#block-link')) {
-        action = 'block_user';
-        console.debug('User blocked.');
-      }
-      else if (e.target.matches('#unblock-link')) {
-        action = 'unblock_user';
-        console.debug('User unblocked.');
-      }
+				playGame(config);
+			}
+			if (e.target.matches('#remove-link')) {
+				action = 'remove_friend';
+				console.debug('Friend removed.');
+			} else if (e.target.matches('#add-link')) {
+				action = 'send_friend_request';
+				console.debug('Friend added.');
+			} else if (e.target.matches('#block-link')) {
+				action = 'block_user';
+				console.debug('User blocked.');
+			} else if (e.target.matches('#unblock-link')) {
+				action = 'unblock_user';
+				console.debug('User unblocked.');
+			}
 
-      if (!action) return; // If no action matched, exit
-      
-      const payload = {
-        type: 'info_message',
-        action: action,
-        author: await getUserIdFromCookieAPI(),
-        recipient: profile_id,
-        initiator: await getUserIdFromCookieAPI(),
-        timestamp: new Date().toISOString(),
-      };
-      ws.send(JSON.stringify(payload));
-    });
-  },
+			if (!action) return; // If no action matched, exit
+
+			const payload = {
+				type: 'info_message',
+				action: action,
+				author: await getUserIdFromCookieAPI(),
+				recipient: profile_id,
+				initiator: await getUserIdFromCookieAPI(),
+				timestamp: new Date().toISOString(),
+			};
+			ws.send(JSON.stringify(payload));
+		});
+	},
 });
 
 /**
@@ -168,30 +171,25 @@ export const otherProfileForm = createComponent({
  */
 
 export async function fetchUserId(username) {
-  try {
-    const response = await fetch(`/api/user-service/get_user_id/${username}/`);
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
-    }
-    const data = await response.json();
-    return data.user_id;
-  } catch (error) {
-    console.error('Error fetching user ID:', error);
-  }
+	try {
+		const response = await fetch(`/api/user-service/get_user_id/${username}/`);
+		if (!response.ok) {
+			throw new Error(`HTTP error ${response.status}`);
+		}
+		const data = await response.json();
+		return data.user_id;
+	} catch (error) {
+		console.error('Error fetching user ID:', error);
+	}
 }
 
 function clearPageContent() {
-  const profileForm = document.getElementById('profile-form');
-  if (profileForm) {
-    profileForm.style.display = 'none'; // Hide the entire form
-  }
-  const blurScreenEffect = document.getElementById('blur-screen-effect');
-  if (blurScreenEffect) {
-    blurScreenEffect.classList.add('hidden'); // Hide the blur effect
-  }
+	const profileForm = document.getElementById('profile-form');
+	if (profileForm) {
+		profileForm.style.display = 'none'; // Hide the entire form
+	}
+	const blurScreenEffect = document.getElementById('blur-screen-effect');
+	if (blurScreenEffect) {
+		blurScreenEffect.classList.add('hidden'); // Hide the blur effect
+	}
 }
-
-/*
-SI LE USER EXISTE PAS FAIRE UNE PAGE SPECIALE 
-
-*/

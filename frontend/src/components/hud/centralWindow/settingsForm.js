@@ -2,7 +2,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { validatePassword } from '/src/components/hud/centralWindow/subscribeForm.js';
-import { validateId } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { checkPasswordConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { checkEmailConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';

@@ -1,7 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.js';
 import { subscribe } from '/src/services/eventEmitter.js';
 import { ws } from '/src/services/websocket.js';
