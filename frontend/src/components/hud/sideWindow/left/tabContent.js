@@ -16,7 +16,7 @@ export async function loadTabContent(tabName, container) {
 	container.innerHTML = '';
 
 	if (tabName === 'info') {
-		let infoTabData = sessionStorage.getItem("infoTabData") ? JSON.parse(sessionStorage.getItem("infoTabData")) : null;
+		let infoTabData = sessionStorage.getItem('infoTabData');
 		console.log('Info tab loading');
 
 		if (infoTabData && infoTabData !== '[]') {
@@ -39,7 +39,7 @@ export async function loadTabContent(tabName, container) {
 		removeChatInput();
 	} else if (tabName === 'comm') {
 		let tabItems = [];
-		const storedHistory = sessionStorage.getItem("chatHistory") || null;
+		const storedHistory = sessionStorage.getItem('chatHistory');
 
 
 		if (storedHistory) {
@@ -47,7 +47,7 @@ export async function loadTabContent(tabName, container) {
 				tabItems = JSON.parse(storedHistory);
 			} catch (err) {
 				console.warn("Erreur lors de la récupération de 'chatHistory', réinitialisation...", err);
-				sessionStorage.removeItem("chatHistory");
+				sessionStorage.removeItem('chatHistory');
 				tabItems = [];
 			}
 		}
@@ -75,7 +75,7 @@ export async function fetchAndStoreInfoData(container) {
 	const data = await response.json();
 	if (data.info) {
 		console.log('Information received from the server:', data);
-		sessionStorage.setItem("infoTabData", JSON.stringify(data.info));
+		sessionStorage.setItem('infoTabData', JSON.stringify(data.info));
 		renderInfoTab(data.info, container);
 	} else {
 		console.log('Error getting information');
@@ -158,13 +158,13 @@ function renderCommMessage(item, container, currentUserId) {
 
 export async function storeMessageInSessionStorage(msg) {
 	try {
-		const historyString = sessionStorage.getItem("chatHistory") || null;
+		const historyString = sessionStorage.getItem('chatHistory');
 		let history = [];
 		if (historyString) {
 			history = JSON.parse(historyString);
 		}
 		history.push(msg);
-		sessionStorage.setItem("chatHistory", JSON.stringify(history));
+		sessionStorage.setItem('chatHistory', JSON.stringify(history));
 	} catch (err) {
 		console.error('Failed to store message:', err);
 	}

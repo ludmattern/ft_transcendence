@@ -1,41 +1,49 @@
-import { getUserIdFromCookieAPI } from "/src/services/auth.js";
-
 export async function pushInfo(key, value) {
-  const userId = await getUserIdFromCookieAPI();
-
-  const response = await fetch("/api/user-service/storage/push/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ user_id: userId, key, value })
-  });
-  const data = await response.json();
-  console.log("pushInfo result:", data);
+  try {
+    const response = await fetch("/api/user-service/storage/push/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key, value }), 
+      credentials: "include",
+    });
+    const data = await response.json();
+    console.log("pushInfo result:", data);
+    return data;
+  } catch (error) {
+    console.error("Error pushing info:", error);
+  }
 }
 
 export async function getInfo(key) {
-  const userId = await getUserIdFromCookieAPI();
+  try {
+    const url = `/api/user-service/storage/get/?key=${encodeURIComponent(key)}`;
 
-  const url = `/api/user-service/storage/get/?user_id=${encodeURIComponent(userId)}&key=${encodeURIComponent(key)}`;
+    const response = await fetch(url, {
+      method: "GET",
+      credentials: "include",
+    });
 
-  const response = await fetch(url, {
-    method: "GET"
-  });
-  const data = await response.json();
-  console.log("getInfo result:", data);
-  return data;
+    const data = await response.json();
+    console.log("getInfo result:", data);
+    return data;
+  } catch (error) {
+    console.error("Error getting info:", error);
+  }
 }
 
 export async function deleteInfo(key) {
-  const userId = await getUserIdFromCookieAPI();
+  try {
+    const url = `/api/user-service/storage/delete/?key=${encodeURIComponent(key)}`;
 
-  const url = `/api/user-service/storage/delete/?user_id=${encodeURIComponent(userId)}&key=${encodeURIComponent(key)}`;
+    const response = await fetch(url, {
+      method: "DELETE",
+      credentials: "include",
+    });
 
-  const response = await fetch(url, {
-    method: "DELETE"
-  });
-  const data = await response.json();
-  console.log("deleteInfo result:", data);
-  return data;
+    const data = await response.json();
+    console.log("deleteInfo result:", data);
+    return data;
+  } catch (error) {
+    console.error("Error deleting info:", error);
+  }
 }
