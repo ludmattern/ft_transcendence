@@ -27,10 +27,10 @@ export const qrcode = createComponent({
 	attachEvents: async (el) => {
 		el.querySelector('#back').addEventListener('click', async (e) => {
 			e.preventDefault();
-			await deleteInfo("registered_user");
+			sessionStorage.removeItem("registered_user");
 			handleRoute('/login');
 		});
-		const usernameData = await getInfo("registered_user");
+		const usernameData = sessionStorage.getItem("registered_user");
 		const username = usernameData.success ? usernameData.value : null;
 		const qrCodeContainer = el.querySelector('#qr-code-container');
 		const qrCodeImage = el.querySelector('#qr-code');

@@ -22,7 +22,6 @@ export async function isClientAuthenticated() {
 
 		await pushInfo("userId", data.id);
 		await pushInfo("username", data.username);
-		
 
 		initializeWebSocket(data.id);
 		console.log('User is authenticated!');
@@ -47,7 +46,7 @@ export async function logoutUser() {
 		deleteInfo("pending2FA_user");
 		deleteInfo("pending2FA_method");
 		deleteInfo("registered_user");
-
+		sessionStorage.clear();
 		const response = await fetch('/api/auth-service/logout/', {
 			method: 'POST',
 			credentials: 'include',
@@ -65,7 +64,7 @@ export async function logoutUser() {
 	resetPreviousRoutes();
 	componentManagers['Pong'].cleanupComponents([]);
 	switchwindow('home');
-	handleRoute('/login'); // Redirige vers la page de connexion
+	handleRoute('/login');
 }
 
 export async function loginUser(username, password) {
