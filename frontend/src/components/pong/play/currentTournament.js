@@ -238,30 +238,23 @@ export async function renderBracket() {
 
 	const abandonTournamentButton = document.getElementById('abandon-tournament');
 	if (abandonTournamentButton) {
-		abandonTournamentButton.addEventListener('click', async () => {
-			try {
-				// TODO REMOVE getUserIdFromCookieAPI
-				const userId = await getUserIdFromCookieAPI();
-
-				if (!userId) {
-					console.error('Aucun ID de tournoi ou utilisateur trouvé');
-					return;
-				}
-
-
-				if (mode === 'local') {
-				const response = await fetch('/api/tournament-service/abandon_local_tournament/', {
-					method: 'POST',
+		abandonTournamentButton.addEventListener("click", async () => {
+			try {	
+				const response = await fetch("/api/tournament-service/abandon_local_tournament/", {
+					method: "POST",
 					headers: {
-						'Content-Type': 'application/json',
+						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({ user_id: userId, tournament_id: tournament_id }),
+					body: JSON.stringify({ tournament_id: tournament_id }),
+					credentials: "include",
 				});
-
+	
 				const result = await response.json();
-				console.log('Tournament abandoned:', result);
-				handleRoute('/pong/play');
-				}
+				console.log("Tournament abandoned:", result);
+	
+				if (result.success) {
+					handleRoute("/pong/play");
+				} 
 				else if (mode === 'online') {
 					const payload = {
 						type: 'tournament_message',

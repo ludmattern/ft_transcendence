@@ -133,9 +133,7 @@ export async function showContextMenu(item, event) {
 		item.author = item.recipient_id;
 		item.username = item.recipient;
 	}
-	//TODO REMOVE getUserIdFromCookieAPI
-	const userId = await getUserIdFromCookieAPI();
-	const isFriend = await isUserFriend(userId, item.author);
+	const isFriend = await isUserFriend(item.author);
 
 	const userStatus = {
 		isFriend: isFriend,
@@ -169,18 +167,19 @@ document.addEventListener('click', (e) => {
 	}
 });
 
-export async function isUserFriend(userId, otherUserId) {
-	console.log(`Checking if ${userId} is friends with ${otherUserId}...`);
+export async function isUserFriend(otherUserId) {
+	console.log(`Checking if the current user is friends with ${otherUserId}...`);
 	const response = await fetch('/api/user-service/is-friend/', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ userId: userId, otherUserId: otherUserId }),
+		credentials: 'include', 
+		body: JSON.stringify({ otherUserId: otherUserId }),
 	});
 	const data = await response.json();
 	if (data.success) {
 		return data.is_friend;
 	} else {
-		console.log('Error getting friend status');
+		console.log('Error getting friend status:', data.error);
 		return false;
 	}
 }

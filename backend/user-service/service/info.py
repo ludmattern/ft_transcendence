@@ -9,26 +9,19 @@ from .models import (
     ManualTournamentParticipants,
     TournamentMatch,
 )
-
+from service.views import jwt_required
 logger = logging.getLogger(__name__)
 
-
-def info_getter(request, user_id):
-    logger.info(f"Received request for user_id: {user_id}")
-
+@jwt_required 
+def info_getter(request):
+    
     if request.method != "GET":
         return JsonResponse(
             {"success": False, "error": "Invalid request method"}, status=405
         )
 
-    try:
-        user = ManualUser.objects.get(pk=user_id)
-        logger.info(f"User found: {user.username}")
-    except ObjectDoesNotExist:
-        logger.warning(f"User with ID {user_id} not found")
-        return JsonResponse({"success": False, "error": "User not found"}, status=404)
+    user = request.user
 
-    # Récupération des demandes d'amis en attente
     friend_requests = (
         ManualFriendsRelations.objects.filter(status="pending")
         .filter(Q(user=user) | Q(friend=user))

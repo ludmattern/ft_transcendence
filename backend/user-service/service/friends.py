@@ -33,32 +33,31 @@ def get_friends(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
+
+from service.views import jwt_required  
+
+
+@csrf_exempt
 def is_friend(request):
-    """Check if two users are friends."""
     logger.info("Checking if two users are friends")
-    if request.method == "POST":
-        try:
-            body = json.loads(request.body)
-            user = ManualUser.objects.filter(id=body.get("userId")).first()
-            friend = ManualUser.objects.filter(id=body.get("otherUserId")).first()
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "Invalid request method"}, status=405)
+    try:
+        body = json.loads(request.body)
+        other_user_id = body.get("otherUserId")
+        if not other_user_id:
+            return JsonResponse({"success": False, "error": "otherUserId is required"}, status=400)
 
-            if not user or not friend:
-                return JsonResponse(
-                    {"success": False, "error": "User or friend not found"}, status=404
-                )
+        user = request.user
+        friend = ManualUser.objects.filter(id=other_user_id).first()
 
-            is_friend = ManualFriendsRelations.objects.filter(
-                Q(user=user, friend=friend, status="accepted")
-                | Q(user=friend, friend=user, status="accepted")
-            ).exists()
+        if not friend:
+            return JsonResponse({"success": False, "error": "Friend not found"}, status=404)
 
-            return JsonResponse({"success": True, "is_friend": is_friend}, status=200)
-
-        except json.JSONDecodeError:
-            return JsonResponse(
-                {"success": False, "error": "Invalid JSON data"}, status=400
-            )
-
-    return JsonResponse(
-        {"success": False, "error": "Invalid request method"}, status=405
-    )
+        is_friend = ManualFriendsRelations.objects.filter(
+            Q(user=user, friend=friend, status="accepted") |
+            Q(user=friend, friend=user, status="accepted")
+        ).exists()
+        return JsonResponse({"success": True, "is_friend": is_friend}, status=200)
+    except json.JSONDecodeError:
+        return JsonResponse({"success": False, "error": "Invalid JSON data"}, status=400)

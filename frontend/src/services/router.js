@@ -238,15 +238,19 @@ export async function handleTournamentRedirection(caller = '') {
 }
 
 export async function getCurrentTournamentInformation() {
-	// TODO REMOVE getUserIdFromCookieAPI
-	const userId = await getUserIdFromCookieAPI();
-	console.log('User ID récupéré :', userId);
-	const url = `/api/tournament-service/getCurrentTournamentInformation/${encodeURIComponent(userId)}/`;
-	const response = await fetch(url);
-	if (!response.ok) {
-		throw new Error('Impossible de récupérer le statut du tournoi.');
+	try {
+		const response = await fetch('/api/tournament-service/getCurrentTournamentInformation/', {
+			method: 'GET',
+			credentials: 'include', 
+		});
+		if (!response.ok) {
+			throw new Error('Impossible de récupérer le statut du tournoi.');
+		}
+		const data = await response.json();
+		console.log('Statut du tournoi récupéré :', data);
+		return data;
+	} catch (error) {
+		console.error('Erreur lors de la récupération du statut du tournoi:', error);
+		throw error;
 	}
-	const data = await response.json();
-	console.log('Statut du tournoi récupéré :', data);
-	return data;
 }

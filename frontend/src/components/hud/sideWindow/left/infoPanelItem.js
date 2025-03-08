@@ -120,14 +120,11 @@ export async function handleTournamentAction(action, item) {
 	if (action) {
 		try {
 			console.log('Vérification de l\'existence d\'un lobby...');
-			//TODO REMOVE getUserIdFromCookieAPI
-			const userId = await getUserIdFromCookieAPI();
-			console.log('User ID récupéré :', userId);
 
-			let url = `/api/tournament-service/getParticipantStatusInTournament/${encodeURIComponent(userId)}/`;
+			let url = "/api/tournament-service/getParticipantStatusInTournament/";
 			console.log('Appel de l\'API pour récupérer la clé de tournoi :', url);
 
-			let response = await fetch(url);
+			let response = await fetch(url, { credentials: "include" });
 			if (!response.ok) {
 				throw new Error(`Erreur HTTP lors de la vérification du lobby (code ${response.status})`);
 			}

@@ -47,23 +47,29 @@ export function handleLocalTournamentGameEnding(data) {
 	}
 }
 
-export async function createTournament(players) {
-	// TODO REMOVE getUserIdFromCookieAPI
-	const organizerId = await getUserIdFromCookieAPI();
-	const payload = {
-		organizer_id: organizerId,
-		players: players,
-	};
 
+export async function createTournament(players) {
 	try {
+		const payload = {
+			players: players,
+		};
 		const response = await fetch('/api/tournament-service/create_local_tournament/', {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: {
+				'Content-Type': 'application/json',
+			},
 			body: JSON.stringify(payload),
+			credentials: 'include',
 		});
+
 		const data = await response.json();
 		console.log('Tournament created:', data);
-		handleRoute('/pong/play/current-tournament');
+
+		if (data.success) {
+			handleRoute('/pong/play/current-tournament');
+		} else {
+			alert("Erreur: " + data.error);
+		}
 
 		return data;
 	} catch (error) {

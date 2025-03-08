@@ -3,7 +3,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 class MatchmakingManager:
     def __init__(self):
         self.waiting_players = []
@@ -43,8 +42,10 @@ class MatchmakingManager:
             return self.match_found[user_id]
         else:
             return None
-
+        
     def remove_from_queue(self, user_id):
+        logger.info(f"wainting_players={self.waiting_players}")
+        logger.info(f"match_found={self.match_found}")
         if user_id in self.waiting_players:
             self.waiting_players.remove(user_id)
         else:
@@ -53,6 +54,5 @@ class MatchmakingManager:
             del self.match_found[user_id]
         else:
             logger.info(f"user_id={user_id} n'est pas dans la queue")
-
 
 matchmaking_manager = MatchmakingManager()

@@ -78,14 +78,10 @@ export function removePrivateNotifications() {
 
 export async function updateAndCompareInfoData() {
 	console.log('Mise à jour des informations...');
-	//TODO REMOVE getUserIdFromCookieAPI
-	const userId = await getUserIdFromCookieAPI();
-
 	try {
-		console.log('GET info getter with userId', userId);
-		const response = await fetch(`/api/user-service/info-getter/${encodeURIComponent(userId)}/`, {
-			method: 'GET',
-			credentials: 'include',
+		const response = await fetch(`/api/user-service/info-getter/`, {
+			method: "GET",
+			credentials: "include",
 		});
 		const result = await response.json();
 

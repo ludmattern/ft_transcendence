@@ -65,21 +65,21 @@ export async function loadTabContent(tabName, container) {
 }
 
 export async function fetchAndStoreInfoData(container) {
-	// TODO REMOVE getUserIdFromCookieAPI
-	const userId = await getUserIdFromCookieAPI();
-
-	const response = await fetch(`/api/user-service/info-getter/${encodeURIComponent(userId)}/`, {
-		method: 'GET',
-		credentials: 'include',
-	});
-
-	const data = await response.json();
-	if (data.info) {
-		console.log('Information received from the server:', data);
-		sessionStorage.setItem('infoTabData', JSON.stringify(data.info));
-		renderInfoTab(data.info, container);
-	} else {
-		console.log('Error getting information');
+	try {
+		const response = await fetch(`/api/user-service/info-getter/`, {
+			method: "GET",
+			credentials: "include",
+		});
+		const data = await response.json();
+		if (data.info) {
+			console.log("Information received from the server:", data);
+			sessionStorage.setItem("infoTabData", JSON.stringify(data.info));
+			renderInfoTab(data.info, container);
+		} else {
+			console.log("Error getting information");
+		}
+	} catch (error) {
+		console.error("Error fetching information:", error);
 	}
 }
 

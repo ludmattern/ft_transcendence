@@ -181,21 +181,27 @@ def getTournamentSerialKey(request, user_id):
     return JsonResponse(data)
 
 
-def getParticipantStatusInTournament(request, user_id):
+@csrf_exempt
+@jwt_required
+def getParticipantStatusInTournament(request):
+    """Retrieve the tournament status of the authenticated user."""
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
-    if not user_id:
-        return JsonResponse({"error": "user_id parameter is required"}, status=400)
-
     try:
+        user = request.user
+
         participant = ManualTournamentParticipants.objects.filter(
-            user__id=user_id, status="accepted" or "pending"
-        ).latest("created_at")
-        status = participant.status
-    except ManualTournamentParticipants.DoesNotExist:
-        status = "none"
-    data = {"status": status}
-    return JsonResponse(data)
+            user=user, status__in=["accepted", "pending"]
+        ).order_by("-created_at").first()
+
+        status = participant.status if participant else "none"
+
+        return JsonResponse({"status": status}, status=200)
+
+    except Exception as e:
+        logger.exception("Error retrieving participant status in tournament:")
+        return JsonResponse({"error": str(e)}, status=500)
+
 
 
 def getTournamentIdFromSerialKey(request, serial_key):
@@ -252,13 +258,13 @@ def getStatusOfCurrentTournament(request, user_id):
 
     return JsonResponse(data)
 
-
-def getCurrentTournamentInformation(request, user_id):
+@jwt_required
+def getCurrentTournamentInformation(request):
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
 
     try:
-        user = ManualUser.objects.get(id=user_id)
+        user= request.user
     except ManualUser.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
 
@@ -311,11 +317,6 @@ def getCurrentTournamentInformation(request, user_id):
         "mode": tournament.mode,
     }
     return JsonResponse(data)
-
-
-# TODO ici logiquement les modifs seront au niveau du pong et ou matchamking
-# ou il faudrat ajouter le tournament id dans la requete sinon pas de modif majeur
-
 
 @csrf_exempt
 def update_match_result(request):
@@ -397,34 +398,34 @@ def update_match_result(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-# TODO ici celle-ci fonctionne que pour le local
-
 
 @csrf_exempt
+@jwt_required
 def abandon_local_tournament(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST method required"}, status=405)
     try:
+        user = request.user
         body = json.loads(request.body.decode("utf-8"))
+
         tournament_id = body.get("tournament_id")
         if not tournament_id:
             return JsonResponse({"error": "tournament_id is required"}, status=400)
-        tournament = ManualTournament.objects.get(id=tournament_id)
-        organizer = tournament.organizer
 
-        organizer.tournament_status = "out"
-        organizer.current_tournament_id = 0
-        organizer.save()
+        tournament = ManualTournament.objects.filter(id=tournament_id, organizer=user).first()
+        if not tournament:
+            return JsonResponse({"error": "Tournament not found or unauthorized"}, status=404)
+
+        user.tournament_status = "out"
+        user.current_tournament_id = 0
+        user.save()
         tournament.delete()
-
-        logger.info(
-            f"Tournoi {tournament_id} abandonné. L'organisateur {organizer.id} a été réinitialisé."
-        )
+        logger.info(f"Tournament {tournament_id} abandoned. Organizer {user.id} reset.")
         return JsonResponse(
             {"success": True, "message": "Tournament abandoned and organizer updated"}
         )
-    except ManualTournament.DoesNotExist:
-        return JsonResponse({"error": "Tournament not found"}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
     except Exception as e:
         logger.exception("Error abandoning tournament:")
         return JsonResponse({"error": str(e)}, status=500)
@@ -436,54 +437,43 @@ def encrypt_thing(args):
 
 
 @csrf_exempt
+@jwt_required
 def create_local_tournament_view(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST method required"}, status=405)
+
     try:
+        user = request.user 
         body = json.loads(request.body.decode("utf-8"))
-        organizer_id = body.get("organizer_id")
         players = body.get("players", [])
 
-        if not organizer_id:
-            logger.error("Organizer ID is missing in the request data.")
-            return JsonResponse({"error": "Organizer ID is required"}, status=400)
         if len(players) not in [4, 8, 16]:
             logger.error(
-                f"Invalid tournament size: {len(players)} players provided. Expected 4, 8 ou 16."
+                f"Invalid tournament size: {len(players)} players provided. Expected 4, 8, or 16."
             )
             return JsonResponse({"error": "Invalid tournament size"}, status=400)
 
-        try:
-            organizer = ManualUser.objects.get(id=organizer_id)
-            if organizer.tournament_status != "out":
-                error_msg = (
-                    f"L'utilisateur {organizer.id} est déjà dans un tournoi actif."
-                )
-                logger.warning(error_msg)
-                return JsonResponse({"error": error_msg}, status=400)
-        except ManualUser.DoesNotExist:
-            return JsonResponse({"error": "Organizer not found"}, status=404)
+        if user.tournament_status != "out":
+            error_msg = f"L'utilisateur {user.id} est déjà dans un tournoi actif."
+            logger.warning(error_msg)
+            return JsonResponse({"error": error_msg}, status=400)
 
-        serial_key = "".join(
-            random.choices(string.ascii_uppercase + string.digits, k=8)
-        )
+        serial_key = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
         logger.info(f"🔑 Génération de serial_key: {serial_key}")
 
         tournament = ManualTournament.objects.create(
             serial_key=serial_key,
             name="Local Tournament",
-            organizer_id=organizer_id,
+            organizer=user,
             size=len(players) // 2,
             status="ongoing",
             mode="local",
         )
 
-        logger.info(
-            f"🏆 Tournament créé: ID={tournament.id}, serial_key={serial_key}, organizer_id={organizer_id}"
-        )
+        logger.info(f"🏆 Tournament créé: ID={tournament.id}, serial_key={serial_key}, organizer_id={user.id}")
 
         for username in players:
-            user, created = ManualUser.objects.get_or_create(
+            user_obj, created = ManualUser.objects.get_or_create(
                 username=username,
                 defaults={
                     "email": encrypt_thing(f"{username.lower()}@local.fake"),
@@ -491,19 +481,14 @@ def create_local_tournament_view(request):
                     "is_dummy": True,
                 },
             )
-            if created:
-                logger.info(f"👤 Utilisateur créé: username={user.username}")
-            else:
-                logger.info(f"👤 Utilisateur récupéré: username={user.username}")
-            user.tournament_status = "participating"
-            user.current_tournament_id = tournament.id
-            user.save()
+            user_obj.tournament_status = "participating"
+            user_obj.current_tournament_id = tournament.id
+            user_obj.save()
+
             ManualTournamentParticipants.objects.create(
-                tournament=tournament, user=user, status="accepted"
+                tournament=tournament, user=user_obj, status="accepted"
             )
-            logger.info(
-                f"✅ Participant ajouté: TournamentID={tournament.id}, User={user.username}, status=accepted"
-            )
+            logger.info(f"✅ Participant ajouté: TournamentID={tournament.id}, User={user_obj.username}, status=accepted")
 
         n = len(players)
         size_count = int(math.log2(n))
@@ -533,9 +518,7 @@ def create_local_tournament_view(request):
                     player2="TBD",
                     status="pending",
                 )
-                logger.info(
-                    f"🏅 Round {round_number}, Match {match_order} créé: TBD vs TBD"
-                )
+                logger.info(f"🏅 Round {round_number}, Match {match_order} créé: TBD vs TBD")
             previous_matches = num_matches
 
         response_data = {
@@ -546,9 +529,13 @@ def create_local_tournament_view(request):
         }
         return JsonResponse(response_data, status=200)
 
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
     except Exception as e:
         logger.exception("Error creating local tournament:")
         return JsonResponse({"error": str(e)}, status=500)
+
 
 
 @csrf_exempt

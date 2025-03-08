@@ -23,7 +23,5 @@ export async function startMatchmakingGame(gameId, side, data) {
 		user_id: data.user_id,
 		opponent_id: data.opponent_id,
 	};
-	document.getElementById('leaveMatch').style.display = 'none';
-	document.getElementById('launchMatch').style.display = 'block';
 	gameManager.startGame(gameConfig);
 }
