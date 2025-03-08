@@ -2,7 +2,7 @@ import { initializeWebSocket, closeWebSocket } from '/src/services/websocket.js'
 import { handleRoute, resetPreviousRoutes } from '/src/services/router.js';
 import componentManagers from '/src/index.js';
 import { switchwindow } from '/src/3d/animation.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { pushInfo, getInfo, deleteInfo } from '/src/services/infoStorage.js';
 
 export async function isClientAuthenticated() {
 	try {
@@ -20,9 +20,8 @@ export async function isClientAuthenticated() {
 			return false;
 		}
 
-		await pushInfo("userId", data.id);
-		await pushInfo("username", data.username);
-		
+		await pushInfo('userId', data.id);
+		await pushInfo('username', data.username);
 
 		initializeWebSocket(data.id);
 		console.log('User is authenticated!');
@@ -34,19 +33,19 @@ export async function isClientAuthenticated() {
 
 export async function logoutUser() {
 	try {
-		await deleteInfo("userId");
-		await deleteInfo("username");
-		await deleteInfo("tournamentMode");
-		await deleteInfo("tournamentSize");
-		await deleteInfo("roomCode");
+		await deleteInfo('userId');
+		await deleteInfo('username');
+		await deleteInfo('tournamentMode');
+		await deleteInfo('tournamentSize');
+		await deleteInfo('roomCode');
 		//await deleteInfo("chatHistory");
-		await deleteInfo("activeTournamentTab");
+		await deleteInfo('activeTournamentTab');
 		//await deleteInfo("infoTabData");
-		await deleteInfo("difficulty");
-		await deleteInfo("liabilityCheckbox");
-		await deleteInfo("pending2FA_user");
-		await deleteInfo("pending2FA_method");
-		await deleteInfo("registered_user");
+		await deleteInfo('difficulty');
+		await deleteInfo('liabilityCheckbox');
+		await deleteInfo('pending2FA_user');
+		await deleteInfo('pending2FA_method');
+		await deleteInfo('registered_user');
 
 		const response = await fetch('/api/auth-service/logout/', {
 			method: 'POST',

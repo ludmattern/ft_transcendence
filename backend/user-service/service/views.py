@@ -509,4 +509,3 @@ def get_leaderboard(request):
         for index, player in enumerate(players)
     ]
     return JsonResponse({"success": True, "players": results})
-	
