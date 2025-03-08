@@ -9,7 +9,7 @@ export const contextMenu = createComponent({
 	tag: 'contextMenu',
 
 	// Génère le HTML du menu contextuel en fonction de l'item et d'un objet userStatus
-	render: (item, userStatus) => `
+	render: (userStatus) => `
     <div id="context-menu" class="context-menu">
       <ul>
         <li id="action-friend">${userStatus.isFriend ? 'Remove Friend' : 'Add Friend'}</li>
