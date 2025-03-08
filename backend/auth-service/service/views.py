@@ -1,45 +1,93 @@
 import json
 import bcrypt
-from django.http import JsonResponse
-from django.conf import settings
 import datetime
+import random
+import jwt
+import pyotp
 from functools import wraps
 
-from twilio.rest import Client
-from django.core.mail import send_mail
-import random
-
-from django.views.decorators.csrf import csrf_exempt
-from service.models import ManualUser
-import jwt
-
-import pyotp
 from cryptography.fernet import Fernet
 
+from django.http import JsonResponse
+from django.conf import settings
+from django.core.mail import send_mail
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.timezone import now, is_aware, make_aware
+from django.shortcuts import redirect
+
+import requests
+from urllib.parse import urlencode
+
+from twilio.rest import Client
+
+from service.models import ManualUser
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Initialisation de Fernet
 cipher = Fernet(settings.FERNET_KEY)
 
 
-def encrypt_thing(args):
-    """Encrypts the args."""
-    return cipher.encrypt(args.encode("utf-8")).decode("utf-8")
+# Fonctions d'encryptage/décryptage
+def encrypt_thing(text):
+    """Chiffre la chaîne passée en argument."""
+    return cipher.encrypt(text.encode("utf-8")).decode("utf-8")
 
 
-def decrypt_thing(encrypted_args):
-    """Decrypts the args."""
-    return cipher.decrypt(encrypted_args.encode("utf-8")).decode("utf-8")
+def decrypt_thing(encrypted_text):
+    """Déchiffre la chaîne passée en argument."""
+    return cipher.decrypt(encrypted_text.encode("utf-8")).decode("utf-8")
+
+
+# --- Fonctions utilitaires pour JWT ---
+
+
+def generate_session_token(user):
+    """
+    Génère un token JWT pour l'utilisateur avec une durée définie dans settings.JWT_EXP_DELTA_SECONDS.
+    Renvoie le token (str) et la date d'expiration (datetime).
+    """
+    current_time = datetime.datetime.utcnow()
+    expiry = current_time + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
+    token = jwt.encode(
+        {
+            "sub": str(user.id),
+            "iat": current_time,
+            "exp": expiry.timestamp(),
+        },
+        settings.JWT_SECRET_KEY,
+        algorithm=settings.JWT_ALGORITHM,
+    )
+    token_str = token if isinstance(token, str) else token.decode("utf-8")
+    return token_str, expiry
+
+
+def set_access_token_cookie(response, token_str):
+    """Ajoute le cookie d'authentification à la réponse."""
+    response.set_cookie(
+        key="access_token",
+        value=token_str,
+        httponly=True,
+        secure=True,
+        samesite="Strict",
+        max_age=settings.JWT_EXP_DELTA_SECONDS,
+    )
+
+
+# --- Vues d'authentification ---
 
 
 def check_auth_view(request):
     token = request.COOKIES.get("access_token")
     if not token:
         return JsonResponse({"success": False, "message": "Cookie missing"}, status=401)
-
     try:
         payload = jwt.decode(
             token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
         )
-        now = datetime.datetime.utcnow().timestamp()
-
+        current_timestamp = datetime.datetime.utcnow().timestamp()
         if "exp" not in payload or "sub" not in payload:
             return JsonResponse(
                 {"success": False, "message": "Invalid token payload"}, status=401
@@ -58,24 +106,16 @@ def check_auth_view(request):
                 status=401,
             )
 
-        if not user.token_expiry or user.token_expiry.timestamp() < now:
+        if not user.token_expiry or user.token_expiry.timestamp() < current_timestamp:
             return JsonResponse(
                 {"success": False, "message": "Token expired (DB)"}, status=401
             )
 
-        remaining = payload["exp"] - now
+        remaining = payload["exp"] - current_timestamp
         if remaining < 1000:
-            new_exp = now + settings.JWT_EXP_DELTA_SECONDS
-            new_payload = {**payload, "exp": new_exp}
-            new_token = jwt.encode(
-                new_payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
-            )
-            new_token_str = (
-                new_token if isinstance(new_token, str) else new_token.decode("utf-8")
-            )
-
-            user.token_expiry = datetime.datetime.utcfromtimestamp(new_exp)
-            user.session_token = new_token_str
+            new_token, new_expiry = generate_session_token(user)
+            user.token_expiry = new_expiry
+            user.session_token = new_token
             user.save()
 
             response = JsonResponse(
@@ -86,14 +126,7 @@ def check_auth_view(request):
                     "message": "Cookie renewed",
                 }
             )
-            response.set_cookie(
-                key="access_token",
-                value=new_token_str,
-                httponly=True,
-                secure=True,
-                samesite="Strict",
-                max_age=settings.JWT_EXP_DELTA_SECONDS,
-            )
+            set_access_token_cookie(response, new_token)
             return response
 
         return JsonResponse(
@@ -148,14 +181,12 @@ def jwt_required(view_func):
                     status=401,
                 )
 
-            now = datetime.datetime.utcnow()
-            if user.token_expiry is None or user.token_expiry < now:
+            if not user.token_expiry or user.token_expiry < datetime.datetime.utcnow():
                 return JsonResponse(
                     {"success": False, "message": "Token expired in DB"}, status=401
                 )
 
             request.user = user
-
         except jwt.ExpiredSignatureError:
             return JsonResponse(
                 {"success": False, "message": "Token expired"}, status=401
@@ -170,21 +201,17 @@ def jwt_required(view_func):
 
 @jwt_required
 def protected_view(request):
-    payload = getattr(request, "jwt_payload", {})
-    user_id = int(payload.get("sub"))
-
-    try:
-        user = ManualUser.objects.get(id=user_id)
-    except ManualUser.DoesNotExist:
-        return JsonResponse({"success": False, "message": "User not found"}, status=404)
-
+    user = request.user
     return JsonResponse(
         {"success": True, "message": f"Hello, {user.username}. You are authenticated!"}
     )
 
 
+# --- Fonctions 2FA ---
+
+
 def generate_2fa_code(length=6):
-    """Retourne un code numérique à 6 chiffres."""
+    """Génère un code numérique à 6 chiffres."""
     return "".join(str(random.randint(0, 9)) for _ in range(length))
 
 
@@ -202,311 +229,187 @@ def send_2fa_sms(phone_number, code):
             from_=settings.TWILIO_PHONE_NUMBER,
             to=decrypt_thing(phone_number),
         )
-        print("SMS sent, SID:", message.sid)
+        logger.info("SMS sent, SID: %s", message.sid)
     except Exception as e:
-        print("Error sending SMS:", e)
+        logger.error("Error sending SMS: %s", e)
+
+
+# --- Vues de connexion/déconnexion ---
 
 
 @csrf_exempt
 def login_view(request):
-    if request.method == "POST":
-        import json
-
-        body = json.loads(request.body.decode("utf-8"))
-        username = body.get("username")
-        password = body.get("password")
-
-        try:
-            user = ManualUser.objects.get(username=username)
-        except ManualUser.DoesNotExist:
-            return JsonResponse(
-                {"success": False, "message": "User not found"}, status=404
-            )
-        if user.is_dummy:
-            # Bypass des vérifications pour un compte dummy
-            now = datetime.datetime.utcnow()
-            new_session_token = jwt.encode(
-                {
-                    "sub": str(user.id),
-                    "iat": now,
-                    "exp": (
-                        now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-                    ).timestamp(),
-                },
-                settings.JWT_SECRET_KEY,
-                algorithm=settings.JWT_ALGORITHM,
-            )
-            new_session_token_str = (
-                new_session_token
-                if isinstance(new_session_token, str)
-                else new_session_token.decode("utf-8")
-            )
-            user.token_expiry = now + datetime.timedelta(
-                seconds=settings.JWT_EXP_DELTA_SECONDS
-            )
-            user.session_token = new_session_token_str
-            user.status = "online"
-            user.save()
-
-            response = JsonResponse(
-                {
-                    "success": True,
-                    "message": "Logged in (dummy)",
-                    "id": user.id,
-                    "username": user.username,
-                }
-            )
-            response.set_cookie(
-                key="access_token",
-                value=new_session_token_str,
-                httponly=True,
-                secure=True,
-                samesite="Strict",
-                max_age=settings.JWT_EXP_DELTA_SECONDS,
-            )
-            return response
-        if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
-            return JsonResponse(
-                {"success": False, "message": "Invalid credentials"}, status=401
-            )
-
-        if user.is_2fa_enabled:
-            if user.twofa_method == "email":
-                code = generate_2fa_code()
-                hashed_code = bcrypt.hashpw(
-                    code.encode("utf-8"), bcrypt.gensalt()
-                ).decode("utf-8")
-                user.temp_2fa_code = hashed_code
-                user.save()
-                send_2fa_email(user.email, code)
-            elif user.twofa_method == "sms":
-                code = generate_2fa_code()
-                hashed_code = bcrypt.hashpw(
-                    code.encode("utf-8"), bcrypt.gensalt()
-                ).decode("utf-8")
-                user.temp_2fa_code = hashed_code
-                user.save()
-                send_2fa_sms(user.phone_number, code)
-
-            return JsonResponse(
-                {
-                    "success": True,
-                    "message": "2FA required",
-                    "twofa_method": user.twofa_method,
-                },
-                status=200,
-            )
-
-        now = datetime.datetime.utcnow()
-        cookie_token = request.COOKIES.get("access_token")
-
-        if user.token_expiry and user.token_expiry > now:
-            if not cookie_token or cookie_token != user.session_token:
-                user.token_expiry = None
-                user.session_token = None
-                user.save()
-            else:
-                return JsonResponse(
-                    {"success": False, "message": "User is already connected"},
-                    status=403,
-                )
-
-        new_session_token = jwt.encode(
-            {
-                "sub": str(user.id),
-                "iat": now,
-                "exp": (
-                    now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-                ).timestamp(),
-            },
-            settings.JWT_SECRET_KEY,
-            algorithm=settings.JWT_ALGORITHM,
-        )
-        new_session_token_str = (
-            new_session_token
-            if isinstance(new_session_token, str)
-            else new_session_token.decode("utf-8")
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": "Only POST allowed"}, status=405
         )
 
-        user.token_expiry = now + datetime.timedelta(
-            seconds=settings.JWT_EXP_DELTA_SECONDS
-        )
-        user.session_token = new_session_token_str
+    body = json.loads(request.body.decode("utf-8"))
+    username = body.get("username")
+    password = body.get("password")
+
+    try:
+        user = ManualUser.objects.get(username=username)
+    except ManualUser.DoesNotExist:
+        return JsonResponse({"success": False, "message": "User not found"}, status=404)
+
+    now_utc = datetime.datetime.utcnow()
+
+    # Bypass pour les comptes dummy
+    if user.is_dummy:
+        token_str, expiry = generate_session_token(user)
+        user.token_expiry = expiry
+        user.session_token = token_str
         user.status = "online"
         user.save()
-
         response = JsonResponse(
             {
                 "success": True,
-                "message": "Logged in",
+                "message": "Logged in (dummy)",
                 "id": user.id,
                 "username": user.username,
             }
         )
-        response.set_cookie(
-            key="access_token",
-            value=new_session_token_str,
-            httponly=True,
-            secure=True,
-            samesite="Strict",
-            max_age=settings.JWT_EXP_DELTA_SECONDS,
-        )
+        set_access_token_cookie(response, token_str)
         return response
 
-    return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)
+    if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
+        return JsonResponse(
+            {"success": False, "message": "Invalid credentials"}, status=401
+        )
+
+    if user.is_2fa_enabled:
+        code = generate_2fa_code()
+        hashed_code = bcrypt.hashpw(code.encode("utf-8"), bcrypt.gensalt()).decode(
+            "utf-8"
+        )
+        user.temp_2fa_code = hashed_code
+        user.save()
+        if user.twofa_method == "email":
+            send_2fa_email(user.email, code)
+        elif user.twofa_method == "sms":
+            send_2fa_sms(user.phone_number, code)
+        return JsonResponse(
+            {
+                "success": True,
+                "message": "2FA required",
+                "twofa_method": user.twofa_method,
+            },
+            status=200,
+        )
+
+    cookie_token = request.COOKIES.get("access_token")
+    if user.token_expiry and user.token_expiry > now_utc:
+        if not cookie_token or cookie_token != user.session_token:
+            user.token_expiry = None
+            user.session_token = None
+            user.save()
+        else:
+            return JsonResponse(
+                {"success": False, "message": "User is already connected"}, status=403
+            )
+
+    token_str, expiry = generate_session_token(user)
+    user.token_expiry = expiry
+    user.session_token = token_str
+    user.status = "online"
+    user.save()
+    response = JsonResponse(
+        {
+            "success": True,
+            "message": "Logged in",
+            "id": user.id,
+            "username": user.username,
+        }
+    )
+    set_access_token_cookie(response, token_str)
+    return response
 
 
 @csrf_exempt
 def logout_view(request):
-    if request.method == "POST":
-        token = request.COOKIES.get("access_token")
-        if not token:
-            return JsonResponse(
-                {"success": False, "message": "No token provided"}, status=400
-            )
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": "Only POST allowed"}, status=405
+        )
 
-        try:
-            payload = jwt.decode(
-                token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
-            )
-            id = payload.get("sub")
-            user = ManualUser.objects.get(id=id)
+    token = request.COOKIES.get("access_token")
+    if not token:
+        return JsonResponse(
+            {"success": False, "message": "No token provided"}, status=400
+        )
 
-            user.token_expiry = None
-            user.status = "offline"
-            user.save()
+    try:
+        payload = jwt.decode(
+            token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+        )
+        user = ManualUser.objects.get(id=payload.get("sub"))
+        user.token_expiry = None
+        user.status = "offline"
+        user.save()
 
-            response = JsonResponse({"success": True, "message": "Logged out"})
-            response.delete_cookie("access_token")
-            response.delete_cookie("refresh_token")
-            return response
+        response = JsonResponse({"success": True, "message": "Logged out"})
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
+        return response
 
-        except jwt.ExpiredSignatureError:
-            return JsonResponse(
-                {"success": False, "message": "Token already expired"}, status=401
-            )
-        except (jwt.InvalidTokenError, ManualUser.DoesNotExist) as e:
-            return JsonResponse({"success": False, "message": str(e)}, status=401)
-
-    return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)
+    except jwt.ExpiredSignatureError:
+        return JsonResponse(
+            {"success": False, "message": "Token already expired"}, status=401
+        )
+    except (jwt.InvalidTokenError, ManualUser.DoesNotExist) as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=401)
 
 
 @csrf_exempt
 def verify_2fa_view(request):
-    if request.method == "POST":
-        body = json.loads(request.body.decode("utf-8"))
-        username = body.get("username")
-        code = body.get("twofa_code")
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": "Only POST allowed"}, status=405
+        )
 
-        try:
-            user = ManualUser.objects.get(username=username)
-        except ManualUser.DoesNotExist:
-            return JsonResponse(
-                {"success": False, "message": "User not found"}, status=404
-            )
+    body = json.loads(request.body.decode("utf-8"))
+    username = body.get("username")
+    code = body.get("twofa_code")
 
-        now = datetime.datetime.utcnow()
-        if user.token_expiry and user.token_expiry > now:
-            return JsonResponse(
-                {"success": False, "message": "User is already connected."}, status=403
-            )
+    try:
+        user = ManualUser.objects.get(username=username)
+    except ManualUser.DoesNotExist:
+        return JsonResponse({"success": False, "message": "User not found"}, status=404)
 
-        if user.twofa_method == "authenticator-app":
-            totp = pyotp.TOTP(user.totp_secret)
-            if totp.verify(code):
-                now = datetime.datetime.utcnow()
-                exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-                user.token_expiry = exp
-                user.save()
-                access_payload = {
-                    "sub": str(user.id),
-                    "iat": now,
-                    "exp": exp.timestamp(),
-                }
-                access_token = jwt.encode(
-                    {
-                        "sub": str(user.id),
-                        "iat": now,
-                        "exp": (
-                            now
-                            + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-                        ).timestamp(),
-                    },
-                    settings.JWT_SECRET_KEY,
-                    algorithm=settings.JWT_ALGORITHM,
-                )
-                access_token_str = (
-                    access_token
-                    if isinstance(access_token, str)
-                    else access_token.decode("utf-8")
-                )
+    now_utc = datetime.datetime.utcnow()
+    if user.token_expiry and user.token_expiry > now_utc:
+        return JsonResponse(
+            {"success": False, "message": "User is already connected."}, status=403
+        )
 
-                user.token_expiry = now + datetime.timedelta(
-                    seconds=settings.JWT_EXP_DELTA_SECONDS
-                )
-                user.session_token = access_token_str
-                user.status = "online"
-                user.save()
-                response = JsonResponse({"success": True, "message": "2FA verified"})
-                response.set_cookie(
-                    key="access_token",
-                    value=access_token_str,
-                    httponly=True,
-                    secure=True,
-                    samesite="Strict",
-                    max_age=settings.JWT_EXP_DELTA_SECONDS,
-                )
-                return response
-            else:
-                return JsonResponse(
-                    {"success": False, "message": "Invalid 2FA code"}, status=401
-                )
-        elif bcrypt.checkpw(code.encode("utf-8"), user.temp_2fa_code.encode("utf-8")):
-            now = datetime.datetime.utcnow()
-            exp = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-            user.token_expiry = exp
-            user.save()
-            access_token = jwt.encode(
-                {
-                    "sub": str(user.id),
-                    "iat": now,
-                    "exp": (
-                        now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-                    ).timestamp(),
-                },
-                settings.JWT_SECRET_KEY,
-                algorithm=settings.JWT_ALGORITHM,
-            )
-            access_token_str = (
-                access_token
-                if isinstance(access_token, str)
-                else access_token.decode("utf-8")
-            )
-
-            user.token_expiry = now + datetime.timedelta(
-                seconds=settings.JWT_EXP_DELTA_SECONDS
-            )
-            user.session_token = access_token_str
+    if user.twofa_method == "authenticator-app":
+        totp = pyotp.TOTP(user.totp_secret)
+        if totp.verify(code):
+            token_str, expiry = generate_session_token(user)
+            user.token_expiry = expiry
+            user.session_token = token_str
             user.status = "online"
             user.save()
-
             response = JsonResponse({"success": True, "message": "2FA verified"})
-            response.set_cookie(
-                key="access_token",
-                value=access_token_str,
-                httponly=True,
-                secure=True,
-                samesite="Strict",
-                max_age=settings.JWT_EXP_DELTA_SECONDS,
-            )
+            set_access_token_cookie(response, token_str)
             return response
         else:
             return JsonResponse(
                 {"success": False, "message": "Invalid 2FA code"}, status=401
             )
+    elif bcrypt.checkpw(code.encode("utf-8"), user.temp_2fa_code.encode("utf-8")):
+        token_str, expiry = generate_session_token(user)
+        user.token_expiry = expiry
+        user.session_token = token_str
+        user.status = "online"
+        user.save()
+        response = JsonResponse({"success": True, "message": "2FA verified"})
+        set_access_token_cookie(response, token_str)
+        return response
     else:
         return JsonResponse(
-            {"success": False, "message": "Only POST allowed"}, status=405
+            {"success": False, "message": "Invalid 2FA code"}, status=401
         )
 
 
@@ -529,15 +432,10 @@ def get_user_id_from_cookie(request):
         return JsonResponse({"error": str(e)}, status=400)
 
 
-import requests
-from django.shortcuts import redirect
-from django.http import JsonResponse
-from django.conf import settings
-from urllib.parse import urlencode
+# --- Vues OAuth (42) ---
 
 SERVER_IP = settings.HOSTNAME
 REDIRECT_URI = f"https://{SERVER_IP}:8443/api/auth-service/oauth/callback/"
-
 CLIENT_ID = settings.UID_42
 CLIENT_SECRET = settings.SECRET_42
 
@@ -548,11 +446,6 @@ def get_42_auth_url(request):
         f"client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=public"
     )
     return JsonResponse({"url": auth_url})
-
-
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
@@ -608,13 +501,10 @@ def oauth_callback(request):
             return authenticate_and_respond(existing_user)
 
         original_username = username
-        if ManualUser.objects.filter(username=username).exists():
-            counter = 1
-            while ManualUser.objects.filter(
-                username=f"{original_username}_{counter}"
-            ).exists():
-                counter += 1
+        counter = 1
+        while ManualUser.objects.filter(username=username).exists():
             username = f"{original_username}_{counter}"
+            counter += 1
 
         logger.info(f"✅ Nouveau username généré : {username}")
 
@@ -631,60 +521,24 @@ def oauth_callback(request):
         return authenticate_and_respond(user)
 
     except Exception as e:
+        logger.exception("OAuth callback error")
         return JsonResponse(
             {"success": False, "message": "Internal Server Error"}, status=500
         )
 
 
 def authenticate_and_respond(user):
-    now = datetime.datetime.utcnow()
-    new_session_token = jwt.encode(
-        {
-            "sub": str(user.id),
-            "iat": now,
-            "exp": (
-                now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-            ).timestamp(),
-        },
-        settings.JWT_SECRET_KEY,
-        algorithm=settings.JWT_ALGORITHM,
-    )
-    new_session_token_str = (
-        new_session_token
-        if isinstance(new_session_token, str)
-        else new_session_token.decode("utf-8")
-    )
-
-    user.token_expiry = now + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
-    user.session_token = new_session_token_str
+    token_str, expiry = generate_session_token(user)
+    user.token_expiry = expiry
+    user.session_token = token_str
     user.status = "online"
     user.save()
-
     response = redirect(f"https://{SERVER_IP}:8443")
-    response.set_cookie(
-        key="access_token",
-        value=new_session_token_str,
-        httponly=True,
-        secure=True,
-        samesite="Strict",
-        max_age=settings.JWT_EXP_DELTA_SECONDS,
-    )
+    set_access_token_cookie(response, token_str)
     return response
 
 
-from django.utils.timezone import now
-import datetime
-import json
-import bcrypt
-import jwt
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.core.mail import send_mail
-import logging
-
-logger = logging.getLogger(__name__)
-
-from django.utils.timezone import now
+# --- Vues de réinitialisation du mot de passe ---
 
 
 @csrf_exempt
@@ -701,7 +555,6 @@ def request_password_reset(request):
                 {"success": False, "message": "Email is required"}, status=400
             )
 
-        # Rechercher l'utilisateur via l'email décrypté
         user = None
         for u in ManualUser.objects.filter(email__isnull=False).exclude(email=""):
             try:
@@ -715,8 +568,7 @@ def request_password_reset(request):
                 {"success": False, "message": "User not found"}, status=404
             )
 
-        current_time = now()  # datetime aware
-        # Vérifier si un code a déjà été généré et non expiré
+        current_time = now()
         if user.reset_code_expiry and user.reset_code_expiry > current_time:
             remaining = (user.reset_code_expiry - current_time).total_seconds()
             return JsonResponse(
@@ -727,7 +579,6 @@ def request_password_reset(request):
                 status=429,
             )
 
-        # Générer et stocker le nouveau code avec expiration aware
         code = generate_2fa_code()
         hashed_code = bcrypt.hashpw(code.encode("utf-8"), bcrypt.gensalt()).decode(
             "utf-8"
@@ -761,7 +612,6 @@ def verify_reset_code(request):
                 {"success": False, "message": "Missing email or code"}, status=400
             )
 
-        # Recherche de l'utilisateur via l'email décrypté
         user = None
         for u in ManualUser.objects.filter(email__isnull=False).exclude(email=""):
             try:
@@ -778,21 +628,17 @@ def verify_reset_code(request):
         current_time = now()
         logger.info(f"Current time: {current_time}")
         logger.info(f"Reset code expiry: {user.reset_code_expiry}")
-        # Vérifier que le code n'est pas expiré
-        from django.utils.timezone import is_aware, make_aware
-
-        # Assurez-vous que reset_code_expiry est aware
-        if user.reset_code_expiry and not is_aware(user.reset_code_expiry):
-            reset_expiry = make_aware(user.reset_code_expiry)
-        else:
-            reset_expiry = user.reset_code_expiry
+        reset_expiry = (
+            make_aware(user.reset_code_expiry)
+            if user.reset_code_expiry and not is_aware(user.reset_code_expiry)
+            else user.reset_code_expiry
+        )
 
         if not reset_expiry or reset_expiry < current_time:
             return JsonResponse(
                 {"success": False, "message": "Reset code expired"}, status=400
             )
 
-        # Vérification du code avec bcrypt
         if not bcrypt.checkpw(
             code.encode("utf-8"), user.temp_reset_code.encode("utf-8")
         ):
@@ -800,7 +646,6 @@ def verify_reset_code(request):
                 {"success": False, "message": "Invalid code"}, status=401
             )
 
-        # Générer un token temporaire de réinitialisation valable 1 minute
         reset_token = jwt.encode(
             {
                 "sub": str(user.id),
@@ -811,9 +656,15 @@ def verify_reset_code(request):
             settings.JWT_SECRET_KEY,
             algorithm=settings.JWT_ALGORITHM,
         )
-
+        reset_token_str = (
+            reset_token if isinstance(reset_token, str) else reset_token.decode("utf-8")
+        )
         return JsonResponse(
-            {"success": True, "message": "Code verified", "reset_token": reset_token}
+            {
+                "success": True,
+                "message": "Code verified",
+                "reset_token": reset_token_str,
+            }
         )
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
@@ -835,7 +686,6 @@ def change_password(request):
                 status=400,
             )
 
-        # Vérifier et décoder le token de réinitialisation
         try:
             payload = jwt.decode(
                 reset_token,
@@ -849,7 +699,6 @@ def change_password(request):
         except jwt.InvalidTokenError as e:
             return JsonResponse({"success": False, "message": str(e)}, status=401)
 
-        # S'assurer que le token est bien de type réinitialisation
         if payload.get("type") != "password_reset":
             return JsonResponse(
                 {"success": False, "message": "Invalid token type"}, status=401
@@ -858,13 +707,10 @@ def change_password(request):
         user_id = payload.get("sub")
         user = ManualUser.objects.get(id=int(user_id))
 
-        # Mettre à jour le mot de passe (après hachage)
         hashed_password = bcrypt.hashpw(
             new_password.encode("utf-8"), bcrypt.gensalt()
         ).decode("utf-8")
         user.password = hashed_password
-
-        # Nettoyer les champs de réinitialisation
         user.temp_reset_code = None
         user.reset_code_expiry = None
         user.save()
