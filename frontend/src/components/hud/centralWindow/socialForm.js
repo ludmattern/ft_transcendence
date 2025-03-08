@@ -201,7 +201,7 @@ async function getFriends() {
 	try {
 		const response = await fetch("/api/user-service/get_friends/", {
 			method: "GET",
-			credentials: "include", // 🔥 Important pour envoyer le cookie JWT
+			credentials: "include",
 		});
 		console.log("response:", response);
 		if (!response.ok) {
