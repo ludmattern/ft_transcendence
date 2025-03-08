@@ -117,4 +117,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                     pass
 
             elif action == "leave":
+                logger.info(f"🔴 user_id={user_id} veut quitter la queue")
+                logger.info(f"type de user_id = {type(user_id)}")
                 matchmaking_manager.remove_from_queue(user_id)

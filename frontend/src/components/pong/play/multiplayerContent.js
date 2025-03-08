@@ -117,11 +117,12 @@ export const multiplayerContent = createComponent({
 });
 
 export async function leaveMatchmaking() {
-	payload = {
+	const payload = {
 		type: 'matchmaking',
 		action: 'leave',
 	};
 
 	ws.send(JSON.stringify(payload));
+	console.log('payload :', payload);
 	console.log('Sent \'leave matchmaking\' via WebSocket');
 }
