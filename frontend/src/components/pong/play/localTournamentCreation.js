@@ -35,11 +35,11 @@ export const localTournamentCreation = createComponent({
 	},
 
 	attachEvents: async (el) => {
-		const tournamentSizeData = await getInfo("tournamentSize");
-		const usernameData = await getInfo("username");
+		const tournamentSizeData = await getInfo('tournamentSize');
+		const usernameData = await getInfo('username');
 
 		const tournamentSize = parseInt(tournamentSizeData.success ? tournamentSizeData.value : 16, 10);
-		const username = usernameData.success ? usernameData.value : "You";
+		const username = usernameData.success ? usernameData.value : 'You';
 
 		const maxPlayersElement = el.querySelector('#max-players');
 		const playersCountSpan = el.querySelector('#players-count');

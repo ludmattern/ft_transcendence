@@ -80,10 +80,10 @@ export const loginForm = createComponent({
 				if (data.url) {
 					window.location.href = data.url;
 				} else {
-					console.error("Erreur : Impossible d'obtenir l'URL d'authentification.");
+					console.error('Erreur : Impossible d\'obtenir l\'URL d\'authentification.');
 				}
 			} catch (error) {
-				console.error("Erreur lors de l'appel API :", error);
+				console.error('Erreur lors de l\'appel API :', error);
 			}
 		});
 	},

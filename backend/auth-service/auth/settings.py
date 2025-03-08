@@ -24,25 +24,25 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
 try:
-    with open("/run/secrets/fernet_key", "r") as f:
+    with open("/run/secrets/fernet_key", "r", encoding="utf-8") as f:
         FERNET_KEY = f.read().strip()
-    with open("/run/secrets/smtp_host_user", "r") as f:
+    with open("/run/secrets/smtp_host_user", "r", encoding="utf-8") as f:
         EMAIL_HOST_USER = f.read().strip()
-    with open("/run/secrets/smtp_host_password", "r") as f:
+    with open("/run/secrets/smtp_host_password", "r", encoding="utf-8") as f:
         EMAIL_HOST_PASSWORD = f.read().strip()
-    with open("/run/secrets/twilio_account_sid", "r") as f:
+    with open("/run/secrets/twilio_account_sid", "r", encoding="utf-8") as f:
         TWILIO_ACCOUNT_SID = f.read().strip()
-    with open("/run/secrets/twilio_auth_token", "r") as f:
+    with open("/run/secrets/twilio_auth_token", "r", encoding="utf-8") as f:
         TWILIO_AUTH_TOKEN = f.read().strip()
-    with open("/run/secrets/twilio_phone_number", "r") as f:
+    with open("/run/secrets/twilio_phone_number", "r", encoding="utf-8") as f:
         TWILIO_PHONE_NUMBER = f.read().strip()
-    with open("/run/secrets/42_uid", "r") as f:
+    with open("/run/secrets/42_uid", "r", encoding="utf-8") as f:
         UID_42 = f.read().strip()
-    with open("/run/secrets/42_secret", "r") as f:
+    with open("/run/secrets/42_secret", "r", encoding="utf-8") as f:
         SECRET_42 = f.read().strip()
-    with open("/run/secrets/hostname", "r") as f:
+    with open("/run/secrets/hostname", "r", encoding="utf-8") as f:
         HOSTNAME = f.read().strip()
-    with open("/run/secrets/jwt_secret", "r") as f:
+    with open("/run/secrets/jwt_secret", "r", encoding="utf-8") as f:
         JWT_SECRET_KEY = f.read().strip()
 except Exception:
     print("Error reading Fernet key from file")

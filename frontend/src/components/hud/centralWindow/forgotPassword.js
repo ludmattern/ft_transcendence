@@ -1,35 +1,35 @@
-import { createComponent } from '/src/utils/component.js';
-import { handleRoute } from '/src/services/router.js';
+import React, { useState } from 'react';
+import axios from 'axios';
 
-export const forgotPassword = (() => {
-	let state = { step: 'email', email: '', resetToken: '' };
+const ForgotPassword = () => {
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
 
-	const render = (step) => {
-		if (typeof step !== 'undefined') {
-			state.step = step;
-		} else {
-			state.step = 'email';
-		}
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('/api/auth/forgot-password', { email });
+            setMessage(response.data.message);
+        } catch (error) {
+            setMessage('An error occurred. Please try again.');
+        }
+    };
 
-		if (state.step === 'email') {
-			return `
-		<div id="forgot-password-form" class="form-container flex-column justify-content-around text-center active">
-			<h5>PASSWORD RECOVERY</h5>
-			<span class="background-central-span">
-				<form id="email-form" action="#" method="post" class="w-100">
-					<div class="form-group">
-						<label for="email" class="mb-3">Enter your email</label>
-						<input type="email" id="email" name="email" class="form-control" required />
-					</div>
-					<button type="submit" class="btn">Send Code</button>
-				</form>
-			</span>
-		</div>`;
-		} else if (state.step === 'code') {
-			return `
-		<div id="code-verification-form" class="form-container flex-column justify-content-around text-center active">
-			<h5>CODE VERIFICATION</h5>
-			<span class="background-central-span">
+    return (
+        <div>
+            <h2>Forgot Password</h2>
+            <form onSubmit={handleSubmit}>
+                <label>
+                    Email:
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                </label>
+                <button type="submit">Submit</button>
+            </form>
 				<form id="code-form" action="#" method="post" class="w-100">
 					<div class="form-group">
 						<label for="code" class="mb-3">Enter the code</label>
@@ -60,7 +60,7 @@ export const forgotPassword = (() => {
 			</span>
 		</div>`;
 		} else {
-			return `<div>Invalid step</div>`;
+			return '<div>Invalid step</div>';
 		}
 	};
 

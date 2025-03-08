@@ -45,7 +45,7 @@ function processNotificationBuffer() {
 export function createNotificationMessage(message, duration = 2500, error = false) {
 	const container = document.getElementById('bottom-notification-container');
 	if (!container) {
-		console.error("Le container de notification n'a pas été trouvé.");
+		console.error('Le container de notification n\'a pas été trouvé.');
 		return;
 	}
 

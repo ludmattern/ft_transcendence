@@ -1,6 +1,7 @@
 import random
 import time
 
+
 class BasePongGame:
     def __init__(self, game_id, player1_id=None, player2_id=None):
         self.game_id = game_id
@@ -12,16 +13,10 @@ class BasePongGame:
         self.player1_id = player1_id if player1_id else "unknown1"
         self.player2_id = player2_id if player2_id else "unknown2"
 
-        self.player_mapping = {
-            self.player1_id: 1,
-            self.player2_id: 2
-        }
+        self.player_mapping = {self.player1_id: 1, self.player2_id: 2}
 
-        self.user_scores = {
-            self.player1_id: 0,
-            self.player2_id: 0
-        }
-        
+        self.user_scores = {self.player1_id: 0, self.player2_id: 0}
+
         self.ball_hit_paddle = False
         self.ball_hit_wall = False
 
@@ -32,19 +27,23 @@ class BasePongGame:
         self.paddle_width = 0.07
         self.paddle_height = 0.33
         self.paddle_depth = 0.33
-        self.ball_reset_time =1
+        self.ball_reset_time = 1
         self.state = {
             "ball": {
-                "x": 0, "y": 0, "z": 0,
-                "vx": 1.5, "vy": random.uniform(-1, 1), "vz": random.uniform(-1, 1),
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "vx": 1.5,
+                "vy": random.uniform(-1, 1),
+                "vz": random.uniform(-1, 1),
             },
             "players": {
                 1: {"x": -self.tunnel_width / 2.2, "y": 0, "z": 0},
                 2: {"x": self.tunnel_width / 2.2, "y": 0, "z": 0},
             },
-            "scores": {1: 0, 2: 0}
+            "scores": {1: 0, 2: 0},
         }
-        self.ball_size = 0.1 
+        self.ball_size = 0.1
         self.vmax = 4
         self.last_update = time.time()
 
@@ -57,15 +56,21 @@ class BasePongGame:
         player = self.state["players"][player_id]
 
         if direction == "up":
-            player["y"] = min(self.tunnel_height / 2 - self.paddle_height / 2, player["y"] + step)
+            player["y"] = min(
+                self.tunnel_height / 2 - self.paddle_height / 2, player["y"] + step
+            )
         elif direction == "down":
-            player["y"] = max(-self.tunnel_height / 2 + self.paddle_height / 2, player["y"] - step)
+            player["y"] = max(
+                -self.tunnel_height / 2 + self.paddle_height / 2, player["y"] - step
+            )
         elif direction == "left":
-            player["z"] = max(-self.tunnel_depth / 2 + self.paddle_depth / 2, player["z"] - step)  
+            player["z"] = max(
+                -self.tunnel_depth / 2 + self.paddle_depth / 2, player["z"] - step
+            )
         elif direction == "right":
-            player["z"] = min(self.tunnel_depth / 2 - self.paddle_depth / 2, player["z"] + step)  
-
-
+            player["z"] = min(
+                self.tunnel_depth / 2 - self.paddle_depth / 2, player["z"] + step
+            )
 
     def update(self):
         if self.game_over:
@@ -93,10 +98,16 @@ class BasePongGame:
 
                     offset_x = 0.5 if self.scoring_player == 1 else -0.5
 
-                    self.state["ball"]["x"] += (paddle["x"] + offset_x - self.state["ball"]["x"]) * lerp_factor
-                    self.state["ball"]["y"] += (paddle["y"] - self.state["ball"]["y"]) * lerp_factor
-                    self.state["ball"]["z"] += (paddle["z"] - self.state["ball"]["z"]) * lerp_factor
-                return  
+                    self.state["ball"]["x"] += (
+                        paddle["x"] + offset_x - self.state["ball"]["x"]
+                    ) * lerp_factor
+                    self.state["ball"]["y"] += (
+                        paddle["y"] - self.state["ball"]["y"]
+                    ) * lerp_factor
+                    self.state["ball"]["z"] += (
+                        paddle["z"] - self.state["ball"]["z"]
+                    ) * lerp_factor
+                return
             else:
                 paddle = self.state["players"][self.scoring_player]
 
@@ -111,7 +122,7 @@ class BasePongGame:
 
                 speed_factor = 1.1
 
-                direction = 1 if self.scoring_player == 1 else -1  
+                direction = 1 if self.scoring_player == 1 else -1
                 self.state["ball"]["vx"] = 1.5 * speed_factor * direction
 
         players = self.state["players"]
@@ -120,8 +131,8 @@ class BasePongGame:
 
         ball["x"] += ball["vx"] * dt
         ball["y"] += ball["vy"] * dt
-        ball["z"] += ball["vz"] * dt  
-        speed = (ball["vx"] ** 2 + ball["vy"] ** 2 + ball["vz"] ** 2) ** 0.5  
+        ball["z"] += ball["vz"] * dt
+        speed = (ball["vx"] ** 2 + ball["vy"] ** 2 + ball["vz"] ** 2) ** 0.5
         if speed > self.vmax:
             factor = self.vmax / speed
             ball["vx"] *= factor
@@ -130,20 +141,20 @@ class BasePongGame:
         elif speed < 1.5:
             factor = 1.5 / speed
             ball["vx"] *= factor
-            
+
         if abs(ball["vx"]) < 1.5:
             ball["vx"] = 1.5 if ball["vx"] >= 0 else -1.5
-        speed = (ball["vx"] ** 2 + ball["vy"] ** 2 + ball["vz"] ** 2) ** 0.5  
+        speed = (ball["vx"] ** 2 + ball["vy"] ** 2 + ball["vz"] ** 2) ** 0.5
 
         ball = self.state["ball"]
-        ball_half_size = self.ball_size / 2  
-        
+        ball_half_size = self.ball_size / 2
+
         if speed > self.vmax:
             factor = self.vmax / speed
             ball["vx"] *= factor
             ball["vy"] *= factor
             ball["vz"] *= factor
-        
+
         if ball["y"] + ball_half_size >= self.tunnel_height / 2:
             ball["y"] = self.tunnel_height / 2 - ball_half_size
             ball["vy"] *= -1
@@ -167,30 +178,34 @@ class BasePongGame:
         margin_before_scoring = 0.1
 
         if ball["x"] <= p1["x"] + self.paddle_width:
-            if (p1["y"] - self.paddle_height / 2 <= ball["y"] + ball_half_size and 
-                p1["y"] + self.paddle_height / 2 >= ball["y"] - ball_half_size) and \
-               (p1["z"] - self.paddle_depth / 2 <= ball["z"] + ball_half_size and 
-                p1["z"] + self.paddle_depth / 2 >= ball["z"] - ball_half_size):
-
+            if (
+                p1["y"] - self.paddle_height / 2 <= ball["y"] + ball_half_size
+                and p1["y"] + self.paddle_height / 2 >= ball["y"] - ball_half_size
+            ) and (
+                p1["z"] - self.paddle_depth / 2 <= ball["z"] + ball_half_size
+                and p1["z"] + self.paddle_depth / 2 >= ball["z"] - ball_half_size
+            ):
                 self.ball_hit_paddle = True
                 impact_y = (ball["y"] - p1["y"]) / (self.paddle_height / 2)
                 impact_z = (ball["z"] - p1["z"]) / (self.paddle_depth / 2)
 
                 ball["vx"] = abs(ball["vx"]) * 1.05
                 ball["vy"] += impact_y * 0.75
-                ball["vz"] += impact_z *0.75
-            elif ball["x"] <= p1["x"] - margin_before_scoring:  
-                scoring_player_id = self.player2_id 
+                ball["vz"] += impact_z * 0.75
+            elif ball["x"] <= p1["x"] - margin_before_scoring:
+                scoring_player_id = self.player2_id
                 self.user_scores[scoring_player_id] += 1
                 self.state["scores"][self.player_mapping[scoring_player_id]] += 1
                 self.reset_ball("right")
 
         if ball["x"] >= p2["x"] - self.paddle_width:
-            if (p2["y"] - self.paddle_height / 2 <= ball["y"] + ball_half_size and 
-                p2["y"] + self.paddle_height / 2 >= ball["y"] - ball_half_size) and \
-               (p2["z"] - self.paddle_depth / 2 <= ball["z"] + ball_half_size and 
-                p2["z"] + self.paddle_depth / 2 >= ball["z"] - ball_half_size):
-                   
+            if (
+                p2["y"] - self.paddle_height / 2 <= ball["y"] + ball_half_size
+                and p2["y"] + self.paddle_height / 2 >= ball["y"] - ball_half_size
+            ) and (
+                p2["z"] - self.paddle_depth / 2 <= ball["z"] + ball_half_size
+                and p2["z"] + self.paddle_depth / 2 >= ball["z"] - ball_half_size
+            ):
                 self.ball_hit_paddle = True
 
                 impact_y = (ball["y"] - p2["y"]) / (self.paddle_height / 2)
@@ -199,21 +214,19 @@ class BasePongGame:
                 ball["vx"] = -abs(ball["vx"]) * 1.07
                 ball["vy"] += impact_y * 0.75
                 ball["vz"] += impact_z * 0.75
-            elif ball["x"] >= p2["x"] + margin_before_scoring: 
+            elif ball["x"] >= p2["x"] + margin_before_scoring:
                 scoring_player_id = self.player1_id
                 self.user_scores[scoring_player_id] += 1
                 self.state["scores"][self.player_mapping[scoring_player_id]] += 1
                 self.reset_ball("left")
 
-        if self.user_scores[self.player1_id] >= self.max_score or self.user_scores[self.player2_id] >= self.max_score:
+        if (
+            self.user_scores[self.player1_id] >= self.max_score
+            or self.user_scores[self.player2_id] >= self.max_score
+        ):
             self.game_over = True
 
-
-
-
-
     def reset_ball(self, direction="right"):
-
         if direction == "right":
             self.scoring_player = 1
         else:
@@ -221,7 +234,7 @@ class BasePongGame:
 
         self.state["ball_waiting"] = True
         self.state["ball_following_paddle"] = True
-        self.ball_reset_time = time.time()  
+        self.ball_reset_time = time.time()
 
         self.state["ball"]["vx"] = 0
         self.state["ball"]["vy"] = 0
@@ -235,5 +248,5 @@ class BasePongGame:
             "user_scores": self.user_scores,
             "game_over": self.game_over,
             "ball_hit_paddle": self.ball_hit_paddle,
-            "ball_hit_wall": self.ball_hit_wall
+            "ball_hit_wall": self.ball_hit_wall,
         }

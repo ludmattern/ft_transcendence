@@ -133,7 +133,7 @@ function attachProfilePicUpload() {
                     }
                 }
             } catch (error) {
-                console.error("Erreur lors de l'upload de l'image:", error);
+                console.error('Erreur lors de l\'upload de l\'image:', error);
             }
         });
     }
@@ -168,7 +168,7 @@ export async function loadMatchHistory(userId) {
 				historyContainer.innerHTML += matchHtml;
 			});
 		} else {
-			console.error("Erreur lors du chargement de l'historique :", data.error);
+			console.error('Erreur lors du chargement de l\'historique :', data.error);
 		}
 	} catch (error) {
 		console.error('Error loading match history:', error);
@@ -199,7 +199,7 @@ export async function loadUserProfile(userId) {
 			const profilePicImg = document.querySelector('.profile-pic');
 			if (profilePicImg) {
 				profilePicImg.src = data.profile.profile_picture;
-				profilePicImg.alt = data.profile.username + "'s profile picture";
+				profilePicImg.alt = data.profile.username + '\'s profile picture';
 				profilePicImg.style.width = '150px';
 				profilePicImg.style.height = '150px';
 			}

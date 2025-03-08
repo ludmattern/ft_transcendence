@@ -83,8 +83,8 @@ attachEvents: async (el) => {
 
                 if (data.success) {
                     if (formData.newUsername) {
-                        await pushInfo("registered_user", formData.newUsername);
-                        await pushInfo("username", formData.newUsername);
+                        await pushInfo('registered_user', formData.newUsername);
+                        await pushInfo('username', formData.newUsername);
                     }
                     alert('Information updated successfully.');
                     resetErrorMessages();
@@ -210,7 +210,7 @@ function createFormGroup(id, type, label) {
  */
 async function collectFormData(el) {
 	return {
-		username: (await getInfo("username")).success ? (await getInfo("username")).value : null,
+		username: (await getInfo('username')).success ? (await getInfo('username')).value : null,
 		newUsername: el.querySelector('#new-username').value,
 		oldPassword: el.querySelector('#old-password').value,
 		newPassword: el.querySelector('#new-password').value,

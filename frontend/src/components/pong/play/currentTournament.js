@@ -130,7 +130,7 @@ export const currentTournament = createComponent({
 
 export async function renderBracket() {
 	const el = currentTournament.el;
-	const username = (await getInfo("username")).success ? (await getInfo("username")).value : null;
+	const username = (await getInfo('username')).success ? (await getInfo('username')).value : null;
 	const userId = await getUserIdFromCookieAPI();
 	const data = await getBracketData();
 	if (!data || !data.size) {
@@ -205,7 +205,7 @@ export async function renderBracket() {
 					}
 
 					if (match.status === 'pending' && match.player1 !== 'TBD' && match.player2 !== 'TBD') {
-						joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>`;
+						joinButton = '<button class="btn btn-pong-blue btn-sm join-match ms-2">Join Game</button>';
 					}
 
 					return `<div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
@@ -252,7 +252,7 @@ export async function renderBracket() {
 
 
 				if (mode === 'local') {
-				const response = await fetch("/api/tournament-service/abandon_local_tournament/", {
+				const response = await fetch('/api/tournament-service/abandon_local_tournament/', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
@@ -351,11 +351,11 @@ function getCompletedMatchHtml(match) {
 		return `${match.player1} vs ${match.player2}`;
 	}
 
-	if (match.score === "Forfeit" && (match.player1 === "TBD" || match.player2 === "TBD")) {
+	if (match.score === 'Forfeit' && (match.player1 === 'TBD' || match.player2 === 'TBD')) {
 		return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
 	}
 
-	if (match.score === "Forfeit") 
+	if (match.score === 'Forfeit') 
 	{
 		const winner = match.winner;
 		console.log('winner:', winner);

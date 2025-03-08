@@ -151,7 +151,7 @@ export async function getUserIdFromCookieAPI() {
 			return null;
 		}
 	} catch (error) {
-		console.error("Erreur lors de la récupération de l'user ID:", error);
+		console.error('Erreur lors de la récupération de l\'user ID:', error);
 		return null;
 	}
 }

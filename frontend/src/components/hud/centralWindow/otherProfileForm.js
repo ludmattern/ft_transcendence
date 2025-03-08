@@ -88,7 +88,7 @@ export const otherProfileForm = createComponent({
 
     const profileUsername = getUsernameFromUrl();
     if (!profileUsername) {
-      console.error("Username not found in URL");
+      console.error('Username not found in URL');
       return;
     }
 
@@ -107,7 +107,7 @@ export const otherProfileForm = createComponent({
         console.debug('Invite sent.');
         const payload = {
           type: 'info_message',
-          action: "private_game_invite",
+          action: 'private_game_invite',
           author: await getUserIdFromCookieAPI(),
           recipient: profile_id,
           initiator: await getUserIdFromCookieAPI(),
@@ -124,19 +124,19 @@ export const otherProfileForm = createComponent({
         playGame(config);
       }
       if (e.target.matches('#remove-link')) {
-        action = "remove_friend";
+        action = 'remove_friend';
         console.debug('Friend removed.');
       }
       else if (e.target.matches('#add-link')) {
-        action = "send_friend_request";
+        action = 'send_friend_request';
         console.debug('Friend added.');
       }
       else if (e.target.matches('#block-link')) {
-        action = "block_user";
+        action = 'block_user';
         console.debug('User blocked.');
       }
       else if (e.target.matches('#unblock-link')) {
-        action = "unblock_user";
+        action = 'unblock_user';
         console.debug('User unblocked.');
       }
 
@@ -183,7 +183,7 @@ export async function fetchUserId(username) {
 function clearPageContent() {
   const profileForm = document.getElementById('profile-form');
   if (profileForm) {
-    profileForm.style.display = "none"; // Hide the entire form
+    profileForm.style.display = 'none'; // Hide the entire form
   }
   const blurScreenEffect = document.getElementById('blur-screen-effect');
   if (blurScreenEffect) {

@@ -18,7 +18,7 @@ export async function initializeWebSocket(userId) {
 	ws.onopen = async () => {
 		console.log('WebSocket connecté !');
 		isWsConnected = true;
-		const username = (await getInfo("username")).success ? (await getInfo("username")).value : null;
+		const username = (await getInfo('username')).success ? (await getInfo('username')).value : null;
 		const initPayload = {
 			type: 'init',
 			userId: userId,

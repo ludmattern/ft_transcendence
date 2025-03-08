@@ -41,12 +41,12 @@ export const onlineTournamentCreation = createComponent({
 		const roomCodeElement = el.querySelector('#room-code');
 
 		try {
-			const tournamentData = await getInfo("tournamentSize");
+			const tournamentData = await getInfo('tournamentSize');
 			const tournamentSize = parseInt(tournamentData.success ? tournamentData.value : 16, 10);
 
 			maxPlayersOnlineSpan.textContent = tournamentSize;
 		} catch (error) {
-			console.error("Erreur lors de la récupération du tournoi :", error);
+			console.error('Erreur lors de la récupération du tournoi :', error);
 		}
 
 		subscribe('leavingLobby', () => {
@@ -108,7 +108,7 @@ export const onlineTournamentCreation = createComponent({
 					console.log('Aucun utilisateur trouvé avec le nom spécifié');
 					return;
 				} else if (recipientId.toString() === data.user_id) {
-					createNotificationMessage(`You cannot invite yourself`, 5000, true);
+					createNotificationMessage('You cannot invite yourself', 5000, true);
 					inviteInput.value = '';
 					console.log('Vous ne pouvez pas vous inviter vous-même');
 					return;
@@ -164,7 +164,7 @@ export const onlineTournamentCreation = createComponent({
 
 async function checkOrCreateLobby() {
 	try {
-		const tournamentSize = parseInt((await getInfo("tournamentSize")).success ? (await getInfo("tournamentSize")).value : NaN, 10);
+		const tournamentSize = parseInt((await getInfo('tournamentSize')).success ? (await getInfo('tournamentSize')).value : NaN, 10);
 		const data = await getCurrentTournamentInformation();
 
 		if (data.tournament !== null && data.status === 'upcoming') {

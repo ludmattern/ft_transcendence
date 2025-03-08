@@ -84,15 +84,15 @@ function titleType(item) {
 	console.log('************************** item **************************', item);
 	switch (item.type) {
 		case 'friend_request':
-			return `Friend request from: `;
+			return 'Friend request from: ';
 		case 'tournament_invite':
-			return `Tournament invite from: `;
+			return 'Tournament invite from: ';
 		case 'private_game_invite':
-			return `Private game invite from: `;
+			return 'Private game invite from: ';
 		case 'tournament_next_game':
-			return `Ready up to fight against: `;
+			return 'Ready up to fight against: ';
 		case 'miscellaneous':
-			return `Miscellaneous: `;
+			return 'Miscellaneous: ';
 	}
 }
 
@@ -120,12 +120,12 @@ export async function handleTournamentAction(action, item) {
 	const userId = await getUserIdFromCookieAPI();
 	if (action) {
 		try {
-			console.log("Vérification de l'existence d'un lobby...");
+			console.log('Vérification de l\'existence d\'un lobby...');
 			const userId = await getUserIdFromCookieAPI();
 			console.log('User ID récupéré :', userId);
 
 			let url = `/api/tournament-service/getParticipantStatusInTournament/${encodeURIComponent(userId)}/`;
-			console.log("Appel de l'API pour récupérer la clé de tournoi :", url);
+			console.log('Appel de l\'API pour récupérer la clé de tournoi :', url);
 
 			let response = await fetch(url);
 			if (!response.ok) {
@@ -142,10 +142,10 @@ export async function handleTournamentAction(action, item) {
 			console.error('Erreur dans checkOrCreateLobby :', error);
 		}
 		action = 'join_tournament';
-		console.log(`joining tournament...`);
+		console.log('joining tournament...');
 	} else {
 		action = 'reject_tournament';
-		console.log(`rejecting tournament...`);
+		console.log('rejecting tournament...');
 	}
 	const payload = {
 		type: 'tournament_message',
@@ -161,8 +161,8 @@ function behaviorTournamentGame(el) {
 	const acceptButton = el.querySelector('#accept-action');
 	if (acceptButton) {
 		acceptButton.addEventListener('click', () => {
-			handleRoute(`/pong/play/current-tournament`);
-			createNotificationMessage("You can't be at two places at the same time", 2500, true);
+			handleRoute('/pong/play/current-tournament');
+			createNotificationMessage('You can\'t be at two places at the same time', 2500, true);
 			createNotificationMessage('idiot...', 2500, true);
 		});
 	}

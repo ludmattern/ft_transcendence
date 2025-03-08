@@ -9,9 +9,9 @@ function getComponentsForPage(pages, pageKey) {
 
 export function renderPage(pages, pageKey, managerType) {
 	if (!pages.hasOwnProperty(pageKey)) {
-		console.warn(`Page "${pageKey}" introuvable.`);
+		console.warn(`Page '${pageKey}' introuvable.`);
 		if (managerType === 'Pong') {
-			console.warn(`Redirection vers la page "lost"...`);
+			console.warn('Redirection vers la page \'lost\'...');
 			renderPage(pages, 'lost', managerType);
 		}
 		return;

@@ -46,23 +46,23 @@ export const soloContent = createComponent({
 
 	// Ajouter les événements pour gérer 
 	attachEvents: async () => {
-    const difficulty = document.getElementById("difficulty");
-    const liabilityCheckbox = document.getElementById("liabilityCheckbox");
+    const difficulty = document.getElementById('difficulty');
+    const liabilityCheckbox = document.getElementById('liabilityCheckbox');
     
     // Charger les valeurs sauvegardées
-    const savedDifficulty = (await getInfo("difficulty")).success ? (await getInfo("difficulty")).value : null;
-    const savedLiability = (await getInfo("liabilityCheckbox")).success ? (await getInfo("liabilityCheckbox")).value : null;
+    const savedDifficulty = (await getInfo('difficulty')).success ? (await getInfo('difficulty')).value : null;
+    const savedLiability = (await getInfo('liabilityCheckbox')).success ? (await getInfo('liabilityCheckbox')).value : null;
     
 
 		if (savedDifficulty) difficulty.value = savedDifficulty;
 		if (savedLiability) liabilityCheckbox.checked = savedLiability === 'true';
 
-    difficulty.addEventListener("change", () => {
-      pushInfo("difficulty", difficulty.value);
+    difficulty.addEventListener('change', () => {
+      pushInfo('difficulty', difficulty.value);
   });
   
-  liabilityCheckbox.addEventListener("change", () => {
-      pushInfo("liabilityCheckbox", liabilityCheckbox.checked);
+  liabilityCheckbox.addEventListener('change', () => {
+      pushInfo('liabilityCheckbox', liabilityCheckbox.checked);
   });
   
 		const launchButton = document.getElementById('launch');

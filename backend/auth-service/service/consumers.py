@@ -8,13 +8,11 @@ class AuthConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         await self.channel_layer.group_add("auth_service", self.channel_name)
-        logger.info(
-            f"🔗 Connecté au groupe auth_service (channel: {self.channel_name})"
-        )
+        logger.info("Connecté au groupe auth_service (channel: %s)", self.channel_name)
 
-    async def disconnect(self, close_code):
+    async def disconnect(self):
         await self.channel_layer.group_discard("auth_service", self.channel_name)
         logger.info("Déconnecté du groupe auth_service")
 
-    async def logout_message(self, event):
+    async def logout_message(self):
         return

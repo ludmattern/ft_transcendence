@@ -4,7 +4,7 @@ function isIndexedDBAvailable() {
 	try {
 		return !!window.indexedDB;
 	} catch (error) {
-		console.error("IndexedDB n'est pas disponible sur ce navigateur:", error);
+		console.error('IndexedDB n\'est pas disponible sur ce navigateur:', error);
 		return false;
 	}
 }
@@ -14,7 +14,7 @@ class IndexedDBCache {
 		if (IndexedDBCache.instance) return IndexedDBCache.instance;
 
 		if (!isIndexedDBAvailable()) {
-			console.warn("IndexedDB n'est pas disponible, le cache ne fonctionnera pas.");
+			console.warn('IndexedDB n\'est pas disponible, le cache ne fonctionnera pas.');
 			return;
 		}
 
