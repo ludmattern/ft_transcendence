@@ -46,7 +46,7 @@ export async function loadTabContent(tabName, container) {
 			try {
 				tabItems = JSON.parse(storedHistory);
 			} catch (err) {
-				console.warn("Erreur lors de la récupération de 'chatHistory', réinitialisation...", err);
+				console.warn('Erreur lors de la récupération de \'chatHistory\', réinitialisation...', err);
 				sessionStorage.removeItem('chatHistory');
 				tabItems = [];
 			}

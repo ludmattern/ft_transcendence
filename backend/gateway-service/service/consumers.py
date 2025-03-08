@@ -1,14 +1,13 @@
 import json
 import logging
 import urllib.parse
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer  # type: ignore
 
 
 logger = logging.getLogger(__name__)
 
-from django.utils.timezone import now
-from service.models import ManualUser
-from asgiref.sync import sync_to_async
+from service.models import ManualUser  # noqa: E402
+from asgiref.sync import sync_to_async  # type: ignore # noqa: E402
 
 
 @sync_to_async
@@ -114,12 +113,12 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                     "timestamp": data.get("timestamp"),
                 }
                 await self.channel_layer.group_send("chat_service", event)
-                logger.info(f"New notification send")
+                logger.info("New notification send")
 
             elif message_type == "tournament_message":
-                logger.info(f"🏆 Message de tournoi reçu: {data}")
+                logger.info(f"Message de tournoi reçu: {data}")
                 await self.channel_layer.group_send("tournament_service", data)
-                logger.info(f"Message général relayé à 'tournament_service")
+                logger.info("Message général relayé à 'tournament_service")
 
             elif data.get("type") == "game_event":
                 game_id = data.get("game_id", "unknown_game")
@@ -234,7 +233,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
     async def tournament_creation(self, event):
         await self.send(json.dumps(event))
-        logger.info(f"tournament_creation")
+        logger.info("tournament_creation")
 
     async def logout(self, event):
         await self.send(

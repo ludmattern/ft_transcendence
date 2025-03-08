@@ -1,16 +1,16 @@
 export async function pushInfo(key, value) {
   try {
-    const response = await fetch("/api/user-service/storage/push/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const response = await fetch('/api/user-service/storage/push/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key, value }), 
-      credentials: "include",
+      credentials: 'include',
     });
     const data = await response.json();
-    console.log("pushInfo result:", data);
+    console.log('pushInfo result:', data);
     return data;
   } catch (error) {
-    console.error("Error pushing info:", error);
+    console.error('Error pushing info:', error);
   }
 }
 
@@ -19,15 +19,15 @@ export async function getInfo(key) {
     const url = `/api/user-service/storage/get/?key=${encodeURIComponent(key)}`;
 
     const response = await fetch(url, {
-      method: "GET",
-      credentials: "include",
+      method: 'GET',
+      credentials: 'include',
     });
 
     const data = await response.json();
-    console.log("getInfo result:", data);
+    console.log('getInfo result:', data);
     return data;
   } catch (error) {
-    console.error("Error getting info:", error);
+    console.error('Error getting info:', error);
   }
 }
 
@@ -36,14 +36,14 @@ export async function deleteInfo(key) {
     const url = `/api/user-service/storage/delete/?key=${encodeURIComponent(key)}`;
 
     const response = await fetch(url, {
-      method: "DELETE",
-      credentials: "include",
+      method: 'DELETE',
+      credentials: 'include',
     });
 
     const data = await response.json();
-    console.log("deleteInfo result:", data);
+    console.log('deleteInfo result:', data);
     return data;
   } catch (error) {
-    console.error("Error deleting info:", error);
+    console.error('Error deleting info:', error);
   }
 }

@@ -2,7 +2,7 @@ import { initializeWebSocket, closeWebSocket } from '/src/services/websocket.js'
 import { handleRoute, resetPreviousRoutes } from '/src/services/router.js';
 import componentManagers from '/src/index.js';
 import { switchwindow } from '/src/3d/animation.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { pushInfo, getInfo, deleteInfo } from '/src/services/infoStorage.js';
 
 export async function isClientAuthenticated() {
 	try {
@@ -20,8 +20,13 @@ export async function isClientAuthenticated() {
 			return false;
 		}
 
+<<<<<<< HEAD
 		await pushInfo("userId", data.id);
 		await pushInfo("username", data.username);
+=======
+		await pushInfo('userId', data.id);
+		await pushInfo('username', data.username);
+>>>>>>> a9d13774d4e334f1c799a8182984d99ee31ef9d6
 
 		initializeWebSocket(data.id);
 		console.log('User is authenticated!');
@@ -33,6 +38,7 @@ export async function isClientAuthenticated() {
 
 export async function logoutUser() {
 	try {
+<<<<<<< HEAD
 		deleteInfo("userId");
 		deleteInfo("username");
 		deleteInfo("tournamentMode");
@@ -47,6 +53,22 @@ export async function logoutUser() {
 		deleteInfo("pending2FA_method");
 		deleteInfo("registered_user");
 		sessionStorage.clear();
+=======
+		await deleteInfo('userId');
+		await deleteInfo('username');
+		await deleteInfo('tournamentMode');
+		await deleteInfo('tournamentSize');
+		await deleteInfo('roomCode');
+		//await deleteInfo("chatHistory");
+		await deleteInfo('activeTournamentTab');
+		//await deleteInfo("infoTabData");
+		await deleteInfo('difficulty');
+		await deleteInfo('liabilityCheckbox');
+		await deleteInfo('pending2FA_user');
+		await deleteInfo('pending2FA_method');
+		await deleteInfo('registered_user');
+
+>>>>>>> a9d13774d4e334f1c799a8182984d99ee31ef9d6
 		const response = await fetch('/api/auth-service/logout/', {
 			method: 'POST',
 			credentials: 'include',
@@ -151,7 +173,7 @@ export async function getUserIdFromCookieAPI() {
 			return null;
 		}
 	} catch (error) {
-		console.error("Erreur lors de la récupération de l'user ID:", error);
+		console.error('Erreur lors de la récupération de l\'user ID:', error);
 		return null;
 	}
 }

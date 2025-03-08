@@ -1,4 +1,5 @@
-from django.db import models
+from django.db import models  # type: ignore
+import pyotp  # type: ignore
 
 
 class GameHistory(models.Model):
@@ -16,9 +17,6 @@ class GameHistory(models.Model):
         return (
             f"GameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
         )
-
-
-import pyotp
 
 
 class ManualUser(models.Model):

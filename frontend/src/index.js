@@ -29,7 +29,7 @@ async function initializeApp() {
 
 		await setDatabaseID();
 	} catch (error) {
-		console.error("Erreur d'initialisation : IndexedDB est indisponible.", error);
+		console.error('Erreur d\'initialisation : IndexedDB est indisponible.', error);
 	}
 
 	let targetRoute = window.location.pathname;

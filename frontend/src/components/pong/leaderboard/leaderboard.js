@@ -107,20 +107,20 @@ export const leaderboard = createComponent({
 
 async function fetchLeaderboard() {
 	try {
-		const response = await fetch(`/api/user-service/leaderboard/`);
+		const response = await fetch('/api/user-service/leaderboard/');
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
 		const data = await response.json();
-		console.log("Leaderboard data:", data.players);
+		console.log('Leaderboard data:', data.players);
 
 		if (data.success) {
 			leaderboardData = data.players;
 		} else {
-			console.error("Erreur lors de la récupération du leaderboard :", data.error);
+			console.error('Erreur lors de la récupération du leaderboard :', data.error);
 		}
 	} catch (error) {
-		console.error("Error fetching leaderboard:", error);
+		console.error('Error fetching leaderboard:', error);
 	}
 }
 
@@ -150,7 +150,7 @@ async function findUserInLeaderboard(el) {
 	const user = leaderboardData.find((p) => p.username === username);
 
 	if (!user) {
-		alert("You're not even ranked... Get better.");
+		alert('You\'re not even ranked... Get better.');
 		return;
 	}
 

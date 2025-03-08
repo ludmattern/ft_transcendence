@@ -79,7 +79,7 @@ export const leftSideWindow = createComponent({
 		const parentContainer = el.parentElement;
 		startAnimation(parentContainer, 'light-animation', 1000);
 
-		const usernameData = await getInfo("username");
+		const usernameData = await getInfo('username');
 		createNotificationMessage(`Welcome to your spaceship ${usernameData.success ? usernameData.value : 'Guest'} !`, 15000);
 		
 		subscribe('updatenotifications', (data) => {

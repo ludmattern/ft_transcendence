@@ -1,6 +1,6 @@
 # gateway_service/apps.py
 
-from django.apps import AppConfig
+from django.apps import AppConfig  # type: ignore
 import logging
 
 logger = logging.getLogger(__name__)

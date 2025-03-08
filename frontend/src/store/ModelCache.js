@@ -1,7 +1,7 @@
 import { GLTFLoader } from 'https://esm.sh/three/examples/jsm/loaders/GLTFLoader.js';
 import { CacheDB } from '/src/utils/IndexedDBCache.js';
 
-class ModelCache {
+class ModelCacheClass {
 	constructor() {
 		this.models = new Map();
 		this.loader = new GLTFLoader();
@@ -56,4 +56,4 @@ class ModelCache {
 	}
 }
 
-export const ModelCache = new ModelCache();
+export const ModelCache = new ModelCacheClass();

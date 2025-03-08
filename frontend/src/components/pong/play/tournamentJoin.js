@@ -5,9 +5,9 @@ import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 export const tournamentJoin = createComponent({
 	tag: 'tournamentJoin',
 	render: async () => {
-		const roomCode = (await getInfo("roomCode")).success ? (await getInfo("roomCode")).value : "UNKNOWN";
-		const tournamentSize = parseInt((await getInfo("tournamentSize")).success ? (await getInfo("tournamentSize")).value : 16, 10);
-		const username = (await getInfo("username")).success ? (await getInfo("username")).value : "You";
+		const roomCode = (await getInfo('roomCode')).success ? (await getInfo('roomCode')).value : 'UNKNOWN';
+		const tournamentSize = parseInt((await getInfo('tournamentSize')).success ? (await getInfo('tournamentSize')).value : 16, 10);
+		const username = (await getInfo('username')).success ? (await getInfo('username')).value : 'You';
 		
 
 		return `
@@ -44,8 +44,8 @@ export const tournamentJoin = createComponent({
 		const onlinePlayersList = el.querySelector('#online-players-list');
 		const onlinePlayersCountSpan = el.querySelector('#online-players-count');
 
-		const tournamentSize = parseInt((await getInfo("tournamentSize")).success ? (await getInfo("tournamentSize")).value : 16, 10);
-		const username = (await getInfo("username")).success ? (await getInfo("username")).value : "You";
+		const tournamentSize = parseInt((await getInfo('tournamentSize')).success ? (await getInfo('tournamentSize')).value : 16, 10);
+		const username = (await getInfo('username')).success ? (await getInfo('username')).value : 'You';
 		
 
 		// Dans un vrai environnement, cette liste serait gérée en temps réel via Redis ou WebSocket.

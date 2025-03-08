@@ -17,9 +17,9 @@ export const loginForm = createComponent({
 	  <div class="form-group">
 	  <label class="mb-3" for="password">Password</label>
 	  <input type="password" id="password" name="password" class="form-control" required />
-	  <p class="text-end"><a href="#" id="forgot-password-link" class="text-info ">Forgot password?</a></p>
 	  <div id="error-message-co" class="text-danger mt-2 d-none">User already connected</div>
 	  <div id="error-message" class="text-danger mt-2 d-none">Invalid credentials</div>
+	  <p class="text-end"><a href="#" id="forgot-password-link" class="text-info ">Forgot password?</a></p>
 	  </div>
 	  <button class="btn bi bi-check">accept</button>
 	  </form>
@@ -80,10 +80,10 @@ export const loginForm = createComponent({
 				if (data.url) {
 					window.location.href = data.url;
 				} else {
-					console.error("Erreur : Impossible d'obtenir l'URL d'authentification.");
+					console.error('Erreur : Impossible d\'obtenir l\'URL d\'authentification.');
 				}
 			} catch (error) {
-				console.error("Erreur lors de l'appel API :", error);
+				console.error('Erreur lors de l\'appel API :', error);
 			}
 		});
 	},

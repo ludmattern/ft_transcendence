@@ -1,7 +1,7 @@
 # matchmaking-service
-from common.common_settings import *
+from common.common_settings import *  # noqa: F403
 
-INSTALLED_APPS = COMMON_INSTALLED_APPS + [
+INSTALLED_APPS = COMMON_INSTALLED_APPS + [  # noqa: F405
     "channels",
 ]
 
@@ -16,8 +16,7 @@ ROOT_URLCONF = "tournament.urls"
 WSGI_APPLICATION = "service.wsgi.application"
 
 
-
-JWT_ALGORITHM = 'HS256'
+JWT_ALGORITHM = "HS256"
 JWT_EXP_DELTA_SECONDS = 3600
 
 

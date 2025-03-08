@@ -78,14 +78,14 @@ export const socialForm = createComponent({
 				const authorElement = pilotItem?.querySelector('.profile-pseudo');
 	
 				if (!authorElement) {
-					console.error("Author username not found!");
+					console.error('Author username not found!');
 					return;
 				}
 	
 				const author = authorElement.textContent.trim();
 				const payload = {
 					type: 'info_message',
-					action: "send_friend_request",
+					action: 'send_friend_request',
 					author: await getUserIdFromCookieAPI(),
 					recipient: await fetchUserId(author),
 					initiator: await getUserIdFromCookieAPI(),
@@ -105,7 +105,7 @@ export const socialForm = createComponent({
 						const friendUsername = pseudoEl.textContent.trim();
 						const payload = {
 							type: 'info_message',
-							action: "remove_friend",
+							action: 'remove_friend',
 							author: await getUserIdFromCookieAPI(),
 							recipient: await fetchUserId(friendUsername),
 							initiator: await getUserIdFromCookieAPI(),
@@ -214,10 +214,10 @@ async function getFriends(userId) {
 		if (friendListContainer && data.friends && data.friends.length > 0) {
 			friendListContainer.innerHTML = data.friends.map((friend) => createFriendItem('Online', friend.username, friend.is_connected ? 'text-success' : 'text-danger')).join('');
 		} else if (friendListContainer && data.friends && data.friends.length === 0){
-			friendListContainer.innerHTML = `<p style="opacity: 0.7;">It's a lonely world...</p>`;
+			friendListContainer.innerHTML = '<p style="opacity: 0.7;">It\'s a lonely world...</p>';
 		}
 	} catch (error) {
-		console.error("Erreur lors de la récupération de la liste d'amis:", error);
+		console.error('Erreur lors de la récupération de la liste d\'amis:', error);
 	}
 }
 
@@ -233,7 +233,7 @@ async function fetchPilot(query, container) {
 
 		if (container) {
 			if (data.pilots.length === 0) {
-				container.innerHTML = `<p>Maybe this pilot crashed or went far far far away...</p>`;
+				container.innerHTML = '<p>Maybe this pilot crashed or went far far far away...</p>';
 			} else {
 				container.innerHTML = data.pilots
 					.map((pilot) => createPilotItem(pilot.is_connected ? 'Online' : 'Offline', pilot.username, pilot.is_connected ? 'text-success' : 'text-danger'))

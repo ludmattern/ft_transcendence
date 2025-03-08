@@ -15,7 +15,7 @@ export const tournamentCreation = createComponent({
         if (await handleTournamentRedirection('/pong/play/tournament-creation')) {
             return;
         }
-        const tournamentMode = (await getInfo("tournamentMode")).success ? (await getInfo("tournamentMode")).value : "local";
+        const tournamentMode = (await getInfo('tournamentMode')).success ? (await getInfo('tournamentMode')).value : 'local';
         const tournamentContent = el.querySelector('#tst');
 
         if (tournamentMode === 'local') {

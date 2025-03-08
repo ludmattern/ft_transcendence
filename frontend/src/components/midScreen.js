@@ -26,7 +26,7 @@ export const midScreen = createComponent({
 function initM2() {
 	Store.menuElement = document.getElementById('gameScreen');
 	if (!Store.menuElement) {
-		console.error("The element with ID 'gameScreen' was not found.");
+		console.error('The element with ID \'gameScreen\' was not found.');
 		return;
 	}
 	Store.menuObject = new CSS3DObject(Store.menuElement);

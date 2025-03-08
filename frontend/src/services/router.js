@@ -216,7 +216,7 @@ export async function handleTournamentRedirection(caller = '') {
 		}
 
 		if (data.tournament_id && data.mode && data.mode !== 'local') {
-			pushInfo("tournamentMode", data.mode);
+			pushInfo('tournamentMode', data.mode);
 		}
 
 		if (caller === route) {

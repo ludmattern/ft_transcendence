@@ -72,7 +72,7 @@ export async function cancelMode(config) {
 				user_id: userId,
 			})
 		);
-		console.log("Sent 'leave matchmaking' via WebSocket");
+		console.log('Sent \'leave matchmaking\' via WebSocket');
 	} else if (config.gameMode === 'private') {
 		const userId = await getUserIdFromCookieAPI();
 		ws.send(

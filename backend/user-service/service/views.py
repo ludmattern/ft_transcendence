@@ -1,21 +1,52 @@
 import json
 import bcrypt
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import ManualUser, GameHistory, ManualBlockedRelations
-from django.db.models import Q
 import os
-
-from cryptography.fernet import Fernet
-import pyotp
-import qrcode
-from io import BytesIO
-from django.conf import settings
-
-cipher = Fernet(settings.FERNET_KEY)
 import jwt
+import pyotp  # type: ignore
+import qrcode  # type: ignore
+
+from io import BytesIO
 from functools import wraps
-import datetime
+from PIL import Image  # type: ignore
+from cryptography.fernet import Fernet
+from django.http import JsonResponse, HttpResponse  # type: ignore
+from django.views.decorators.csrf import csrf_exempt  # type: ignore
+from django.db.models import Q  # type: ignore
+from django.conf import settings  # type: ignore
+from django.utils.timezone import now, is_aware, make_aware  # type: ignore
+from .models import ManualUser, GameHistory, ManualBlockedRelations
+
+# Initialisation de Fernet pour le chiffrement/déchiffrement
+cipher = Fernet(settings.FERNET_KEY)
+
+
+# --- Fonctions utilitaires ---
+
+
+def is_expired(expiry):
+    """
+    Vérifie si une datetime d'expiration est dépassée.
+    Si la datetime n'est pas aware, elle est rendue aware via make_aware.
+    """
+    if expiry is None:
+        return True
+    if not is_aware(expiry):
+        expiry = make_aware(expiry)
+    return expiry < now()
+
+
+def decrypt_thing(encrypted_args):
+    """Déchiffre la chaîne passée en argument."""
+    return cipher.decrypt(encrypted_args.encode("utf-8")).decode("utf-8")
+
+
+def encrypt_thing(text):
+    """Chiffre la chaîne passée en argument."""
+    return cipher.encrypt(text.encode("utf-8")).decode("utf-8")
+
+
+# --- Décorateurs d'authentification ---
+
 
 def jwt_required(view_func):
     @wraps(view_func)
@@ -25,7 +56,6 @@ def jwt_required(view_func):
             return JsonResponse(
                 {"success": False, "message": "No access_token cookie"}, status=401
             )
-
         try:
             payload = jwt.decode(
                 token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
@@ -45,11 +75,11 @@ def jwt_required(view_func):
 
             if user.session_token != token:
                 return JsonResponse(
-                    {"success": False, "message": "Invalid or outdated token"}, status=401
+                    {"success": False, "message": "Invalid or outdated token"},
+                    status=401,
                 )
 
-            now = datetime.datetime.utcnow()
-            if user.token_expiry is None or user.token_expiry < now:
+            if is_expired(user.token_expiry):
                 return JsonResponse(
                     {"success": False, "message": "Token expired in DB"}, status=401
                 )
@@ -68,18 +98,13 @@ def jwt_required(view_func):
     return wrapper
 
 
-
-def decrypt_thing(encrypted_args):
-    """Decrypts the args."""
-    return cipher.decrypt(encrypted_args.encode("utf-8")).decode("utf-8")
-
-
-def encrypt_thing(args):
-    """Encrypts the args."""
-    return cipher.encrypt(args.encode("utf-8")).decode("utf-8")
+# --- Vues d'authentification et d'utilitaires ---
 
 
 def generate_qr_code(request, username):
+    """
+    Génère un QR code pour l'authentification 2FA via une application d'authentification.
+    """
     try:
         user = ManualUser.objects.get(username=username)
         totp = pyotp.TOTP(user.totp_secret)
@@ -117,21 +142,21 @@ def register_user(request):
 
             encrypted_email = encrypt_thing(email)
 
+            # Vérification des emails existants
             existing_users = ManualUser.objects.filter(
                 is_dummy=False, email__isnull=False
             ).exclude(email="")
-
             for user in existing_users:
                 try:
-                    decrypted_email = decrypt_thing(user.email)
-                    if decrypted_email == email:
+                    if decrypt_thing(user.email) == email:
                         return JsonResponse(
                             {"success": False, "message": "Email already in use"},
                             status=409,
                         )
-                except Exception as e:
+                except Exception:
                     return JsonResponse(
-                        {"success": False, "message": "email fail"}, status=409
+                        {"success": False, "message": "Email decryption failed"},
+                        status=409,
                     )
 
             if is_2fa_enabled and twofa_method == "sms" and not phone_number:
@@ -165,7 +190,6 @@ def register_user(request):
                     "user_id": user.id,
                 }
             )
-
         except Exception as e:
             return JsonResponse({"success": False, "message": str(e)}, status=500)
     else:
@@ -175,22 +199,21 @@ def register_user(request):
 
 
 @csrf_exempt
-@jwt_required  
+@jwt_required
 def delete_account(request):
     if request.method != "POST":
         return JsonResponse(
             {"success": False, "message": "Only POST method is allowed"}, status=405
         )
-
     try:
         user = request.user
         if not user:
-            return JsonResponse({"success": False, "message": "Unauthorized"}, status=401)
-
+            return JsonResponse(
+                {"success": False, "message": "Unauthorized"}, status=401
+            )
         user_id = user.id
         username = user.username
         user.delete()
-
         return JsonResponse(
             {
                 "success": True,
@@ -198,10 +221,8 @@ def delete_account(request):
                 "user_id": user_id,
             }
         )
-
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
-
 
 
 @csrf_exempt
@@ -211,7 +232,6 @@ def update_info(request):
         return JsonResponse(
             {"success": False, "message": "Only POST method is allowed"}, status=405
         )
-
     try:
         body = json.loads(request.body.decode("utf-8"))
         old_password = body.get("oldPassword", "")
@@ -223,7 +243,9 @@ def update_info(request):
 
         user = request.user
         if not user:
-            return JsonResponse({"success": False, "message": "Unauthorized"}, status=401)
+            return JsonResponse(
+                {"success": False, "message": "Unauthorized"}, status=401
+            )
 
         if not old_password:
             return JsonResponse(
@@ -231,7 +253,9 @@ def update_info(request):
                 status=401,
             )
 
-        if not bcrypt.checkpw(old_password.encode("utf-8"), user.password.encode("utf-8")):
+        if not bcrypt.checkpw(
+            old_password.encode("utf-8"), user.password.encode("utf-8")
+        ):
             return JsonResponse(
                 {"success": False, "message": "Current password is incorrect"},
                 status=402,
@@ -254,33 +278,34 @@ def update_info(request):
                 return JsonResponse(
                     {"success": False, "message": "Emails do not match"}, status=400
                 )
-
             decrypted_email = decrypt_thing(user.email)
             if new_email != decrypted_email:
-                if ManualUser.objects.exclude(id=user.id).filter(email=encrypt_thing(new_email)).exists():
+                if (
+                    ManualUser.objects.exclude(id=user.id)
+                    .filter(email=encrypt_thing(new_email))
+                    .exists()
+                ):
                     return JsonResponse(
-                        {"success": False, "message": "Email already in use"}, status=409
+                        {"success": False, "message": "Email already in use"},
+                        status=409,
                     )
-
             user.email = encrypt_thing(new_email)
 
         if new_password:
             if new_password != confirm_password:
                 return JsonResponse(
-                    {"success": False, "message": "Passwords do not match"},
-                    status=400,
+                    {"success": False, "message": "Passwords do not match"}, status=400
                 )
-            user.password = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+            user.password = bcrypt.hashpw(
+                new_password.encode("utf-8"), bcrypt.gensalt()
+            ).decode("utf-8")
 
         user.save()
-
         return JsonResponse(
             {"success": True, "message": "Information updated successfully"}
         )
-
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
-
 
 
 @csrf_exempt
@@ -289,16 +314,12 @@ def getUsername(request):
         try:
             body = json.loads(request.body.decode("utf-8"))
             user_id = body.get("id")
-
             if not user_id:
                 return JsonResponse(
                     {"success": False, "message": "User ID is required"}, status=400
                 )
-
             user = ManualUser.objects.get(id=user_id)
-
             return JsonResponse({"success": True, "username": user.username})
-
         except ManualUser.DoesNotExist:
             return JsonResponse(
                 {"success": False, "message": "User not found"}, status=404
@@ -325,20 +346,16 @@ def get_user_id(request, username):
 def get_game_history(request):
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
-
     user_id = request.GET.get("user_id")
     if not user_id:
         return JsonResponse({"error": "user_id parameter is required"}, status=400)
-
     try:
         history_entries = GameHistory.objects.filter(
             Q(winner_id=user_id) | Q(loser_id=user_id)
         ).order_by("-created_at")[:20]
-
         history_list = []
         wins = 0
         total_games = history_entries.count()
-
         for entry in history_entries:
             try:
                 winner_user = ManualUser.objects.get(id=entry.winner_id)
@@ -350,10 +367,8 @@ def get_game_history(request):
                 loser_username = loser_user.username
             except ManualUser.DoesNotExist:
                 loser_username = None
-
             if str(entry.winner_id) == user_id:
                 wins += 1
-
             history_list.append(
                 {
                     "winner_id": entry.winner_id,
@@ -365,28 +380,24 @@ def get_game_history(request):
                     "created_at": entry.created_at.strftime("%Y-%m-%d %H:%M:%S"),
                 }
             )
-
         winrate = (wins / total_games * 100) if total_games > 0 else 0
-
         return JsonResponse(
             {"success": True, "history": history_list, "winrate": winrate}
         )
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+
 @csrf_exempt
 def get_profile(request):
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
-
     user_id = request.GET.get("user_id")
     if not user_id:
         return JsonResponse({"error": "user_id parameter is required"}, status=400)
-
     try:
         user = ManualUser.objects.get(id=user_id)
         profile_picture = user.profile_picture.url
-
         data = {
             "username": user.username,
             "email": user.email,
@@ -395,18 +406,15 @@ def get_profile(request):
             "elo": user.elo,
         }
         return JsonResponse({"success": True, "profile": data})
-
     except ManualUser.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
-
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
 
-from PIL import Image
-
 ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
 MAX_FILE_SIZE = 5 * 1024 * 1024
+
 
 @csrf_exempt
 @jwt_required
@@ -423,20 +431,16 @@ def upload_profile_picture(request):
             return JsonResponse(
                 {"success": False, "error": "No file uploaded"}, status=400
             )
-
         file = request.FILES["profile_picture"]
-
         if file.size > MAX_FILE_SIZE:
             return JsonResponse(
                 {"success": False, "error": "File too large"}, status=400
             )
-
         ext = os.path.splitext(file.name)[1].lower().strip(".")
         if ext not in ALLOWED_EXTENSIONS:
             return JsonResponse(
                 {"success": False, "error": "Invalid file format"}, status=400
             )
-
         try:
             image = Image.open(file)
             image.verify()
@@ -445,11 +449,9 @@ def upload_profile_picture(request):
                 {"success": False, "error": "Uploaded file is not a valid image"},
                 status=400,
             )
-
         old_image_path = user.profile_picture.path if user.profile_picture else None
         user.profile_picture = file
         user.save()
-
         default_filename = "default-profile-150.png"
         if old_image_path and os.path.exists(old_image_path):
             if os.path.basename(old_image_path) != default_filename:
@@ -460,14 +462,11 @@ def upload_profile_picture(request):
                         {"success": False, "error": "Failed to remove old image"},
                         status=500,
                     )
-
         return JsonResponse(
             {"success": True, "profile_picture": user.profile_picture.url}, status=200
         )
-
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
-
 
 
 def search_pilots(request):
@@ -479,37 +478,30 @@ def search_pilots(request):
     user_id = request.GET.get("user_id")
     if not user_id:
         return JsonResponse({"message": "user_id parameter is required"}, status=400)
-    
-    blocked_users = ManualBlockedRelations.objects.filter(blocked_user_id=user_id).values_list("user_id", flat=True)
-
-    pilots = ManualUser.objects.filter(username__istartswith=query).exclude(id__in=blocked_users)
-    results = []
-    for pilot in pilots:
-        results.append(
-            {
-                "username": pilot.username,
-                "user_id": pilot.id,
-                "is_connected": pilot.is_connected,
-            }
-        )
+    blocked_users = ManualBlockedRelations.objects.filter(
+        blocked_user_id=user_id
+    ).values_list("user_id", flat=True)
+    pilots = ManualUser.objects.filter(username__istartswith=query).exclude(
+        id__in=blocked_users
+    )
+    results = [
+        {
+            "username": pilot.username,
+            "user_id": pilot.id,
+            "is_connected": pilot.is_connected,
+        }
+        for pilot in pilots
+    ]
     return JsonResponse({"success": True, "pilots": results})
-
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from service.models import ManualUser
 
 
 @csrf_exempt
 def get_leaderboard(request):
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
-
     players = ManualUser.objects.filter(elo__gt=0).order_by("-elo")[:500]
-
     results = [
         {"rank": index + 1, "username": player.username, "elo": player.elo}
         for index, player in enumerate(players)
     ]
-
     return JsonResponse({"success": True, "players": results})

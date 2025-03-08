@@ -1,9 +1,9 @@
 import os
-import django
-from django.core.asgi import get_asgi_application
-from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.auth import AuthMiddlewareStack
-from .routing import websocket_urlpatterns
+import django  # type: ignore
+from django.core.asgi import get_asgi_application  # type: ignore
+from channels.routing import ProtocolTypeRouter, URLRouter  # type: ignore
+from channels.auth import AuthMiddlewareStack  # type: ignore
+from .routing import websocket_urlpatterns  # type: ignore
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "matchmaking.settings")
 django.setup()

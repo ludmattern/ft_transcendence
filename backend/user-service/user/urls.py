@@ -1,5 +1,4 @@
-from django.contrib import admin
-from django.urls import path
+from django.urls import path  # type: ignore
 from service.views import (
     get_leaderboard,
     search_pilots,
@@ -16,7 +15,11 @@ from service.views import (
 from service.friends import is_friend, get_friends
 from service.profile import profile_info
 from service.info import info_getter
-from service.views_info_storage import push_info_storage, get_info_storage, delete_info_storage
+from service.views_info_storage import (
+    push_info_storage,
+    get_info_storage,
+    delete_info_storage,
+)
 
 urlpatterns = [
     path("register/", register_user, name="register_user"),
@@ -29,7 +32,9 @@ urlpatterns = [
     path("is-friend/", is_friend, name="is_friend"),
     path("get_game_history/", get_game_history, name="get_game_history"),
     path("get_profile/", get_profile, name="get_profile"),
-    path("upload_profile_picture/", upload_profile_picture, name="upload_profile_picture"),
+    path(
+        "upload_profile_picture/", upload_profile_picture, name="upload_profile_picture"
+    ),
     path("get_friends/", get_friends, name="get_friends"),
     path("get_user_id/<str:username>/", get_user_id, name="get_user_id"),
     path("search_pilots/", search_pilots, name="search_pilots"),

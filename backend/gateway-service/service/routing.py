@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path  # type: ignore
 from service.consumers import GatewayConsumer
 
 websocket_urlpatterns = [

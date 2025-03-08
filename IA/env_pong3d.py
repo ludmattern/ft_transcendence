@@ -1,36 +1,33 @@
-import gymnasium as gym
-from gymnasium import spaces
-import numpy as np
-import time
+import gymnasium as gym  # type: ignore
+from gymnasium import spaces  # type: ignore
+import numpy as np  # type: ignore
 
 # On importe BasePongGame depuis le même dossier
 from games import BasePongGame
 
+
 class Pong3DEnv(gym.Env):
     def __init__(self, frame_skip=60, max_steps=2000):
         super(Pong3DEnv, self).__init__()
-        
+
         self.frame_skip = frame_skip
         self.max_steps = max_steps
         self.current_steps = 0
-        
+
         self.action_space = spaces.Discrete(5)
-        
-        low_obs = np.array([
-            -5.0, -1.5, -1.5,
-            -4.0, -4.0, -4.0,  
-            -1.5, -0.75,    
-            -1.5, -0.75      
-        ], dtype=np.float32)
-        high_obs = np.array([
-            5.0, 1.5, 1.5, 
-            4.0, 4.0, 4.0, 
-            1.5, 0.75,       
-            1.5, 0.75      
-        ], dtype=np.float32)
-        
-        self.observation_space = spaces.Box(low=low_obs, high=high_obs, dtype=np.float32)
-        
+
+        low_obs = np.array(
+            [-5.0, -1.5, -1.5, -4.0, -4.0, -4.0, -1.5, -0.75, -1.5, -0.75],
+            dtype=np.float32,
+        )
+        high_obs = np.array(
+            [5.0, 1.5, 1.5, 4.0, 4.0, 4.0, 1.5, 0.75, 1.5, 0.75], dtype=np.float32
+        )
+
+        self.observation_space = spaces.Box(
+            low=low_obs, high=high_obs, dtype=np.float32
+        )
+
         self.game = None
 
     def reset(self, seed=None, options=None):
@@ -42,9 +39,8 @@ class Pong3DEnv(gym.Env):
         return self._get_obs(), {}
 
     def step(self, action):
-
         self.current_steps += 1
-        
+
         for _ in range(self.frame_skip):
             if action == 1:
                 self.game.move_paddle(1, "up")
@@ -54,18 +50,18 @@ class Pong3DEnv(gym.Env):
                 self.game.move_paddle(1, "left")
             elif action == 4:
                 self.game.move_paddle(1, "right")
-            
+
             self._opponent_script()
-            
+
             self.game.update()
-            
+
             if self.game.game_over:
                 break
-        
+
         obs = self._get_obs()
         reward = self._compute_reward()
         done = self.game.game_over or (self.current_steps >= self.max_steps)
-        
+
         info = {}
         return obs, reward, done, False, info
 
@@ -81,7 +77,7 @@ class Pong3DEnv(gym.Env):
         """
         ball = self.game.state["ball"]
         p2 = self.game.state["players"][2]
-        
+
         if ball["y"] > p2["y"]:
             self.game.move_paddle(2, "up")
         else:
@@ -99,13 +95,22 @@ class Pong3DEnv(gym.Env):
         ball = self.game.state["ball"]
         p1 = self.game.state["players"][1]
         p2 = self.game.state["players"][2]
-        
-        return np.array([
-            ball["x"], ball["y"], ball["z"],
-            ball["vx"], ball["vy"], ball["vz"],
-            p1["y"], p1["z"],
-            p2["y"], p2["z"]
-        ], dtype=np.float32)
+
+        return np.array(
+            [
+                ball["x"],
+                ball["y"],
+                ball["z"],
+                ball["vx"],
+                ball["vy"],
+                ball["vz"],
+                p1["y"],
+                p1["z"],
+                p2["y"],
+                p2["z"],
+            ],
+            dtype=np.float32,
+        )
 
     def _compute_reward(self):
         """
@@ -115,14 +120,13 @@ class Pong3DEnv(gym.Env):
           +0.1 si on tape la balle.
         """
         reward = 0.0
-        
+
         if self.game.ball_hit_paddle:
             reward += 0.4
-        
+
         p1_score = self.game.user_scores[self.game.player1_id]
         p2_score = self.game.user_scores[self.game.player2_id]
 
-       
         if p1_score > 0:
             reward += 1.0
         if p2_score > 0:

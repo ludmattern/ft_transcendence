@@ -1,6 +1,6 @@
-from django.db import models
-import pyotp
-from django.core.validators import FileExtensionValidator
+from django.db import models  # type: ignore
+import pyotp  # type: ignore
+from django.core.validators import FileExtensionValidator  # type: ignore
 
 
 class ManualUser(models.Model):
@@ -12,6 +12,8 @@ class ManualUser(models.Model):
     twofa_method = models.CharField(max_length=50, null=True, blank=True)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     temp_2fa_code = models.CharField(max_length=10, null=True, blank=True)
+    temp_reset_code = models.CharField(max_length=10, null=True, blank=True)
+    reset_code_expiry = models.DateTimeField(null=True, blank=True)
     totp_secret = models.CharField(max_length=32, default=pyotp.random_base32)
     token_expiry = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

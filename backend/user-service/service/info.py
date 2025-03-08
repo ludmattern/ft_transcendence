@@ -1,16 +1,12 @@
 import json
 import logging
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.http import JsonResponse  # type: ignore
+from django.core.exceptions import ObjectDoesNotExist  # type: ignore
+from django.db.models import Q  # type: ignore
 from .models import (
     ManualUser,
-    ManualBlockedRelations,
     ManualFriendsRelations,
     ManualTournamentParticipants,
-    ManualNotifications,
-    ManualTournament,
     TournamentMatch,
 )
 
@@ -75,6 +71,16 @@ def info_getter(request, user_id):
     ]
 
     logger.info(f"Tournament invite data: {tournament_invite_data}")
+
+    # private_game_invite_data = [
+    #     {
+    #         "type": "private_game_invite",
+    #         "inviter_id": ,
+    #         "inviter": ,
+    #         "actions": "choice"
+    #     }
+    #     for private_game_invite in pending_private_game_invites
+    # ]
 
     if not user.current_tournament_id:
         logger.info("No current tournament")

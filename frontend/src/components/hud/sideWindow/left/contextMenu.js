@@ -83,8 +83,8 @@ export async function handleFriendAction(isFriend, author) {
 
 async function handleBlockAction(author) {
 	const payload = {
-		type: "info_message",
-		action: "block_user",
+		type: 'info_message',
+		action: 'block_user',
 		author: await getUserIdFromCookieAPI(),
 		recipient: author,
 		initiator: await getUserIdFromCookieAPI(),
