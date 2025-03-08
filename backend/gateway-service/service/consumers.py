@@ -53,6 +53,13 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             author = data.get("author")
 
             if message_type == "init":
+                # # recuperer values depuis le cookie access_token et l'envoyer a auth-service pour obtenir l'id de l'utilisateur
+                # fetch_user_id = {
+                #     "type": "fetch_user_id",
+                #     "access_token": data.get("access_token"),
+                # }
+                # await self.channel_layer.group_send("auth_service", fetch_user_id)
+                # logger.info(f"Envoi de la requête d'initialisation à auth_service")
                 self.user_id = data.get("userId")
                 self.username = data.get("username")
                 await update_user_status(self.user_id, True)

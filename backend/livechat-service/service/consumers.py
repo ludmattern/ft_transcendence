@@ -490,7 +490,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             participants = await get_participants(tournament)
 
             for participant in participants:
-                if participant.user.id != recipient_id:
+                if participant.user.id != int(recipient_id):
+                    logger.info(f"Sending reject message to {participant.user.id}")
                     await self.channel_layer.group_send(
                         f"user_{participant.user.id}",
                         {
@@ -511,6 +512,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(
                 f"user_{recipient_id}",
                 {"type": "info_message", "info": "You refused the tournament invite."},
+            )
+            await self.channel_layer.group_send(
+                f"user_{recipient_id}",
+                {"type": "info_message", "action": "You refused the tournament invite."},
             )
 
         elif str(action) == "back_cancel_tournament_invite":
@@ -533,7 +538,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             participants = await get_participants(tournament)
 
             for participant in participants:
-                if participant.user.id != recipient_id:
+                if participant.user.id != int(recipient_id):
                     await self.channel_layer.group_send(
                         f"user_{participant.user.id}",
                         {
@@ -584,7 +589,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             participants = await get_participants(tournament)
 
             for participant in participants:
-                if participant.user.id != recipient_id:
+                if participant.user.id != int(recipient_id):
                     await self.channel_layer.group_send(
                         f"user_{participant.user.id}",
                         {
@@ -695,7 +700,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             participants = await get_participants(tournament)
 
             for participant in participants:
-                if participant.user.id != initiator_id:
+                if participant.user.id != int(initiator_id):
                     await self.channel_layer.group_send(
                         f"user_{participant.user.id}",
                         {
