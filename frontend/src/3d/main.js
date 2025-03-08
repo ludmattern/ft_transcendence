@@ -50,9 +50,16 @@ export async function buildScene() {
 	animate();
 }
 
+let lastGameUpdateTime = 0;
+
 function animate() {
 	requestAnimationFrame(animate);
-	animatePong(Store.renderer);
+	
+	const now = performance.now();
+	if (now - lastGameUpdateTime > 16.67) { 
+		animatePong(Store.renderer);
+		lastGameUpdateTime = now;
+	}
 
 	if (Store.controls) Store.controls.update(0.01);
 
@@ -65,3 +72,5 @@ function animate() {
 		Store.cssRenderer.render(Store.scene, Store.camera);
 	}
 }
+
+

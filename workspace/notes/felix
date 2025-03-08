@@ -1,53 +1,5 @@
-Traceback (most recent call last):
-  File "/home/appuser/.local/lib/python3.13/site-packages/channels/routing.py", line 48, in __call__
-    return await application(scope, receive, send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/appuser/.local/lib/python3.13/site-packages/channels/sessions.py", line 44, in __call__
-    return await self.inner(dict(scope, cookies=cookies), receive, send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/appuser/.local/lib/python3.13/site-packages/channels/sessions.py", line 261, in __call__
-    return await self.inner(wrapper.scope, receive, wrapper.send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/appuser/.local/lib/python3.13/site-packages/channels/auth.py", line 185, in __call__
-    return await super().__call__(scope, receive, send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/appuser/.local/lib/python3.13/site-packages/channels/middleware.py", line 24, in __call__
-    return await self.inner(scope, receive, send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/appuser/.local/lib/python3.13/site-packages/channels/routing.py", line 118, in __call__
-    return await application(
-           ^^^^^^^^^^^^^^^^^^
-    ...<10 lines>...
-    )
-    ^
-  File "/home/appuser/.local/lib/python3.13/site-packages/channels/consumer.py", line 95, in app
-    return await consumer(scope, receive, send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/appuser/.local/lib/python3.13/site-packages/channels/consumer.py", line 58, in __call__
-    await await_many_dispatch(
-        [receive, self.channel_receive], self.dispatch
-    )
-  File "/home/appuser/.local/lib/python3.13/site-packages/channels/utils.py", line 50, in await_many_dispatch
-    await dispatch(result)
-  File "/home/appuser/.local/lib/python3.13/site-packages/channels/consumer.py", line 74, in dispatch
-    await handler(message)
-  File "/app/service/consumers.py", line 70, in matchmaking_event
-    match_info_p1 = matchmaking_manager.match_found[p1]
-                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^
-
-
-
-PROBLEME DE MM  A REGLER 
-
-TODO TOURNAMENT:
- - REWORK NOTIFICATION SYSTEM FOR JOIN GAME IN TOURNAMENT
-
 
 
 
 
  LE SCORIGNG PENDANT QUI EST INVERSER 
-
-
-
- LE QR CODE FONCTIONNE PAS ake
