@@ -117,10 +117,10 @@ function behaviorTournament(el, item) {
 }
 
 export async function handleTournamentAction(action, item) {
-	const userId = await getUserIdFromCookieAPI();
 	if (action) {
 		try {
 			console.log('Vérification de l\'existence d\'un lobby...');
+			//TODO REMOVE getUserIdFromCookieAPI
 			const userId = await getUserIdFromCookieAPI();
 			console.log('User ID récupéré :', userId);
 
@@ -150,7 +150,6 @@ export async function handleTournamentAction(action, item) {
 	const payload = {
 		type: 'tournament_message',
 		action,
-		userId: userId,
 		tournamentId: item.tournament_id,
 	};
 

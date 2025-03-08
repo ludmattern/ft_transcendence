@@ -65,6 +65,7 @@ export const leaderboard = createComponent({
 		await fetchLeaderboard();
 
 		async function updateLeaderboard() {
+			// TODO REMOVE getUserIdFromCookieAPI
 			const username = await getUsername(await getUserIdFromCookieAPI());
 			const startIndex = currentPage * playersPerPage;
 			const endIndex = startIndex + playersPerPage;
@@ -145,6 +146,7 @@ function generateLeaderboardRows(players, username) {
 
 
 async function findUserInLeaderboard(el) {
+	// TODO REMOVE getUserIdFromCookieAPI
 	const username = await getUsername(await getUserIdFromCookieAPI());
 	console.log(username);
 	const user = leaderboardData.find((p) => p.username === username);

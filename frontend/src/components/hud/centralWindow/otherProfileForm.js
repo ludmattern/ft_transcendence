@@ -114,9 +114,7 @@ export const otherProfileForm = createComponent({
 				const payload = {
 					type: 'info_message',
 					action: 'private_game_invite',
-					author: await getUserIdFromCookieAPI(),
 					recipient: profile_id,
-					initiator: await getUserIdFromCookieAPI(),
 					timestamp: new Date().toISOString(),
 				};
 				ws.send(JSON.stringify(payload));
@@ -148,9 +146,7 @@ export const otherProfileForm = createComponent({
 			const payload = {
 				type: 'info_message',
 				action: action,
-				author: await getUserIdFromCookieAPI(),
 				recipient: profile_id,
-				initiator: await getUserIdFromCookieAPI(),
 				timestamp: new Date().toISOString(),
 			};
 			ws.send(JSON.stringify(payload));

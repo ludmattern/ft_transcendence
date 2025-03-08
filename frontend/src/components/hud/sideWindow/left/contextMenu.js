@@ -47,17 +47,6 @@ export const contextMenu = createComponent({
 });
 
 /**
- * @param {HTMLElement} el - Élément racine du formulaire
- * @returns {Object} - Données collectées du formulaire
- */
-async function bodyData(author) {
-	return {
-		userId: await getUserIdFromCookieAPI(),
-		selectedUserId: author,
-	};
-}
-
-/**
  * Gestion des actions du menu contextuel.
  */
 export async function handleFriendAction(isFriend, author) {
@@ -72,9 +61,7 @@ export async function handleFriendAction(isFriend, author) {
 	const payload = {
 		type: 'info_message',
 		action,
-		author: await getUserIdFromCookieAPI(),
 		recipient: author,
-		initiator: await getUserIdFromCookieAPI(),
 		timestamp: new Date().toISOString(),
 	};
 
@@ -85,9 +72,7 @@ async function handleBlockAction(author) {
 	const payload = {
 		type: 'info_message',
 		action: 'block_user',
-		author: await getUserIdFromCookieAPI(),
 		recipient: author,
-		initiator: await getUserIdFromCookieAPI(),
 		timestamp: new Date().toISOString(),
 	};
 
@@ -148,6 +133,7 @@ export async function showContextMenu(item, event) {
 		item.author = item.recipient_id;
 		item.username = item.recipient;
 	}
+	//TODO REMOVE getUserIdFromCookieAPI
 	const userId = await getUserIdFromCookieAPI();
 	const isFriend = await isUserFriend(userId, item.author);
 

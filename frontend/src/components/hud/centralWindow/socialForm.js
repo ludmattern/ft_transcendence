@@ -85,9 +85,7 @@ export const socialForm = createComponent({
 				const payload = {
 					type: 'info_message',
 					action: 'send_friend_request',
-					author: await getUserIdFromCookieAPI(),
 					recipient: await fetchUserId(author),
-					initiator: await getUserIdFromCookieAPI(),
 					timestamp: new Date().toISOString(),
 				};
 	
@@ -105,9 +103,7 @@ export const socialForm = createComponent({
 						const payload = {
 							type: 'info_message',
 							action: 'remove_friend',
-							author: await getUserIdFromCookieAPI(),
 							recipient: await fetchUserId(friendUsername),
-							initiator: await getUserIdFromCookieAPI(),
 							timestamp: new Date().toISOString(),
 						};
 	

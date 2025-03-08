@@ -1,6 +1,7 @@
 import json
 import logging
 import urllib.parse
+import httpx  # type: ignore
 from channels.generic.websocket import AsyncWebsocketConsumer  # type: ignore
 
 
@@ -23,6 +24,25 @@ def update_user_status(user_id, is_connected):
 class GatewayConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
+        query_string = self.scope["query_string"].decode("utf-8")
+        query_params = urllib.parse.parse_qs(query_string)
+
+        # Si le paramètre "dummy" est présent dans l'URL, on considère la connexion comme dummy
+        if query_params.get("dummy", [None])[0] == "true":
+            self.user_id = 0
+            logger.info("Connexion dummy détectée, bypass cookie auth.")
+        else:
+            cookies = self.scope.get("cookies", {})
+            self.user_id = await fetch_user_id(cookies)
+            if not self.user_id:
+                logger.error(
+                    "Impossible de récupérer l'ID utilisateur depuis l'auth-service"
+                )
+                return await self.close()
+
+        await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
+        logger.info(f"User {self.user_id} connecté via WebSocket Gateway")
+        await update_user_status(self.user_id, True)
         await self.channel_layer.group_add("gateway", self.channel_name)
 
         query_string = self.scope["query_string"].decode("utf-8")
@@ -50,34 +70,11 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         try:
             data = json.loads(text_data)
             message_type = data.get("type")
-            author = data.get("author")
-
-            if message_type == "init":
-                # # recuperer values depuis le cookie access_token et l'envoyer a auth-service pour obtenir l'id de l'utilisateur
-                # fetch_user_id = {
-                #     "type": "fetch_user_id",
-                #     "access_token": data.get("access_token"),
-                # }
-                # await self.channel_layer.group_send("auth_service", fetch_user_id)
-                # logger.info(f"Envoi de la requête d'initialisation à auth_service")
-                self.user_id = data.get("userId")
-                self.username = data.get("username")
-                await update_user_status(self.user_id, True)
-                await self.channel_layer.group_add(
-                    f"user_{self.user_id}", self.channel_name
-                )
-                logger.info(
-                    f"Initialization complete: Client {self.username} (ID: {self.user_id}) connected."
-                )
-                return
+            author = self.user_id
 
             if message_type == "chat_message":
                 await self.channel_layer.group_send("chat_service", data)
                 logger.info(f"Message général relayé à 'chat_service' depuis {author}")
-
-            if message_type == "heartbeat":
-                await self.channel_layer.group_send("auth_service", data)
-                logger.info(f"Message général relayé à 'auth_service' depuis {author}")
 
             elif message_type == "private_message":
                 recipient = data.get("recipient")
@@ -92,7 +89,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 event = {
                     "type": "private_message",
                     "message": data.get("message"),
-                    "author": author,
+                    "author": self.user_id,
                     "recipient": recipient,
                     "recipient_id": data.get("recipient_id"),
                     "channel": "private",
@@ -102,7 +99,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 logger.info(f"Message privé envoyé à user_{recipient} depuis {author}")
 
             elif message_type == "info_message":
-                logger.info(f"ℹ️ Message d'information reçu: {data}")
+                logger.info(f"Message d'information reçu: {data}")
                 recipient = data.get("recipient")
                 if not recipient:
                     await self.send(
@@ -115,7 +112,8 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 event = {
                     "type": "info_message",
                     "action": data.get("action"),
-                    "author": author,
+                    "author": self.user_id,
+                    "initiator": self.user_id,
                     "recipient": recipient,
                     "timestamp": data.get("timestamp"),
                 }
@@ -124,6 +122,12 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
             elif message_type == "tournament_message":
                 logger.info(f"Message de tournoi reçu: {data}")
+                if data.get("action") == "leave_online_tournament":
+                    data["user_id"] = self.user_id
+                elif data.get("action") == "join_tournament" or data.get("action") == "reject_tournament":
+                    data["userId"] = self.user_id
+                elif data.get("action") == "create_online_tournament":
+                    data["organizer_id"] = self.user_id
                 await self.channel_layer.group_send("tournament_service", data)
                 logger.info("Message général relayé à 'tournament_service")
 
@@ -157,9 +161,8 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
             elif data.get("type") in ["matchmaking", "private_event"]:
                 action = data.get("action")
-                user_id = data.get("user_id", self.user_id)
                 logger.info(
-                    f"🚀 matchmaking_event/private_event => service : {action} {user_id}"
+                    f"🚀 matchmaking_event/private_event => service : {action} {self.user_id}"
                 )
                 room_code = data.get("room_code")
 
@@ -168,12 +171,12 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                     {
                         "type": "matchmaking_event",
                         "action": action,
-                        "user_id": user_id,
+                        "user_id": self.user_id,
                         "room_code": room_code,
                     },
                 )
                 logger.info(
-                    f"🚀 matchmaking_event/private_event => service : {action} {user_id}, room={room_code}"
+                    f"🚀 matchmaking_event/private_event => service : {action} {self.user_id}, room={room_code}"
                 )
 
         except json.JSONDecodeError:
@@ -253,3 +256,20 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         )
         logger.info(f"Déconnexion envoyée à l'utilisateur {self.user_id}")
         await self.close()
+
+
+async def fetch_user_id(cookies):
+    async with httpx.AsyncClient(
+        base_url="https://auth_service:3001", verify=False
+    ) as client:
+        response = await client.get(
+            "/get_user_id_from_cookie/", cookies=cookies
+        )
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("user_id")
+        else:
+            logger.error(
+                f"Erreur lors de la récupération de l'ID utilisateur: {response.text}"
+            )
+            return None

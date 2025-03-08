@@ -1,2 +1,3 @@
 -r common/requirements_channels.txt
 websockets==15.0
+httpx==0.28.1

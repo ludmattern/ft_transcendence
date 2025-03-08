@@ -1,6 +1,5 @@
 import { gameManager } from '/src/pongGame/gameManager.js';
 import { ws } from '/src/services/websocket.js';
-import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export async function gameModeSelector(config) {
 	if (config.gameMode === 'local') {
@@ -16,17 +15,14 @@ export async function gameModeSelector(config) {
 		};
 		gameManager.startGame(gameConfig);
 	} else if (config.gameMode === 'matchmaking') {
-		const userId = await getUserIdFromCookieAPI();
 		ws.send(
 			JSON.stringify({
 				type: 'matchmaking',
 				action: 'join',
-				user_id: userId,
 			})
 		);
 		console.log('launch matchmaking');
 	} else if (config.gameMode === 'private') {
-		const userId = await getUserIdFromCookieAPI();
 		console.log('private game');
 		if (config.action === 'create') {
 			ws.send(
@@ -34,18 +30,15 @@ export async function gameModeSelector(config) {
 					type: 'private_event',
 					action: 'join',
 					room_code: config.matchkey,
-					user_id: userId,
 				})
 			);
 			console.log('Sent join room create event for room:', config.matchkey);
 		} else if (config.action === 'join') {
 			ws.send(
 				JSON.stringify({
-					type: 'private_event',
 					action: 'join',
 					subaction: 'accept',
 					room_code: config.matchkey,
-					user_id: userId,
 				})
 			);
 			console.log('Sent join room accept event for room:', config.matchkey);
@@ -64,23 +57,19 @@ export async function gameModeSelector(config) {
 
 export async function cancelMode(config) {
 	if (config.gameMode === 'matchmaking') {
-		const userId = await getUserIdFromCookieAPI();
 		ws.send(
 			JSON.stringify({
 				type: 'matchmaking',
 				action: 'leave',
-				user_id: userId,
 			})
 		);
 		console.log('Sent \'leave matchmaking\' via WebSocket');
 	} else if (config.gameMode === 'private') {
-		const userId = await getUserIdFromCookieAPI();
 		ws.send(
 			JSON.stringify({
 				type: 'private_event',
 				action: 'leave',
 				room_code: config.matchkey,
-				user_id: userId,
 			})
 		);
 		console.log('Sent leave room event for room:', config.matchkey);

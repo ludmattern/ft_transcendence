@@ -10,7 +10,7 @@ from service.views import (
     verify_2fa_view,
     request_password_reset,
     verify_reset_code,
-    change_password,
+    change_password
 )
 
 urlpatterns = [

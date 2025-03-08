@@ -110,15 +110,17 @@ def getTournamentParticipants(request, tournament_id):
 # TODO ici pas de changement avec le online
 
 
+@jwt_required
 def get_current_tournament(request):
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
-    user_id = request.GET.get("user_id")
-    if not user_id:
-        return JsonResponse({"error": "user_id parameter is required"}, status=400)
+
+    user = request.user
+    if not user:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
     try:
         tournament = ManualTournament.objects.filter(
-            status="ongoing", participants__user__id=user_id
+            status="ongoing", participants__user__id=user.id
         ).latest("created_at")
     except ManualTournament.DoesNotExist:
         return JsonResponse(

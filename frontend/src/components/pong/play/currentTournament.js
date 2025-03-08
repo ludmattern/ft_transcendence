@@ -105,11 +105,9 @@ export const currentTournament = createComponent({
 		if (data.success && data.value === 'True') {
 			try {
 				await deleteInfo('TournamentCreationNeeded');
-				const userId = await getUserIdFromCookieAPI();
 				const payload = {
 					type: 'tournament_message',
 					action: 'create_online_tournament',
-					organizer_id: userId,
 				};
 				ws.send(JSON.stringify(payload));
 				console.log('Online tournament created:', payload);
@@ -131,7 +129,6 @@ export const currentTournament = createComponent({
 export async function renderBracket() {
 	const el = currentTournament.el;
 	const username = (await getInfo('username')).success ? (await getInfo('username')).value : null;
-	const userId = await getUserIdFromCookieAPI();
 	const data = await getBracketData();
 	if (!data || !data.size) {
 		console.warn('No bracket data available.');
@@ -243,6 +240,7 @@ export async function renderBracket() {
 	if (abandonTournamentButton) {
 		abandonTournamentButton.addEventListener('click', async () => {
 			try {
+				// TODO REMOVE getUserIdFromCookieAPI
 				const userId = await getUserIdFromCookieAPI();
 
 				if (!userId) {
@@ -268,7 +266,6 @@ export async function renderBracket() {
 					const payload = {
 						type: 'tournament_message',
 						action: 'leave_online_tournament',
-						user_id: await getUserIdFromCookieAPI(),
 					};
 					
 					ws.send(JSON.stringify(payload));
@@ -318,8 +315,10 @@ export async function renderBracket() {
 
 async function getBracketData() {
 	try {
-		const userId = await getUserIdFromCookieAPI();
-		const response = await fetch(`/api/tournament-service/get_current_tournament/?user_id=${userId}`);
+		const response = await fetch(`/api/tournament-service/get_current_tournament/`, {
+			method: 'GET',
+			credentials: 'include',
+		});
 		if (!response.ok) {
 			throw new Error(`Erreur HTTP ${response.status}`);
 		}

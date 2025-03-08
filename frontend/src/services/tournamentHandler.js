@@ -48,6 +48,7 @@ export function handleLocalTournamentGameEnding(data) {
 }
 
 export async function createTournament(players) {
+	// TODO REMOVE getUserIdFromCookieAPI
 	const organizerId = await getUserIdFromCookieAPI();
 	const payload = {
 		organizer_id: organizerId,

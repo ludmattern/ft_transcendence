@@ -65,6 +65,7 @@ export async function loadTabContent(tabName, container) {
 }
 
 export async function fetchAndStoreInfoData(container) {
+	// TODO REMOVE getUserIdFromCookieAPI
 	const userId = await getUserIdFromCookieAPI();
 
 	const response = await fetch(`/api/user-service/info-getter/${encodeURIComponent(userId)}/`, {

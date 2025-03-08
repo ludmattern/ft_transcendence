@@ -238,6 +238,7 @@ export async function handleTournamentRedirection(caller = '') {
 }
 
 export async function getCurrentTournamentInformation() {
+	// TODO REMOVE getUserIdFromCookieAPI
 	const userId = await getUserIdFromCookieAPI();
 	console.log('User ID récupéré :', userId);
 	const url = `/api/tournament-service/getCurrentTournamentInformation/${encodeURIComponent(userId)}/`;

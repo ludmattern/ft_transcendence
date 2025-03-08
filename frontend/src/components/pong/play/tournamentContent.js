@@ -1,6 +1,5 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute, handleTournamentRedirection, getCurrentTournamentInformation } from '/src/services/router.js';
-import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { ws } from '/src/services/websocket.js';
 import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 

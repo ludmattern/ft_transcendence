@@ -62,8 +62,6 @@ export const profileForm = createComponent({
 
 	attachEvents: async (el) => {
 		const userId = await getUserIdFromCookieAPI();
-		console.log('hre', userId);
-
 		loadMatchHistory(userId);
 		loadUserProfile(userId);
 		attachProfilePicUpload();

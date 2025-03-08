@@ -78,7 +78,6 @@ def set_access_token_cookie(response, token_str):
 
 # --- Vues d'authentification ---
 
-
 def check_auth_view(request):
     token = request.COOKIES.get("access_token")
     if not token:
