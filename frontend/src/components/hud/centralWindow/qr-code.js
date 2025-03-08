@@ -1,6 +1,5 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const qrcode = createComponent({
 	tag: 'qrcode',

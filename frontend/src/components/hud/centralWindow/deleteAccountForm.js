@@ -1,8 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute, getPreviousRoute } from '/src/services/router.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
-import { getUsername } from '/src/pongGame/gameManager.js';
-import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { deleteInfo} from '/src/services/infoStorage.js';
 
 export const deleteAccountForm = createComponent({
 	tag: 'deleteAccountForm',
