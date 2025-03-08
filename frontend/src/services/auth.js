@@ -20,8 +20,8 @@ export async function isClientAuthenticated() {
 			return false;
 		}
 
-		pushInfo("userId", data.id);
-		pushInfo("username", data.username);
+		await pushInfo("userId", data.id);
+		await pushInfo("username", data.username);
 		
 
 		initializeWebSocket(data.id);

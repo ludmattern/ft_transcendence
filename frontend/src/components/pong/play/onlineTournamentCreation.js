@@ -41,11 +41,9 @@ export const onlineTournamentCreation = createComponent({
 		const roomCodeElement = el.querySelector('#room-code');
 
 		try {
-			// 🎯 Récupération des données
 			const tournamentData = await getInfo("tournamentSize");
 			const tournamentSize = parseInt(tournamentData.success ? tournamentData.value : 16, 10);
 
-			// ✅ Mise à jour du DOM
 			maxPlayersOnlineSpan.textContent = tournamentSize;
 		} catch (error) {
 			console.error("Erreur lors de la récupération du tournoi :", error);
