@@ -1,5 +1,5 @@
-// websocket.js
 import { messageHandlers } from '/src/services/wsHandlers.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export let ws = null;
 let isWsConnected = false;
@@ -15,10 +15,10 @@ export async function initializeWebSocket(userId) {
 	console.log('Connexion WebSocket à :', wsUrl);
 	ws = new WebSocket(wsUrl);
 
-	ws.onopen = () => {
+	ws.onopen = async () => {
 		console.log('WebSocket connecté !');
 		isWsConnected = true;
-		const username = sessionStorage.getItem('username');
+		const username = (await getInfo("username")).success ? (await getInfo("username")).value : null;
 		const initPayload = {
 			type: 'init',
 			userId: userId,

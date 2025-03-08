@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS blocks (
 	user_id INT NOT NULL,
 	blocked_user_id INT NOT NULL,
 	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  initiator_id INT NOT NULL,  -- The user who initiated the block
 	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
 	FOREIGN KEY (blocked_user_id) REFERENCES users(id) ON DELETE CASCADE,
 	UNIQUE (user_id, blocked_user_id) -- Ensures no duplicate blocks

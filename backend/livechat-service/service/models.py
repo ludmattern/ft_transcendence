@@ -83,26 +83,27 @@ class ManualFriendsRelations(models.Model):
 
 
 class ManualBlockedRelations(models.Model):
-    id = models.AutoField(primary_key=True)  # Added primary key
-    user = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="blocked_users"
-    )
-    blocked_user = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="blocked_by"
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
+	id = models.AutoField(primary_key=True)  # Added primary key
+	user = models.ForeignKey(
+		ManualUser, on_delete=models.CASCADE, related_name="blocked_users"
+	)
+	blocked_user = models.ForeignKey(
+		ManualUser, on_delete=models.CASCADE, related_name="blocked_by"
+	)
+	initiator_id = models.IntegerField(default=0)
+	created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        db_table = "blocks"
-        managed = True
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "blocked_user"], name="unique_block"
-            )
-        ]
+	class Meta:
+		db_table = "blocks"
+		managed = True
+		constraints = [
+			models.UniqueConstraint(
+				fields=["user", "blocked_user"], name="unique_block"
+			)
+		]
 
-    def __str__(self):
-        return f"{self.user.username} blocked {self.blocked_user.username}"
+	def __str__(self):
+		return f"{self.user.username} blocked {self.blocked_user.username}"
 
 
 class ManualTournament(models.Model):

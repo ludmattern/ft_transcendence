@@ -2,6 +2,7 @@ import { initializeWebSocket, closeWebSocket } from '/src/services/websocket.js'
 import { handleRoute, resetPreviousRoutes } from '/src/services/router.js';
 import componentManagers from '/src/index.js';
 import { switchwindow } from '/src/3d/animation.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export async function isClientAuthenticated() {
 	try {
@@ -19,8 +20,9 @@ export async function isClientAuthenticated() {
 			return false;
 		}
 
-		sessionStorage.setItem('userId', data.id);
-		sessionStorage.setItem('username', data.username);
+		await pushInfo("userId", data.id);
+		await pushInfo("username", data.username);
+		
 
 		initializeWebSocket(data.id);
 		console.log('User is authenticated!');
@@ -32,15 +34,27 @@ export async function isClientAuthenticated() {
 
 export async function logoutUser() {
 	try {
+		deleteInfo("userId");
+		deleteInfo("username");
+		deleteInfo("tournamentMode");
+		deleteInfo("tournamentSize");
+		deleteInfo("roomCode");
+		//deleteInfo("chatHistory");
+		deleteInfo("activeTournamentTab");
+		//deleteInfo("infoTabData");
+		deleteInfo("difficulty");
+		deleteInfo("liabilityCheckbox");
+		deleteInfo("pending2FA_user");
+		deleteInfo("pending2FA_method");
+		deleteInfo("registered_user");
+
 		const response = await fetch('/api/auth-service/logout/', {
 			method: 'POST',
 			credentials: 'include',
 		});
 
 		if (response.ok) {
-			closeWebSocket();
-			sessionStorage.clear();
-
+			await closeWebSocket();
 			console.log('Logout successful!');
 		} else {
 			console.log('Logout failed:', await response.text());

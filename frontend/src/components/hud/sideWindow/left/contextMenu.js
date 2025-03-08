@@ -28,7 +28,7 @@ export const contextMenu = createComponent({
 			hideContextMenu();
 		});
 		el.querySelector('#action-block').addEventListener('click', () => {
-			handleBlockAction(userStatus.isBlocked, item.author);
+			handleBlockAction(item.author);
 			hideContextMenu();
 		});
 		el.querySelector('#action-invite').addEventListener('click', () => {
@@ -81,34 +81,17 @@ export async function handleFriendAction(isFriend, author) {
 	ws.send(JSON.stringify(payload));
 }
 
-async function handleBlockAction(isBlocked, author) {
-	if (isBlocked) {
-		console.log(`Unblocking ${author}...`);
-		const response = await fetch('/api/user-service/unblock/', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(bodyData(author)),
-		});
-		const data = await response.json();
-		if (data.success) {
-			console.log(`User: ${author} unblocked successfully by ${sessionStorage.getItem('username')}`);
-		} else {
-			console.log('Error updating information:');
-		}
-	} else {
-		console.log(`Blocking ${author}...`);
-		const response = await fetch('/api/user-service/block/', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(bodyData(author)),
-		});
-		const data = await response.json();
-		if (data.success) {
-			console.log(`User: ${author} blocked  successfully by ${sessionStorage.getItem('username')}`);
-		} else {
-			console.log('Error updating information');
-		}
-	}
+async function handleBlockAction(author) {
+	const payload = {
+		type: "info_message",
+		action: "block_user",
+		author: await getUserIdFromCookieAPI(),
+		recipient: author,
+		initiator: await getUserIdFromCookieAPI(),
+		timestamp: new Date().toISOString(),
+	};
+
+	ws.send(JSON.stringify(payload));
 }
 
 function handleInviteAction(author) {

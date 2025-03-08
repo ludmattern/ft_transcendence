@@ -21,6 +21,7 @@ class ManualUser(models.Model):
         default="profile_pics/default-profile-150.png",
         validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])],
     )
+    session_token = models.CharField(max_length=255, null=True, default=None)
     oauth_id = models.CharField(max_length=255, null=True, blank=True, unique=True)
     totp_secret = models.CharField(max_length=32, default=pyotp.random_base32)
     token_expiry = models.DateTimeField(null=True, blank=True)

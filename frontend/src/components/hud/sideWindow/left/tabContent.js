@@ -4,6 +4,7 @@ import { commMessage, infoPanelItem } from '/src/components/hud/index.js';
 import { setupChatInput, removeChatInput } from '/src/components/hud/sideWindow/left/chat.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 /**
  * Charge dynamiquement le contenu de l'onglet spécifié.
@@ -25,7 +26,6 @@ export async function loadTabContent(tabName, container) {
 					throw new Error('Données corrompues ou incomplètes !');
 				}
 				renderInfoTab(parsedData, container);
-				console.log('Info tab loaded from sessionStorage');
 				console.log(parsedData);
 			} catch (err) {
 				console.warn('SessionStorage corrompu, rechargement depuis le serveur...', err);
@@ -40,6 +40,7 @@ export async function loadTabContent(tabName, container) {
 	} else if (tabName === 'comm') {
 		let tabItems = [];
 		const storedHistory = sessionStorage.getItem('chatHistory');
+
 
 		if (storedHistory) {
 			try {
@@ -155,7 +156,7 @@ function renderCommMessage(item, container, currentUserId) {
 	container.scrollTop = container.scrollHeight;
 }
 
-export function storeMessageInSessionStorage(msg) {
+export async function storeMessageInSessionStorage(msg) {
 	try {
 		const historyString = sessionStorage.getItem('chatHistory');
 		let history = [];
@@ -165,7 +166,7 @@ export function storeMessageInSessionStorage(msg) {
 		history.push(msg);
 		sessionStorage.setItem('chatHistory', JSON.stringify(history));
 	} catch (err) {
-		console.error('Failed to store message in sessionStorage:', err);
+		console.error('Failed to store message:', err);
 	}
 }
 

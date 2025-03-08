@@ -119,6 +119,7 @@ services:
       - 42_uid
       - 42_secret
       - hostname
+      - jwt_secret
     ports:
       - "3001:3001"
 
@@ -132,6 +133,7 @@ services:
       <<: *postgres_env
     secrets:
       - fernet_key
+      - jwt_secret
     ports:
       - "3002:3002"
     volumes:
@@ -183,6 +185,7 @@ services:
       <<: *postgres_env
     secrets:
       - fernet_key
+      - jwt_secret
     ports:
       - "3007:3007"
 
@@ -242,3 +245,5 @@ secrets:
     file: ./secret/42_uid.txt
   hostname:
     file: ./secret/hostname.txt
+  jwt_secret:
+    file: ./secret/jwt_secret.txt

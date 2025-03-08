@@ -21,6 +21,7 @@ import {
 import { render } from '/src/pongGame/gameNavigation.js';
 import { emit } from '/src/services/eventEmitter.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 let previousRoute = null;
 let previousPongSubRoute = null;
@@ -215,7 +216,7 @@ export async function handleTournamentRedirection(caller = '') {
 		}
 
 		if (data.tournament_id && data.mode && data.mode !== 'local') {
-			sessionStorage.setItem('tournamentMode', data.mode);
+			pushInfo("tournamentMode", data.mode);
 		}
 
 		if (caller === route) {

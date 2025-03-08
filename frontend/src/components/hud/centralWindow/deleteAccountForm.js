@@ -1,10 +1,12 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute, getPreviousRoute } from '/src/services/router.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { getUsername } from '/src/pongGame/gameManager.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 export const deleteAccountForm = createComponent({
 	tag: 'deleteAccountForm',
 
-	// Générer le HTML
 	render: () => `
     <div id="delete-account-form" class="form-container">
       <h5>RESIGN</h5>
@@ -19,44 +21,32 @@ export const deleteAccountForm = createComponent({
     </div>
   `,
 
-	// Ajouter les événements après le chargement
 	attachEvents: async (el) => {
 		el.addEventListener('click', async (e) => {
 			if (e.target.matches('#cancel-delete')) {
 				e.preventDefault();
-				handleRoute(getPreviousRoute()); // Retour à la route précédente
+				handleRoute(getPreviousRoute()); 
 			}
 			if (e.target.matches('#confirm-delete')) {
-				const formData = collectData(el);
 				try {
 					const response = await fetch('/api/user-service/delete/', {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify(formData),
+						credentials: 'include',
 					});
 					const data = await response.json();
 					if (data.success) {
-						alert('Deleted account successfully.');
-						sessionStorage.removeItem('username');
-						sessionStorage.removeItem('userId');
+						await deleteInfo('username');
+						alert('Your account has been deleted.');
+						handleRoute('/login');
+					} else {
+						alert(`Error: ${data.message}`);
 					}
 				} catch (error) {
 					alert('An unexpected error occurred.');
 				}
 				e.preventDefault();
-				handleRoute('/login'); // Redirection vers login
 			}
 		});
 	},
 });
-
-/**
- *
- * @param {HTMLElement} el - Élément racine
- * @returns {Object} - Données collectées
- */
-function collectData(el) {
-	return {
-		username: sessionStorage.getItem('username'),
-	};
-}

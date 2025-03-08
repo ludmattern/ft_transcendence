@@ -58,6 +58,7 @@ const handleInfoMessage = async (data) => {
 		emit('leavingLobby');
 	} else if (data.action) {
 		await updateAndCompareInfoData();
+		emit('updateFriendsList');
 	} else {
 		createNotificationMessage(data.info);
 	}

@@ -13,7 +13,6 @@ ROOT_URLCONF = "auth.urls"
 WSGI_APPLICATION = "auth.wsgi.application"
 ASGI_APPLICATION = "auth.asgi.application"
 
-JWT_SECRET_KEY = secrets.token_urlsafe(64)
 JWT_ALGORITHM = "HS256"
 JWT_EXP_DELTA_SECONDS = 3000
 
@@ -43,6 +42,8 @@ try:
         SECRET_42 = f.read().strip()
     with open("/run/secrets/hostname", "r") as f:
         HOSTNAME = f.read().strip()
+    with open("/run/secrets/jwt_secret", "r") as f:
+        JWT_SECRET_KEY = f.read().strip()
 except Exception:
     print("Error reading Fernet key from file")
 

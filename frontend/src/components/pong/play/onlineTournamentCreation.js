@@ -5,11 +5,11 @@ import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { handleRoute } from '/src/services/router.js';
 import { getCurrentTournamentInformation } from '/src/services/router.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const onlineTournamentCreation = createComponent({
 	tag: 'onlineTournamentCreation',
 	render: () => {
-		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
 		return `
 		<section class="col-12 d-flex flex-column align-items-center text-center p-5"
 		style="background-color: #111111; color: white; max-height: 700px; overflow: auto;">
@@ -18,14 +18,14 @@ export const onlineTournamentCreation = createComponent({
 		<!-- Affichage du Room Code -->
 		<div class="mb-4">
 		<h3 class="text-white">Room Code:</h3>
-		<h2 id="room-code" class="text-warning"></h2>
+		<h2 id="room-code" class="text-warning">Loading...</h2>
 		<button id="copy-room-code" class="btn btn-pong btn-sm">Copy Room Code</button>
 		</div>
 		
 		<!-- Liste des joueurs en ligne -->
 		<div class="w-50 mb-4">
 		<h2 class="text-white">
-		Players (<span id="online-players-count">0</span>/<span id="max-players-online">${tournamentSize}</span>)
+		Players (<span id="online-players-count">0</span>/<span id="max-players-online">...</span>)
 		</h2>
 		<ul id="online-players-list" class="list-group"></ul>
 		</div>
@@ -36,6 +36,19 @@ export const onlineTournamentCreation = createComponent({
 		`;
 	},
 	attachEvents: async (el) => {
+
+		const maxPlayersOnlineSpan = el.querySelector('#max-players-online');
+		const roomCodeElement = el.querySelector('#room-code');
+
+		try {
+			const tournamentData = await getInfo("tournamentSize");
+			const tournamentSize = parseInt(tournamentData.success ? tournamentData.value : 16, 10);
+
+			maxPlayersOnlineSpan.textContent = tournamentSize;
+		} catch (error) {
+			console.error("Erreur lors de la récupération du tournoi :", error);
+		}
+
 		subscribe('leavingLobby', () => {
 			handleRoute('/pong/play/tournament');
 		});
@@ -47,7 +60,6 @@ export const onlineTournamentCreation = createComponent({
 
 		const data = await getCurrentTournamentInformation();
 
-		const roomCodeElement = el.querySelector('#room-code');
 		const copyRoomCodeButton = el.querySelector('#copy-room-code');
 		const controlButtonsContainer = el.querySelector('#control-buttons-container');
 
@@ -152,7 +164,7 @@ export const onlineTournamentCreation = createComponent({
 
 async function checkOrCreateLobby() {
 	try {
-		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize'));
+		const tournamentSize = parseInt((await getInfo("tournamentSize")).success ? (await getInfo("tournamentSize")).value : NaN, 10);
 		const data = await getCurrentTournamentInformation();
 
 		if (data.tournament !== null && data.status === 'upcoming') {
@@ -226,9 +238,9 @@ export function updateOnlinePlayersUI(data) {
 					createTournamentButton.id = 'create-tournament';
 					createTournamentButton.className = 'btn btn-pong';
 					createTournamentButton.textContent = 'Create Tournament';
-					createTournamentButton.addEventListener('click', () => {
+					createTournamentButton.addEventListener('click', async () => {
 						const roomCode = document.querySelector('#room-code').textContent;
-						sessionStorage.setItem('tournamentCreationNeeded', true);
+						await pushInfo('TournamentCreationNeeded', true);
 						handleRoute('/pong/play/current-tournament');
 					});
 					controlButtonsContainer.insertAdjacentElement('afterbegin', createTournamentButton);

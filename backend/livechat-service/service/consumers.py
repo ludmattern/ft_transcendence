@@ -1,11 +1,11 @@
 import json
 import logging
-from .models import ManualUser
+from django.db import models  # Import models
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db.models import Q
-from .models import ManualUser, ManualFriendsRelations, ManualTournamentParticipants, ManualTournament
+from .models import ManualUser, ManualFriendsRelations, ManualTournamentParticipants, ManualTournament, ManualBlockedRelations
 from asgiref.sync import sync_to_async
 
 logger = logging.getLogger(__name__)
@@ -36,6 +36,35 @@ async def get_profile_picture(user_id):
 	except ManualUser.DoesNotExist:
 		return "/media/profile_pics/default-profile-150.png"
 
+async def get_non_blocked_users_id(author_id):
+    users_blocked_by_author = await database_sync_to_async(
+        lambda: list(
+            ManualBlockedRelations.objects.filter(initiator_id=author_id)
+            .values_list("blocked_user_id", flat=True)
+        )
+    )()
+    users_who_blocked_author = await database_sync_to_async(
+        lambda: list(
+            ManualBlockedRelations.objects.filter(blocked_user_id=author_id)
+            .values_list("user_id", flat=True)
+        )
+    )()
+    blocked_set = set(users_blocked_by_author + users_who_blocked_author)
+    all_users = await get_users_id()
+    non_blocked_users = [user_id for user_id in all_users if user_id not in blocked_set and user_id != author_id]
+
+    return non_blocked_users
+
+async def is_blocked(author_id, recipient_id):
+    blocked_relation = await database_sync_to_async(
+        lambda: ManualBlockedRelations.objects.filter(
+            models.Q(initiator_id=author_id, blocked_user_id=recipient_id) |  # Author blocked recipient
+            models.Q(initiator_id=recipient_id, blocked_user_id=author_id)   # Recipient blocked author
+        ).exists()
+    )()
+    return blocked_relation
+
+
 class ChatConsumer(AsyncWebsocketConsumer):
 	async def connect(self):
 		await self.accept()
@@ -52,11 +81,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		profile_picture = await get_profile_picture(author_id)
 		event["username"] = username
 		event["profilePicture"] = profile_picture
-		users = await get_users_id()  
+		non_blocked_users = await get_non_blocked_users_id(author_id)
 
-		for userid in users:
-			if userid != author_id:
-				await self.channel_layer.group_send(f"user_{userid}", event)
+		for userid in non_blocked_users:
+			await self.channel_layer.group_send(f"user_{userid}", event)
 		logger.info(f"Message transmis aux active users depuis chat_service (General): {event}")
 
 
@@ -81,8 +109,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 		event["recipient_id"] = recipient_id
 
 		if str(author_id) == str(recipient_id):
-			logger.info(f"Skipping message sending because author_id ({author_id}) equals recipient_id ({recipient_id})")
 			message = {"type": "error_message", "error": "You can't send a message to yourself."}
+			await self.channel_layer.group_send(f"user_{author_id}", message)
+			return
+
+		if await is_blocked(author_id, recipient_id):
+			message = {"type": "error_message", "error": "You cannot send a message to this user."}
 			await self.channel_layer.group_send(f"user_{author_id}", message)
 			return
 
@@ -125,6 +157,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			else:
 				user, friend = initiator, recipient_user
 
+			if await is_blocked(author_id, recipient_id):
+				message = {"type": "error_message", "error": "You cannot send a friend request to this user."}
+				await self.channel_layer.group_send(f"user_{author_id}", message)
+				return
+
 			qs = ManualFriendsRelations.objects.filter(user=user, friend=friend)
 			if await database_sync_to_async(qs.exists)():
 				relation = await database_sync_to_async(qs.first)()
@@ -140,6 +177,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 						logger.info(f"Friend request accepted between {author_id} and {recipient_id} : {event}")
 					else:
 						await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "Friend request already sent"})
+					return
+				if relation.status == "accepted":
+					await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "You are already friends"})
 					return
 
 			await database_sync_to_async(ManualFriendsRelations.objects.create)(
@@ -255,7 +295,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 			participants = await get_participants(tournament)
 
 			for participant in participants:
-					await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
+				await self.channel_layer.group_send(f"user_{participant.user.id}", {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id,"player": recipient_username})
 
 			await self.channel_layer.group_send(f"user_{tournament.organizer_id}", {"type": "info_message", "info": f"{recipient_username} refused your tournament invite."})
 			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"You refused the tournament invite."})
@@ -360,6 +400,94 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 			await self.channel_layer.group_send(f"user_{initiator_id}", {"type": "info_message", "info": "You have left the lobby."})
 			await self.channel_layer.group_send(f"user_{initiator_id}", {"type": "info_message", "action": "leavingLobby", "tournament_id": tournament.id,"player": initiator_username})
+		
+		elif str(action) == "block_user":
+			author_id = event.get("author")
+			recipient_id = event.get("recipient")
+			try:
+				author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+				recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 
+				if author_user.id > recipient_user.id:
+					user, friend = recipient_user, author_user
+				else:
+					user, friend = author_user, recipient_user
+
+				# Check if a block already exists in either direction
+				qs = ManualBlockedRelations.objects.filter(
+					models.Q(user=user, blocked_user=friend) |
+				  	models.Q(user=friend, blocked_user=user)
+				)
+
+				if await database_sync_to_async(qs.exists)():
+					relation = await database_sync_to_async(qs.first)()
+					initiator_id = await database_sync_to_async(lambda: relation.initiator_id)()
+
+					if str(initiator_id) != str(author_id):
+						await self.channel_layer.group_send(
+							f"user_{author_id}",
+							{"type": "info_message", "info": f"You have already been blocked by {recipient_user.username}."}
+						)
+					else:
+						await self.channel_layer.group_send(
+							f"user_{author_id}",
+							{"type": "info_message", "info": f"You have already blocked {recipient_user.username}."}
+						)
+				
+				else:
+					await database_sync_to_async(ManualBlockedRelations.objects.create)(user=author_user, blocked_user=recipient_user, initiator_id=author_user.id)
+					await self.channel_layer.group_send(
+							f"user_{author_id}",
+							{"type": "info_message", "info": f"You have blocked {recipient_user.username}."}
+						)
+
+				# Remove friendship if it exists (both directions)
+				await database_sync_to_async(lambda: ManualFriendsRelations.objects.filter(
+					models.Q(user=author_user, friend=recipient_user) |
+					models.Q(user=recipient_user, friend=author_user)
+				).delete())()
+			except ManualUser.DoesNotExist:
+				await self.channel_layer.group_send(f"user_{author_user.id}", {"type": "error_message", "error": "No user has been found."})
+
+		elif str(action) == "unblock_user":
+			author_id = event.get("author")
+			recipient_id = event.get("recipient")
+
+			try:
+				author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+				recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
+				# Check if the author has blocked the recipient (using initiator_id)
+				qs = ManualBlockedRelations.objects.filter(
+					initiator_id=author_id, blocked_user=recipient_id
+				)
+				if await database_sync_to_async(qs.exists)():
+					# If the block exists and the author is the initiator, delete the block
+					await database_sync_to_async(qs.delete)()
+
+					await self.channel_layer.group_send(
+						f"user_{author_id}",
+						{"type": "info_message", "info": f"You have unblocked {recipient_user.username}."}
+					)
+				else:
+					# If no block exists or the recipient initiated the block, inform the user
+					await self.channel_layer.group_send(
+						f"user_{author_id}",
+						{"type": "error_message", "error": f"You cannot unblock {recipient_user.username}."}
+					)
+			except ManualUser.DoesNotExist:
+				await self.channel_layer.group_send(
+					f"user_{author_id}",
+					{"type": "error_message", "error": "User not found."}
+				)
+		elif str(action) == "private_game_invite":
+			logger.info(f"Private game invite received: {event}")
+			recipient_id = event.get("recipient")
+			author_id = event.get("author")
+			await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": f"Private game invite sent to {recipient_id}"})
+			await self.channel_layer.group_send(f"user_{recipient_id}", event)
+			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"Private game invite received from {author_id}"})
+			logger.info(f"Invite private game sent to user_{recipient_id}")
 		else:
 			logger.warning(f"Unknown action: {action}")
+
+

@@ -404,10 +404,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 		except Exception as e:
 			logger.exception("Error while creating online tournament bracket:")
-   
-   
+
 	async def handle_leave_online_tournament(self, event):
-		"""Gère l'abandon d'un tournoi en ligne via WebSocket."""
 		try:
 			user_id = event.get("user_id")
 			if not user_id:
@@ -421,7 +419,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
 			tournament_id = user.current_tournament_id
 			if tournament_id == 0:
-				await self.send(json.dumps({"error": "User is not participating in any tournament"}))
+				logger.warning(f"No active tournament found for user {user.username}")
 				return
 
 			participant = await sync_to_async(lambda: ManualTournamentParticipants.objects.filter(
@@ -432,21 +430,23 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 			if not participant:
 				await self.send(json.dumps({"error": "User not found in tournament"}))
 				return
-
 			participant.status = "left"
 			await sync_to_async(participant.save)()
-   
 			match = await sync_to_async(lambda: TournamentMatch.objects.filter(
 				tournament_id=tournament_id
 			).filter(
 				Q(status="pending") | Q(status="ready"),
 				Q(player1=user.username) | Q(player2=user.username)
 			).first())()
-
-
+			next_match_player_ids = []
+			current_match_player_ids = []
 			if match:
 				opponent = match.player1 if match.player2 == user.username else match.player2
 				if opponent:
+					if opponent == "TBD":
+						current_match_player_ids = await sync_to_async(lambda: [ManualUser.objects.get(username=user.username).id])()
+					else:
+						current_match_player_ids = await sync_to_async(lambda: [ManualUser.objects.get(username=user.username).id, ManualUser.objects.get(username=opponent).id])()
 					match.winner = opponent
 					match.score = "Forfeit"
 					match.status = "completed"
@@ -460,22 +460,36 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 						match_order=next_match_order
 					).first())()
 
-   
 					if next_match:
 						if match.match_order % 2 == 1:
 							next_match.player1 = opponent
 						else:
 							next_match.player2 = opponent
+						if next_match.player1 != "TBD" and next_match.player2 != "TBD":
+							next_match_player_ids = await sync_to_async(lambda: [ManualUser.objects.get(username=next_match.player1).id, ManualUser.objects.get(username=next_match.player2).id])()
 						await sync_to_async(next_match.save)()
-
+      
 			user.tournament_status = "out"
 			user.current_tournament_id = 0
 			await sync_to_async(user.save)()
 
-			next_match_player_ids = []
-			if next_match:
-				if next_match.player1 != "TBD" and next_match.player2 != "TBD":
-					next_match_player_ids = await sync_to_async(lambda: [ManualUser.objects.get(username=next_match.player1).id, ManualUser.objects.get(username=next_match.player2).id])()
+				
+
+			active_players_count = await sync_to_async(lambda: ManualTournamentParticipants.objects.filter(
+				tournament_id=tournament_id, 
+				status__in=["accepted", "eliminated", "left"]
+			).count())()
+
+			left_players_count = await sync_to_async(lambda: ManualTournamentParticipants.objects.filter(
+				tournament_id=tournament_id, 
+				status="left"
+			).count())()
+
+			logger.info(f"Tournament {tournament_id} - Active Players: {active_players_count}, Left Players: {left_players_count}")
+
+			if active_players_count > 0 and active_players_count == left_players_count:
+				logger.info(f"Deleting tournament {tournament_id} since all players have left.")
+				await sync_to_async(lambda: ManualTournament.objects.filter(id=tournament_id).delete())()
 
 			participant_list = await sync_to_async(lambda: list(ManualTournamentParticipants.objects.filter(tournament_id=tournament_id).exclude(Q(status="rejected") | Q(status="left")).values_list('id', flat=True)))()
 
@@ -485,7 +499,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 				"tournament_id": tournament_id,
 				"participant_list": participant_list,
 				"next_match_player_ids": next_match_player_ids,
-				# "current_match_player_ids": [int(winner_id), int(loser_id)],
+				"current_match_player_ids": current_match_player_ids,
 			}
 			logger.info(f"back_tournament_game_over sent to gateway: {payload}")
 			await self.channel_layer.group_send(f"user_{0}", payload)
@@ -493,8 +507,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		except Exception as e:
 			logger.exception("Error handling online tournament abandonment:")
 			await self.send(json.dumps({"error": str(e)}))
-
-
 
 	async def generate_unique_serial_key(self, length=8):
 		from service.models import ManualTournament  

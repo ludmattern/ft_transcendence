@@ -1,5 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { playGame } from '/src/components/pong/play/utils.js';
+import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 
 export const soloContent = createComponent({
 	tag: 'soloContent',
@@ -43,26 +44,27 @@ export const soloContent = createComponent({
     </section>
   `,
 
-	// Ajouter les événements pour gérer sessionStorage
-	attachEvents: () => {
-		const difficulty = document.getElementById('difficulty');
-		const liabilityCheckbox = document.getElementById('liabilityCheckbox');
-
-		// Charger les valeurs sauvegardées
-		const savedDifficulty = sessionStorage.getItem('difficulty');
-		const savedLiability = sessionStorage.getItem('liabilityCheckbox');
+	// Ajouter les événements pour gérer 
+	attachEvents: async () => {
+    const difficulty = document.getElementById("difficulty");
+    const liabilityCheckbox = document.getElementById("liabilityCheckbox");
+    
+    // Charger les valeurs sauvegardées
+    const savedDifficulty = (await getInfo("difficulty")).success ? (await getInfo("difficulty")).value : null;
+    const savedLiability = (await getInfo("liabilityCheckbox")).success ? (await getInfo("liabilityCheckbox")).value : null;
+    
 
 		if (savedDifficulty) difficulty.value = savedDifficulty;
 		if (savedLiability) liabilityCheckbox.checked = savedLiability === 'true';
 
-		difficulty.addEventListener('change', () => {
-			sessionStorage.setItem('difficulty', difficulty.value);
-		});
-
-		liabilityCheckbox.addEventListener('change', () => {
-			sessionStorage.setItem('liabilityCheckbox', liabilityCheckbox.checked);
-		});
-
+    difficulty.addEventListener("change", () => {
+      pushInfo("difficulty", difficulty.value);
+  });
+  
+  liabilityCheckbox.addEventListener("change", () => {
+      pushInfo("liabilityCheckbox", liabilityCheckbox.checked);
+  });
+  
 		const launchButton = document.getElementById('launch');
 
 		launchButton.addEventListener('click', () => {

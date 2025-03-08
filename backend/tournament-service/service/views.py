@@ -9,9 +9,66 @@ from cryptography.fernet import Fernet
 from django.conf import settings
 from django.db.models import Q
 from django.db import models
-
+import jwt
 logger = logging.getLogger(__name__)
 cipher = Fernet(settings.FERNET_KEY)
+
+import jwt
+from functools import wraps
+import datetime
+
+
+def jwt_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        token = request.COOKIES.get("access_token")
+        if not token:
+            return JsonResponse(
+                {"success": False, "message": "No access_token cookie"}, status=401
+            )
+
+        try:
+            payload = jwt.decode(
+                token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+            )
+            user_id = payload.get("sub")
+            if not user_id:
+                return JsonResponse(
+                    {"success": False, "message": "Invalid token: no sub"}, status=401
+                )
+
+            try:
+                user = ManualUser.objects.get(pk=user_id)
+            except ManualUser.DoesNotExist:
+                return JsonResponse(
+                    {"success": False, "message": "User not found"}, status=404
+                )
+
+            if user.session_token != token:
+                return JsonResponse(
+                    {"success": False, "message": "Invalid or outdated token"}, status=401
+                )
+
+            now = datetime.datetime.utcnow()
+            if user.token_expiry is None or user.token_expiry < now:
+                return JsonResponse(
+                    {"success": False, "message": "Token expired in DB"}, status=401
+                )
+
+            request.user = user
+
+        except jwt.ExpiredSignatureError:
+            return JsonResponse(
+                {"success": False, "message": "Token expired"}, status=401
+            )
+        except jwt.InvalidTokenError as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=401)
+
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
 
 def getTournamentParticipants(request, tournament_id):
 	if request.method != "GET":
@@ -431,159 +488,121 @@ def create_local_tournament_view(request):
 		logger.exception("Error creating local tournament:")
 		return JsonResponse({"error": str(e)}, status=500)
 
+import json
+import logging
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+logger = logging.getLogger(__name__)
 
 @csrf_exempt
-def abandon_online_tournament(request):
-	if request.method != "POST":
-		return JsonResponse({"error": "POST method required"}, status=405)
-    
-	try:
-		body = json.loads(request.body.decode("utf-8"))
-
-		user_id = body.get("user_id")
-		if not user_id:
-			return JsonResponse({"error": "user_id is required"}, status=400)
-
-		user = ManualUser.objects.get(id=user_id)
-
-		tournament_id = user.current_tournament_id
-		if tournament_id == 0:
-			return JsonResponse({"error": "User is not participating in any tournament"}, status=400)
-
-		participant = ManualTournamentParticipants.objects.filter(
-            tournament_id=tournament_id, user=user).first()
-
-		if not participant:
-			return JsonResponse({"error": "User not found in tournament"}, status=404)
-
-		participant.status = "left"
-		participant.save()
-
-		match = TournamentMatch.objects.filter(
-			tournament_id=tournament_id
-		).filter(
-			Q(status="pending") | Q(status="ready"),
-			Q(player1=user.username) | Q(player2=user.username)
-		).first()
-
-		if match:
-			opponent = match.player1 if match.player2 == user.username else match.player2
-			if opponent:
-				match.winner = opponent
-				match.score = "Forfeit"
-				match.status = "completed"
-				match.save()
-				next_round = match.round_number + 1
-				next_match_order = (match.match_order + 1) // 2
-				next_match = TournamentMatch.objects.filter(
-					tournament_id=tournament_id,
-					round_number=next_round,
-					match_order=next_match_order
-				).first()
-
-				if next_match:
-					if match.match_order % 2 == 1:
-						next_match.player1 = opponent
-					else:
-						next_match.player2 = opponent
-					next_match.save()
-
-		user.tournament_status = "out"
-		user.current_tournament_id = 0
-		user.save()
-
-		return JsonResponse({"success": True, "message": "User removed from tournament and match forfeited"})
-
-	except ManualUser.DoesNotExist:
-		return JsonResponse({"error": "User not found"}, status=404)
-	except ManualTournament.DoesNotExist:
-		return JsonResponse({"error": "Tournament not found"}, status=404)
-	except Exception as e:
-		logger.exception("Error handling online tournament abandonment:")
-		return JsonResponse({"error": str(e)}, status=500)
-
-#TODO Here we can find logic on how we try to join tournamnet from TournamentContent.js. One with trying to random tournament with a specific size
-# and the other one with trying to join a tournament with a room code (serial_key)
-
-@csrf_exempt
+@jwt_required
 def try_join_random_tournament(request):
-	if request.method != "POST":
-		return JsonResponse({"message": "POST method required"}, status=405)
-	try:
-		body = json.loads(request.body.decode("utf-8"))
-		logger.info(f"Body: {body}")
-		userId = body.get("userId")
-		if not userId:
-			return JsonResponse({"message": "userId is required"}, status=400)
-		user = ManualUser.objects.get(id=userId)
-		if user.tournament_status != "out":
-			return JsonResponse({"message": "User is already in a tournament"}, status=400)
-		
-		tournamentSize = body.get("tournamentSize")
-		
-		tournament = ManualTournament.objects.filter(
-			status="upcoming",
-			mode="online",
-			size=tournamentSize
-		).order_by("created_at").first()
-		if not tournament:
-			return JsonResponse({"error": "No upcoming tournament found"}, status=404)		
+    if request.method != "POST":
+        return JsonResponse({"message": "POST method required"}, status=405)
 
-		participant_count = ManualTournamentParticipants.objects.filter(tournament=tournament).filter(status="accepted" or "pending").count()
-		if str(participant_count) >= tournamentSize:
-			return JsonResponse({"message": "Tournament is full"}, status=400)
-		
-		participant = ManualTournamentParticipants.objects.create(
-			tournament=tournament,
-			user=user,
-			status="pending"
-		)
-		
-		logger.info(f"User {userId} Found {tournament.id} tournament to join")
-		return JsonResponse({"success": True, "message": "User Found a random tournament", "payload": {"userId":userId, "tournament_id": tournament.id}})
-	except ManualUser.DoesNotExist:
-		return JsonResponse({"message": "User not found"}, status=404)
-	except Exception as e:
-		logger.exception("Error joining random tournament:")
-		return JsonResponse({"message": str(e)}, status=500)
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        logger.info(f"Body: {body}")
+
+        user = request.user
+        if not user:
+            return JsonResponse({"message": "Unauthorized"}, status=401)
+
+        if user.tournament_status != "out":
+            return JsonResponse({"message": "User is already in a tournament"}, status=400)
+
+        tournament_size = body.get("tournamentSize")
+        if not tournament_size:
+            return JsonResponse({"message": "Tournament size is required"}, status=400)
+
+        tournament = ManualTournament.objects.filter(
+            status="upcoming",
+            mode="online",
+            size=tournament_size
+        ).order_by("created_at").first()
+
+        if not tournament:
+            return JsonResponse({"error": "No upcoming tournament found"}, status=404)
+
+        participant_count = ManualTournamentParticipants.objects.filter(
+            tournament=tournament, status__in=["accepted", "pending"]
+        ).count()
+
+        if participant_count >= tournament_size:
+            return JsonResponse({"message": "Tournament is full"}, status=400)
+
+        participant = ManualTournamentParticipants.objects.create(
+            tournament=tournament,
+            user=user,
+            status="pending"
+        )
+
+        logger.info(f"User {user.id} found {tournament.id} tournament to join")
+        return JsonResponse({
+            "success": True,
+            "message": "User found a random tournament",
+            "payload": {"userId": user.id, "tournament_id": tournament.id}
+        })
+
+    except ManualUser.DoesNotExist:
+        return JsonResponse({"message": "User not found"}, status=404)
+
+    except Exception as e:
+        logger.exception("Error joining random tournament:")
+        return JsonResponse({"message": str(e)}, status=500)
+
 
 @csrf_exempt
+@jwt_required
 def try_join_tournament_with_room_code(request):
-	if request.method != "POST":
-		return JsonResponse({"message": "POST method required"}, status=405)
-	try:
-		body = json.loads(request.body.decode("utf-8"))
-		logger.info(f"Body: {body}")
-		userId = body.get("userId")
-		roomCode = body.get("roomCode")
-		if not userId or not roomCode:
-			return JsonResponse({"message": "userId and roomCode are required"}, status=400)
-		user = ManualUser.objects.get(id=userId)
-		if user.tournament_status != "out":
-			return JsonResponse({"message": "User is already in a tournament"}, status=400)
-		tournament = ManualTournament.objects.filter(
-			status="upcoming",
-			mode="online",
-			serial_key=roomCode
-		).first()
-		if not tournament:
-			return JsonResponse({"message": "No upcoming tournament found"}, status=404)		
+    if request.method != "POST":
+        return JsonResponse({"message": "POST method required"}, status=405)
 
-		participant_count = ManualTournamentParticipants.objects.filter(tournament=tournament).filter(status="accepted" or "pending").count()
-		if participant_count >= tournament.size:
-			return JsonResponse({"message": "Tournament is full"}, status=400)
-		
-		participant = ManualTournamentParticipants.objects.create(
-			tournament=tournament,
-			user=user,
-			status="pending"
-		)
-		
-		logger.info(f"User {userId} Found {tournament.id} tournament to join")
-		return JsonResponse({"success": True, "message": "User Found a random tournament", "payload": {"userId":userId, "tournament_id": tournament.id}})
-	
-	except ManualUser.DoesNotExist:
-		return JsonResponse({"message": "User not found"}, status=404)
-	except Exception as e:
-		logger.exception("Error joining tournament with room code:")
-		return JsonResponse({"message": str(e)}, status=500)
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        logger.info(f"Body: {body}")
+
+        user = request.user
+        if not user:
+            return JsonResponse({"message": "Unauthorized"}, status=401)
+
+        room_code = body.get("roomCode")
+        if not room_code:
+            return JsonResponse({"message": "roomCode is required"}, status=400)
+
+        if user.tournament_status != "out":
+            return JsonResponse({"message": "User is already in a tournament"}, status=400)
+
+        tournament = ManualTournament.objects.filter(
+            status="upcoming",
+            mode="online",
+            serial_key=room_code
+        ).first()
+
+        if not tournament:
+            return JsonResponse({"message": "No upcoming tournament found"}, status=404)
+
+        participant_count = ManualTournamentParticipants.objects.filter(
+            tournament=tournament, status__in=["accepted", "pending"]
+        ).count()
+
+        if participant_count >= tournament.size:
+            return JsonResponse({"message": "Tournament is full"}, status=400)
+
+        participant = ManualTournamentParticipants.objects.create(
+            tournament=tournament,
+            user=user,
+            status="pending"
+        )
+
+        logger.info(f"User {user.id} joined tournament {tournament.id}")
+        return JsonResponse({
+            "success": True,
+            "message": "User joined the tournament",
+            "payload": {"userId": user.id, "tournament_id": tournament.id}
+        })
+
+    except Exception as e:
+        logger.exception("Error joining tournament with room code:")
+        return JsonResponse({"message": str(e)}, status=500)

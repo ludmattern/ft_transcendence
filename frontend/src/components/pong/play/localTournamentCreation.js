@@ -1,23 +1,20 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { createTournament } from '/src/services/tournamentHandler.js';
+import { pushInfo, getInfo, deleteInfo } from '/src/services/infoStorage.js';
 
 export const localTournamentCreation = createComponent({
 	tag: 'localTournamentCreation',
 	render: () => {
-		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
-		const username = sessionStorage.getItem('username') || 'You';
-
 		return `
 		<section class="col-12 d-flex flex-column align-items-center text-center p-5"
 				style="background-color: #111111; color: white; max-height: 700px; overflow: auto;">
 			<h1 class="mb-4">Local Tournament Creation</h1>
 			
-			
 			<!-- Liste des joueurs -->
 			<div class="w-50 mb-4">
 			<h2>
-			Players (<span id="players-count">0</span>/<span id="max-players">${tournamentSize}</span>)
+			Players (<span id="players-count">0</span>/<span id="max-players">...</span>)
 			</h2>
 			<ul id="players-list" class="list-group"></ul>
 			</div>
@@ -36,9 +33,17 @@ export const localTournamentCreation = createComponent({
 		</section>
 		`;
 	},
-	attachEvents: (el) => {
-		const tournamentSize = parseInt(sessionStorage.getItem('tournamentSize')) || 16;
-		const username = sessionStorage.getItem('username') || 'You';
+
+	attachEvents: async (el) => {
+		const tournamentSizeData = await getInfo("tournamentSize");
+		const usernameData = await getInfo("username");
+
+		const tournamentSize = parseInt(tournamentSizeData.success ? tournamentSizeData.value : 16, 10);
+		const username = usernameData.success ? usernameData.value : "You";
+
+		const maxPlayersElement = el.querySelector('#max-players');
+		const playersCountSpan = el.querySelector('#players-count');
+		maxPlayersElement.textContent = tournamentSize;
 
 		const cancelTournamentButton = el.querySelector('#cancel-tournament');
 		cancelTournamentButton.addEventListener('click', () => {
@@ -48,7 +53,6 @@ export const localTournamentCreation = createComponent({
 		const playerNameInput = el.querySelector('#player-name');
 		const addPlayerButton = el.querySelector('#add-player');
 		const playersList = el.querySelector('#players-list');
-		const playersCountSpan = el.querySelector('#players-count');
 		const createTournamentButton = el.querySelector('#create-tournament');
 
 		let players = [username];
@@ -56,6 +60,7 @@ export const localTournamentCreation = createComponent({
 		function updateLocalUI() {
 			playersCountSpan.textContent = players.length;
 			playersList.innerHTML = '';
+
 			players.forEach((name, index) => {
 				const li = document.createElement('li');
 				li.className = 'list-group-item d-flex justify-content-between align-items-center';
