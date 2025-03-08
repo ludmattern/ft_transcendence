@@ -20,8 +20,13 @@ export async function isClientAuthenticated() {
 			return false;
 		}
 
+<<<<<<< HEAD
+		await pushInfo("userId", data.id);
+		await pushInfo("username", data.username);
+=======
 		await pushInfo('userId', data.id);
 		await pushInfo('username', data.username);
+>>>>>>> a9d13774d4e334f1c799a8182984d99ee31ef9d6
 
 		initializeWebSocket(data.id);
 		console.log('User is authenticated!');
@@ -33,6 +38,22 @@ export async function isClientAuthenticated() {
 
 export async function logoutUser() {
 	try {
+<<<<<<< HEAD
+		deleteInfo("userId");
+		deleteInfo("username");
+		deleteInfo("tournamentMode");
+		deleteInfo("tournamentSize");
+		deleteInfo("roomCode");
+		//deleteInfo("chatHistory");
+		deleteInfo("activeTournamentTab");
+		//deleteInfo("infoTabData");
+		deleteInfo("difficulty");
+		deleteInfo("liabilityCheckbox");
+		deleteInfo("pending2FA_user");
+		deleteInfo("pending2FA_method");
+		deleteInfo("registered_user");
+		sessionStorage.clear();
+=======
 		await deleteInfo('userId');
 		await deleteInfo('username');
 		await deleteInfo('tournamentMode');
@@ -47,6 +68,7 @@ export async function logoutUser() {
 		await deleteInfo('pending2FA_method');
 		await deleteInfo('registered_user');
 
+>>>>>>> a9d13774d4e334f1c799a8182984d99ee31ef9d6
 		const response = await fetch('/api/auth-service/logout/', {
 			method: 'POST',
 			credentials: 'include',
@@ -64,7 +86,7 @@ export async function logoutUser() {
 	resetPreviousRoutes();
 	componentManagers['Pong'].cleanupComponents([]);
 	switchwindow('home');
-	handleRoute('/login'); // Redirige vers la page de connexion
+	handleRoute('/login');
 }
 
 export async function loginUser(username, password) {
