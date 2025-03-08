@@ -144,7 +144,8 @@ def jwt_required(view_func):
 
             if user.session_token != token:
                 return JsonResponse(
-                    {"success": False, "message": "Invalid or outdated token"}, status=401
+                    {"success": False, "message": "Invalid or outdated token"},
+                    status=401,
                 )
 
             now = datetime.datetime.utcnow()
@@ -165,7 +166,6 @@ def jwt_required(view_func):
         return view_func(request, *args, **kwargs)
 
     return wrapper
-
 
 
 @jwt_required
@@ -670,3 +670,207 @@ def authenticate_and_respond(user):
         max_age=settings.JWT_EXP_DELTA_SECONDS,
     )
     return response
+
+
+from django.utils.timezone import now
+import datetime
+import json
+import bcrypt
+import jwt
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+import logging
+
+logger = logging.getLogger(__name__)
+
+from django.utils.timezone import now
+
+
+@csrf_exempt
+def request_password_reset(request):
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": "Only POST allowed"}, status=405
+        )
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        email = body.get("email")
+        if not email:
+            return JsonResponse(
+                {"success": False, "message": "Email is required"}, status=400
+            )
+
+        # Rechercher l'utilisateur via l'email décrypté
+        user = None
+        for u in ManualUser.objects.filter(email__isnull=False).exclude(email=""):
+            try:
+                if decrypt_thing(u.email) == email:
+                    user = u
+                    break
+            except Exception:
+                continue
+        if not user:
+            return JsonResponse(
+                {"success": False, "message": "User not found"}, status=404
+            )
+
+        current_time = now()  # datetime aware
+        # Vérifier si un code a déjà été généré et non expiré
+        if user.reset_code_expiry and user.reset_code_expiry > current_time:
+            remaining = (user.reset_code_expiry - current_time).total_seconds()
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": f"Please wait {int(remaining)} seconds before requesting a new code",
+                },
+                status=429,
+            )
+
+        # Générer et stocker le nouveau code avec expiration aware
+        code = generate_2fa_code()
+        hashed_code = bcrypt.hashpw(code.encode("utf-8"), bcrypt.gensalt()).decode(
+            "utf-8"
+        )
+        user.temp_reset_code = hashed_code
+        user.reset_code_expiry = current_time + datetime.timedelta(minutes=1)
+        user.save()
+
+        subject = "Réinitialisation de votre mot de passe"
+        message = f"Bonjour,\n\nVoici votre code de réinitialisation : {code}\n\nCordialement."
+        send_mail(subject, message, None, [email], fail_silently=False)
+
+        return JsonResponse({"success": True, "message": "Reset code sent"})
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+
+@csrf_exempt
+def verify_reset_code(request):
+    logger.info("Verifying reset code")
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": "Only POST allowed"}, status=405
+        )
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        email = body.get("email")
+        code = body.get("code")
+        if not email or not code:
+            return JsonResponse(
+                {"success": False, "message": "Missing email or code"}, status=400
+            )
+
+        # Recherche de l'utilisateur via l'email décrypté
+        user = None
+        for u in ManualUser.objects.filter(email__isnull=False).exclude(email=""):
+            try:
+                if decrypt_thing(u.email) == email:
+                    user = u
+                    break
+            except Exception:
+                continue
+        if not user:
+            return JsonResponse(
+                {"success": False, "message": "User not found"}, status=404
+            )
+
+        current_time = now()
+        logger.info(f"Current time: {current_time}")
+        logger.info(f"Reset code expiry: {user.reset_code_expiry}")
+        # Vérifier que le code n'est pas expiré
+        from django.utils.timezone import is_aware, make_aware
+
+        # Assurez-vous que reset_code_expiry est aware
+        if user.reset_code_expiry and not is_aware(user.reset_code_expiry):
+            reset_expiry = make_aware(user.reset_code_expiry)
+        else:
+            reset_expiry = user.reset_code_expiry
+
+        if not reset_expiry or reset_expiry < current_time:
+            return JsonResponse(
+                {"success": False, "message": "Reset code expired"}, status=400
+            )
+
+        # Vérification du code avec bcrypt
+        if not bcrypt.checkpw(
+            code.encode("utf-8"), user.temp_reset_code.encode("utf-8")
+        ):
+            return JsonResponse(
+                {"success": False, "message": "Invalid code"}, status=401
+            )
+
+        # Générer un token temporaire de réinitialisation valable 1 minute
+        reset_token = jwt.encode(
+            {
+                "sub": str(user.id),
+                "iat": current_time.timestamp(),
+                "exp": (current_time + datetime.timedelta(minutes=1)).timestamp(),
+                "type": "password_reset",
+            },
+            settings.JWT_SECRET_KEY,
+            algorithm=settings.JWT_ALGORITHM,
+        )
+
+        return JsonResponse(
+            {"success": True, "message": "Code verified", "reset_token": reset_token}
+        )
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
+
+
+@csrf_exempt
+def change_password(request):
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "message": "Only POST allowed"}, status=405
+        )
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        new_password = body.get("new_password")
+        reset_token = body.get("reset_token")
+        if not new_password or not reset_token:
+            return JsonResponse(
+                {"success": False, "message": "Missing new_password or reset_token"},
+                status=400,
+            )
+
+        # Vérifier et décoder le token de réinitialisation
+        try:
+            payload = jwt.decode(
+                reset_token,
+                settings.JWT_SECRET_KEY,
+                algorithms=[settings.JWT_ALGORITHM],
+            )
+        except jwt.ExpiredSignatureError:
+            return JsonResponse(
+                {"success": False, "message": "Reset token expired"}, status=401
+            )
+        except jwt.InvalidTokenError as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=401)
+
+        # S'assurer que le token est bien de type réinitialisation
+        if payload.get("type") != "password_reset":
+            return JsonResponse(
+                {"success": False, "message": "Invalid token type"}, status=401
+            )
+
+        user_id = payload.get("sub")
+        user = ManualUser.objects.get(id=int(user_id))
+
+        # Mettre à jour le mot de passe (après hachage)
+        hashed_password = bcrypt.hashpw(
+            new_password.encode("utf-8"), bcrypt.gensalt()
+        ).decode("utf-8")
+        user.password = hashed_password
+
+        # Nettoyer les champs de réinitialisation
+        user.temp_reset_code = None
+        user.reset_code_expiry = None
+        user.save()
+
+        return JsonResponse(
+            {"success": True, "message": "Password changed successfully"}
+        )
+    except Exception as e:
+        return JsonResponse({"success": False, "message": str(e)}, status=500)
