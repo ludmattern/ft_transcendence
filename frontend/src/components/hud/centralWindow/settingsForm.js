@@ -45,6 +45,12 @@ export const settingsForm = createComponent({
 `,
 
 attachEvents: async (el) => {
+
+	const oauth_null = await checkOAuthStatus();
+	if (oauth_null === false) {
+		handleRoute('/settings/delete-account');
+	}
+
     el.querySelector('#update-button').addEventListener('click', async (e) => {
         e.preventDefault();
         const formData = collectFormData(el);
@@ -239,4 +245,21 @@ function resetErrorMessages() {
 		const el = document.getElementById(errId);
 		if (el) el.style.display = 'none';
 	});
+}
+
+
+async function checkOAuthStatus() {
+    try {
+        const response = await fetch("/api/user-service/check_oauth_id/", {
+            method: "GET",
+            credentials: "include",
+        });
+
+        const data = await response.json();
+        console.log("is null", data.oauth_null);
+        return data.oauth_null;
+    } catch (error) {
+        console.error("Erreur lors de la vérification de OAuth:", error);
+        return null;
+    }
 }

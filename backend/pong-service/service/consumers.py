@@ -306,7 +306,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                             "final_scores": game.user_scores,
                         },
                     )
-
+                    
+                    await asyncio.sleep(0.01)
+                    
                     if not (
                         str(game_id).startswith("game_")
                         or str(game_id).startswith("tournLocal_")
@@ -324,7 +326,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     # logger.info(f"Partie {game_id} terminée (game_over)")
                     break
 
-                await asyncio.sleep(0.01)
+                await asyncio.sleep(0.0167)
 
         except asyncio.CancelledError:
             logger.info(f"game_loop annulée pour {game_id}")

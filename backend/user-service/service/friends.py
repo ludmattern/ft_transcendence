@@ -5,20 +5,18 @@ from django.views.decorators.csrf import csrf_exempt  # type: ignore
 from django.core.exceptions import ObjectDoesNotExist  # type: ignore
 from django.db.models import Q  # type: ignore
 from .models import ManualUser, ManualFriendsRelations
-
+from service.views import jwt_required
 logger = logging.getLogger(__name__)
 
-
 @csrf_exempt
+@jwt_required 
 def get_friends(request):
-    """Retrieve all accepted friends for a user."""
-    if request.method == "GET":
-        user_id = request.GET.get("userId")
+    """Retrieve all accepted friends for the authenticated user."""
+    if request.method != "GET":
+        return JsonResponse({"error": "Invalid request method"}, status=405)
 
-        try:
-            user = ManualUser.objects.get(id=user_id)
-        except ObjectDoesNotExist:
-            return JsonResponse({"error": "User not found"}, status=404)
+    try:
+        user = request.user
 
         friends = (
             ManualUser.objects.filter(
@@ -31,7 +29,8 @@ def get_friends(request):
 
         return JsonResponse({"friends": list(friends)}, status=200)
 
-    return JsonResponse({"error": "Invalid request method"}, status=405)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 def is_friend(request):
