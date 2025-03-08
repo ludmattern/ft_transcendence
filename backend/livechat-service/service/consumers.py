@@ -479,7 +479,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
 					f"user_{author_id}",
 					{"type": "error_message", "error": "User not found."}
 				)
-
+		elif str(action) == "private_game_invite":
+			logger.info(f"Private game invite received: {event}")
+			recipient_id = event.get("recipient")
+			author_id = event.get("author")
+			await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": f"Private game invite sent to {recipient_id}"})
+			await self.channel_layer.group_send(f"user_{recipient_id}", event)
+			await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"Private game invite received from {author_id}"})
+			logger.info(f"Invite private game sent to user_{recipient_id}")
 		else:
 			logger.warning(f"Unknown action: {action}")
 

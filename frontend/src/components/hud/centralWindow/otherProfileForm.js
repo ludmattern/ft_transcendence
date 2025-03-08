@@ -2,6 +2,7 @@ import { createComponent } from '/src/utils/component.js';
 import { loadUserProfile, loadMatchHistory } from '/src/components/hud/centralWindow/profileForm.js';
 import { ws } from '/src/services/websocket.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { playGame } from '/src/components/pong/play/utils.js';
 
 export const otherProfileForm = createComponent({
   tag: 'otherProfileForm',
@@ -104,7 +105,23 @@ export const otherProfileForm = createComponent({
       let action = null;
       if (e.target.matches('#invite-link')) {
         console.debug('Invite sent.');
-        // TODO : send invite
+        const payload = {
+          type: 'info_message',
+          action: "private_game_invite",
+          author: await getUserIdFromCookieAPI(),
+          recipient: profile_id,
+          initiator: await getUserIdFromCookieAPI(),
+          timestamp: new Date().toISOString(),
+        };
+        ws.send(JSON.stringify(payload));
+        clearPageContent();
+				const config = {
+          gameMode: 'private',
+					action: 'create',
+					matchkey: await getUserIdFromCookieAPI(), // ID of current User
+					type: 'fullScreen',
+				};
+        playGame(config);
       }
       if (e.target.matches('#remove-link')) {
         action = "remove_friend";
@@ -124,7 +141,7 @@ export const otherProfileForm = createComponent({
       }
 
       if (!action) return; // If no action matched, exit
-
+      
       const payload = {
         type: 'info_message',
         action: action,
@@ -133,7 +150,6 @@ export const otherProfileForm = createComponent({
         initiator: await getUserIdFromCookieAPI(),
         timestamp: new Date().toISOString(),
       };
-
       ws.send(JSON.stringify(payload));
     });
   },
@@ -161,6 +177,17 @@ export async function fetchUserId(username) {
     return data.user_id;
   } catch (error) {
     console.error('Error fetching user ID:', error);
+  }
+}
+
+function clearPageContent() {
+  const profileForm = document.getElementById('profile-form');
+  if (profileForm) {
+    profileForm.style.display = "none"; // Hide the entire form
+  }
+  const blurScreenEffect = document.getElementById('blur-screen-effect');
+  if (blurScreenEffect) {
+    blurScreenEffect.classList.add('hidden'); // Hide the blur effect
   }
 }
 
