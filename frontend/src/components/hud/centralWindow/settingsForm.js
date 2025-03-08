@@ -256,7 +256,7 @@ async function checkOAuthStatus() {
         });
 
         const data = await response.json();
-        console.log("OAuth ID est null ?", data.oauth_null);
+        console.log("is null", data.oauth_null);
         return data.oauth_null;
     } catch (error) {
         console.error("Erreur lors de la vérification de OAuth:", error);
