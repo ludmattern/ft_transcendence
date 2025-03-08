@@ -34,19 +34,19 @@ export async function isClientAuthenticated() {
 
 export async function logoutUser() {
 	try {
-		deleteInfo("userId");
-		deleteInfo("username");
-		deleteInfo("tournamentMode");
-		deleteInfo("tournamentSize");
-		deleteInfo("roomCode");
-		//deleteInfo("chatHistory");
-		deleteInfo("activeTournamentTab");
-		//deleteInfo("infoTabData");
-		deleteInfo("difficulty");
-		deleteInfo("liabilityCheckbox");
-		deleteInfo("pending2FA_user");
-		deleteInfo("pending2FA_method");
-		deleteInfo("registered_user");
+		await deleteInfo("userId");
+		await deleteInfo("username");
+		await deleteInfo("tournamentMode");
+		await deleteInfo("tournamentSize");
+		await deleteInfo("roomCode");
+		//await deleteInfo("chatHistory");
+		await deleteInfo("activeTournamentTab");
+		//await deleteInfo("infoTabData");
+		await deleteInfo("difficulty");
+		await deleteInfo("liabilityCheckbox");
+		await deleteInfo("pending2FA_user");
+		await deleteInfo("pending2FA_method");
+		await deleteInfo("registered_user");
 
 		const response = await fetch('/api/auth-service/logout/', {
 			method: 'POST',
