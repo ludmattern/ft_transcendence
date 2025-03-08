@@ -11,6 +11,7 @@ from service.views import (
     generate_qr_code,
     update_info,
     delete_account,
+    check_oauth_id,
 )
 from service.friends import is_friend, get_friends
 from service.profile import profile_info
@@ -42,4 +43,5 @@ urlpatterns = [
     path("storage/push/", push_info_storage, name="push_info_storage"),
     path("storage/get/", get_info_storage, name="get_info_storage"),
     path("storage/delete/", delete_info_storage, name="delete_info_storage"),
+    path("check_oauth_id/", check_oauth_id, name="check_oauth_id"),
 ]

@@ -505,3 +505,15 @@ def get_leaderboard(request):
         for index, player in enumerate(players)
     ]
     return JsonResponse({"success": True, "players": results})
+
+
+
+@csrf_exempt
+@jwt_required
+def check_oauth_id(request):
+    try:
+        user = request.user
+        return JsonResponse({"oauth_null": user.oauth_id is None}, status=200)
+    
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
