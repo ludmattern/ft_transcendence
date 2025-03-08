@@ -515,7 +515,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
             await self.channel_layer.group_send(
                 f"user_{recipient_id}",
-                {"type": "info_message", "action": "You refused the tournament invite."},
+                {
+                    "type": "info_message",
+                    "action": "You refused the tournament invite.",
+                },
             )
 
         elif str(action) == "back_cancel_tournament_invite":
@@ -560,9 +563,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 f"user_{recipient_id}",
                 {
                     "type": "info_message",
-                    "action": "updatePlayerList",
-                    "tournament_id": tournament.id,
-                    "player": recipient_username,
+                    "action": "Your invite has been cancelled",
                 },
             )
             await self.channel_layer.group_send(
