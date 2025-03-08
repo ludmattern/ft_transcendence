@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path  # type: ignore
 from .consumers import TournamentConsumer
 
 websocket_urlpatterns = [

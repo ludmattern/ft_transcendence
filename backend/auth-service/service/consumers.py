@@ -1,5 +1,5 @@
 import logging
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer  # type: ignore
 
 logger = logging.getLogger(__name__)
 

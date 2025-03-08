@@ -1,5 +1,5 @@
-from django.db import models
-import pyotp
+from django.db import models  # type: ignore
+import pyotp  # type: ignore
 
 
 class ManualUser(models.Model):

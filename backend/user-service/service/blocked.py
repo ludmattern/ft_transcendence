@@ -1,6 +1,6 @@
 import json
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse  # type: ignore
+from django.views.decorators.csrf import csrf_exempt  # type: ignore
 from .models import ManualUser, ManualBlockedRelations
 
 

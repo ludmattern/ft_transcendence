@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path # type: ignore
 from service.views import (
     create_local_tournament_view,
     get_current_tournament,

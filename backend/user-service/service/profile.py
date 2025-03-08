@@ -1,9 +1,7 @@
 import json
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse  # type: ignore
 from .models import ManualUser
 from .models import ManualGameHistory
-from django.conf import settings
 
 
 def profile_info(request):

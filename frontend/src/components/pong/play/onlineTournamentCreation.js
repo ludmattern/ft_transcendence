@@ -210,7 +210,6 @@ export function updateOnlinePlayersUI(data) {
 	roomCodeElement.textContent = data.serial_key;
 	maxPlayersOnlineSpan.textContent = data.size;
 
-
 	const sortedParticipants = data.participants.sort((a, b) => {
 		console.log('a:', a);
 		console.log('b:', b);

@@ -1,15 +1,15 @@
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer # type: ignore
+from asgiref.sync import sync_to_async # type: ignore
 from .models import ManualTournament, ManualUser, ManualTournamentParticipants, TournamentMatch
 import logging
-from channels.db import database_sync_to_async 
+from channels.db import database_sync_to_async # type: ignore
 from cryptography.fernet import Fernet
-from django.conf import settings
+from django.conf import settings # type: ignore
 import secrets
 import random
 import string
-from django.db.models import Q
+from django.db.models import Q # type: ignore
 
 logger = logging.getLogger(__name__)
 def generate_online_match_key():
@@ -402,7 +402,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 		except ValueError as ve:
 			logger.error(f"Bracket creation failed: {str(ve)}")
 
-		except Exception as e:
+		except Exception:
 			logger.exception("Error while creating online tournament bracket:")
 
 	async def handle_leave_online_tournament(self, event):

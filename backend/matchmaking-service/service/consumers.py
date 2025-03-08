@@ -1,6 +1,5 @@
-import json
 import logging
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer # type: ignore
 from .matchmaking_manager import matchmaking_manager
 from .private_manager import private_manager
 

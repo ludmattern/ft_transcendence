@@ -1,7 +1,7 @@
 # service/auth_connection.py
 import asyncio
 import logging
-import websockets
+import websockets  # type: ignore
 import threading
 import ssl
 

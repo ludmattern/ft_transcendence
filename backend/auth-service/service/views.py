@@ -3,22 +3,22 @@ import bcrypt
 import datetime
 import random
 import jwt
-import pyotp
+import pyotp  # type: ignore
 from functools import wraps
 
 from cryptography.fernet import Fernet
 
-from django.http import JsonResponse
-from django.conf import settings
-from django.core.mail import send_mail
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.timezone import now, is_aware, make_aware
-from django.shortcuts import redirect
+from django.http import JsonResponse  # type: ignore
+from django.conf import settings  # type: ignore
+from django.core.mail import send_mail  # type: ignore
+from django.views.decorators.csrf import csrf_exempt  # type: ignore
+from django.utils.timezone import now, is_aware, make_aware  # type: ignore
+from django.shortcuts import redirect  # type: ignore
 
 import requests
 from urllib.parse import urlencode
 
-from twilio.rest import Client
+from twilio.rest import Client  # type: ignore
 
 from service.models import ManualUser
 
@@ -520,7 +520,7 @@ def oauth_callback(request):
 
         return authenticate_and_respond(user)
 
-    except Exception as e:
+    except Exception:
         logger.exception("OAuth callback error")
         return JsonResponse(
             {"success": False, "message": "Internal Server Error"}, status=500

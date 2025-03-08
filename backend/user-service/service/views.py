@@ -1,23 +1,19 @@
 import json
 import bcrypt
 import os
-
 import jwt
-import pyotp
-import qrcode
+import pyotp  # type: ignore
+import qrcode  # type: ignore
+
 from io import BytesIO
 from functools import wraps
-
-from PIL import Image
-
+from PIL import Image  # type: ignore
 from cryptography.fernet import Fernet
-
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
-from django.conf import settings
-from django.utils.timezone import now, is_aware, make_aware
-
+from django.http import JsonResponse, HttpResponse  # type: ignore
+from django.views.decorators.csrf import csrf_exempt  # type: ignore
+from django.db.models import Q  # type: ignore
+from django.conf import settings  # type: ignore
+from django.utils.timezone import now, is_aware, make_aware  # type: ignore
 from .models import ManualUser, GameHistory, ManualBlockedRelations
 
 # Initialisation de Fernet pour le chiffrement/déchiffrement

@@ -1,22 +1,19 @@
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse # type: ignore
+from django.views.decorators.csrf import csrf_exempt # type: ignore
 import math
-import random, string
+import random
+import string
 from .models import ManualTournament, ManualTournamentParticipants, TournamentMatch, ManualUser
 import logging
 import json
 from cryptography.fernet import Fernet
-from django.conf import settings
-from django.db.models import Q
-from django.db import models
-import jwt
-logger = logging.getLogger(__name__)
-cipher = Fernet(settings.FERNET_KEY)
-
+from django.conf import settings # type: ignore
 import jwt
 from functools import wraps
 import datetime
 
+logger = logging.getLogger(__name__)
+cipher = Fernet(settings.FERNET_KEY)
 
 def jwt_required(view_func):
     @wraps(view_func)
@@ -488,12 +485,7 @@ def create_local_tournament_view(request):
 		logger.exception("Error creating local tournament:")
 		return JsonResponse({"error": str(e)}, status=500)
 
-import json
-import logging
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
-logger = logging.getLogger(__name__)
 
 @csrf_exempt
 @jwt_required
@@ -531,12 +523,6 @@ def try_join_random_tournament(request):
 
         if participant_count >= tournament_size:
             return JsonResponse({"message": "Tournament is full"}, status=400)
-
-        participant = ManualTournamentParticipants.objects.create(
-            tournament=tournament,
-            user=user,
-            status="pending"
-        )
 
         logger.info(f"User {user.id} found {tournament.id} tournament to join")
         return JsonResponse({
@@ -589,12 +575,6 @@ def try_join_tournament_with_room_code(request):
 
         if participant_count >= tournament.size:
             return JsonResponse({"message": "Tournament is full"}, status=400)
-
-        participant = ManualTournamentParticipants.objects.create(
-            tournament=tournament,
-            user=user,
-            status="pending"
-        )
 
         logger.info(f"User {user.id} joined tournament {tournament.id}")
         return JsonResponse({

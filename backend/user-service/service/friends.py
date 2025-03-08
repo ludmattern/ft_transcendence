@@ -1,9 +1,9 @@
 import json
 import logging
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.http import JsonResponse  # type: ignore
+from django.views.decorators.csrf import csrf_exempt  # type: ignore
+from django.core.exceptions import ObjectDoesNotExist  # type: ignore
+from django.db.models import Q  # type: ignore
 from .models import ManualUser, ManualFriendsRelations
 
 logger = logging.getLogger(__name__)

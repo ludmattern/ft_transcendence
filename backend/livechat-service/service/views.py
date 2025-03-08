@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render  # type: ignore
+from service.models import ManualUser
 
 
 def chat_room(request):
