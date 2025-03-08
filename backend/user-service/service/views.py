@@ -469,30 +469,39 @@ def upload_profile_picture(request):
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
+@csrf_exempt
+@jwt_required
 def search_pilots(request):
+    """Search pilots whose usernames start with the query, excluding blocked users."""
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
+
     query = request.GET.get("query")
     if not query:
         return JsonResponse({"message": "Query parameter is required"}, status=400)
-    user_id = request.GET.get("user_id")
-    if not user_id:
-        return JsonResponse({"message": "user_id parameter is required"}, status=400)
-    blocked_users = ManualBlockedRelations.objects.filter(
-        blocked_user_id=user_id
-    ).values_list("user_id", flat=True)
-    pilots = ManualUser.objects.filter(username__istartswith=query).exclude(
-        id__in=blocked_users
-    )
-    results = [
-        {
-            "username": pilot.username,
-            "user_id": pilot.id,
-            "is_connected": pilot.is_connected,
-        }
-        for pilot in pilots
-    ]
-    return JsonResponse({"success": True, "pilots": results})
+
+    try:
+        user = request.user 
+
+        blocked_users = ManualBlockedRelations.objects.filter(
+            blocked_user=user
+        ).values_list("user_id", flat=True)
+
+        pilots = ManualUser.objects.filter(username__istartswith=query).exclude(
+            id__in=blocked_users
+        )
+        results = [
+            {
+                "username": pilot.username,
+                "user_id": pilot.id,
+                "is_connected": pilot.is_connected,
+            }
+            for pilot in pilots
+        ]
+        return JsonResponse({"success": True, "pilots": results}, status=200)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 @csrf_exempt

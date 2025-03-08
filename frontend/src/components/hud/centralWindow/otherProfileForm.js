@@ -124,7 +124,7 @@ export const otherProfileForm = createComponent({
 				const config = {
 					gameMode: 'private',
 					action: 'create',
-					matchkey: await getUserIdFromCookieAPI(), // ID of current User
+					matchkey: await getUserIdFromCookieAPI(),
 					type: 'fullScreen',
 				};
 				playGame(config);

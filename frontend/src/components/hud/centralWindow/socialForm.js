@@ -48,13 +48,11 @@ export const socialForm = createComponent({
 	attachEvents: async (el) => {
 		// Subscribe to the event to update the friends list dynamically
 		subscribe('updateFriendsList', async () => {
-			getFriends(await getUserIdFromCookieAPI());
+			getFriends();
 		});
 	
-		// Fetch the initial friend list
-		getFriends(await getUserIdFromCookieAPI());
+		getFriends();
 	
-		// Add a single event listener for all clicks within `el`
 		el.addEventListener('click', async (e) => {
 			e.preventDefault();
 	
@@ -199,47 +197,65 @@ function createPilotItem(status, pseudo, statusClass) {
  *
  * @param {string} userId
  */
-async function getFriends(userId) {
+async function getFriends() {
 	try {
-		const response = await fetch(`/api/user-service/get_friends/?userId=${encodeURIComponent(userId)}`);
-		console.log('response:', response);
+		const response = await fetch("/api/user-service/get_friends/", {
+			method: "GET",
+			credentials: "include", // 🔥 Important pour envoyer le cookie JWT
+		});
+		console.log("response:", response);
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
 		const data = await response.json();
-		console.log('Friend list:', data.friends);
+		console.log("Friend list:", data.friends);
 
-		const friendListContainer = document.querySelector('.friend-list-container');
+		const friendListContainer = document.querySelector(".friend-list-container");
 		if (friendListContainer && data.friends && data.friends.length > 0) {
-			friendListContainer.innerHTML = data.friends.map((friend) => createFriendItem('Online', friend.username, friend.is_connected ? 'text-success' : 'text-danger')).join('');
-		} else if (friendListContainer && data.friends && data.friends.length === 0){
-			friendListContainer.innerHTML = '<p style="opacity: 0.7;">It\'s a lonely world...</p>';
+			friendListContainer.innerHTML = data.friends
+				.map((friend) =>
+					createFriendItem(
+						"Online",
+						friend.username,
+						friend.is_connected ? "text-success" : "text-danger"
+					)
+				)
+				.join("");
+		} else if (friendListContainer && data.friends && data.friends.length === 0) {
+			friendListContainer.innerHTML =
+				'<p style="opacity: 0.7;">It\'s a lonely world...</p>';
 		}
 	} catch (error) {
-		console.error('Erreur lors de la récupération de la liste d\'amis:', error);
+		console.error("Erreur lors de la récupération de la liste d'amis:", error);
 	}
 }
 
 async function fetchPilot(query, container) {
 	try {
-		const userId = await getUserIdFromCookieAPI();
-		const response = await fetch(`/api/user-service/search_pilots/?query=${encodeURIComponent(query)}&user_id=${encodeURIComponent(userId)}`);
+		const response = await fetch(`/api/user-service/search_pilots/?query=${encodeURIComponent(query)}`, {
+			method: "GET",
+			credentials: "include",
+		});
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
 		const data = await response.json();
-		console.log('Search results:', data.pilots);
+		console.log("Search results:", data.pilots);
 
 		if (container) {
 			if (data.pilots.length === 0) {
 				container.innerHTML = '<p>Maybe this pilot crashed or went far far far away...</p>';
 			} else {
 				container.innerHTML = data.pilots
-					.map((pilot) => createPilotItem(pilot.is_connected ? 'Online' : 'Offline', pilot.username, pilot.is_connected ? 'text-success' : 'text-danger'))
-					.join('');
+					.map((pilot) => createPilotItem(
+						pilot.is_connected ? "Online" : "Offline",
+						pilot.username,
+						pilot.is_connected ? "text-success" : "text-danger"
+					))
+					.join("");
 			}
 		}
 	} catch (error) {
-		console.error('Error searching pilots:', error);
+		console.error("Error searching pilots:", error);
 	}
 }
