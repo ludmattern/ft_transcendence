@@ -123,5 +123,6 @@ export async function leaveMatchmaking() {
 	};
 
 	ws.send(JSON.stringify(payload));
+	console.log('payload :', payload);
 	console.log('Sent \'leave matchmaking\' via WebSocket');
 }

@@ -73,6 +73,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             author = self.user_id
 
             if message_type == "chat_message":
+                data["author"] = author
                 await self.channel_layer.group_send("chat_service", data)
                 logger.info(f"Message général relayé à 'chat_service' depuis {author}")
 
@@ -171,7 +172,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                     {
                         "type": "matchmaking_event",
                         "action": action,
-                        "user_id": self.user_id,
+                        "user_id": str(self.user_id),
                         "room_code": room_code,
                     },
                 )
