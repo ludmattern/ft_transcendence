@@ -284,3 +284,24 @@
 	opacity: 0.8;
 	transition: all 0.15s;
 }
+
+
+.menu3 {
+	width: 100%;
+	height: 100%;
+}
+
+.bluescreen{
+	height: 100%;
+	width: 100%;
+	filter:  brightness(0.6) contrast(1.1);
+	display: none;
+
+}
+
+.spinner-slow-big {
+    width: 5rem;
+    height: 5rem;
+    border-width: 0.5rem;
+    animation-duration: 2s;
+  }
