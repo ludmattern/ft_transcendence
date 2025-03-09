@@ -81,7 +81,7 @@ async function handleBlockAction(author) {
 	ws.send(JSON.stringify(payload));
 }
 
-function handleInviteAction(author) {
+async function handleInviteAction(author) {
 	const payload = {
 		type: 'info_message',
 		action: 'private_game_invite',
@@ -89,6 +89,13 @@ function handleInviteAction(author) {
 		timestamp: new Date().toISOString(),
 	};
 	ws.send(JSON.stringify(payload));
+	const config = {
+		gameMode: 'private',
+		action: 'create',
+		matchkey: await getUserIdFromCookieAPI(),
+		type: 'fullScreen',
+	};
+	playGame(config);
 }
 
 async function handleProfileAction(author) {

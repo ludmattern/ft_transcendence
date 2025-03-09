@@ -38,6 +38,7 @@ from service.views import jwt_required
 
 
 @csrf_exempt
+@jwt_required 
 def is_friend(request):
     logger.info("Checking if two users are friends")
     if request.method != "POST":
