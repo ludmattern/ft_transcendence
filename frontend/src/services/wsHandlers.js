@@ -8,6 +8,7 @@ import componentManagers from '/src/index.js';
 import { tournamentCreation } from '/src/components/pong/play/tournamentCreation.js';
 import { emit } from '/src/services/eventEmitter.js';
 import { updateOnlinePlayersUI } from '/src/components/pong/play/onlineTournamentCreation.js';
+import { playGame } from '/src/components/pong/play/utils.js';
 
 const handleLogout = () => {
 	console.warn('Déconnexion détectée via WebSocket Heartbeat');
@@ -56,6 +57,15 @@ const handleInfoMessage = async (data) => {
 		emit('updateBracket');
 	} else if (data.action === 'leavingLobby' || (data.info && data.action === 'You have been kicked.')) {
 		emit('leavingLobby');
+	} else if (data.action === 'accept_private_game_invite') {
+		await updateAndCompareInfoData();
+		const config = {
+			gameMode: 'private',
+			action: 'join',
+			matchkey: data.recipient,
+			type: 'fullScreen',
+		};
+		playGame(config);
 	} else if (data.action) {
 		await updateAndCompareInfoData();
 		emit('updateFriendsList');

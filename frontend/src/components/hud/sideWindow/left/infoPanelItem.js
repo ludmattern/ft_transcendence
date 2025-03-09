@@ -2,7 +2,6 @@ import { createComponent } from '/src/utils/component.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { showContextMenu } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { handleFriendAction } from '/src/components/hud/sideWindow/left/contextMenu.js';
-import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { ws } from '/src/services/websocket.js';
 import { handleRoute } from '/src/services/router.js';
 
@@ -42,7 +41,7 @@ export const infoPanelItem = createComponent({
 				behaviorTournamentGame(el);
 				break;
 			case 'private_game_invite':
-				behaviorPrivateGame();
+				behaviorPrivateGame(el, item);
 				break;
 			case 'miscellaneous':
 				behaviorMiscellaneous();
@@ -165,22 +164,36 @@ function behaviorTournamentGame(el) {
 }
 
 function behaviorPrivateGame(el, item) {
-	// const acceptButton = el.querySelector("#accept-action");
-	// const refuseButton = el.querySelector("#refuse-action");
-	// if (acceptButton) {
-	//   acceptButton.addEventListener("click", () => {
-	//     console.log(`Accepted ${item.inviter}'s request.`);
-	//     // Logique pour accepter la demande
-	//   });
-	// }
-	// if (refuseButton) {
-	//   refuseButton.addEventListener("click", () => {
-	//     console.log(`Refused ${item.inviter}'s request.`);
-	//     // Logique pour refuser la demande
-	//   });
-	// }
+	const acceptButton = el.querySelector("#accept-action");
+	const refuseButton = el.querySelector("#refuse-action");
+	if (acceptButton) {
+	  acceptButton.addEventListener("click", () => {
+	    console.log(`Accepted ${item.inviter}'s request.`);
+		const payload = {	
+			type: 'info_message',
+			action: 'accept_private_game_invite',
+			recipient: item.inviter_id,
+			timestamp: new Date().toISOString(),
+		};
+	    ws.send(JSON.stringify(payload));
+	  });
+	  
+	}
+	if (refuseButton) {
+	  refuseButton.addEventListener("click", () => {
+	    console.log(`Refused ${item.inviter}'s request.`);
+		const payload = {	
+			type: 'info_message',
+			action: 'refuse_private_game_invite',
+			recipient: item.inviter_id,
+			timestamp: new Date().toISOString(),
+		};
+		ws.send(JSON.stringify(payload));
+	  });
+	}
 }
 
+// Will be deleted imo
 function behaviorMiscellaneous(el, item) {
 	// const discardButton = el.querySelector("#discard-action");
 	// if (discardButton) {

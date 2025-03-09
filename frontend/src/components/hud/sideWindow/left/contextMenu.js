@@ -49,6 +49,7 @@ export const contextMenu = createComponent({
 /**
  * Gestion des actions du menu contextuel.
  */
+
 export async function handleFriendAction(isFriend, author) {
 	let action;
 	if (isFriend) {
@@ -68,6 +69,7 @@ export async function handleFriendAction(isFriend, author) {
 	ws.send(JSON.stringify(payload));
 }
 
+
 async function handleBlockAction(author) {
 	const payload = {
 		type: 'info_message',
@@ -80,7 +82,13 @@ async function handleBlockAction(author) {
 }
 
 function handleInviteAction(author) {
-	console.log(`Inviting ${author} to a game...`);
+	const payload = {
+		type: 'info_message',
+		action: 'private_game_invite',
+		recipient: author,
+		timestamp: new Date().toISOString(),
+	};
+	ws.send(JSON.stringify(payload));
 }
 
 async function handleProfileAction(author) {
