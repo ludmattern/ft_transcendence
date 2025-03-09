@@ -23,7 +23,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
         action = event.get("action")
         user_id = event.get("user_id")
-        room_code = event.get("room_code")
+        room_code = str(event.get("room_code"))
 
         if room_code:
             if action == "join":

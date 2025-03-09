@@ -36,6 +36,7 @@ export async function gameModeSelector(config) {
 		} else if (config.action === 'join') {
 			ws.send(
 				JSON.stringify({
+					type: 'private_event',
 					action: 'join',
 					subaction: 'accept',
 					room_code: config.matchkey,

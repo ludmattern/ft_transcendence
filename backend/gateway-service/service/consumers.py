@@ -173,7 +173,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                         "type": "matchmaking_event",
                         "action": action,
                         "user_id": str(self.user_id),
-                        "room_code": room_code,
+                        "room_code": str(room_code),
                     },
                 )
                 logger.info(
