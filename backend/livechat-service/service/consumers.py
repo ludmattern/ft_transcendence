@@ -898,6 +898,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         },
                     )
                     return
+
                 else:
                     await self.channel_layer.group_send(
                         f"user_{author_id}",
@@ -937,8 +938,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if await database_sync_to_async(qs.exists)():
                 relation = await database_sync_to_async(qs.first)()
                 if relation.status == "pending":
-                    relation.status = "accepted"
-                    await database_sync_to_async(relation.save)()
+                    await database_sync_to_async(relation.delete)()
+
                 await self.channel_layer.group_send(f"user_{author_id}",{"type": "info_message","info": f"Private game invite accepted by {recipient_id}",},)
                 await self.channel_layer.group_send(f"user_{author_id}", event)
                 await self.channel_layer.group_send(f"user_{recipient_id}",{"type": "info_message","info": f"Private game invite accepted by {author_id}",},)
@@ -963,8 +964,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if await database_sync_to_async(qs.exists)():
                 relation = await database_sync_to_async(qs.first)()
                 if relation.status == "pending":
-                    relation.status = "rejected"
-                    await database_sync_to_async(relation.save)()
+                    await database_sync_to_async(relation.delete)()
                 await self.channel_layer.group_send(f"user_{author_id}",{"type": "info_message","info": f"Private game invite rejected by {recipient_id}",},)
                 await self.channel_layer.group_send(f"user_{author_id}", event)
                 await self.channel_layer.group_send(f"user_{recipient_id}",{"type": "info_message","info": f"Private game invite rejected by {author_id}",},)
