@@ -168,6 +168,32 @@ class ManualTournamentParticipants(models.Model):
         return f"{self.user.username} in {self.tournament.name} ({self.status})"
 
 
+class ManualPrivateGames(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="private_games_as_user")
+    recipient = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="private_games_as_recipient")
+    initiator = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="private_games_as_initiator")
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("pending", "Pending"),
+            ("accepted", "Accepted"),
+            ("rejected", "Rejected"),
+            ("expired", "Expired"),
+        ],
+        default="pending",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "private_games"
+        managed = True
+        constraints = [models.UniqueConstraint(fields=["user", "recipient"], name="unique_private_game")]
+
+    def __str__(self):
+        return f"Private game between {self.user.username} and {self.recipient.username} ({self.status})"
+
+# Not used so far
 class ManualNotifications(models.Model):
     id = models.AutoField(primary_key=True)
     sender = models.ForeignKey(

@@ -8,19 +8,20 @@ from .models import (
     ManualFriendsRelations,
     ManualTournamentParticipants,
     TournamentMatch,
+    ManualPrivateGames,
 )
 from service.views import jwt_required
 logger = logging.getLogger(__name__)
 
 @jwt_required 
 def info_getter(request):
-    
     if request.method != "GET":
         return JsonResponse(
             {"success": False, "error": "Invalid request method"}, status=405
         )
 
     user = request.user
+    logger.info(f"Current user: {user.id} - {user.username}")
 
     friend_requests = (
         ManualFriendsRelations.objects.filter(status="pending")
@@ -65,20 +66,32 @@ def info_getter(request):
 
     logger.info(f"Tournament invite data: {tournament_invite_data}")
 
-    # private_game_invite_data = [
-    #     {
-    #         "type": "private_game_invite",
-    #         "inviter_id": ,
-    #         "inviter": ,
-    #         "actions": "choice"
-    #     }
-    #     for private_game_invite in pending_private_game_invites
-    # ]
+    pending_private_game_invites = ManualPrivateGames.objects.filter(
+        (Q(user=user, recipient__gt=user) | Q(recipient=user, user__lt=user)) & ~Q(initiator=user),
+        status="pending"
+    ).select_related("initiator")
+
+
+
+    logger.debug(f"Pending private game invites query: {pending_private_game_invites.query}")
+    logger.info(f"Pending private game invites: {pending_private_game_invites}")
+
+    private_game_invite_data = [
+        {
+            "type": "private_game_invite",
+            "inviter_id": invite.initiator.id,
+            "inviter": invite.initiator.username,
+            "actions": "choice",
+        }
+        for invite in pending_private_game_invites
+    ]
+
+    logger.info(f"Private game invite data: {private_game_invite_data}")
 
     if not user.current_tournament_id:
         logger.info("No current tournament")
         return JsonResponse(
-            {"success": True, "info": friend_request_data + tournament_invite_data}
+            {"success": True, "info": friend_request_data + tournament_invite_data + private_game_invite_data}
         )
 
     next_ready_matches = TournamentMatch.objects.filter(
@@ -103,7 +116,7 @@ def info_getter(request):
 
     response_data = {
         "success": True,
-        "info": friend_request_data + tournament_invite_data + next_match_data,
+        "info": friend_request_data + tournament_invite_data + next_match_data + private_game_invite_data,
     }
 
     logger.info(f"Response data: {json.dumps(response_data, indent=4)}")

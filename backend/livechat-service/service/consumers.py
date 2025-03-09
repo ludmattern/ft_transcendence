@@ -7,6 +7,7 @@ from .models import (
     ManualFriendsRelations,
     ManualTournament,
     ManualBlockedRelations,
+    ManualPrivateGames,
 )
 from asgiref.sync import sync_to_async  # type: ignore
 
@@ -845,10 +846,75 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     f"user_{author_id}",
                     {"type": "error_message", "error": "User not found."},
                 )
+                
         elif str(action) == "private_game_invite":
             logger.info(f"Private game invite received: {event}")
             recipient_id = event.get("recipient")
             author_id = event.get("author")
+
+            if str(recipient_id) == str(author_id):
+                await self.channel_layer.group_send(
+                    f"user_{author_id}",
+                    {
+                        "type": "error_message",
+                        "error": f"Cannot send private game invite to yourself.",
+                    },
+                )
+                return;
+
+            if await is_blocked(author_id, recipient_id):
+                message = {
+                    "type": "error_message",
+                    "error": "You cannot send a private game invite to this user.",
+                }
+                await self.channel_layer.group_send(f"user_{author_id}", message)
+                return
+            
+            author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
+            
+                # Ensure `initiator` is always the one sending the invite
+            initiator = author_user
+            recipient = recipient_user
+
+            if author_user.id > recipient_user.id:
+                user, recipient = recipient_user, author_user
+            else:
+                user, recipient = author_user, recipient_user
+
+            # Check if a private game invite already exists in either direction
+            qs = ManualPrivateGames.objects.filter(
+                models.Q(initiator=user, recipient=recipient)
+                | models.Q(initiator=recipient, recipient=user)
+            )
+
+            if await database_sync_to_async(qs.exists)():
+                relation = await database_sync_to_async(qs.first)()
+                existing_initiator  = await database_sync_to_async(
+                    lambda: relation.initiator_id
+                )()
+
+                if str(existing_initiator) != str(author_id):
+                    await self.channel_layer.group_send(
+                        f"user_{author_id}",
+                        {
+                            "type": "info_message",
+                            "info": f"Private game invite already sent to {recipient_user.username}.",
+                        },
+                    )
+                    return
+                else:
+                    await self.channel_layer.group_send(
+                        f"user_{author_id}",
+                        {
+                            "type": "info_message",
+                            "info": f"Private game invite already received from {recipient_user.username}.",
+                        },
+                    )
+                    return
+            else:
+                await database_sync_to_async(ManualPrivateGames.objects.create)(initiator=initiator, user=user, recipient=recipient, status="pending")
+
             await self.channel_layer.group_send(
                 f"user_{author_id}",
                 {
@@ -857,13 +923,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 },
             )
             await self.channel_layer.group_send(f"user_{recipient_id}", event)
-            await self.channel_layer.group_send(
-                f"user_{recipient_id}",
-                {
-                    "type": "info_message",
-                    "info": f"Private game invite received from {author_id}",
-                },
-            )
+            await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"Private game invite received from {author_id}",},)
             logger.info(f"Invite private game sent to user_{recipient_id}")
         else:
             logger.warning(f"Unknown action: {action}")

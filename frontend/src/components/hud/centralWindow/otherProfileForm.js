@@ -114,6 +114,7 @@ export const otherProfileForm = createComponent({
 				const payload = {
 					type: 'info_message',
 					action: 'private_game_invite',
+					author: await getUserIdFromCookieAPI(),
 					recipient: profile_id,
 					timestamp: new Date().toISOString(),
 				};

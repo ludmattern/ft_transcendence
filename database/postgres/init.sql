@@ -95,6 +95,19 @@ CREATE TABLE
 	);
 
 CREATE TABLE
+	IF NOT EXISTS private_games (
+		id SERIAL PRIMARY KEY, -- Django requires a primary key
+		user_id INT NOT NULL,
+		recipient_id INT NOT NULL,
+		initiator_id INT NOT NULL, -- Ajout de la colonne pour l'initiateur de la demande
+		status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'accepted', 'rejected'
+		created_at TIMESTAMP NOT NULL DEFAULT NOW (),
+		FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+		FOREIGN KEY (recipient_id) REFERENCES users (id) ON DELETE CASCADE,
+		UNIQUE (user_id, recipient_id) -- Ensures no duplicate friendships
+	);
+
+CREATE TABLE
 	IF NOT EXISTS notifications (
 		id SERIAL PRIMARY KEY,
 		sender_id INT NOT NULL,
