@@ -247,13 +247,16 @@ class BasePongGame:
         self.state["ball"]["vx"] = 0
         self.state["ball"]["vy"] = 0
         self.state["ball"]["vz"] = 0
-
+        
     def to_dict(self):
         return {
             "ball": self.state["ball"],
             "players": {str(k): v for k, v in self.state["players"].items()},
             "scores": {str(k): v for k, v in self.state["scores"].items()},
-            "user_scores": self.user_scores,
+            "user_scores": {
+                self.player1_id: self.user_scores.get(self.player1_id, 0),
+                self.player2_id: self.user_scores.get(self.player2_id, 0),
+            },
             "game_over": self.game_over,
             "ball_hit_paddle": self.ball_hit_paddle,
             "ball_hit_wall": self.ball_hit_wall,

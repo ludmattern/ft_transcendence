@@ -5,9 +5,18 @@ import { endGameScreen, showCountdown } from '/src/components/midScreen.js';
 import * as THREE from 'https://esm.sh/three';
 import componentManagers from '/src/index.js';
 import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+
+
+//mettre cette classe asynchone 
+async function getid()
+{
+	return await getUserIdFromCookieAPI();
+}
 
 class GameManager {
-	constructor() {
+	constructor()  {
+		this.gameMode = null;
 		this.activeGame = null;
 		this.activeKeys = {};
 		this.moveInterval = null;
@@ -17,7 +26,9 @@ class GameManager {
 			this.activeKeys[e.key] = true;
 			this.startMovement('local');
 		};
-
+		this.initClientData() 
+		this.clientId = null;
+		this.clientName = null;
 		this.localKeyupHandler = (e) => {
 			delete this.activeKeys[e.key];
 			if (Object.keys(this.activeKeys).length === 0) {
@@ -38,7 +49,10 @@ class GameManager {
 			}
 		};
 	}
-
+	async initClientData() {
+		this.clientId = await getUserIdFromCookieAPI();
+		this.clientName = await getUsername(this.clientId);
+	}
 	startMovement(mode) {
 		if (this.moveInterval) return;
 
@@ -105,7 +119,7 @@ class GameManager {
 	startGame(gameConfig) {
 		console.log('Starting game with config:', gameConfig);
 		componentManagers['HUD'].unloadComponent('pongTuto');
-
+		this.gameMode = gameConfig.mode;
 		if (this.activeGame) this.endGame();
 
 		this.activeGame = gameConfig;
@@ -116,6 +130,7 @@ class GameManager {
 
 		let player1 = gameConfig.side === 'left' ? gameConfig.user_id : gameConfig.opponent_id;
 		let player2 = gameConfig.side === 'right' ? gameConfig.user_id : gameConfig.opponent_id;
+		console.log('player1:', player1, 'player2:', player2);
 
 		if (gameConfig.mode === 'local') {
 			document.addEventListener('keydown', this.localKeydownHandler);
@@ -222,18 +237,33 @@ class GameManager {
 			}
 		}
 		if (!gameState || !gameState.user_scores) return;
+		if (this.gameMode === 'local') {
+			
+				const players = Object.keys(gameState.user_scores);
+				const scores = Object.values(gameState.user_scores);
+				const score1 = scores[0];
+				const score2 = scores[1];
+				const scoreTextEl = document.getElementById('scoreText');
+				if (scoreTextEl) 
+				scoreTextEl.textContent = `${this.username1} ${score1}  -  ${score2} ${this.username2}`;
+		} else {
+			let oppennentName = null;
+			const scores = gameState.user_scores;
 
-		const players = Object.keys(gameState.user_scores);
-		const scores = Object.values(gameState.user_scores);
+			const clientScore = scores[this.clientId] ?? 0;
 
-		if (players.length >= 2) {
-			const score1 = scores[0];
-			const score2 = scores[1];
+			const opponentId = Object.keys(scores).find(id => id !== this.clientId);
+			const opponentScore = opponentId ? scores[opponentId] : 0;
+			
 			const scoreTextEl = document.getElementById('scoreText');
 
-			if (scoreTextEl) {
-				scoreTextEl.textContent = `${this.username1} ${score1}  -  ${score2} ${this.username2}`;
-			}
+			if (this.username1 === this.clientName) 
+				oppennentName = this.username2;
+			else
+				oppennentName = this.username1;
+
+			if (scoreTextEl) 
+				scoreTextEl.innerHTML = `<strong>You</strong> ${clientScore}  -  ${opponentScore} ${oppennentName}`;
 		}
 	}
 
@@ -291,6 +321,10 @@ export async function getUsername(playerId) {
 		console.error('Error fetching username:', error);
 		return `${playerId}`;
 	}
+}
+
+async function username() {
+	return await getUsername(await getUserIdFromCookieAPI());
 }
 
 function triggerBallColorChange() {

@@ -30,7 +30,7 @@ export async function initializeWebSocket(userId) {
 
 	ws.onmessage = async (event) => {
 		const data = JSON.parse(event.data);
-		// console.log('Message complet reçu :', data);
+		console.log('Message complet reçu :', data);
 
 		const handler = messageHandlers[data.type];
 		if (handler) {
