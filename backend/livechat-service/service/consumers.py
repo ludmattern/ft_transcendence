@@ -481,6 +481,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         {
                             "type": "info_message",
                             "action": "updatePlayerList",
+                            "subaction": "join_tournament",
                             "tournament_id": tournament.id,
                             "player": recipient_username,
                         },

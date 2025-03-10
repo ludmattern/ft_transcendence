@@ -49,7 +49,18 @@ const handleMatchFound = (data) => {
 };
 
 const handleInfoMessage = async (data) => {
+	console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO Info message reçu OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO :', data);
 	if (data.action === 'updatePlayerList') {
+		if (data.subaction === "join_tournament") {
+			console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
+			handleRoute('/pong/play/tournament-creation');
+			componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
+			const tournamentData = await getCurrentTournamentInformation();
+			updateOnlinePlayersUI(tournamentData);
+			emit('updatePlayerList', tournamentData);
+			await updateAndCompareInfoData();
+			return;
+		}
 		const tournamentData = await getCurrentTournamentInformation();
 		emit('updatePlayerList', tournamentData);
 		await updateAndCompareInfoData();
