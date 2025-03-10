@@ -11,8 +11,9 @@ import { updateOnlinePlayersUI } from '/src/components/pong/play/onlineTournamen
 import { playGame } from '/src/components/pong/play/utils.js';
 
 const handleLogout = () => {
-	console.warn('Déconnexion détectée via WebSocket Heartbeat');
-	logoutUser();
+	if (!isClientAuthenticated()) {
+		logoutUser();
+	}
 };
 
 const handleGameState = (data) => {

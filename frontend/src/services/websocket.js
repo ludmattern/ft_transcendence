@@ -1,5 +1,5 @@
 import { messageHandlers } from '/src/services/wsHandlers.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { getInfo } from '/src/services/infoStorage.js';
 
 export let ws = null;
 let isWsConnected = false;
