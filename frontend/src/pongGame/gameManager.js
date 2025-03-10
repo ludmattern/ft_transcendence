@@ -26,7 +26,6 @@ class GameManager {
 			this.activeKeys[e.key] = true;
 			this.startMovement('local');
 		};
-		this.initClientData() 
 		this.clientId = null;
 		this.clientName = null;
 		this.localKeyupHandler = (e) => {
@@ -117,6 +116,8 @@ class GameManager {
 	}
 
 	startGame(gameConfig) {
+		this.initClientData() 
+
 		console.log('Starting game with config:', gameConfig);
 		componentManagers['HUD'].unloadComponent('pongTuto');
 		this.gameMode = gameConfig.mode;
