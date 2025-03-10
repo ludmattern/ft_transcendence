@@ -9,9 +9,12 @@ class AuthConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add("auth_service", self.channel_name)
         logger.info("Connecté au groupe auth_service (channel: %s)", self.channel_name)
 
-    async def disconnect(self):
+    async def disconnect(self, close_code):
         await self.channel_layer.group_discard("auth_service", self.channel_name)
         logger.info("Déconnecté du groupe auth_service")
 
-    async def logout_message(self):
-        return
+    async def logout_message(self, event):
+        await self.send_json({
+            "type": "z",
+            "message": "Your session has been invalidated.",
+        })

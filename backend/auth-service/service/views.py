@@ -235,6 +235,8 @@ def send_2fa_sms(phone_number, code):
 
 # --- Vues de connexion/déconnexion ---
 
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 @csrf_exempt
 def login_view(request):
@@ -296,17 +298,32 @@ def login_view(request):
             },
             status=200,
         )
-
     cookie_token = request.COOKIES.get("access_token")
+    logger.info(f"User {user.id}: token_expiry={user.token_expiry}, now_utc={now_utc}, cookie_token={cookie_token}, session_token={user.session_token}")
+
     if user.token_expiry and user.token_expiry > now_utc:
+        logger.info(f"User {user.id}: session is still valid")
         if not cookie_token or cookie_token != user.session_token:
+            logger.info(f"User {user.id}: session token mismatch, invalidating session")
             user.token_expiry = None
             user.session_token = None
             user.save()
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f"user_{user.id}",
+                {
+                    "type": "logout",
+                    "message": "session replaced",
+                }
+            )
         else:
+            logger.info(f"User {user.id}: already connected")
             return JsonResponse(
                 {"success": False, "message": "User is already connected"}, status=403
             )
+    else:
+        logger.info(f"User {user.id}: no active session or token expired")
+
 
     token_str, expiry = generate_session_token(user)
     user.token_expiry = expiry
