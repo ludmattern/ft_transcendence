@@ -35,7 +35,7 @@ export function toggleFreeView() {
 }
 
 // =============== OARALAX HANDLER ===============
-export function onBaseMouseMove(event) {
+export function onBaseMouseMove(event = { movementX: 0.1, movementY: 0.1 }) {
 	if (Store.isCameraMoving) return;
 
 	const maxRotationAngle = Math.PI / 3;

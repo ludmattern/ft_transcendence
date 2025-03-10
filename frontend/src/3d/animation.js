@@ -89,6 +89,7 @@ export function animateCameraToTarget(endPosition, endRotation, nb) {
 			document.addEventListener('mousemove', onBaseMouseMove, false);
 			Store.isCameraMoving = false;
 			Store.camera.updateMatrixWorld(true);
+			onBaseMouseMove();
 		},
 	});
 }
