@@ -31,7 +31,8 @@ def get_friends(request):
         return JsonResponse({"friends": list(friends)}, status=200)
 
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        logger.error("An error occurred while retrieving friends", exc_info=True)
+        return JsonResponse({"error": "An internal error has occurred"}, status=500)
 
 
 @csrf_exempt
