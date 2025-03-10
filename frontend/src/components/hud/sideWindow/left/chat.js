@@ -2,6 +2,10 @@
 
 import { ws } from '/src/services/websocket.js';
 
+const messageHistory = [];
+let historyIndex = -1;
+let draftMessage = "";
+
 export async function setupChatInput() {
 	const container = document.querySelector('#l-tab-content-container');
 	if (!container) {
@@ -11,15 +15,15 @@ export async function setupChatInput() {
 
 	if (!container.querySelector('#message-input-container')) {
 		const inputContainer = `
-		  <div class="d-flex" 
-			  style="flex-wrap: wrap; background: #ffffff07; position: absolute; width: 100%;" 
-			  id="message-input-container">
-		  <input type="text" id="message-input" placeholder="Enter your message..." 
-				  class="form-control w-50 me-2 p-3" 
-				  style="flex: auto; color: var(--content-color);" />
-		  <button id="chat-send-button" class="btn btn-sm">Send</button>
-		  </div>
-	  `;
+          <div class="d-flex" 
+              style="flex-wrap: wrap; background: #ffffff07; position: absolute; width: 100%;" 
+              id="message-input-container">
+          <input type="text" id="message-input" placeholder="Enter your message..." 
+                  class="form-control w-50 me-2 p-3" 
+                  style="flex: auto; color: var(--content-color);" />
+          <button id="chat-send-button" class="btn btn-sm">Send</button>
+          </div>
+      `;
 		container.insertAdjacentHTML('beforeend', inputContainer);
 	}
 
@@ -29,13 +33,11 @@ export async function setupChatInput() {
 	function sendMessage(message) {
 		const privateMessageMatch = message.match(/^@(\w+)\s+(.*)/);
 
-		// Common payload structure
 		const payload = {
 			timestamp: new Date().toISOString(),
 		};
 
 		if (privateMessageMatch) {
-			// Private message case
 			const recipient = privateMessageMatch[1];
 			const privateMessage = privateMessageMatch[2];
 
@@ -44,7 +46,6 @@ export async function setupChatInput() {
 			payload.recipient = recipient;
 			payload.channel = 'private';
 		} else {
-			// General chat message case
 			payload.type = 'chat_message';
 			payload.message = message;
 			payload.channel = 'general';
@@ -52,13 +53,34 @@ export async function setupChatInput() {
 
 		console.log('Sending message:', payload);
 
-		// Send the payload
+		messageHistory.push(message);
+		historyIndex = messageHistory.length;
+		draftMessage = "";
+
 		ws.send(JSON.stringify(payload));
 	}
 
 	if (inputField) {
 		inputField.addEventListener('keydown', (event) => {
-			if (event.key === 'Enter') {
+			if (event.key === 'ArrowUp') {
+				if (historyIndex === messageHistory.length) {
+					draftMessage = inputField.value;
+				}
+				if (historyIndex > 0) {
+					historyIndex--;
+					inputField.value = messageHistory[historyIndex];
+				}
+				event.preventDefault();
+			} else if (event.key === 'ArrowDown') {
+				if (historyIndex < messageHistory.length - 1) {
+					historyIndex++;
+					inputField.value = messageHistory[historyIndex];
+				} else if (historyIndex === messageHistory.length - 1) {
+					historyIndex++;
+					inputField.value = draftMessage;
+				}
+				event.preventDefault();
+			} else if (event.key === 'Enter') {
 				event.preventDefault();
 				if (inputField.value.trim() !== '') {
 					sendMessage(inputField.value.trim());
