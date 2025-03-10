@@ -1,6 +1,7 @@
 // src/components/hud/chat.js
 
 import { ws } from '/src/services/websocket.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 
 const messageHistory = [];
 let historyIndex = -1;
@@ -62,10 +63,6 @@ export async function setupChatInput() {
 
 	if (inputField) {
 		inputField.addEventListener('keydown', (event) => {
-			if (inputField.value.length >= 150 && event.key !== "Backspace" && event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
-				event.preventDefault();
-				return;
-			}
 			if (event.key === 'ArrowUp') {
 				if (historyIndex === messageHistory.length) {
 					draftMessage = inputField.value;
@@ -87,12 +84,14 @@ export async function setupChatInput() {
 			} else if (event.key === 'Enter') {
 				event.preventDefault();
 				const trimmedMessage = inputField.value.trim();
-				if (trimmedMessage !== '') {
+				if (trimmedMessage !== '' && trimmedMessage.length <= 150) {
 					sendMessage(trimmedMessage);
 					messageHistory.push(trimmedMessage); // Save only trimmed messages
 					historyIndex = messageHistory.length; // Reset index
 					inputField.value = '';
 				}
+				else
+					createNotificationMessage('Message is too long, 150 chars. max.', 2500, true);
 			}
 		});
 	}
@@ -106,6 +105,8 @@ export async function setupChatInput() {
 				historyIndex = messageHistory.length; // Reset index
 				inputField.value = '';
 			}
+			else
+				createNotificationMessage('Message is too long, 150 chars. max.', 2500, true);
 		});
 	}
 }
