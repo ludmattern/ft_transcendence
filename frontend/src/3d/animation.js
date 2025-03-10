@@ -17,7 +17,6 @@ export function switchwindow(screen) {
 		animateCameraToTarget(new THREE.Vector3(-2.559453657498437, 3.253545045816075, -0.7922370317858861), { x: Math.PI / 3.2, y: Math.PI / 5.5, z: -Math.PI / -12 }, 2);
 		Store.camera.updateMatrixWorld(true);
 	} else if (screen === 'race') {
-
 		animateCameraToTarget(new THREE.Vector3(1.9765430745879866, 3.434172967891374, -0.9419868064632663), { x: Math.PI / 3.2, y: Math.PI / -5.5, z: -Math.PI / 12 }, 3);
 	} else if (screen === 'game') {
 		animateCameraToTarget(new THREE.Vector3(-0.2, 5.257378802731586, -0.8900580859235202), { x: Math.PI / 3, y: 0, z: 0 }, 1);
@@ -79,7 +78,6 @@ export function animateCameraToTarget(endPosition, endRotation, nb) {
 			}
 			if (nb == 3) {
 				Store.menuElement3.classList.remove('active');
-				
 			}
 			Store.initialCameraRotation.x = Store.camera.rotation.x;
 			Store.initialCameraRotation.y = Store.camera.rotation.y;
