@@ -5,6 +5,7 @@ import { setupChatInput, removeChatInput } from '/src/components/hud/sideWindow/
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { escapeHtml } from '/src/components/hud/sideWindow/left/commMessage.js';
 
 /**
  * Charge dynamiquement le contenu de l'onglet spécifié.
@@ -134,7 +135,7 @@ function renderCommMessage(item, container, currentUserId) {
 	if (isSameAuthorAndChannel) {
 		const msgText = `
 	  <div class="message-text" style="margin-top: 0.5rem;">
-		  ${extendedItem.message}
+		  ${escapeHtml(extendedItem.message)}
 	  </div>
 	  `;
 		lastChild.querySelector('.message-content-wrapper').insertAdjacentHTML('beforeend', msgText);
@@ -182,6 +183,7 @@ export async function handleIncomingMessage(data) {
 
 	const activeTab = document.querySelector('.nav-link.active');
 	if (activeTab && activeTab.dataset.tab === 'comm') {
+		console.log('COMM message received:', data);
 		renderCommMessage(data, container, userId.toString());
 	} else {
 		if (data.channel === 'private') {

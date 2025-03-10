@@ -416,7 +416,6 @@ def abandon_local_tournament(request):
         if not tournament:
             return JsonResponse({"error": "Tournament not found or unauthorized"}, status=404)
 
-        user.tournament_status = "out"
         user.current_tournament_id = 0
         user.save()
         tournament.delete()
@@ -453,7 +452,7 @@ def create_local_tournament_view(request):
             )
             return JsonResponse({"error": "Invalid tournament size"}, status=400)
 
-        if user.tournament_status != "out":
+        if user.current_tournament_id != 0:
             error_msg = f"L'utilisateur {user.id} est déjà dans un tournoi actif."
             logger.warning(error_msg)
             return JsonResponse({"error": error_msg}, status=400)
@@ -552,7 +551,7 @@ def try_join_random_tournament(request):
         if not user:
             return JsonResponse({"message": "Unauthorized"}, status=401)
 
-        if user.tournament_status != "out":
+        if user.current_tournament_id != 0:
             return JsonResponse(
                 {"message": "User is already in a tournament"}, status=400
             )
@@ -614,7 +613,7 @@ def try_join_tournament_with_room_code(request):
         if not room_code:
             return JsonResponse({"message": "roomCode is required"}, status=400)
 
-        if user.tournament_status != "out":
+        if user.current_tournament_id != 0:
             return JsonResponse(
                 {"message": "User is already in a tournament"}, status=400
             )
