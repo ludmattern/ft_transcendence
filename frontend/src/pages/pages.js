@@ -7,7 +7,6 @@ import {
 	rightSideWindow,
 	logoutForm,
 	twoFAForm,
-	freeViewButton,
 	socialForm,
 	qrcode,
 	otherProfileForm,
@@ -119,7 +118,6 @@ export const hudPages = {
 	home: {
 		components: [...backgroundComponents, ...persistentComponents, ...globalComponents],
 	},
-	// home: { components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: "#freeView-container", component: freeViewButton }] },
 	race: {
 		components: [...backgroundComponents, ...persistentComponents, ...globalComponents],
 	},

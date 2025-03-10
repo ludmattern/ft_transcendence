@@ -1,15 +1,9 @@
 import { createComponent } from '/src/utils/component.js';
 import { initWireframeScene } from '/src/3d/wireframeScene.js';
 import { startAnimation } from '/src/components/hud/index.js';
+import { toggleFreeView } from '/src/3d/freeViewHandler.js';
+import { subscribe } from '/src/services/eventEmitter.js';
 
-/**
- * Génère un élément de navigation (onglet) avec un lien.
- *
- * @param {string} label - Le label de l'onglet
- * @param {number} value - La valeur ou l'identifiant de l'onglet
- * @param {boolean} active - Si l'onglet est actif
- * @returns {string} - HTML de l'onglet
- */
 function createNavItem(label, value, active = false) {
 	return `
     <li class="nav-item" data-tab="${value}">
@@ -20,17 +14,18 @@ function createNavItem(label, value, active = false) {
   `;
 }
 
-/**
- * Composant RightSideWindow
- */
 export const rightSideWindow = createComponent({
 	tag: 'rightSideWindow',
-
 	render: () => `
     <div class="d-flex flex-column">
       <div class="r-side-window right-side-window">
         <ul class="nav nav-tabs">
           ${createNavItem('OVERVIEW', 1, true)}
+          <li class="nav-item">
+            <span class="nav-link" id="free-view">
+              <a href="#">freeview</a>
+            </span>
+          </li>
           <li class="nav-item">
             <div class="container">
               <div class="right-side-window-expander active" id="r-sw-expander">
@@ -47,9 +42,8 @@ export const rightSideWindow = createComponent({
       </div>
     </div>
   `,
-
 	attachEvents: (el) => {
-		// Gestion de l'expansion et de la réduction
+		el.querySelector('#free-view').addEventListener('click', toggleFreeView);
 		const expanders = el.querySelectorAll('.right-side-window-expander');
 		const rightSideWindow = el.querySelector('.r-tab-content');
 
@@ -60,35 +54,33 @@ export const rightSideWindow = createComponent({
 			});
 		});
 
-		// Initialisation de la scène THREE.js
 		const wireframeDiv = el.querySelector('#wireframe');
 		if (wireframeDiv) {
-			initWireframeScene(); // Appelle la fonction pour créer la scène
+			initWireframeScene();
 		} else {
 			console.warn('Wireframe container not found in DOM.');
 		}
 
-		// Gestion des clics sur les onglets (si nécessaire)
 		const tabLinks = el.querySelectorAll('.r-side-window .nav-link a');
-		const tabContentContainer = el.querySelector('#r-tab-content');
-
 		tabLinks.forEach((link) => {
 			link.addEventListener('click', (event) => {
 				event.preventDefault();
-
 				const tabName = link.getAttribute('data-tab');
-
-				// Mise à jour des classes actives pour les onglets
 				tabLinks.forEach((tabLink) => {
 					tabLink.parentElement.classList.remove('active');
 				});
 				link.parentElement.classList.add('active');
-
-				// Logique pour gérer le changement d'onglet
 				if (tabName === 'overview') {
-					// Charger ou mettre à jour le contenu de l'onglet
+					// Logique pour gérer le changement d'onglet overview
 				}
 			});
+		});
+
+		subscribe('freeViewDisabled', () => {
+			const overviewLink = el.querySelector('a[data-tab="overview"]');
+			if (overviewLink) {
+				overviewLink.click();
+			}
 		});
 
 		const parentContainer = el.parentElement;

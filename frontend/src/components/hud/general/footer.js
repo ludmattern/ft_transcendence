@@ -1,5 +1,5 @@
 import { createComponent } from '/src/utils/component.js';
-import { addCameraRotationListener, toggleFreeView } from '/src/3d/freeViewHandler.js';
+import { addCameraRotationListener } from '/src/3d/freeViewHandler.js';
 import { startAnimation } from '/src/components/hud/index.js';
 
 let lastOffset = 198;
@@ -11,9 +11,6 @@ export const footer = createComponent({
 	render: () => `
 	<div class="row">
 	<div class="col-12">
-		<!-- Free View Button -->
-		<div id="freeView-container" class="d-flex justify-content-center">
-		</div>
 		<!-- Compass -->
 		<div class="body">
 		<div class="compass">

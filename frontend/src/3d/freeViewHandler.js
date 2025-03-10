@@ -1,6 +1,7 @@
 import * as THREE from 'https://esm.sh/three';
 import Store from './store.js';
 import { animateCameraBackToInitialPosition } from '/src/3d/animation.js';
+import { emit } from '/src/services/eventEmitter.js';
 
 // =============== ROTATE LISTENER HANDLER ===============
 export let cameraRotationEvent = 0;
@@ -86,6 +87,7 @@ export function disableFreeView() {
 	Store.menuElement3.style.pointerEvents = 'auto';
 	document.removeEventListener('mousemove', onFreeViewMouseMove, false);
 	document.addEventListener('mousemove', onBaseMouseMove, false);
+	emit('freeViewDisabled');
 }
 
 export function onFreeViewMouseMove(event) {

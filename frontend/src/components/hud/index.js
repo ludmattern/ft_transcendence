@@ -23,7 +23,6 @@ export { forgotPassword } from '/src/components/hud/centralWindow/forgotPassword
 export { header } from '/src/components/hud/general/header.js';
 export { headerIngame } from '/src/components/hud/general/headerIngame.js';
 export { footer } from '/src/components/hud/general/footer.js';
-export { freeViewButton } from '/src/components/hud/general/freeView.js';
 
 // SideWindow components
 //   left
