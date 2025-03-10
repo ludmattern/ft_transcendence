@@ -258,6 +258,19 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         logger.info(f"Déconnexion envoyée à l'utilisateur {self.user_id}")
         await self.close()
 
+    async def logout(self, event):
+        logger.info(f"Déconnexion envoyée à l'utilisateur {self.user_id}")
+        await self.send(
+            json.dumps(
+                {
+                    "type": "logout",
+                    "message": event["message"],
+                }
+            )
+        )
+        logger.info(f"Déconnexion envoyée à l'utilisateur {self.user_id}")
+        await self.close()
+
 
 async def fetch_user_id(cookies):
     async with httpx.AsyncClient(

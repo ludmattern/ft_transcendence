@@ -19,21 +19,18 @@ export const logoutForm = createComponent({
     </div>
   `,
 
-	// Ajouter les événements après le chargement
 	attachEvents: (el) => {
-		// Annuler la déconnexion
 		el.querySelector('#cancel-logout').addEventListener('click', (e) => {
 			e.preventDefault();
-			handleRoute(getPreviousRoute()); // Retour à la route précédente
+			handleRoute(getPreviousRoute());
 			console.info('Logout canceled. Returning to settings.');
 		});
 
-		// Confirmer la déconnexion
 		el.querySelector('#confirm-logout').addEventListener('click', async (e) => {
 			e.preventDefault();
 
 			try {
-				await logoutUser(); // Simule la déconnexion (appel API ou suppression de session)
+				await logoutUser();
 				console.info('User logged out successfully.');
 			} catch (error) {
 				console.warn('Error during logout:', error);

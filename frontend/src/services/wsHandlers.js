@@ -9,11 +9,11 @@ import { tournamentCreation } from '/src/components/pong/play/tournamentCreation
 import { emit } from '/src/services/eventEmitter.js';
 import { updateOnlinePlayersUI } from '/src/components/pong/play/onlineTournamentCreation.js';
 import { playGame } from '/src/components/pong/play/utils.js';
+import { isClientAuthenticated } from '/src/services/auth.js';
+import { logoutUser } from '/src/services/auth.js';
 
 const handleLogout = () => {
-	if (!isClientAuthenticated()) {
-		logoutUser();
-	}
+	handleRoute('/');
 };
 
 const handleGameState = (data) => {
