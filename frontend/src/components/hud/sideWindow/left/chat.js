@@ -62,6 +62,10 @@ export async function setupChatInput() {
 
 	if (inputField) {
 		inputField.addEventListener('keydown', (event) => {
+			if (inputField.value.length >= 150 && event.key !== "Backspace" && event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
+				event.preventDefault();
+				return;
+			}
 			if (event.key === 'ArrowUp') {
 				if (historyIndex === messageHistory.length) {
 					draftMessage = inputField.value;
@@ -82,8 +86,11 @@ export async function setupChatInput() {
 				event.preventDefault();
 			} else if (event.key === 'Enter') {
 				event.preventDefault();
-				if (inputField.value.trim() !== '') {
-					sendMessage(inputField.value.trim());
+				const trimmedMessage = inputField.value.trim();
+				if (trimmedMessage !== '') {
+					sendMessage(trimmedMessage);
+					messageHistory.push(trimmedMessage); // Save only trimmed messages
+					historyIndex = messageHistory.length; // Reset index
 					inputField.value = '';
 				}
 			}
@@ -92,8 +99,11 @@ export async function setupChatInput() {
 
 	if (sendButton) {
 		sendButton.addEventListener('click', () => {
-			if (inputField && inputField.value.trim() !== '') {
-				sendMessage(inputField.value.trim());
+			const trimmedMessage = inputField.value.trim();
+			if (trimmedMessage !== '' && trimmedMessage.length <= 150) {
+				sendMessage(trimmedMessage);
+				messageHistory.push(trimmedMessage); // Save only trimmed messages
+				historyIndex = messageHistory.length; // Reset index
 				inputField.value = '';
 			}
 		});

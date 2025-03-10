@@ -97,6 +97,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         logger.info("Déconnecté du groupe chat_service")
 
     async def chat_message(self, event):
+        logger.info(f"ChatConsumer.chat_message received event: {event}")
+        # Need to trim event's message size to 150 characters to avoid long messages
+        message = event.get("message")
+        if len(message) > 150:
+            message = message[:150] + "..."
+        event["message"] = message
         author_id = event.get("author")
         username = await get_username(author_id)
         profile_picture = await get_profile_picture(author_id)
@@ -147,6 +153,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         event["username"] = username
+
+        message = event.get("message")
+        if len(message) > 150:
+            message = message[:150] + "..."
+        event["message"] = message
 
         await self.channel_layer.group_send(f"user_{recipient_id}", event)
         await self.channel_layer.group_send(f"user_{author_id}", event)
