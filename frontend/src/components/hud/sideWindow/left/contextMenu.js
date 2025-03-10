@@ -1,19 +1,39 @@
-// contextMenu.js
 import { createComponent } from '/src/utils/component.js';
 import { waitForElement } from '/src/components/hud/utils/utils.js';
 import { ws } from '/src/services/websocket.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { handleRoute } from '/src/services/router.js';
 import { getUsername } from '/src/pongGame/gameManager.js';
+import { playGame } from '/src/components/pong/play/utils.js';
+
+function sendWsInfoMessage(action, recipient) {
+	const payload = {
+		type: 'info_message',
+		action,
+		recipient,
+		timestamp: new Date().toISOString(),
+	};
+	ws.send(JSON.stringify(payload));
+}
+
+function resolveUser(item) {
+	if (!item.author) {
+		return { author: item.inviter_id, username: item.inviter };
+	}
+	if (item.author === 'USER') {
+		return { author: item.recipient_id, username: item.recipient };
+	}
+	return { author: item.author, username: item.username };
+}
+
 export const contextMenu = createComponent({
 	tag: 'contextMenu',
 
-	// Génère le HTML du menu contextuel en fonction de l'item et d'un objet userStatus
 	render: (userStatus) => `
     <div id="context-menu" class="context-menu">
       <ul>
-        <li id="action-friend">${userStatus.isFriend ? 'Remove Friend' : 'Add Friend'}</li>
-        <li id="action-block">Block</li>
+        <li id="action-friend">${userStatus.is_friend ? 'Remove Friend' : 'Add Friend'}</li>
+        <li id="action-block">${userStatus.is_blocked && userStatus.can_unblock ? 'Unblock' : 'Block'}</li>
         <li id="action-invite">Invite</li>
         <li id="action-profile">Profile</li>
         <li id="action-message">Message</li>
@@ -21,74 +41,41 @@ export const contextMenu = createComponent({
     </div>
   `,
 
-	// Attache les événements aux boutons du menu
 	attachEvents: async (el, item, userStatus) => {
-		el.querySelector('#action-friend').addEventListener('click', () => {
-			handleFriendAction(userStatus.isFriend, item.author);
-			hideContextMenu();
-		});
-		el.querySelector('#action-block').addEventListener('click', () => {
-			handleBlockAction(item.author);
-			hideContextMenu();
-		});
-		el.querySelector('#action-invite').addEventListener('click', () => {
-			handleInviteAction(item.author);
-			hideContextMenu();
-		});
-		el.querySelector('#action-profile').addEventListener('click', () => {
-			handleProfileAction(item.author);
-			hideContextMenu();
-		});
-		el.querySelector('#action-message').addEventListener('click', () => {
-			handleMessageAction(item.username);
-			hideContextMenu();
+		const actions = {
+			'action-friend': () => handleFriendAction(userStatus.is_friend, item.author),
+			'action-block': () => handleBlockAction(item.author, userStatus.is_blocked),
+			'action-invite': () => handleInviteAction(item.author),
+			'action-profile': () => handleProfileAction(item.author),
+			'action-message': async () => await handleMessageAction(item.username),
+		};
+
+		Object.entries(actions).forEach(([id, actionFn]) => {
+			const element = el.querySelector(`#${id}`);
+			if (element) {
+				element.addEventListener('click', async () => {
+					await actionFn();
+					hideContextMenu();
+				});
+			}
 		});
 	},
 });
 
-/**
- * Gestion des actions du menu contextuel.
- */
-
-export async function handleFriendAction(isFriend, author) {
-	let action;
-	if (isFriend) {
-		action = 'remove_friend';
-		console.log(`Removing ${author} from friends...`);
-	} else {
-		action = 'send_friend_request';
-		console.log(`Adding ${author} to friends...`);
-	}
-	const payload = {
-		type: 'info_message',
-		action,
-		recipient: author,
-		timestamp: new Date().toISOString(),
-	};
-
-	ws.send(JSON.stringify(payload));
+export async function handleFriendAction(is_friend, author) {
+	const action = is_friend ? 'remove_friend' : 'send_friend_request';
+	console.log(`${is_friend ? 'Removing' : 'Adding'} ${author} ${is_friend ? 'from' : 'to'} friends...`);
+	sendWsInfoMessage(action, author);
 }
 
-
-async function handleBlockAction(author) {
-	const payload = {
-		type: 'info_message',
-		action: 'block_user',
-		recipient: author,
-		timestamp: new Date().toISOString(),
-	};
-
-	ws.send(JSON.stringify(payload));
+async function handleBlockAction(author, is_blocked) {
+	const action = is_blocked ? 'unblock_user' : 'block_user';
+	console.log(`${is_blocked ? 'Unblocking' : 'Blocking'} ${author}...`);
+	sendWsInfoMessage(action, author);
 }
 
 async function handleInviteAction(author) {
-	const payload = {
-		type: 'info_message',
-		action: 'private_game_invite',
-		recipient: author,
-		timestamp: new Date().toISOString(),
-	};
-	ws.send(JSON.stringify(payload));
+	sendWsInfoMessage('private_game_invite', author);
 	const config = {
 		gameMode: 'private',
 		action: 'create',
@@ -103,37 +90,35 @@ async function handleProfileAction(author) {
 	handleRoute(`/social/pilot=${username}`);
 }
 
-function handleMessageAction(author) {
-	console.log(`Messaging ${author}...`);
+async function handleMessageAction(username) {
+	console.log(`Messaging ${username}...`);
 
 	const activeTab = document.querySelector('.nav-link.active');
+	const setMessageInput = async () => {
+		const inputField = await waitForElement('#l-tab-content-container #message-input');
+		inputField.value = '@' + username + ' ';
+		inputField.focus();
+	};
+
 	if (activeTab && activeTab.dataset.tab !== 'comm') {
 		const commTab = document.querySelector('.nav-link[data-tab="comm"]');
 		if (commTab) {
 			commTab.click();
 		}
-		waitForElement('#l-tab-content-container #message-input')
-			.then((inputField) => {
-				inputField.value = '@' + author + ' ';
-				inputField.focus();
-			})
-			.catch((error) => {
-				console.error(error);
-			});
+		try {
+			await setMessageInput();
+		} catch (error) {
+			console.error(error);
+		}
 	} else {
 		const inputField = document.querySelector('#l-tab-content-container #message-input');
 		if (inputField) {
-			inputField.value = '@' + author + ' ';
+			inputField.value = '@' + username + ' ';
 			inputField.focus();
 		}
 	}
 }
 
-/**
- * Affiche le menu contextuel à la position du clic droit.
- * @param {Object} item - L'objet associé au message.
- * @param {MouseEvent} event - L'événement contextmenu.
- */
 export async function showContextMenu(item, event) {
 	console.log('showContextMenu', item, event);
 	event.preventDefault();
@@ -141,24 +126,19 @@ export async function showContextMenu(item, event) {
 
 	hideContextMenu();
 
-	if (!item.author) {
-		item.author = item.inviter_id;
-		item.username = item.inviter;
-	} else if (item.author === 'USER') {
-		item.author = item.recipient_id;
-		item.username = item.recipient;
+	const { author, username } = resolveUser(item);
+	item.author = author;
+	item.username = username;
+
+	const userStatus = await getRelationshipStatus(author);
+	if (!userStatus || !userStatus.success || userStatus.is_me) {
+		console.error('Error getting relationship status:', userStatus);
+		return;
 	}
-	const isFriend = await isUserFriend(item.author);
 
-	const userStatus = {
-		isFriend: isFriend,
-		isBlocked: false,
-	};
-
-	const menuHTML = contextMenu.render(item, userStatus);
+	const menuHTML = contextMenu.render(userStatus);
 	document.body.insertAdjacentHTML('beforeend', menuHTML);
 	const menuElement = document.getElementById('context-menu');
-
 	menuElement.style.left = event.pageX + 'px';
 	menuElement.style.top = event.pageY + 'px';
 	menuElement.style.display = 'block';
@@ -166,9 +146,6 @@ export async function showContextMenu(item, event) {
 	contextMenu.attachEvents(menuElement, item, userStatus);
 }
 
-/**
- * Cache et supprime le menu contextuel s'il existe.
- */
 export function hideContextMenu() {
 	const menuElement = document.getElementById('context-menu');
 	if (menuElement) {
@@ -182,19 +159,30 @@ document.addEventListener('click', (e) => {
 	}
 });
 
-export async function isUserFriend(otherUserId) {
-	console.log(`Checking if the current user is friends with ${otherUserId}...`);
-	const response = await fetch('/api/user-service/is-friend/', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		credentials: 'include', 
-		body: JSON.stringify({ otherUserId: otherUserId }),
-	});
-	const data = await response.json();
-	if (data.success) {
-		return data.is_friend;
-	} else {
-		console.log('Error getting friend status:', data.error);
-		return false;
+export async function getRelationshipStatus(otherUserId) {
+	console.log(`Checking relationship status for user ${otherUserId}...`);
+	try {
+		const response = await fetch('/api/user-service/get-relationship-status/', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			credentials: 'include',
+			body: JSON.stringify({ otherUserId }),
+		});
+		const data = await response.json();
+		if (data.success) {
+			console.log('Relationship status:', data);
+			return data;
+		} else {
+			console.error('Error getting relationship status:', data.error);
+			return null;
+		}
+	} catch (error) {
+		console.error('Fetch error:', error);
+		return null;
 	}
+}
+
+export async function isUserFriend(otherUserId) {
+	const status = await getRelationshipStatus(otherUserId);
+	return status ? status.is_friend : null;
 }

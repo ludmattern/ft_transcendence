@@ -13,7 +13,7 @@ from service.views import (
     delete_account,
     check_oauth_id,
 )
-from service.friends import is_friend, get_friends
+from service.friends import get_relationship_status, get_friends
 from service.profile import profile_info
 from service.info import info_getter
 from service.views_info_storage import (
@@ -30,7 +30,7 @@ urlpatterns = [
     path("profile/", profile_info, name="profile_info"),
     path("getUsername/", getUsername, name="getUsername"),
     path("info-getter/", info_getter, name="info_getter"),
-    path("is-friend/", is_friend, name="is_friend"),
+    path("get-relationship-status/", get_relationship_status, name="get_relationship_status"),
     path("get_game_history/", get_game_history, name="get_game_history"),
     path("get_profile/", get_profile, name="get_profile"),
     path(
