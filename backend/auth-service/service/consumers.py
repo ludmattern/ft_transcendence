@@ -3,7 +3,6 @@ from channels.generic.websocket import AsyncWebsocketConsumer  # type: ignore
 
 logger = logging.getLogger(__name__)
 
-
 class AuthConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()

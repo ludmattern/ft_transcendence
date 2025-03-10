@@ -2,7 +2,7 @@ FROM myapp-base
 
 COPY --chown=appuser:appuser backend/livechat-service/ /app/
 
-RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install -r /app/requirements.txt
 
 EXPOSE 3003
 

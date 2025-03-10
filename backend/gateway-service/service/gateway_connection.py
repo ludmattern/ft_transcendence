@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 async def connect_dummy_gateway():
     # Ajout du paramètre "dummy=true" dans l'URL
-    ws_url = "wss://gateway_service:3006/ws/gateway/?dummy=true"
+    ws_url = "wss://gateway-service:3006/wss/gateway/?dummy=true"
     while True:
         try:
             ssl_context = ssl.create_default_context()

@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 async def connect_dummy_chat():
-    ws_url = "wss://livechat_service:3003/ws/chat/"
+    ws_url = "wss://livechat-service:3003/wss/chat/"
     while True:
         try:
             ssl_context = ssl.create_default_context()

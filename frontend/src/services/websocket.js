@@ -11,7 +11,7 @@ export async function initializeWebSocket(userId) {
 		closeWebSocket();
 	}
 
-	const wsUrl = `wss://${window.location.host}/ws/gateway/`;
+	const wsUrl = `wss://${window.location.host}/wss/gateway/`;
 	console.log('Connexion WebSocket à :', wsUrl);
 	ws = new WebSocket(wsUrl);
 

@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 async def connect_dummy_matchmaking():
-    ws_url = "wss://matchmaking_service:3005/ws/matchmaking/"
+    ws_url = "wss://matchmaking-service:3005/wss/matchmaking/"
     while True:
         try:
             ssl_context = ssl.create_default_context()

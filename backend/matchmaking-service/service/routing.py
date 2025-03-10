@@ -2,5 +2,5 @@ from django.urls import path  # type: ignore
 from .consumers import MatchmakingConsumer
 
 websocket_urlpatterns = [
-    path("ws/matchmaking/", MatchmakingConsumer.as_asgi()),
+    path("wss/matchmaking/", MatchmakingConsumer.as_asgi()),
 ]

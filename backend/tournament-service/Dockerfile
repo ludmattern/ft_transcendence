@@ -1,7 +1,7 @@
 FROM myapp-base
 
 COPY --chown=appuser:appuser backend/tournament-service/requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 COPY --chown=appuser:appuser backend/tournament-service/ /app/
 

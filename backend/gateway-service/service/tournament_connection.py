@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 async def connect_dummy_tournament():
-    ws_url = "wss://tournament_service:3007/ws/tournament/"
+    ws_url = "wss://tournament-service:3007/wss/tournament/"
     while True:
         try:
             ssl_context = ssl.create_default_context()

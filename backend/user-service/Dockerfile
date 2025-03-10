@@ -3,7 +3,7 @@ FROM myapp-base
 COPY --chown=appuser:appuser backend/user-service/ /app/
 COPY --chown=appuser:appuser media/ /app/media/
 
-RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install -r /app/requirements.txt
 
 
 EXPOSE 3002

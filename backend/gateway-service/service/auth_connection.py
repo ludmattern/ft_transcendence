@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 async def connect_dummy_auth():
-    ws_url = "wss://auth_service:3001/ws/auth/"
+    ws_url = "wss://auth-service:3001/wss/auth/"
     while True:
         try:
             ssl_context = ssl.create_default_context()

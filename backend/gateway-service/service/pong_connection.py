@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 async def connect_dummy_pong():
-    ws_url = "wss://pong_service:3004/ws/pong/"
+    ws_url = "wss://pong-service:3004/wss/pong/"
     while True:
         try:
             ssl_context = ssl.create_default_context()
