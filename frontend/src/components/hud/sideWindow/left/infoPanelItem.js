@@ -3,14 +3,13 @@ import { createNotificationMessage } from '/src/components/hud/sideWindow/left/n
 import { showContextMenu } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { handleFriendAction } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { ws } from '/src/services/websocket.js';
-import { handleRoute } from '/src/services/router.js';
 
 export const infoPanelItem = createComponent({
 	tag: 'infoPanelItem',
 
 	render: (item) => {
 		const content = titleType(item);
-		console.log('item', item);
+		console.log('item inside panel ITEM', item);
 
 		return `
 	<div class="panel-item" data-notification-id="${item.type}-${item.inviter_id}">
@@ -21,9 +20,7 @@ export const infoPanelItem = createComponent({
 						<button class="btn bi bi-check" id="accept-action">Accept</button>
 						<button class="btn bi bi-x" id="refuse-action">Refuse</button>
 					</div>`
-				: `<div class="actions">
-						<button class="btn bi bi-check" id="accept-action">Fight</button>
-					</div>`
+				: ``
 		}
 	</div>`;
 	},
@@ -38,7 +35,6 @@ export const infoPanelItem = createComponent({
 				behaviorTournament(el, item);
 				break;
 			case 'tournament_next_game':
-				behaviorTournamentGame(el);
 				break;
 			case 'private_game_invite':
 				behaviorPrivateGame(el, item);
@@ -150,17 +146,6 @@ export async function handleTournamentAction(action, item) {
 	};
 
 	ws.send(JSON.stringify(payload));
-}
-
-function behaviorTournamentGame(el) {
-	const acceptButton = el.querySelector('#accept-action');
-	if (acceptButton) {
-		acceptButton.addEventListener('click', () => {
-			handleRoute('/pong/play/current-tournament');
-			createNotificationMessage('You can\'t be at two places at the same time', 2500, true);
-			createNotificationMessage('idiot...', 2500, true);
-		});
-	}
 }
 
 function behaviorPrivateGame(el, item) {

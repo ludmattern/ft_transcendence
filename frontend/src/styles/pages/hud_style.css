@@ -945,12 +945,15 @@ p {
 
 .blur-screen-effect {
 	position: absolute;
-	pointer-events: none;
 	width: 100%;
 	height: 100%;
 	backdrop-filter: blur(1rem);
 	transition: all 0.15s;
 	z-index: 50;
+}
+
+.blur-screen-effect.hidden {
+	pointer-events: none;
 }
 
 #hud-body .transparent-table {
