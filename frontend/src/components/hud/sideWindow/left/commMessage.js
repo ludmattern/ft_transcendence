@@ -27,6 +27,15 @@ function formatTimestamp(timestamp) {
 	return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
+export function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 export const commMessage = createComponent({
 	tag: 'commMessage',
 
@@ -62,7 +71,7 @@ export const commMessage = createComponent({
 			  <span class="timestamp">${formatTimestamp(item.timestamp)}</span>
 			</div>
 			<div class="message-text" style="margin-top: 0.5rem;">
-			  ${item.message}
+				${escapeHtml(item.message)}
 			</div>
 		  </div>
 		</div>

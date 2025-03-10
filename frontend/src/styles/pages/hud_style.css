@@ -1062,13 +1062,13 @@ p {
 	text-align: right;
 }
 
-.container,
-.container-fluid,
-.container-lg,
-.container-md,
-.container-sm,
-.container-xl,
-.container-xxl {
+#app .container,
+#app .container-fluid,
+#app .container-lg,
+#app .container-md,
+#app .container-sm,
+#app .container-xl,
+#app .container-xxl {
 	--bs-gutter-x: 0;
 }
 
