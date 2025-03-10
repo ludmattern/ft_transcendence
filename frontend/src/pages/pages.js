@@ -19,6 +19,7 @@ import {
 	HelmetSVG,
 	loadingScreen,
 	forgotPassword,
+	headerIngame,
 } from '/src/components/hud/index.js';
 
 import {
@@ -95,7 +96,6 @@ export const hudPages = {
 			{ selector: '#central-window', component: loadingScreen },
 		],
 	},
-
 	profile: {
 		components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: '#central-window', component: profileForm }],
 	},
@@ -114,7 +114,16 @@ export const hudPages = {
 	logout: {
 		components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: '#central-window', component: logoutForm }],
 	},
-
+	inGame: {
+		components: [
+			...backgroundComponents,
+			...persistentComponents, 
+			{ selector: '#header-container', component: headerIngame },
+			{ selector: '#left-window-container', component: leftSideWindow },
+			{ selector: '#right-window-container', component: rightSideWindow },
+			{ selector: '#footer-container', component: footer },
+		],
+	},
 	home: {
 		components: [...backgroundComponents, ...persistentComponents, ...globalComponents],
 	},

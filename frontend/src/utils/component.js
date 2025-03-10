@@ -15,6 +15,9 @@ export default class ComponentManager {
 
 	loadComponent(target, component) {
 		if (this.mountedComponents[component.tag]) {
+			if (component.tag === 'otherProfileForm') {
+				this.replaceComponent(target, component);
+			}
 			return;
 		}
 
