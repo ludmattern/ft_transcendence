@@ -682,7 +682,8 @@ def verify_reset_code(request):
             }
         )
     except Exception as e:
-        return JsonResponse({"success": False, "message": str(e)}, status=500)
+        logger.error("An error occurred while verifying the reset code: %s", str(e))
+        return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
 
 @csrf_exempt
@@ -734,4 +735,5 @@ def change_password(request):
             {"success": True, "message": "Password changed successfully"}
         )
     except Exception as e:
-        return JsonResponse({"success": False, "message": str(e)}, status=500)
+        logger.error("An error occurred while changing the password: %s", str(e))
+        return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
