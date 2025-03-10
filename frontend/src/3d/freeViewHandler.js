@@ -54,6 +54,7 @@ export function onBaseMouseMove(event = { movementX: 0.1, movementY: 0.1 }) {
 	Store.camera.rotation.set(Store.cameraRotation.x, Store.cameraRotation.y, Store.camera.rotation.z, 'XYZ');
 	setCameraRotation(Store.camera.rotation.y);
 	Store.camera.updateMatrixWorld(true);
+	console.log('Camera rotation:', Store.camera.rotation);
 }
 
 document.addEventListener('pointerlockchange', () => {
@@ -104,7 +105,8 @@ export function onFreeViewMouseMove(event) {
 
 	Store.cameraRotation.x = THREE.MathUtils.clamp(Store.cameraRotation.x, Store.initialCameraRotation.x - maxRotationAngle / 2, Store.initialCameraRotation.x + maxRotationAngle / 2);
 
-	Store.camera.rotation.set(Store.cameraRotation.x, Store.cameraRotation.y, 0, 'XYZ');
+	Store.camera.rotation.set(Store.cameraRotation.x, Store.cameraRotation.y, Store.camera.rotation.z, 'XYZ');
 	setCameraRotation(Store.camera.rotation.y);
 	Store.camera.updateMatrixWorld(true);
+	console.log('Camera rotation:', Store.camera.rotation);
 }

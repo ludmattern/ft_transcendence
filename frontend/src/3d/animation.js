@@ -112,9 +112,6 @@ export function animateCameraToTarget(endPosition, endRotation, nb) {
 }
   
   export function animateCameraBackToInitialPosition() {
-	if (Store.pongScene) {
-	  Store.pongScene.clear();
-	}
 	animateCameraToTarget(CAMERA_POSITIONS[currentWindow], CAMERA_ROTATIONS[currentWindow], CAMERA_TARGETS[currentWindow]);
   }
   
