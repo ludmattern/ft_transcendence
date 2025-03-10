@@ -531,4 +531,5 @@ def check_oauth_id(request):
         return JsonResponse({"oauth_null": user.oauth_id is None}, status=200)
 
     except Exception as e:
-        return JsonResponse({"success": False, "error": str(e)}, status=500)
+        logging.error("An error occurred in check_oauth_id: %s", str(e))
+        return JsonResponse({"success": False, "error": "An internal error has occurred!"}, status=500)
