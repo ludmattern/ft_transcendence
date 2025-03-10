@@ -116,7 +116,7 @@ export async function handleTournamentAction(action, item) {
 		try {
 			console.log('Vérification de l\'existence d\'un lobby...');
 
-			let url = "/api/tournament-service/getParticipantStatusInTournament/";
+			let url = "/api/tournament-service/getCurrentTournamentInformation/";
 			console.log('Appel de l\'API pour récupérer la clé de tournoi :', url);
 
 			let response = await fetch(url, { credentials: "include" });
@@ -124,9 +124,9 @@ export async function handleTournamentAction(action, item) {
 				throw new Error(`Erreur HTTP lors de la vérification du lobby (code ${response.status})`);
 			}
 			let data = await response.json();
-			console.log('status de tournoi récupérée :', data.status);
+			console.log('status de tournoi récupérée :', data.tournament_id);
 
-			if (data.status === 'accepted') {
+			if (data.tournament_id) {
 				createNotificationMessage('You are already in a tournament', 2500, true);
 				return;
 			}
@@ -144,7 +144,7 @@ export async function handleTournamentAction(action, item) {
 		action,
 		tournamentId: item.tournament_id,
 	};
-
+	console.log('payload', payload);
 	ws.send(JSON.stringify(payload));
 }
 
