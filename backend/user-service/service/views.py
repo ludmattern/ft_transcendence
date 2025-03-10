@@ -337,7 +337,7 @@ def get_user_id(request, username):
         return JsonResponse({"error": "GET method required"}, status=405)
     try:
         user = ManualUser.objects.get(username=username)
-        return JsonResponse({"success": True, "user_id": user.id})
+        return JsonResponse({"success": True, "user_id": str(user.id)})
     except ManualUser.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
 

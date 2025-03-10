@@ -31,7 +31,6 @@ def get_id(user_username):
         return user.id
     return None
 
-
 @database_sync_to_async
 def get_users_id():
     return list(ManualUser.objects.values_list("id", flat=True))
