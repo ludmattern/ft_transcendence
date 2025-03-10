@@ -5,26 +5,45 @@ import { screenMaterial } from '/src/3d/pongScene.js';
 
 let currentWindow = null;
 
+const CAMERA_POSITIONS = {
+  pong: new THREE.Vector3(-2.559453657498437, 3.253545045816075, -0.7922370317858861),
+  race: new THREE.Vector3(1.9765430745879866, 3.434172967891374, -0.9419868064632663),
+  game: new THREE.Vector3(-0.2, 5.257378802731586, -0.8900580859235202),
+  home: new THREE.Vector3(0, 0, 1.4)
+};
+
+const CAMERA_ROTATIONS = {
+  pong: { x: Math.PI / 3.2, y: Math.PI / 5.5, z: Math.PI / 12 },
+  race: { x: Math.PI / 3.2, y: -Math.PI / 5.5, z: -Math.PI / 12 },
+  game: { x: Math.PI / 3, y: 0, z: 0 },
+  home: { x: 1.3, y: 0, z: 0 }
+};
+
+const CAMERA_TARGETS = {
+  pong: 2,
+  race: 3,
+  game: 1,
+  home: 0
+};
+
 // =============== WINDOW SWITCHER ===============
 
+
 export function switchwindow(screen) {
-	if (screen === currentWindow) {
-		return;
-	}
-	currentWindow = screen;
-	Store.isCameraMoving = true;
-	if (screen === 'pong') {
-		animateCameraToTarget(new THREE.Vector3(-2.559453657498437, 3.253545045816075, -0.7922370317858861), { x: Math.PI / 3.2, y: Math.PI / 5.5, z: -Math.PI / -12 }, 2);
-		Store.camera.updateMatrixWorld(true);
-	} else if (screen === 'race') {
-		animateCameraToTarget(new THREE.Vector3(1.9765430745879866, 3.434172967891374, -0.9419868064632663), { x: Math.PI / 3.2, y: Math.PI / -5.5, z: -Math.PI / 12 }, 3);
-	} else if (screen === 'game') {
-		animateCameraToTarget(new THREE.Vector3(-0.2, 5.257378802731586, -0.8900580859235202), { x: Math.PI / 3, y: 0, z: 0 }, 1);
-	} else if (screen === 'home') {
-		if (Store.pongScene) Store.pongScene.clear();
-		animateCameraToTarget(new THREE.Vector3(0, 0, 1.4), { x: 1.3, y: -0, z: -0 }, 0);
-	}
+  if (screen === currentWindow) return;
+  currentWindow = screen;
+  Store.isCameraMoving = true;
+
+  if (screen === 'home' && Store.pongScene) {
+    Store.pongScene.clear();
+  }
+  animateCameraToTarget(CAMERA_POSITIONS[screen], CAMERA_ROTATIONS[screen], CAMERA_TARGETS[screen]);
+  
+  if (screen === 'pong') {
+    Store.camera.updateMatrixWorld(true);
+  }
 }
+
 
 // =============== GSAP ANIMATION ===============
 export function animateCameraToTarget(endPosition, endRotation, nb) {
@@ -91,8 +110,11 @@ export function animateCameraToTarget(endPosition, endRotation, nb) {
 		},
 	});
 }
-
-export function animateCameraBackToInitialPosition() {
-	if (Store.pongScene) Store.pongScene.clear();
-	animateCameraToTarget(new THREE.Vector3(0, 0, 1.4), { x: 1.3, y: -0, z: -0 }, 0);
-}
+  
+  export function animateCameraBackToInitialPosition() {
+	if (Store.pongScene) {
+	  Store.pongScene.clear();
+	}
+	animateCameraToTarget(CAMERA_POSITIONS[currentWindow], CAMERA_ROTATIONS[currentWindow], CAMERA_TARGETS[currentWindow]);
+  }
+  
