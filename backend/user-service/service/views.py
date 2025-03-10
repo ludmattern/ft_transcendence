@@ -15,6 +15,7 @@ from django.db.models import Q  # type: ignore
 from django.conf import settings  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
 from .models import ManualUser, GameHistory, ManualBlockedRelations
+import logging
 
 # Initialisation de Fernet pour le chiffrement/déchiffrement
 cipher = Fernet(settings.FERNET_KEY)
@@ -191,7 +192,8 @@ def register_user(request):
                 }
             )
         except Exception as e:
-            return JsonResponse({"success": False, "message": str(e)}, status=500)
+            logging.error("Error in register_user: %s", str(e))
+            return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
     else:
         return JsonResponse(
             {"success": False, "message": "Only POST method is allowed"}, status=405
@@ -222,7 +224,8 @@ def delete_account(request):
             }
         )
     except Exception as e:
-        return JsonResponse({"success": False, "message": str(e)}, status=500)
+        logging.error("Error in delete_account: %s", str(e))
+        return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
 
 @csrf_exempt
