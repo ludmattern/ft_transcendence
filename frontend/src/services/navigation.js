@@ -43,6 +43,7 @@ export const navigateToSocial = () => navigateTo('HUD', 'social');
 export const navigateToLogout = () => navigateTo('HUD', 'logout');
 export const navigateToLogin = () => navigateTo('HUD', 'login', false, true);
 export const navigateToHome = () => navigateTo('HUD', 'home', false, false, 'home');
+export const navigateInGame = () => navigateTo('HUD', 'inGame', false, false, 'game');
 export const navigateToLost = () => navigateTo('HUD', 'lostForm');
 export const navigateTo2FA = () => navigateTo('HUD', 'twoFAForm', false, true);
 

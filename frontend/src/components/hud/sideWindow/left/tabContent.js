@@ -1,6 +1,7 @@
 // src/components/hud/tabContent.js
 
-import { commMessage, infoPanelItem } from '/src/components/hud/index.js';
+import { commMessage } from '/src/components/hud/sideWindow/left/commMessage.js';
+import { infoPanelItem } from '/src/components/hud/sideWindow/left/infoPanelItem.js';
 import { setupChatInput, removeChatInput } from '/src/components/hud/sideWindow/left/chat.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';

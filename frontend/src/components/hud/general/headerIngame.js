@@ -1,5 +1,5 @@
 import { createComponent } from '/src/utils/component.js';
-import { startAnimation } from '/src/components/hud/index.js';
+import { startAnimation } from '/src/components/hud/utils/utils.js';
 
 export const headerIngame = createComponent({
 	tag: 'headerIngame',

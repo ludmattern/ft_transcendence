@@ -1,7 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { subscribe } from '/src/services/eventEmitter.js';
-import { startAnimation } from '/src/components/hud/index.js';
+import { startAnimation } from '/src/components/hud/utils/utils.js';
 
 const navigationLinks = {
 	'home-link': '/',
