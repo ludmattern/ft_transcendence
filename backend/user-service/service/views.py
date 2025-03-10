@@ -472,7 +472,6 @@ def upload_profile_picture(request):
 @csrf_exempt
 @jwt_required
 def search_pilots(request):
-    """Search pilots whose usernames start with the query, excluding blocked users."""
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
 
@@ -481,15 +480,18 @@ def search_pilots(request):
         return JsonResponse({"message": "Query parameter is required"}, status=400)
 
     try:
-        user = request.user 
+        user = request.user
 
         blocked_users = ManualBlockedRelations.objects.filter(
             blocked_user=user
         ).values_list("user_id", flat=True)
 
-        pilots = ManualUser.objects.filter(username__istartswith=query).exclude(
-            id__in=blocked_users
+        pilots = (
+            ManualUser.objects.filter(username__istartswith=query)
+            .exclude(id__in=blocked_users)
+            .exclude(id=user.id)
         )
+
         results = [
             {
                 "username": pilot.username,
@@ -516,13 +518,12 @@ def get_leaderboard(request):
     return JsonResponse({"success": True, "players": results})
 
 
-
 @csrf_exempt
 @jwt_required
 def check_oauth_id(request):
     try:
         user = request.user
         return JsonResponse({"oauth_null": user.oauth_id is None}, status=200)
-    
+
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)

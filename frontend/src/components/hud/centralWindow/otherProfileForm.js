@@ -3,187 +3,169 @@ import { loadUserProfile, loadMatchHistory } from '/src/components/hud/centralWi
 import { ws } from '/src/services/websocket.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { playGame } from '/src/components/pong/play/utils.js';
-import { isUserFriend } from '/src/components/hud/sideWindow/left/contextMenu.js';
+import { getRelationshipStatus } from '/src/components/hud/sideWindow/left/contextMenu.js';
+import { handleRoute } from '/src/services/router.js';
+
+function sendWsInfoMessage(action, recipient) {
+	const payload = {
+		type: 'info_message',
+		action,
+		recipient,
+		timestamp: new Date().toISOString(),
+	};
+	ws.send(JSON.stringify(payload));
+}
+
+function delay(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getUsernameFromUrl() {
+	const path = window.location.pathname;
+	const prefix = '/social/pilot=';
+	return path.startsWith(prefix) ? decodeURIComponent(path.substring(prefix.length)) : null;
+}
+
+async function updateSocialActions(profile_id, container) {
+	const relationshipStatus = await getRelationshipStatus(profile_id);
+	if (!relationshipStatus || !relationshipStatus.success) {
+		console.error('Impossible de récupérer le statut de la relation');
+		return;
+	}
+	if (relationshipStatus.is_me) {
+		handleRoute('/profile');
+		return;
+	}
+	let newHtml = `<button class="btn bi bi-envelope me-2" id="invite-link">Invite</button>`;
+	newHtml += relationshipStatus.is_friend ? `<button class="btn bi bi-person-dash me-2" id="remove-link">Remove</button>` : `<button class="btn bi bi-person-add me-2" id="add-link">Add</button>`;
+	newHtml +=
+		relationshipStatus.is_blocked && relationshipStatus.can_unblock
+			? `<button class="btn bi bi-person-check" id="unblock-link">Unblock</button>`
+			: `<button class="btn bi bi-person-slash me-2" id="block-link">Block</button>`;
+	container.innerHTML = newHtml;
+}
 
 export const otherProfileForm = createComponent({
 	tag: 'otherProfileForm',
-
-	// Générer le HTML
 	render: () => `
-	<div id="profile-form" class="form-container">
-	  <h5 class="text-center">Pilot Profile</h5>
-	  <span class="background-central-span d-flex flex-column align-items-center flex-grow-1 p-4">
-		<!-- Profile Information -->
-		<div class="profile-info d-flex justify-content-evenly align-items-center w-100 m-3 pb-3">
-		  <!-- Profile Picture -->
-		  <div class="profile-pic-container">
-			  <img id="profile-pic-link" class="profile-pic d-none rounded-circle"/>
-		  </div>
-		  <!-- Profile Details -->
-		  <div class="profile-details modifiable-pilot text-start">
-			<!-- Profile Status -->
-			<div class="profile-status mb-2">
-			  <span class="status-indicator bi bi-circle-fill text-success"></span>
-			  <div class="d-inline-block">
-				<div class="d-inline-block" id="pseudo" style="color:var(--content-color); font-weight: bold;"></div>
-			  </div>
-			</div>
-			<!-- Profile Statistics -->
-			<div class="profile-stats">
-			  <div class="stat-item d-flex align-items-center mb-1">
-				<span class="bi bi-trophy me-2"></span>
-				<span class="stat-title">Winrate:</span>
-				<span id="winrate" class="stat-value ms-1"></span>
-			  </div>
-			  <div class="stat-item d-flex align-items-center">
-				<span class="bi bi-award me-2"></span>
-				<span id="elo" class="stat-title">Elo:</span>
-				<span class="stat-value ms-1"></span>
-			  </div>
-			</div>
-		  </div>
-		</div>
-		<span class="panel-mid"></span>
-		<!-- Match History -->
-		<div class="profile-match-history mt-2 w-100 d-flex flex-column">
-		  <h6 class="match-history-title d-flex justify-content-center m-3">
-			<span class="bi bi-journal me-2"></span>Match History
-		  </h6>
-		  <div class="match-history-header d-flex fw-bold">
-			<span class="col-3">Outcome</span>
-			<span class="col-3">Date</span>
-			<span class="col-3">Opponents</span>
-			<span class="col-3">Score</span>
-		  </div>
-		  <div class="match-history-container d-flex flex-column" style="max-height: 40vh; overflow-y: auto;">
-			<!-- Conteneur pour les éléments d'historique -->
-			<div id="match-items-container" class="match-history-items d-flex flex-column" style="max-height: 40vh; overflow-y: auto;">
-			  <!-- Les éléments de match seront ajoutés ici -->
-			</div>
-		  </div>
-		  <!-- Boutons d'actions sociales -->
-		  <div class="d-flex justify-content-center mt-3" id="social-actions">
-			<button class="btn bi bi-envelope me-2" id="invite-link">Invite</button>
-			<!-- Les boutons pour add/remove seront ajoutés ici dynamiquement -->
-			<button class="btn bi bi-person-slash me-2" id="block-link">Block</button>
-			<button class="btn bi bi-person-check" id="unblock-link">Unblock</button>
-		  </div>
-		</div>
-	  </span>
-	</div>
+    <div id="profile-form" class="form-container">
+      <h5 class="text-center">Pilot Profile</h5>
+      <span class="background-central-span d-flex flex-column align-items-center flex-grow-1 p-4">
+        <div class="profile-info d-flex justify-content-evenly align-items-center w-100 m-3 pb-3">
+          <div class="profile-pic-container">
+            <img id="profile-pic-link" class="profile-pic d-none rounded-circle"/>
+          </div>
+          <div class="profile-details modifiable-pilot text-start">
+            <div class="profile-status mb-2">
+              <span class="status-indicator bi bi-circle-fill text-success"></span>
+              <div class="d-inline-block">
+                <div class="d-inline-block" id="pseudo" style="color:var(--content-color); font-weight: bold;"></div>
+              </div>
+            </div>
+            <div class="profile-stats">
+              <div class="stat-item d-flex align-items-center mb-1">
+                <span class="bi bi-trophy me-2"></span>
+                <span class="stat-title">Winrate:</span>
+                <span id="winrate" class="stat-value ms-1"></span>
+              </div>
+              <div class="stat-item d-flex align-items-center">
+                <span class="bi bi-award me-2"></span>
+                <span id="elo" class="stat-title">Elo:</span>
+                <span class="stat-value ms-1"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span class="panel-mid"></span>
+        <div class="profile-match-history mt-2 w-100 d-flex flex-column">
+          <h6 class="match-history-title d-flex justify-content-center m-3">
+            <span class="bi bi-journal me-2"></span>Match History
+          </h6>
+          <div class="match-history-header d-flex fw-bold">
+            <span class="col-3">Outcome</span>
+            <span class="col-3">Date</span>
+            <span class="col-3">Opponents</span>
+            <span class="col-3">Score</span>
+          </div>
+          <div class="match-history-container d-flex flex-column" style="max-height: 40vh; overflow-y: auto;">
+            <div id="match-items-container" class="match-history-items d-flex flex-column" style="max-height: 40vh; overflow-y: auto;"></div>
+          </div>
+          <div class="d-flex justify-content-center mt-3" id="social-actions"></div>
+        </div>
+      </span>
+    </div>
   `,
-  
-
-	// Ajouter les événements après le chargement
 	attachEvents: async (el) => {
-		function getUsernameFromUrl() {
-		  const path = window.location.pathname;
-		  const prefix = '/social/pilot=';
-		  if (path.startsWith(prefix)) {
-			return decodeURIComponent(path.substring(prefix.length));
-		  }
-		  return null;
-		}
-	  
 		const profileUsername = getUsernameFromUrl();
 		if (!profileUsername) {
-		  console.error('Username not found in URL');
-		  return;
+			console.error('Username not found in URL');
+			return;
 		}
-	  
 		const profile_id = await fetchUserId(profileUsername);
-		console.log(`Profile ID: ${profile_id}`);
-	  
 		if (!profile_id) {
-		  console.error('Profile ID not found');
-		  handleRoute('/lost');
-		  return;
+			console.error('Profile ID not found');
+			handleRoute('/lost');
+			return;
 		}
-	  
-		// Charge le profil et l'historique des matchs
+		console.log(`Profile ID: ${profile_id}`);
 		loadUserProfile(profile_id);
 		loadMatchHistory(profile_id);
-	  
-		// Détermine le statut d'amitié et insère le bon bouton
-		const friendStatus = await isUserFriend(profile_id);
 		const socialActionsContainer = el.querySelector('#social-actions');
-		if (friendStatus) {
-		  socialActionsContainer.insertAdjacentHTML('afterbegin', `
-			<button class="btn bi bi-person-dash me-2" id="remove-link">Remove</button>
-		  `);
-		} else {
-		  socialActionsContainer.insertAdjacentHTML('afterbegin', `
-			<button class="btn bi bi-person-add me-2" id="add-link">Add</button>
-		  `);
-		}
-	  
+		await updateSocialActions(profile_id, socialActionsContainer);
+		const actions = {
+			'#invite-link': async () => {
+				console.debug('Invite sent.');
+				sendWsInfoMessage('private_game_invite', profile_id);
+				clearPageContent();
+				const config = {
+					gameMode: 'private',
+					action: 'create',
+					matchkey: await getUserIdFromCookieAPI(),
+					type: 'fullScreen',
+				};
+				playGame(config);
+			},
+			'#remove-link': async () => {
+				console.debug('Friend removed.');
+				sendWsInfoMessage('remove_friend', profile_id);
+				await delay(100);
+				await updateSocialActions(profile_id, socialActionsContainer);
+			},
+			'#add-link': async () => {
+				console.debug('Friend added.');
+				sendWsInfoMessage('send_friend_request', profile_id);
+				await delay(100);
+				await updateSocialActions(profile_id, socialActionsContainer);
+			},
+			'#block-link': async () => {
+				console.debug('User blocked.');
+				sendWsInfoMessage('block_user', profile_id);
+				await delay(100);
+				await updateSocialActions(profile_id, socialActionsContainer);
+			},
+			'#unblock-link': async () => {
+				console.debug('User unblocked.');
+				sendWsInfoMessage('unblock_user', profile_id);
+				await delay(100);
+				await updateSocialActions(profile_id, socialActionsContainer);
+			},
+		};
 		el.addEventListener('click', async (e) => {
-		  e.preventDefault();
-	  
-		  let action = null;
-		  if (e.target.matches('#invite-link')) {
-			console.debug('Invite sent.');
-			const payload = {
-			  type: 'info_message',
-			  action: 'private_game_invite',
-			  author: await getUserIdFromCookieAPI(),
-			  recipient: profile_id,
-			  timestamp: new Date().toISOString(),
-			};
-			ws.send(JSON.stringify(payload));
-			clearPageContent();
-			const config = {
-			  gameMode: 'private',
-			  action: 'create',
-			  matchkey: await getUserIdFromCookieAPI(),
-			  type: 'fullScreen',
-			};
-			playGame(config);
-		  }
-		  if (e.target.matches('#remove-link')) {
-			action = 'remove_friend';
-			console.debug('Friend removed.');
-		  } else if (e.target.matches('#add-link')) {
-			action = 'send_friend_request';
-			console.debug('Friend added.');
-		  } else if (e.target.matches('#block-link')) {
-			action = 'block_user';
-			console.debug('User blocked.');
-		  } else if (e.target.matches('#unblock-link')) {
-			action = 'unblock_user';
-			console.debug('User unblocked.');
-		  }
-	  
-		  if (!action) return; // Si aucune action ne correspond, on quitte
-	  
-		  const payload = {
-			type: 'info_message',
-			action: action,
-			recipient: profile_id,
-			timestamp: new Date().toISOString(),
-		  };
-		  ws.send(JSON.stringify(payload));
+			for (const [selector, actionFn] of Object.entries(actions)) {
+				if (e.target.matches(selector)) {
+					e.preventDefault();
+					await actionFn();
+					break;
+				}
+			}
 		});
-	  },
+	},
 });
-/**
- * Génère un élément d'historique de match.
- *
- * @param {string} outcome - Résultat du match (Win/Loss)
- * @param {string} mode - Mode de jeu
- * @param {string} duration - Durée du match
- * @param {string} date - Date du match
- * @param {string} opponents - Opposants
- * @param {string} outcomeClass - Classe CSS pour le résultat
- * @returns {string} - HTML du match
- */
 
 export async function fetchUserId(username) {
 	try {
 		const response = await fetch(`/api/user-service/get_user_id/${username}/`);
-		if (!response.ok) {
-			throw new Error(`HTTP error ${response.status}`);
-		}
+		if (!response.ok) throw new Error(`HTTP error ${response.status}`);
 		const data = await response.json();
 		return data.user_id;
 	} catch (error) {
@@ -193,11 +175,7 @@ export async function fetchUserId(username) {
 
 function clearPageContent() {
 	const profileForm = document.getElementById('profile-form');
-	if (profileForm) {
-		profileForm.style.display = 'none'; // Hide the entire form
-	}
+	if (profileForm) profileForm.style.display = 'none';
 	const blurScreenEffect = document.getElementById('blur-screen-effect');
-	if (blurScreenEffect) {
-		blurScreenEffect.classList.add('hidden'); // Hide the blur effect
-	}
+	if (blurScreenEffect) blurScreenEffect.classList.add('hidden');
 }

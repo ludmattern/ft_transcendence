@@ -33,9 +33,7 @@ urlpatterns = [
     path("get-relationship-status/", get_relationship_status, name="get_relationship_status"),
     path("get_game_history/", get_game_history, name="get_game_history"),
     path("get_profile/", get_profile, name="get_profile"),
-    path(
-        "upload_profile_picture/", upload_profile_picture, name="upload_profile_picture"
-    ),
+    path("upload_profile_picture/", upload_profile_picture, name="upload_profile_picture"),
     path("get_friends/", get_friends, name="get_friends"),
     path("get_user_id/<str:username>/", get_user_id, name="get_user_id"),
     path("search_pilots/", search_pilots, name="search_pilots"),
