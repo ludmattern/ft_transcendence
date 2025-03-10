@@ -199,7 +199,21 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./frontend:/usr/share/nginx/html/frontend:ro
       - media_volume:/app/media:rw
-
+    depends_on:
+      gateway-service:
+        condition: service_started
+      auth-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+      livechat-service:
+        condition: service_started
+      pong-service:
+        condition: service_started
+      matchmaking-service:
+        condition: service_started
+      tournament-service:
+        condition: service_started
     ports:
       - "8443:443"
     networks:

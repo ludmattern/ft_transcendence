@@ -75,7 +75,6 @@ def set_access_token_cookie(response, token_str):
         max_age=settings.JWT_EXP_DELTA_SECONDS,
     )
 
-
 # --- Vues d'authentification ---
 
 def check_auth_view(request):
