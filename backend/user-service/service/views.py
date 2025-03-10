@@ -388,7 +388,8 @@ def get_game_history(request):
             {"success": True, "history": history_list, "winrate": winrate}
         )
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        logging.error("An error occurred: %s", str(e))
+        return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
 
 @csrf_exempt
@@ -412,7 +413,8 @@ def get_profile(request):
     except ManualUser.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        logging.error("An error occurred: %s", str(e))
+        return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
 
 ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
