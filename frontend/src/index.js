@@ -2,6 +2,7 @@ import { buildScene } from '/src/3d/main.js';
 import { handleRoute } from '/src/services/router.js';
 import ComponentManager from '/src/utils/component.js';
 import { CacheDB } from '/src/utils/IndexedDBCache.js';
+import { onWindowResize } from '/src/3d/main.js';
 
 const componentManagers = {
 	HUD: new ComponentManager('HUD'),
@@ -29,7 +30,7 @@ async function initializeApp() {
 
 		await setDatabaseID();
 	} catch (error) {
-		console.error('Erreur d\'initialisation : IndexedDB est indisponible.', error);
+		console.error("Erreur d'initialisation : IndexedDB est indisponible.", error);
 	}
 
 	let targetRoute = window.location.pathname;
@@ -40,7 +41,9 @@ async function initializeApp() {
 
 	await buildScene();
 	handleRoute(targetRoute);
+    onWindowResize();
 }
 
 window.addEventListener('DOMContentLoaded', initializeApp);
+
 export default componentManagers;

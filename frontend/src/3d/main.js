@@ -10,7 +10,7 @@ import { initLights, initSkybox, initRenderer, initCamera, initScene, initContro
 
 // =============== RESIZE ===============
 
-function onWindowResize() {
+export function onWindowResize() {
 	const width = window.innerWidth;
 	const height = window.innerHeight;
 	Store.renderer.setSize(width, height);
