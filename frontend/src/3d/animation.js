@@ -84,7 +84,6 @@ export function animateCameraToTarget(endPosition, endRotation, nb) {
 			Store.currentTween = null;
 			if (nb == 1) {
 				Store.screenObject1.material = screenMaterial;
-				Store.menuElement.classList.remove('active');
 			}
 			if (nb == 0) {
 				Store.menuElement.querySelector('.mid-screensaver').display = 'block';

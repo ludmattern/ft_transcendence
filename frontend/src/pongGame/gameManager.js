@@ -8,15 +8,13 @@ import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.j
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { emit } from '/src/services/eventEmitter.js';
 
-
-//mettre cette classe asynchone 
-async function getid()
-{
+//mettre cette classe asynchone
+async function getid() {
 	return await getUserIdFromCookieAPI();
 }
 
 class GameManager {
-	constructor()  {
+	constructor() {
 		this.gameMode = null;
 		this.activeGame = null;
 		this.activeKeys = {};
@@ -117,7 +115,7 @@ class GameManager {
 	}
 
 	startGame(gameConfig) {
-		this.initClientData() 
+		this.initClientData();
 
 		console.log('Starting game with config:', gameConfig);
 		componentManagers['HUD'].unloadComponent('pongTuto');
@@ -143,12 +141,10 @@ class GameManager {
 				this.username1 = gameConfig.player1;
 				this.username2 = gameConfig.player2;
 			}
-		} 
-		else if (gameConfig.mode === 'solo') {
+		} else if (gameConfig.mode === 'solo') {
 			document.addEventListener('keydown', this.matchMakingKeydownHandler);
 			document.addEventListener('keyup', this.matchMakingKeyupHandler);
-		}
-		else {
+		} else {
 			document.addEventListener('keydown', this.matchMakingKeydownHandler);
 			document.addEventListener('keyup', this.matchMakingKeyupHandler);
 			Promise.all([getUsername(player1), getUsername(player2)])
@@ -177,6 +173,7 @@ class GameManager {
 				player2: player2,
 			})
 		);
+		emit('gameStarted', gameConfig.mode);
 	}
 
 	endGame() {
@@ -245,40 +242,30 @@ class GameManager {
 		}
 		if (!gameState || !gameState.user_scores) return;
 		if (this.gameMode === 'local' || this.gameMode === 'solo') {
-			
 			const players = Object.keys(gameState.user_scores);
 			const scores = Object.values(gameState.user_scores);
 			const score1 = scores[0];
 			const score2 = scores[1];
 			const scoreTextEl = document.getElementById('scoreText');
-			if (scoreTextEl && this.gameMode === 'local') 
-				scoreTextEl.innerHTML = `${this.username1} ${score1}  -  ${score2} ${this.username2}`;
-			else if (scoreTextEl && this.gameMode === 'solo')
-				scoreTextEl.innerHTML = `<strong>You</strong> ${score1}  -  ${score2} Terminator`;
-
+			if (scoreTextEl && this.gameMode === 'local') scoreTextEl.innerHTML = `${this.username1} ${score1}  -  ${score2} ${this.username2}`;
+			else if (scoreTextEl && this.gameMode === 'solo') scoreTextEl.innerHTML = `<strong>You</strong> ${score1}  -  ${score2} Terminator`;
 		} else {
 			let oppennentName = null;
 			const scores = gameState.user_scores;
 
 			const clientScore = scores[this.clientId] ?? 0;
 
-			const opponentId = Object.keys(scores).find(id => id !== this.clientId);
+			const opponentId = Object.keys(scores).find((id) => id !== this.clientId);
 			const opponentScore = opponentId ? scores[opponentId] : 0;
-			
+
 			const scoreTextEl = document.getElementById('scoreText');
-			
 
-			if (this.username1 === this.clientName)
-			{
-				console.log("clientName", this.clientName)
+			if (this.username1 === this.clientName) {
+				console.log('clientName', this.clientName);
 				oppennentName = this.username2;
-			}
-			else
-				oppennentName = this.username1;
+			} else oppennentName = this.username1;
 
-
-			if (scoreTextEl) 
-				scoreTextEl.innerHTML = `<strong>You</strong> ${clientScore}  -  ${opponentScore} ${oppennentName}`;
+			if (scoreTextEl) scoreTextEl.innerHTML = `<strong>You</strong> ${clientScore}  -  ${opponentScore} ${oppennentName}`;
 		}
 	}
 
@@ -292,6 +279,7 @@ class GameManager {
 			if (Store.pongScene) Store.pongScene.clear();
 			const previousPongPlaySubRoute = getPreviousPongPlaySubRoute();
 			console.log(previousPongPlaySubRoute);
+			emit('gameOver');
 			emit('updateBracket');
 			handleRoute(previousPongPlaySubRoute);
 		}
@@ -337,10 +325,6 @@ export async function getUsername(playerId) {
 		console.error('Error fetching username:', error);
 		return `${playerId}`;
 	}
-}
-
-async function username() {
-	return await getUsername(await getUserIdFromCookieAPI());
 }
 
 function triggerBallColorChange() {
