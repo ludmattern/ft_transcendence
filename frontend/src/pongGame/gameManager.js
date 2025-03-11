@@ -68,7 +68,6 @@ class GameManager {
 				if (this.activeKeys['d']) {
 					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', player_id: 1, game_id: this.gameId }));
 				}
-
 				if (this.activeKeys['ArrowUp']) {
 					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', player_id: 2, game_id: this.gameId }));
 				}

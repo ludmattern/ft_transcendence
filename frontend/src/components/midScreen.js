@@ -55,6 +55,10 @@ export const GiveUpButtons = createComponent({
 				'btn-giveup': () => {
 					console.log('Abandon online déclenché');
 					alert('Abandon online déclenché');
+					const payload = {
+						type: 'game_event'
+					};
+					ws.send(JSON.stringify(payload));
 				},
 			},
 		};

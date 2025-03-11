@@ -61,7 +61,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
         elif action == "leave_game":
             if game_id in self.running_games:
-                self.running_games[game_id]["task"].cancel() 
+                self.running_games[game_id]["task"].cancel()
                 del self.running_games[game_id]
                 game_manager.cleanup_game(game_id)
                 logger.info(f" Partie {game_id} terminée (leave_game)")
@@ -91,7 +91,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
     async def game_state(self, event):
         pass
-
 
     async def game_heartbeat(self, game_id, player_id, stop_event):
         offline_duration = 0
@@ -134,9 +133,8 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         return user.status
 
     async def game_loop(self, game_id):
-
-        target_y = 0.0  
-        target_z = 0.0 
+        target_y = 0.0
+        target_z = 0.0
         stop_event = asyncio.Event()
         game = game_manager.get_game(game_id)
 
@@ -155,22 +153,21 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 now = time.time()
                 if game.is_solo_mode():
                     ai_paddle_num = 2
-                    if now - last_ai_time >= 1:  
+                    if now - last_ai_time >= 1:
                         last_ai_time = now
-                        target_y, target_z = ai_decision(game, "Player 2") 
+                        target_y, target_z = ai_decision(game, "Player 2")
                     paddle = game.state["players"][ai_paddle_num]
                     threshold = 0.02
-                    if abs(paddle["y"] - target_y) > threshold: 
+                    if abs(paddle["y"] - target_y) > threshold:
                         if paddle["y"] < target_y:
                             game.move_paddle(ai_paddle_num, "up")
                         elif paddle["y"] > target_y:
                             game.move_paddle(ai_paddle_num, "down")
-                    if abs(paddle["z"] - target_z) > threshold:  
+                    if abs(paddle["z"] - target_z) > threshold:
                         if paddle["z"] < target_z:
                             game.move_paddle(ai_paddle_num, "right")
                         elif paddle["z"] > target_z:
                             game.move_paddle(ai_paddle_num, "left")
-
 
                 payload = game.to_dict()
 
@@ -327,9 +324,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                             "final_scores": game.user_scores,
                         },
                     )
-                    
+
                     await asyncio.sleep(0.01)
-                    
+
                     if not (
                         str(game_id).startswith("game_")
                         or str(game_id).startswith("tournLocal_")
