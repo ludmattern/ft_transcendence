@@ -237,12 +237,10 @@ class GameManager {
 			if (p1) {
 				if (!Store.p1Target) Store.p1Target = new THREE.Vector3();
 				Store.p1Target.set(p1.x, p1.y, p1.z);
-				console.log('p1:', p1);	
 			}
 			if (p2) {
 				if (!Store.p2Target) Store.p2Target = new THREE.Vector3();
 				Store.p2Target.set(p2.x, p2.y, p2.z);
-				console.log('p2:', p2);
 			}
 		}
 		if (!gameState || !gameState.user_scores) return;

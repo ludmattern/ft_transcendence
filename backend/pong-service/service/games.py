@@ -37,7 +37,7 @@ class BasePongGame:
                 "x": 0,
                 "y": 0,
                 "z": 0,
-                "vx": -1.5,
+                "vx": random.choice([-1.5, 1.5]),
                 "vy": random.uniform(-1, 1),
                 "vz": random.uniform(-1, 1),
             },
