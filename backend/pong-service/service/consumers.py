@@ -7,48 +7,10 @@ from django.db import transaction  # type: ignore
 from service.models import ManualUser, TournamentMatch, ManualTournamentParticipants
 from service.utils import calculate_elo
 from django.db.models import Q  # type: ignore
+import time
+from .bot import ai_decision
 
-
-# import numpy as np
 logger = logging.getLogger(__name__)
-# from stable_baselines3 import PPO
-
-
-# ODEL_PATH = "/app/service/aiModels/pong3d_agent.zip"
-# model = PPO.load(MODEL_PATH)
-
-
-# def get_obs(game):
-#     """
-#     Construit l'observation sous forme (1, 10) avec np.float32.
-#     """
-#     ball = game.state["ball"]
-#     p1 = game.state["players"][1]
-#     p2 = game.state["players"][2]
-
-#     arr = np.array([
-#         ball["x"], ball["y"], ball["z"],
-#         ball["vx"], ball["vy"], ball["vz"],
-#         p1["y"], p1["z"],
-#         p2["y"], p2["z"]
-#     ], dtype=np.float32)
-
-#     return arr.reshape(1, -1)  # => Toujours (1, 10)
-
-# def action_to_direction(action):
-#     """
-#     Convertit l'action (0..4) en 'up','down','left','right' ou None (stay).
-#     """
-#     if action == 1:
-#         return "up"
-#     elif action == 2:
-#         return "down"
-#     elif action == 3:
-#         return "left"
-#     elif action == 4:
-#         return "right"
-#     else:
-#         return None
 
 
 class PongGroupConsumer(AsyncWebsocketConsumer):
@@ -100,56 +62,48 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
         elif action == "leave_game":
             if game_id in self.running_games:
-                self.running_games[game_id].cancel()
+                self.running_games[game_id]["task"].cancel() 
                 del self.running_games[game_id]
                 game_manager.cleanup_game(game_id)
                 logger.info(f" Partie {game_id} terminée (leave_game)")
 
     async def game_state(self, event):
-        # logger.info(f"[PongGroupConsumer] game_state reçu pour {event.get('game_id')}")
 
         pass
 
-    # async def _bot_action(self, game, game_id):
-    #     """
-    #     Fait agir l'IA pour player2 si c'est un match solo.
-    #     """
-    #     obs = get_obs(game)
-
-    #     action, _states = model.predict(obs, deterministic=True)
-    #     direction = action_to_direction(action)
-
-    #     if direction:
-    #         logger.info(f"🎮 dir: {direction}, {game.player2_id}")
-    #         self.running_games[game_id]["bot_last_action"] = direction
 
     async def game_loop(self, game_id):
-        """
-        Boucle régulière de mise à jour. Tourne tant que la partie n'est pas finie.
-        """
 
+        target_y = 0.0  
+        target_z = 0.0  
         try:
-            # is_solo_mode = game_id.startswith("solo_")  # ou "solo" in game_id
-            # ai_interval = 1.0   # IA agit toutes les 1s
-            # last_ai_time = time.time()
+            last_ai_time = time.time()
             while True:
                 game = game_manager.get_game(game_id)
                 if not game:
-                    # logger.warning(f"Game {game_id} introuvable, on quitte la boucle.")
                     break
 
                 game.update()
 
-                # if is_solo_mode:
-                #     now = time.time()
+                now = time.time()
+                if game.is_solo_mode():
+                    ai_paddle_num = 2
+                    if now - last_ai_time >= 1:  
+                        last_ai_time = now
+                        target_y, target_z = ai_decision(game, "Player 2") 
+                    paddle = game.state["players"][ai_paddle_num]
+                    threshold = 0.02
+                    if abs(paddle["y"] - target_y) > threshold: 
+                        if paddle["y"] < target_y:
+                            game.move_paddle(ai_paddle_num, "up")
+                        elif paddle["y"] > target_y:
+                            game.move_paddle(ai_paddle_num, "down")
+                    if abs(paddle["z"] - target_z) > threshold:  
+                        if paddle["z"] < target_z:
+                            game.move_paddle(ai_paddle_num, "right")
+                        elif paddle["z"] > target_z:
+                            game.move_paddle(ai_paddle_num, "left")
 
-                #     if now - last_ai_time >= ai_interval:
-                #         await self._bot_action(game, game_id)
-                #         last_ai_time = now
-
-                #     bot_last_action = self.running_games[game_id]["bot_last_action"]
-                #     if bot_last_action:
-                #         game.move_paddle(1, bot_last_action)
 
                 payload = game.to_dict()
 

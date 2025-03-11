@@ -37,7 +37,7 @@ class BasePongGame:
                 "x": 0,
                 "y": 0,
                 "z": 0,
-                "vx": 1.5,
+                "vx": -1.5,
                 "vy": random.uniform(-1, 1),
                 "vz": random.uniform(-1, 1),
             },
@@ -50,7 +50,10 @@ class BasePongGame:
         self.ball_size = 0.1
         self.vmax = 4
         self.last_update = time.time()
+        self.solo_mode = game_id.startswith("solo_")
 
+    def is_solo_mode(self):
+        return self.solo_mode
     def move_paddle(self, player_id, direction):
         """Déplace la paddle et empêche de sortir du tunnel."""
         if player_id not in self.state["players"]:

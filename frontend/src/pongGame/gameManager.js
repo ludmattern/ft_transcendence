@@ -142,7 +142,12 @@ class GameManager {
 				this.username1 = gameConfig.player1;
 				this.username2 = gameConfig.player2;
 			}
-		} else {
+		} 
+		else if (gameConfig.mode === 'solo') {
+			document.addEventListener('keydown', this.matchMakingKeydownHandler);
+			document.addEventListener('keyup', this.matchMakingKeyupHandler);
+		}
+		else {
 			document.addEventListener('keydown', this.matchMakingKeydownHandler);
 			document.addEventListener('keyup', this.matchMakingKeyupHandler);
 			Promise.all([getUsername(player1), getUsername(player2)])
@@ -231,22 +236,27 @@ class GameManager {
 			if (p1) {
 				if (!Store.p1Target) Store.p1Target = new THREE.Vector3();
 				Store.p1Target.set(p1.x, p1.y, p1.z);
+				console.log('p1:', p1);	
 			}
 			if (p2) {
 				if (!Store.p2Target) Store.p2Target = new THREE.Vector3();
 				Store.p2Target.set(p2.x, p2.y, p2.z);
+				console.log('p2:', p2);
 			}
 		}
 		if (!gameState || !gameState.user_scores) return;
-		if (this.gameMode === 'local') {
+		if (this.gameMode === 'local' || this.gameMode === 'solo') {
 			
-				const players = Object.keys(gameState.user_scores);
-				const scores = Object.values(gameState.user_scores);
-				const score1 = scores[0];
-				const score2 = scores[1];
-				const scoreTextEl = document.getElementById('scoreText');
-				if (scoreTextEl) 
-				scoreTextEl.textContent = `${this.username1} ${score1}  -  ${score2} ${this.username2}`;
+			const players = Object.keys(gameState.user_scores);
+			const scores = Object.values(gameState.user_scores);
+			const score1 = scores[0];
+			const score2 = scores[1];
+			const scoreTextEl = document.getElementById('scoreText');
+			if (scoreTextEl && this.gameMode === 'local') 
+				scoreTextEl.innerHTML = `${this.username1} ${score1}  -  ${score2} ${this.username2}`;
+			else if (scoreTextEl && this.gameMode === 'solo')
+				scoreTextEl.innerHTML = `<strong>You</strong> ${score1}  -  ${score2} Terminator`;
+
 		} else {
 			let oppennentName = null;
 			const scores = gameState.user_scores;
@@ -257,11 +267,16 @@ class GameManager {
 			const opponentScore = opponentId ? scores[opponentId] : 0;
 			
 			const scoreTextEl = document.getElementById('scoreText');
+			
 
-			if (this.username1 === this.clientName) 
+			if (this.username1 === this.clientName)
+			{
+				console.log("clientName", this.clientName)
 				oppennentName = this.username2;
+			}
 			else
 				oppennentName = this.username1;
+
 
 			if (scoreTextEl) 
 				scoreTextEl.innerHTML = `<strong>You</strong> ${clientScore}  -  ${opponentScore} ${oppennentName}`;

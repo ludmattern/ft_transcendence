@@ -11,7 +11,7 @@ export async function gameModeSelector(config) {
 	} else if (config.gameMode === 'solo') {
 		const gameConfig = {
 			mode: 'solo',
-			side: 'right',
+			side: 'left',
 		};
 		gameManager.startGame(gameConfig);
 	} else if (config.gameMode === 'matchmaking') {
