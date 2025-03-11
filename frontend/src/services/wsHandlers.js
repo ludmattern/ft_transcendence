@@ -58,7 +58,6 @@ const handleInfoMessage = async (data) => {
 	} else if (data.action === 'tournament_invite' && data.subaction === 'join_tournament') {
 		handleRoute('/pong/play/current-tournament');
 		const tournamentData = await getCurrentTournamentInformation();
-		updateOnlinePlayersUI(tournamentData);
 		emit('updatePlayerList', tournamentData);
 		await updateAndCompareInfoData();
 	} else if (data.action === 'refresh_brackets') {
