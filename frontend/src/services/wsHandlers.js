@@ -53,27 +53,20 @@ const handleInfoMessage = async (data) => {
 	console.log('Received data:', data); // Log the received data
 
 	if (data.action === 'updatePlayerList') {
-		console.log('Action: updatePlayerList'); // Log the action
 		const tournamentData = await getCurrentTournamentInformation();
-		console.log('Tournament Data:', tournamentData); // Log the tournament data
 		emit('updatePlayerList', tournamentData);
 		await updateAndCompareInfoData();
-	} else if (data.action === 'tournament_invite' && data.subaction === 'join_tournament'){
-			console.log('Subaction: join_tournament'); // Log the subaction
-			handleRoute('/pong/play/current-tournament'); // Update the route to the current tournament page
-			const tournamentData = await getCurrentTournamentInformation();
-			console.log('Tournament Data:', tournamentData); // Log the tournament data
-			updateOnlinePlayersUI(tournamentData); // Update the UI with the current tournament information
-			emit('updatePlayerList', tournamentData);
-			await updateAndCompareInfoData();
+	} else if (data.action === 'tournament_invite' && data.subaction === 'join_tournament') {
+		handleRoute('/pong/play/current-tournament'); // Update the route to the current tournament page
+		const tournamentData = await getCurrentTournamentInformation();
+		updateOnlinePlayersUI(tournamentData); // Update the UI with the current tournament information
+		emit('updatePlayerList', tournamentData);
+		await updateAndCompareInfoData();
 	} else if (data.action === 'refresh_brackets') {
-		console.log('Action: refresh_brackets'); // Log the action
 		emit('updateBracket');
 	} else if (data.action === 'leavingLobby' || (data.info && data.action === 'You have been kicked.')) {
-		console.log('Action: leavingLobby or kicked'); // Log the action
 		emit('leavingLobby');
 	} else if (data.action === 'accept_private_game_invite') {
-		console.log('Action: accept_private_game_invite'); // Log the action
 		await updateAndCompareInfoData();
 		const config = {
 			gameMode: 'private',
@@ -83,11 +76,9 @@ const handleInfoMessage = async (data) => {
 		};
 		playGame(config);
 	} else if (data.action) {
-		console.log('Other Action:', data.action); // Log the action
 		await updateAndCompareInfoData();
 		emit('updateFriendsList');
 	} else {
-		console.log('Info:', data.info); // Log the info
 		createNotificationMessage(data.info);
 	}
 };
