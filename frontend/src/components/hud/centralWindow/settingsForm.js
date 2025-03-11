@@ -5,7 +5,7 @@ import { validatePassword } from '/src/components/hud/centralWindow/subscribeFor
 import { checkPasswordConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { checkEmailConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { pushInfo,getInfo } from '/src/services/infoStorage.js';
 
 export const settingsForm = createComponent({
 	tag: 'settingsForm',

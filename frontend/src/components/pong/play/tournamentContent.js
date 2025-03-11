@@ -1,7 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
-import { handleRoute, handleTournamentRedirection, getCurrentTournamentInformation } from '/src/services/router.js';
+import { handleRoute, handleTournamentRedirection } from '/src/services/router.js';
 import { ws } from '/src/services/websocket.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { pushInfo,getInfo } from '/src/services/infoStorage.js';
 
 export const tournamentContent = createComponent({
     tag: 'tournamentContent',

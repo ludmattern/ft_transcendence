@@ -1,6 +1,5 @@
 // src/components/hud/notifications.js
 import { emit } from '/src/services/eventEmitter.js';
-import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 let notificationBuffer = [];
 

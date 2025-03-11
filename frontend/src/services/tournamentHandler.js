@@ -1,4 +1,3 @@
-import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { handleRoute } from '/src/services/router.js';
 
 function parseGameId(gameId) {

@@ -1,7 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { createTournament } from '/src/services/tournamentHandler.js';
-import { pushInfo, getInfo, deleteInfo } from '/src/services/infoStorage.js';
+import { getInfo } from '/src/services/infoStorage.js';
 
 export const localTournamentCreation = createComponent({
 	tag: 'localTournamentCreation',

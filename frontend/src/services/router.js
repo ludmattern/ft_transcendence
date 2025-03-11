@@ -18,10 +18,8 @@ import {
 	navigateToLoading,
 	navigateToForgotPassword,
 } from '/src/services/navigation.js';
-import { render } from '/src/pongGame/gameNavigation.js';
 import { emit } from '/src/services/eventEmitter.js';
-import { getUserIdFromCookieAPI } from '/src/services/auth.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { pushInfo } from '/src/services/infoStorage.js';
 
 let previousRoute = null;
 let previousPongSubRoute = null;
@@ -86,7 +84,7 @@ function updatePreviousRoute(route) {
  * @param {string} route - La route à gérer.
  * @param {boolean} shouldPushState - Si `true`, met à jour l'historique du navigateur.
  */
-export async function handleRoute(route, shouldPushState = true, internal = false) {
+export async function handleRoute(route, shouldPushState = true) {
 	if (route === '/loading') {
 		processRoute(route, shouldPushState);
 		return;
@@ -94,17 +92,6 @@ export async function handleRoute(route, shouldPushState = true, internal = fals
 
 	const isAuthenticated = await isClientAuthenticated();
 	const isRoutePublic = isAuthenticatedRoute(route);
-
-	if (internal) {
-		console.log('internal route');
-		if (isAuthenticated) {
-			processInternalRoute(route, shouldPushState);
-			return;
-		} else {
-			processRoute('/login', shouldPushState);
-			return;
-		}
-	}
 
 	if ((!isRoutePublic && isAuthenticated) || (isRoutePublic && !isAuthenticated)) {
 		processRoute(route, shouldPushState);
@@ -148,17 +135,6 @@ function processRoute(route, shouldPushState) {
 	}
 }
 
-function processInternalRoute(route, shouldPushState) {
-	// updatePreviousRoute(route);
-
-	// if (!shouldPushState) {
-	// 	history.pushState(null, "", route);
-	// }
-
-	// emit("routeChanged", route);
-
-	render(route);
-}
 /**
  * Retourne la dernière route visitée.
  */
