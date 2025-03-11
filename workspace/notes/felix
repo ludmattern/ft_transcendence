@@ -1,2 +1,3 @@
 
 METTRE LES BONS USERNAME DANS PONGTUTO
+Passer les side et game id au qui joue le match actif a BasePongGame pour faire les MovePaddle en consequence

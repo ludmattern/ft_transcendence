@@ -1,0 +1,3708 @@
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20481/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20481/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20481/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20481/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20481/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20481/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20525/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20529/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -12.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20432/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20482/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20520/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20520/50000 - Reward: -2.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20540/50000 - Reward: -2.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20520/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20440/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20511/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20438/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20465/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20440/50000 - Reward: -12.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20447/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20473/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20522/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20490/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20442/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20477/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20494/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20560/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20431/50000 - Reward: -12.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20424/50000 - Reward: -12.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20483/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20449/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20540/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20548/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20556/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20420/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20412/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20477/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20520/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20500/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20607/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16257/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20460/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20464/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20555/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20185/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16309/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16324/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 16335/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 16344/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20500/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20540/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16679/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20461/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20467/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20541/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20541/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20600/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20580/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20479/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20433/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20419/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20360/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20420/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20602/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20380/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20507/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20517/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20520/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20420/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20556/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20620/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20530/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20443/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20440/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20453/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20423/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20345/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20454/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20544/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20447/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20475/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20432/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20453/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20518/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20514/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20442/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20481/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20520/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20490/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20533/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20532/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20573/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20466/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20427/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20425/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20388/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20481/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20464/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20511/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20483/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20449/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20479/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20432/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20497/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20537/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20540/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20500/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20432/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20437/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20523/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20535/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20500/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20570/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20620/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12233/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 16327/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12211/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 12245/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12198/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 12300/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 12200/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12236/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12257/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12113/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12113/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12316/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 18734/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 8367/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 8367/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 9740/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12260/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 8440/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 12340/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 16420/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 16440/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20428/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20496/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20545/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20444/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20424/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20540/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20580/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20513/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20490/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20450/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20560/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20380/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20481/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20481/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20474/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20421/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20445/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20470/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20429/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20481/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20492/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20527/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20500/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20497/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20435/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20482/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20540/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20432/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20479/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20477/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20435/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20499/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20478/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20421/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20481/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20517/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20500/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20540/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20455/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20520/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20520/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20554/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20410/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20481/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20540/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20406/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20439/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20439/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20465/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20520/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20538/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20471/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20500/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20560/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20565/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20423/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20447/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20440/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20500/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20495/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20440/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20600/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20478/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20461/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20480/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20548/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20416/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20435/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20400/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 20420/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20451/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20426/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 20411/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20476/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16324/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 20493/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 16438/50000 - Reward: -1.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16384/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 16384/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16382/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12269/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12235/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 12161/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12043/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -11.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 8436/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 20480/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12415/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🎮 Step 12288/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 12340/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🏓 Reward +1.0: Ball hit paddle
+🎮 Step 16384/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16393/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+🏓 Reward +1.0: Ball hit paddle
+😢 Penalty -3.0: AI lost a point {self.game.last_score_update}
+🎮 Step 16414/50000 - Reward: -10.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 16426/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 16429/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 16440/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+🥇 Reward +3.0: AI scored a point {self.game.last_score_update}
+🎮 Step 16413/50000 - Reward: 0.00 RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT

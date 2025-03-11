@@ -12,7 +12,56 @@ from .bot import ai_decision
 
 logger = logging.getLogger(__name__)
 
+import os
+import onnxruntime as ort
+import numpy as np
 
+MODEL_PATH = "/app/service/aiModels/pong3d_agent.onnx"
+
+ort_session = ort.InferenceSession(MODEL_PATH)
+
+# now = time.time()
+#                 if game.is_solo_mode():
+#                     ai_paddle_num = 2
+#                     if now - last_ai_time >= 1:  
+#                         last_ai_time = now
+#                         target_y, target_z = ai_decision(game, "Player 2") 
+#                     paddle = game.state["players"][ai_paddle_num]
+#                     threshold = 0.02
+#                     if abs(paddle["y"] - target_y) > threshold: 
+#                         if paddle["y"] < target_y:
+#                             game.move_paddle(ai_paddle_num, "up")
+#                         elif paddle["y"] > target_y:
+#                             game.move_paddle(ai_paddle_num, "down")
+#                     if abs(paddle["z"] - target_z) > threshold:  
+#                         if paddle["z"] < target_z:
+#                             game.move_paddle(ai_paddle_num, "right")
+#                         elif paddle["z"] > target_z:
+#                             game.move_paddle(ai_paddle_num, "left")
+
+def predict_ai_action(obs):
+    obs = np.array(obs, dtype=np.float32).reshape(1, -1)
+    try:
+        action_outputs = ort_session.run(None, {"input": obs})
+        if isinstance(action_outputs, list) and len(action_outputs) > 0:
+            main_action = action_outputs[0] 
+
+            if main_action.shape == (1, 2):  # ✅ Cas normal (batch=1, deux valeurs)
+                target_y, target_z = float(main_action[0][0]), float(main_action[0][1])
+            elif main_action.shape == (2,):  # Cas rare (directement 2 valeurs sans batch)
+                target_y, target_z = float(main_action[0]), float(main_action[1])
+            else:
+                target_y, target_z = 0.0, 0.0 
+
+            logger.info(f"🤖 AI action: (target_y={target_y}, target_z={target_z})")
+            return target_y, target_z
+
+        else:
+            return 0.0, 0.0  # 🔴 Sécurité
+
+    except Exception as e:
+        logger.exception("🚨 Error during AI action prediction")
+        return 0.0, 0.0  # 🔴 Fallback en cas d'erreur
 class PongGroupConsumer(AsyncWebsocketConsumer):
     running_games = {}
 
@@ -88,21 +137,32 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 now = time.time()
                 if game.is_solo_mode():
                     ai_paddle_num = 2
-                    if now - last_ai_time >= 1:  
+                    ai_player_id = "Player 2"
+                    if now - last_ai_time >= 1:
                         last_ai_time = now
-                        target_y, target_z = ai_decision(game, "Player 2") 
-                    paddle = game.state["players"][ai_paddle_num]
-                    threshold = 0.02
-                    if abs(paddle["y"] - target_y) > threshold: 
-                        if paddle["y"] < target_y:
-                            game.move_paddle(ai_paddle_num, "up")
-                        elif paddle["y"] > target_y:
-                            game.move_paddle(ai_paddle_num, "down")
-                    if abs(paddle["z"] - target_z) > threshold:  
-                        if paddle["z"] < target_z:
-                            game.move_paddle(ai_paddle_num, "right")
-                        elif paddle["z"] > target_z:
-                            game.move_paddle(ai_paddle_num, "left")
+
+                        obs = [
+                            game.state["ball"]["x"], game.state["ball"]["y"], game.state["ball"]["z"],
+                            game.state["ball"]["vx"], game.state["ball"]["vy"], game.state["ball"]["vz"],
+                            game.state["players"][1]["y"], game.state["players"][1]["z"],
+                            game.state["players"][2]["y"], game.state["players"][2]["z"]
+                        ]
+
+                        target_y, target_z = predict_ai_action(obs)
+
+                    current_y = game.state["players"][ai_paddle_num]["y"]
+                    current_z = game.state["players"][ai_paddle_num]["z"]
+
+                    if target_y > current_y:
+                        game.move_paddle(ai_paddle_num, "up")
+                    elif target_y < current_y:
+                        game.move_paddle(ai_paddle_num, "down")
+
+                    if target_z > current_z:
+                        game.move_paddle(ai_paddle_num, "right")
+                    elif target_z < current_z:
+                        game.move_paddle(ai_paddle_num, "left")
+
 
 
                 payload = game.to_dict()

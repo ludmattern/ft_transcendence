@@ -365,4 +365,3 @@ function getCompletedMatchHtml(match) {
 		return `<span class="text-danger">${match.player1}</span> vs <span class="text-success fw-bold">${match.player2}</span>`;
 	}
 }
-

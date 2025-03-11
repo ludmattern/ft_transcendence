@@ -1,7 +1,6 @@
 # service/game_manager.py
 from .games import BasePongGame
 
-
 class GameManager:
     def __init__(self):
         self.games = {}

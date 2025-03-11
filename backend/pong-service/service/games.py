@@ -12,22 +12,18 @@ class BasePongGame:
         self.start_time = time.time()
         self.max_score = 3
         self.game_over = False
-
+        
         self.player1_id = player1_id if player1_id else "unknown1"
         self.player2_id = player2_id if player2_id else "unknown2"
         logger.info(f"here : player1_id={self.player1_id}")
         logger.info(f"here : player2_id={self.player2_id}")
         self.player_mapping = {self.player1_id: 1, self.player2_id: 2}
-
         self.user_scores = {self.player1_id: 0, self.player2_id: 0}
-
         self.ball_hit_paddle = False
         self.ball_hit_wall = False
-
         self.tunnel_width = 5
         self.tunnel_height = 1.5
         self.tunnel_depth = 1.5
-
         self.paddle_width = 0.07
         self.paddle_height = 0.33
         self.paddle_depth = 0.33

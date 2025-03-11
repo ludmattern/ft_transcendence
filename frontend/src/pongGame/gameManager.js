@@ -211,9 +211,9 @@ class GameManager {
 	updateGameState(gameState) {
 		if (gameState.ball) {
 			const { x, y, z, vx } = gameState.ball;
-			if (Store.meshBall) {
+			if (Store.meshBall)
+			{
 				Store.meshBall.position.set(x, y, z);
-
 				Store.plaqueTop.position.set(x, 1.5 / 2 - 0.01, z);
 				Store.plaqueBottom.position.set(x, -1.5 / 2 + 0.01, z);
 				Store.plaqueLeft.position.set(x, y, 1.5 / 2 - 0.01);

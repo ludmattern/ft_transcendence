@@ -20,6 +20,7 @@ class BasePongGame:
         self.player_mapping = {self.player1_id: 1, self.player2_id: 2}
 
         self.user_scores = {self.player1_id: 0, self.player2_id: 0}
+        self.ball_hit_paddle_p1 = False
 
         self.ball_hit_paddle = False
         self.ball_hit_wall = False
@@ -51,6 +52,7 @@ class BasePongGame:
         self.vmax = 4
         self.last_update = time.time()
         self.solo_mode = game_id.startswith("solo_")
+        self.last_score_update = None
 
     def is_solo_mode(self):
         return self.solo_mode
@@ -93,6 +95,7 @@ class BasePongGame:
 
         self.ball_hit_paddle = False
         self.ball_hit_wall = False
+        self.ball_hit_paddle_p1 = False
 
         elapsed_since_start = now - self.start_time
         if elapsed_since_start < self.start_delay:
@@ -208,7 +211,7 @@ class BasePongGame:
                 self.user_scores[scoring_player_id] += 1
                 self.state["scores"][self.player_mapping[scoring_player_id]] += 1
                 self.reset_ball("right")
-
+                self.last_score_update = scoring_player_id  # ✅ Mise à jour du dernier scoreur
         if ball["x"] >= p2["x"] - self.paddle_width:
             if (
                 p2["y"] - self.paddle_height / 2 <= ball["y"] + ball_half_size
@@ -217,7 +220,7 @@ class BasePongGame:
                 p2["z"] - self.paddle_depth / 2 <= ball["z"] + ball_half_size
                 and p2["z"] + self.paddle_depth / 2 >= ball["z"] - ball_half_size
             ):
-                self.ball_hit_paddle = True
+                self.ball_hit_paddle_p1 = True
 
                 impact_y = (ball["y"] - p2["y"]) / (self.paddle_height / 2)
                 impact_z = (ball["z"] - p2["z"]) / (self.paddle_depth / 2)
@@ -230,6 +233,8 @@ class BasePongGame:
                 self.user_scores[scoring_player_id] += 1
                 self.state["scores"][self.player_mapping[scoring_player_id]] += 1
                 self.reset_ball("left")
+                self.last_score_update = scoring_player_id  # ✅ Mise à jour du dernier scoreur
+
 
         if (
             self.user_scores[self.player1_id] >= self.max_score
@@ -250,7 +255,8 @@ class BasePongGame:
         self.state["ball"]["vx"] = 0
         self.state["ball"]["vy"] = 0
         self.state["ball"]["vz"] = 0
-        
+        self.last_score_update = None
+
     def to_dict(self):
         return {
             "ball": self.state["ball"],

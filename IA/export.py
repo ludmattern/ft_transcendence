@@ -14,8 +14,8 @@ ONNX_PATH = "./models/pong3d_agent.onnx"
 
 # Exporter en ONNX
 torch.onnx.export(
-    model.policy,  # Réseau de neurones de l'agent
-    dummy_input,  # Exemple d'entrée
+    model.policy,  
+    dummy_input,
     ONNX_PATH,
     opset_version=11,
     input_names=["input"],
