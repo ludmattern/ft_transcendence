@@ -57,7 +57,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         elif action == "move":
             direction = event.get("direction")
             player_id = event.get("player_id")
-
             game.move_paddle(player_id, direction)
 
         elif action == "leave_game":
@@ -67,18 +66,86 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 game_manager.cleanup_game(game_id)
                 logger.info(f" Partie {game_id} terminée (leave_game)")
 
-    async def game_state(self, event):
+        elif action == "game_giveup":
+            player_id = event.get("player_id")
+            if player_id == player1_id:
+                winner_id = player2_id
+            else:
+                winner_id = player1_id
 
+            await self.channel_layer.group_send(
+                f"game_{game_id}",
+                {
+                    "type": "game_event",
+                    "game_id": game_id,
+                    "action": "game_over",
+                    "winner": winner_id,
+                    "loser": player_id,
+                },
+            )
+            if game_id in self.running_games:
+                self.running_games[game_id]["task"].cancel()
+                del self.running_games[game_id]
+                game_manager.cleanup_game(game_id)
+                logger.info(f" Partie {game_id} terminée (game_local_giveup)")
+
+    async def game_state(self, event):
         pass
 
+
+    async def game_heartbeat(self, game_id, player_id, stop_event):
+        offline_duration = 0
+        check_interval = 0.5  # 500ms
+        max_offline_duration = 5  # 5 seconds
+
+        while not stop_event.is_set():
+            user_status = await self.get_user_status(player_id)
+            if user_status == "offline":
+                offline_duration += check_interval
+                if offline_duration >= max_offline_duration:
+                    # Declare the other player as the winner
+                    game = game_manager.get_game(game_id)
+                    if player_id == game.player1_id:
+                        winner_id = game.player2_id
+                    else:
+                        winner_id = game.player1_id
+
+                    await self.channel_layer.group_send(
+                        f"game_{game_id}",
+                        {
+                            "type": "game_event",
+                            "game_id": game_id,
+                            "action": "game_over",
+                            "winner": winner_id,
+                            "loser": player_id,
+                        },
+                    )
+
+                    # Signal the game loop to stop
+                    stop_event.set()
+                    break
+            else:
+                offline_duration = 0
+
+            await asyncio.sleep(check_interval)
+
+    async def get_user_status(self, player_id):
+        user = await sync_to_async(ManualUser.objects.get)(id=player_id)
+        return user.status
 
     async def game_loop(self, game_id):
 
         target_y = 0.0  
-        target_z = 0.0  
+        target_z = 0.0 
+        stop_event = asyncio.Event()
+        game = game_manager.get_game(game_id)
+
+        # Start heartbeat checks for both players
+        asyncio.create_task(self.game_heartbeat(game_id, game.player1_id, stop_event))
+        asyncio.create_task(self.game_heartbeat(game_id, game.player2_id, stop_event))
         try:
             last_ai_time = time.time()
-            while True:
+            while not stop_event.is_set():
                 game = game_manager.get_game(game_id)
                 if not game:
                     break

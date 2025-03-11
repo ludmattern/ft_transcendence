@@ -1,4 +1,19 @@
 # -- TODO --
+# IN ORDER TO TRAIN AI
+## Create and navigate to the new directory in ~goinfre/
+mkdir -p ~/goinfre/ft_transcendence
+cd ~/goinfre/ft_transcendence
+
+## Create and activate a virtual environment in ~goinfre/
+python3 -m venv venv
+source venv/bin/activate
+
+## Install stable-baselines3 and other dependencies
+pip install stable-baselines3 gym numpy torch
+
+## Run the training script from its original location
+python3 ~/42/ft_transcendence/IA/train_pong3d.py
+
 
 IA: MODELS NEED TO BE SMART ENOUGH
 
