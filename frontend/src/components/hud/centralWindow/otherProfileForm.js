@@ -29,7 +29,6 @@ function getUsernameFromUrl() {
 async function updateSocialActions(profile_id, container) {
 	const relationshipStatus = await getRelationshipStatus(profile_id);
 	if (!relationshipStatus || !relationshipStatus.success) {
-		console.error('Impossible de récupérer le statut de la relation');
 		return;
 	}
 	if (relationshipStatus.is_me) {
@@ -98,23 +97,19 @@ export const otherProfileForm = createComponent({
 	attachEvents: async (el) => {
 		const profileUsername = getUsernameFromUrl();
 		if (!profileUsername) {
-			console.error('Username not found in URL');
 			return;
 		}
 		const profile_id = await fetchUserId(profileUsername);
 		if (!profile_id) {
-			console.error('Profile ID not found');
 			handleRoute('/lost');
 			return;
 		}
-		console.log(`Profile ID: ${profile_id}`);
 		loadUserProfile(profile_id);
 		loadMatchHistory(profile_id);
 		const socialActionsContainer = el.querySelector('#social-actions');
 		await updateSocialActions(profile_id, socialActionsContainer);
 		const actions = {
 			'#invite-link': async () => {
-				console.debug('Invite sent.');
 				sendWsInfoMessage('private_game_invite', profile_id);
 				// clearPageContent();
 				const config = {
@@ -126,25 +121,21 @@ export const otherProfileForm = createComponent({
 				playGame(config);
 			},
 			'#remove-link': async () => {
-				console.debug('Friend removed.');
 				sendWsInfoMessage('remove_friend', profile_id);
 				await delay(100);
 				await updateSocialActions(profile_id, socialActionsContainer);
 			},
 			'#add-link': async () => {
-				console.debug('Friend added.');
 				sendWsInfoMessage('send_friend_request', profile_id);
 				await delay(100);
 				await updateSocialActions(profile_id, socialActionsContainer);
 			},
 			'#block-link': async () => {
-				console.debug('User blocked.');
 				sendWsInfoMessage('block_user', profile_id);
 				await delay(100);
 				await updateSocialActions(profile_id, socialActionsContainer);
 			},
 			'#unblock-link': async () => {
-				console.debug('User unblocked.');
 				sendWsInfoMessage('unblock_user', profile_id);
 				await delay(100);
 				await updateSocialActions(profile_id, socialActionsContainer);

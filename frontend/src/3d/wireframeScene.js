@@ -5,7 +5,6 @@ import { CacheDB } from '/src/utils/IndexedDBCache.js';
 export async function initWireframeScene() {
 	const wireframeDiv = document.getElementById('wireframe');
 	if (!wireframeDiv) {
-		console.error('Div \'wireframe\' not found');
 		return;
 	}
 

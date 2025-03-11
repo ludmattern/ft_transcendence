@@ -95,7 +95,6 @@ export const multiplayerContent = createComponent({
 		createPrivateButton.addEventListener('click', async () => {
 			const opponentUsername = privateGameInput.value.trim();
 			if (!opponentUsername) {
-				console.log('Please enter a username code.');
 				createNotificationMessage('Please enter a username code.', 2500, false);
 				return;
 			}
@@ -106,8 +105,6 @@ export const multiplayerContent = createComponent({
 				return;
 			}
 			else {
-				console.log(`Opponent ID: ${opponentId}`);
-				console.log(`User ID: ${await getUserIdFromCookieAPI()}`);
 				const userId = await getUserIdFromCookieAPI();
 				if(opponentId === userId)
 				{
@@ -141,6 +138,4 @@ export async function leaveMatchmaking() {
 	};
 
 	ws.send(JSON.stringify(payload));
-	console.log('payload :', payload);
-	console.log('Sent \'leave matchmaking\' via WebSocket');
 }

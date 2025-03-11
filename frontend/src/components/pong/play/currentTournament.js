@@ -26,7 +26,6 @@ export const currentTournament = createComponent({
 	`;
 	},
 	attachEvents: async (el) => {
-		console.log('currentTournament attachEvents');
 		currentTournament.el = el;
 		const data = await getInfo('TournamentCreationNeeded');
 		if (data.success && data.value === 'True') {
@@ -37,13 +36,11 @@ export const currentTournament = createComponent({
 					action: 'create_online_tournament',
 				};
 				ws.send(JSON.stringify(payload));
-				console.log('Online tournament created:', payload);
 			} catch (error) {
 				console.error('Error creating online tournament:', error);
 			}
 		} else {
 			if (await handleTournamentRedirection('/pong/play/current-tournament')) {
-				console.log('Tournament redirection has occurred.');
 				return;
 			}
 			renderBracket();
@@ -57,11 +54,8 @@ export async function renderBracket() {
 	const username = (await getInfo('username')).success ? (await getInfo('username')).value : null;
 	const data = await getBracketData();
 	if (!data || !data.size) {
-		console.warn('No bracket data available.');
 		return;
 	}
-
-	console.log('Bracket data:', data);
 
 	const mode = data.mode;
 	const bracketData = data.size;
@@ -139,8 +133,6 @@ export async function renderBracket() {
 				})
 				.join('');
 
-			console.log('roundIndex', roundIndex);
-
 			sizeHtml += `<div class="round-column">
 							<div class="matches-container">${matchesHtml}</div>
 						</div>`;
@@ -176,7 +168,6 @@ export async function renderBracket() {
 				});
 
 				const result = await response.json();
-				console.log('Tournament abandoned:', result);
 
 				if (result.success) {
 					handleRoute('/pong/play');
@@ -187,7 +178,6 @@ export async function renderBracket() {
 					};
 
 					ws.send(JSON.stringify(payload));
-					console.log('Online tournament abandoned:', payload);
 					handleRoute('/pong/play');
 				}
 			} catch (error) {
@@ -206,14 +196,12 @@ export async function renderBracket() {
 			const matchKey = button.getAttribute('data-match-key');
 
 			if (mode === 'online') {
-				console.log('Join Online Match:', { matchId, player1, player2 });
 				const config = {
 					gameMode: 'private',
 					action: 'create',
 					matchkey: matchKey,
 					type: 'fullScreen',
 				};
-				console.log(config);
 				playGame(config);
 			} else {
 				const config = {
@@ -224,7 +212,6 @@ export async function renderBracket() {
 					matchId: matchId,
 					tournament_id: tournament_id,
 				};
-				console.log('Join Local Match with config:', config);
 				playGame(config);
 			}
 		});
@@ -254,7 +241,6 @@ function hasUserCompletedInPreviousRound(bracketData, roundIndex, username) {
 }
 
 function createCompletedMatchHtml(match, displayHtml) {
-	console.log('score', match.score);
 	return `<div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
 			data-player1="${match.player1}" data-player2="${match.player2}">
 				<span class="text-white">${displayHtml}</span>
@@ -273,7 +259,6 @@ function getCompletedMatchHtml(match) {
 
 	if (match.score === 'Forfeit') {
 		const winner = match.winner;
-		console.log('winner:', winner);
 		if (winner === match.player1) {
 			return `<span class="text-success fw-bold">${match.player1}</span> vs <span class="text-danger">${match.player2}</span>`;
 		} else {

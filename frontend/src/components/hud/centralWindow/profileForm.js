@@ -107,7 +107,6 @@ function attachProfilePicUpload() {
                     throw new Error(`HTTP error ${response.status}`);
                 }
                 const data = await response.json();
-                console.log('Profile picture updated:', data);
 
                 if (data.success && data.profile_picture) {
                     const profilePicImg = document.querySelector('.profile-pic');
@@ -129,7 +128,6 @@ export async function loadMatchHistory(userId) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
 		const data = await response.json();
-		console.log('Game history data:', data);
 		if (data.success) {
 			const winrateElement = document.getElementById('winrate');
 			if (winrateElement) {
@@ -150,8 +148,6 @@ export async function loadMatchHistory(userId) {
 				const matchHtml = createMatchItem(outcome, date, opponents, outcomeClass, score);
 				historyContainer.innerHTML += matchHtml;
 			});
-		} else {
-			console.error('Erreur lors du chargement de l\'historique :', data.error);
 		}
 	} catch (error) {
 		console.error('Error loading match history:', error);
@@ -176,7 +172,6 @@ export async function loadUserProfile(userId) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
 		const data = await response.json();
-		console.log('User profile data:', data);
 
 		if (data.success && data.profile) {
 			const profilePicImg = document.querySelector('.profile-pic');
@@ -192,7 +187,6 @@ export async function loadUserProfile(userId) {
 			if (pseudoElement && data.profile.username) {
 				pseudoElement.textContent = data.profile.username;
 			}
-			console.log(data.profile.elo);
 			const eloElement = document.getElementById('elo');
 			if (eloElement) {
 				eloElement.textContent = `Elo: ${data.profile.elo}`;
@@ -208,8 +202,6 @@ export async function loadUserProfile(userId) {
 					statusIndicator.classList.add('text-danger');
 				}
 			}
-		} else {
-			console.error('Error loading profile:', data.error);
 		}
 	} catch (error) {
 		console.error('Error loading user profile:', error);

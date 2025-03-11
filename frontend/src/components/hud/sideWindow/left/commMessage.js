@@ -42,9 +42,6 @@ export const commMessage = createComponent({
 	render: (item) => {
 		const isUser = !!item.isUser;
 		const isPrivate = item.channel === 'Private';
-		console.log('item is :', item);
-		// Pour un message privé envoyé par vous, afficher le destinataire, sinon "You" pour les messages généraux.
-		// Pour les messages reçus, préfixer d'un "@".
 		let displayName;
 		if (isUser) {
 			displayName = isPrivate ? '@' + item.recipient || 'Unknown' : 'You';

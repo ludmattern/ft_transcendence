@@ -24,7 +24,6 @@ export async function isClientAuthenticated() {
 		await pushInfo('username', data.username);
 
 		initializeWebSocket(data.id);
-		console.log('User is authenticated!');
 		return true;
 	} catch (error) {
 		return false;
@@ -38,15 +37,14 @@ export async function logoutUser() {
 		await deleteInfo('tournamentMode');
 		await deleteInfo('tournamentSize');
 		await deleteInfo('roomCode');
-		//await deleteInfo("chatHistory");
 		await deleteInfo('activeTournamentTab');
-		//await deleteInfo("infoTabData");
 		await deleteInfo('difficulty');
 		await deleteInfo('liabilityCheckbox');
 		await deleteInfo('pending2FA_user');
 		await deleteInfo('pending2FA_method');
 		await deleteInfo('registered_user');
-		sessionStorage.clear();		sessionStorage.clear();
+		sessionStorage.clear();
+		sessionStorage.clear();
 
 		const response = await fetch('/api/auth-service/logout/', {
 			method: 'POST',
@@ -55,9 +53,6 @@ export async function logoutUser() {
 
 		if (response.ok) {
 			await closeWebSocket();
-			console.log('Logout successful!');
-		} else {
-			console.log('Logout failed:', await response.text());
 		}
 	} catch (err) {
 		console.log('Error during logout:', err);
@@ -99,7 +94,6 @@ export async function registerUser(id, password, email, is2FAEnabled, twoFAMetho
 				phone_number: is2FAEnabled && twoFAMethod === 'sms' ? phoneNumber : null,
 			}),
 		});
-		console.log(response);
 		const data = await response.json();
 		if (data.success) {
 			return true;
@@ -119,8 +113,6 @@ export async function registerUser(id, password, email, is2FAEnabled, twoFAMetho
 			return false;
 		}
 	} catch (error) {
-		console.log('Error during registration:', error);
-		alert('An error occurred. Please try again later.');
 		return false;
 	}
 }
@@ -134,7 +126,6 @@ export async function verifyTwoFACode(username, twofaCode) {
 	});
 
 	const data = await response.json();
-	console.log(data);
 	return data;
 }
 
@@ -152,7 +143,7 @@ export async function getUserIdFromCookieAPI() {
 			return null;
 		}
 	} catch (error) {
-		console.error('Erreur lors de la récupération de l\'user ID:', error);
+		console.error("Erreur lors de la récupération de l'user ID:", error);
 		return null;
 	}
 }

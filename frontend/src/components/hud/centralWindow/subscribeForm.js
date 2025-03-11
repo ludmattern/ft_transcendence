@@ -125,7 +125,6 @@ export const subscribeForm = createComponent({
 					}
 				} catch (err) {
 					console.error('register failed:', err.message);
-					alert('register failed! Please try again.');
 				}
 			}
 		});

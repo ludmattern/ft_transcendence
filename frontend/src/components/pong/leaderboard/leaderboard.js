@@ -112,7 +112,6 @@ async function fetchLeaderboard() {
 			throw new Error(`HTTP error ${response.status}`);
 		}
 		const data = await response.json();
-		console.log('Leaderboard data:', data.players);
 
 		if (data.success) {
 			leaderboardData = data.players;
@@ -146,7 +145,6 @@ function generateLeaderboardRows(players, username) {
 
 async function findUserInLeaderboard(el) {
 	const username = await getUsername(await getUserIdFromCookieAPI());
-	console.log(username);
 	const user = leaderboardData.find((p) => p.username === username);
 
 	if (!user) {

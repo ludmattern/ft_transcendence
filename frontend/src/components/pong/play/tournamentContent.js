@@ -62,7 +62,6 @@ export const tournamentContent = createComponent({
 
     attachEvents: async (el) => {
         if (await handleTournamentRedirection('/pong/play/tournament')) {
-            console.log('Tournament redirection has occurred.');
             return;
         }
         const tabs = el.querySelectorAll('.nav-link');
@@ -100,10 +99,8 @@ export const tournamentContent = createComponent({
         joinWithCodeButton.addEventListener('click', async () => {
             const roomCode = document.getElementById('tournamentRoomCode').value;
             if (!roomCode) {
-                console.log('Enter a valid room code');
                 return;
             }
-            console.log(`Trying to join tournament with room code: ${roomCode}`);
             try {
                 const response = await fetch('/api/tournament-service/try_join_tournament_with_room_code/', {
                     method: 'POST',
@@ -112,7 +109,6 @@ export const tournamentContent = createComponent({
                     credentials: 'include',
                 });
                 const data = await response.json();
-                console.log('Response:', data);
                 if (data.success) {
                     const payload = {
                         type: 'tournament_message',
@@ -123,7 +119,6 @@ export const tournamentContent = createComponent({
                     ws.send(JSON.stringify(payload));
                     handleRoute('/pong/play/tournament-creation');
                 } else {
-                    console.log(data);
                     alert(data.message);
                 }
             } catch (error) {
@@ -141,7 +136,6 @@ export const tournamentContent = createComponent({
                 alert('Please enter a valid tournament size.');
                 return;
             }
-            console.log(`Joining a random tournament with size: ${tournamentSize}`);
             try {
                 const response = await fetch('/api/tournament-service/try_join_random_tournament/', {
                     method: 'POST',
@@ -150,7 +144,6 @@ export const tournamentContent = createComponent({
                     credentials: 'include',
                 });
                 const data = await response.json();
-                console.log('Response:', data);
                 if (data.success) {
                     const payload = {
                         type: 'tournament_message',
@@ -161,7 +154,6 @@ export const tournamentContent = createComponent({
                     ws.send(JSON.stringify(payload));
                     handleRoute('/pong/play/tournament-creation');
                 } else {
-                    console.log(data);
                     alert(data.message);
                 }
             } catch (error) {
@@ -177,13 +169,9 @@ export const tournamentContent = createComponent({
             const mode = document.getElementById('tournamentMode').value;
             const size = document.getElementById('tournamentSize').value;
         
-            console.log(`Creating a tournament with mode: ${mode} and size: ${size}`);
-        
             await pushInfo('tournamentMode', mode);
             await pushInfo('tournamentSize', size);
         
-            console.log('Tournament mode and size stored. Redirecting now...');
-            
             handleRoute('/pong/play/tournament-creation');
         });
         

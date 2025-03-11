@@ -21,9 +21,7 @@ export async function gameModeSelector(config) {
 				action: 'join',
 			})
 		);
-		console.log('launch matchmaking');
 	} else if (config.gameMode === 'private') {
-		console.log('private game');
 		if (config.action === 'create') {
 			ws.send(
 				JSON.stringify({
@@ -32,7 +30,6 @@ export async function gameModeSelector(config) {
 					room_code: config.matchkey,
 				})
 			);
-			console.log('Sent join room create event for room:', config.matchkey);
 		} else if (config.action === 'join') {
 			ws.send(
 				JSON.stringify({
@@ -42,7 +39,6 @@ export async function gameModeSelector(config) {
 					room_code: config.matchkey,
 				})
 			);
-			console.log('Sent join room accept event for room:', config.matchkey);
 		}
 	} else if (config.gameMode === 'local-tournament') {
 		const gameConfig = {
@@ -64,7 +60,6 @@ export async function cancelMode(config) {
 				action: 'leave',
 			})
 		);
-		console.log('Sent \'leave matchmaking\' via WebSocket');
 	} else if (config.gameMode === 'private') {
 		ws.send(
 			JSON.stringify({
@@ -73,6 +68,5 @@ export async function cancelMode(config) {
 				room_code: config.matchkey,
 			})
 		);
-		console.log('Sent leave room event for room:', config.matchkey);
 	}
 }

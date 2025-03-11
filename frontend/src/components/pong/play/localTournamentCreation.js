@@ -120,10 +120,8 @@ export const localTournamentCreation = createComponent({
 		}
 
 		createTournamentButton.addEventListener('click', () => {
-			console.log('Local tournament created with players:', players);
 			const shuffledPlayers = shuffleArray([...players]);
 			createTournament(shuffledPlayers);
-			// Reset players list après création
 			players = [username];
 			updateLocalUI();
 		});

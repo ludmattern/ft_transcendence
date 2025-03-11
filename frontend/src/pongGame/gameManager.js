@@ -68,6 +68,7 @@ class GameManager {
 				if (this.activeKeys['d']) {
 					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', player_id: 1, game_id: this.gameId }));
 				}
+
 				if (this.activeKeys['ArrowUp']) {
 					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', player_id: 2, game_id: this.gameId }));
 				}
@@ -116,7 +117,6 @@ class GameManager {
 	startGame(gameConfig) {
 		this.initClientData();
 
-		console.log('Starting game with config:', gameConfig);
 		componentManagers['HUD'].unloadComponent('pongTuto');
 		this.gameMode = gameConfig.mode;
 		if (this.activeGame) this.endGame();
@@ -129,7 +129,6 @@ class GameManager {
 
 		let player1 = gameConfig.side === 'left' ? gameConfig.user_id : gameConfig.opponent_id;
 		let player2 = gameConfig.side === 'right' ? gameConfig.user_id : gameConfig.opponent_id;
-		console.log('player1:', player1, 'player2:', player2);
 
 		if (gameConfig.mode === 'local') {
 			document.addEventListener('keydown', this.localKeydownHandler);
@@ -161,7 +160,6 @@ class GameManager {
 			player1 = gameConfig.player1;
 			player2 = gameConfig.player2;
 		}
-		console.log(` Sending start_game event: player1=${player1}, player2=${player2}`);
 		ws.send(
 			JSON.stringify({
 				type: 'game_event',
@@ -176,7 +174,6 @@ class GameManager {
 	}
 
 	endGame() {
-		console.log('Ending current game...');
 		endGameScreen();
 		if (!this.activeGame) {
 			return;
@@ -260,7 +257,6 @@ class GameManager {
 			const scoreTextEl = document.getElementById('scoreText');
 
 			if (this.username1 === this.clientName) {
-				console.log('clientName', this.clientName);
 				oppennentName = this.username2;
 			} else oppennentName = this.username1;
 
@@ -272,12 +268,9 @@ class GameManager {
 		if (data.type === 'game_state') {
 			this.updateGameState(data.payload);
 		} else if (data.type === 'game_over') {
-			console.log('Game over! Winner is player:', data.winner);
-			console.log('Final scores:', data.final_scores);
 			this.endGame();
 			if (Store.pongScene) Store.pongScene.clear();
 			const previousPongPlaySubRoute = getPreviousPongPlaySubRoute();
-			console.log(previousPongPlaySubRoute);
 			emit('gameOver');
 			emit('updateBracket');
 			handleRoute(previousPongPlaySubRoute);
@@ -324,6 +317,10 @@ export async function getUsername(playerId) {
 		console.error('Error fetching username:', error);
 		return `${playerId}`;
 	}
+}
+
+async function username() {
+	return await getUsername(await getUserIdFromCookieAPI());
 }
 
 function triggerBallColorChange() {

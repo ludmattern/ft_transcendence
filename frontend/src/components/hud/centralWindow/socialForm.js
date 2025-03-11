@@ -75,7 +75,6 @@ export const socialForm = createComponent({
 				const authorElement = pilotItem?.querySelector('.profile-pseudo');
 	
 				if (!authorElement) {
-					console.error('Author username not found!');
 					return;
 				}
 	
@@ -116,7 +115,6 @@ export const socialForm = createComponent({
 				const searchBar = el.querySelector('#search-bar');
 				if (searchBar) {
 					const query = searchBar.value.trim();
-					console.log(`Search for: ${query}`);
 					const pilotListContainer = el.querySelector('.pilot-list-container');
 					fetchPilot(query, pilotListContainer);
 				}
@@ -131,7 +129,6 @@ export const socialForm = createComponent({
 				if (e.key === 'Enter') {
 					e.preventDefault();
 					const query = searchBar.value.trim();
-					console.log(`Search for: ${query}`);
 					const pilotListContainer = el.querySelector('.pilot-list-container');
 					fetchPilot(query, pilotListContainer);
 				}
@@ -199,12 +196,10 @@ async function getFriends() {
 			method: "GET",
 			credentials: "include",
 		});
-		console.log("response:", response);
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
 		const data = await response.json();
-		console.log("Friend list:", data.friends);
 
 		const friendListContainer = document.querySelector(".friend-list-container");
 		if (friendListContainer && data.friends && data.friends.length > 0) {
@@ -236,7 +231,6 @@ async function fetchPilot(query, container) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
 		const data = await response.json();
-		console.log("Search results:", data.pilots);
 
 		if (container) {
 			if (data.pilots.length === 0) {

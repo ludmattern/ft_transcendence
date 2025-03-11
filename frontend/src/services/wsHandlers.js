@@ -36,7 +36,6 @@ const handleErrorMessage = (data) => {
 };
 
 const handleChatOrPrivateMessage = (data) => {
-	console.log('Message reçu :', data);
 	handleIncomingMessage(data);
 };
 
@@ -49,7 +48,6 @@ const handleMatchFound = (data) => {
 };
 
 const handleInfoMessage = async (data) => {
-	// console.log('Received data:', data); // Log the received data
 
 	if (data.action === 'updatePlayerList') {
 		const tournamentData = await getCurrentTournamentInformation();

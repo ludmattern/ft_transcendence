@@ -43,17 +43,14 @@ export const GiveUpButtons = createComponent({
 		const eventHandlers = {
 			local: {
 				'btn-giveup-player-left': () => {
-					console.log('Abandon local déclenché');
 					alert('Abandon local déclenché');
 				},
 				'btn-giveup-player-right': () => {
-					console.log('Quitter local déclenché');
 					alert('Quitter local déclenché');
 				},
 			},
 			online: {
 				'btn-giveup': () => {
-					console.log('Abandon online déclenché');
 					alert('Abandon online déclenché');
 					const payload = {
 						type: 'game_event'
@@ -114,7 +111,6 @@ export const midScreen = createComponent({
 function initM2() {
 	Store.menuElement = document.getElementById('gameScreen');
 	if (!Store.menuElement) {
-		console.error("The element with ID 'gameScreen' was not found.");
 		return;
 	}
 	Store.menuObject = new CSS3DObject(Store.menuElement);
@@ -128,7 +124,6 @@ function initM2() {
 }
 export function showCountdown() {
 	if (!Store.menuElement) {
-		console.error('Store.menuElement is not defined.');
 		return;
 	}
 

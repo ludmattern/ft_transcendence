@@ -55,8 +55,6 @@ attachEvents: async (el) => {
         e.preventDefault();
         const formData = collectFormData(el);
 
-        console.log('Form data:', formData);
-
         resetErrorMessages();
 
         let canUpdate = true;
@@ -102,7 +100,6 @@ attachEvents: async (el) => {
                 }
             } catch (error) {
                 console.error('Error updating information:', error);
-                alert('An unexpected error occurred.');
             }
         }
     });
@@ -256,7 +253,6 @@ async function checkOAuthStatus() {
         });
 
         const data = await response.json();
-        console.log("is null", data.oauth_null);
         return data.oauth_null;
     } catch (error) {
         console.error("Erreur lors de la vérification de OAuth:", error);

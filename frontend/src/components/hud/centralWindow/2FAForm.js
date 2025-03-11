@@ -37,7 +37,6 @@ export const twoFAForm = createComponent({
 					sessionStorage.removeItem('pending2FA_method');
 					handleRoute('/');
 				} else {
-					console.error('2FA verification failed:', data.message);
 					document.getElementById('twofa-error').style.display = 'block';
 				}
 			} catch (err) {

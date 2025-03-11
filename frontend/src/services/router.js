@@ -121,7 +121,6 @@ export async function handleRoute(route, shouldPushState = true, internal = fals
  * @param {boolean} shouldPushState - Si `true`, met à jour l'historique.
  */
 function processRoute(route, shouldPushState) {
-	console.log('processRoute : ' + route);
 	updatePreviousRoute(route);
 
 	let finalRoute = route;
@@ -137,15 +136,12 @@ function processRoute(route, shouldPushState) {
 
 	emit('routeChanged', finalRoute);
 
-	console.log('finalRoute : ' + finalRoute);
-
 	if (routeMappings[finalRoute]) {
 		routeMappings[finalRoute]();
 	} else if (finalRoute.startsWith('/social/pilot=')) {
 		const pilot = finalRoute.split('=')[1];
 		navigateToOtherProfile();
 	} else if (finalRoute.startsWith('/pong')) {
-		console.log('navigateToPong : ' + finalRoute.substring(6));
 		navigateToPong(finalRoute.substring(6));
 	} else {
 		navigateToLost();
@@ -196,15 +192,12 @@ export function notAuthenticatedThenRedirect() {
  * Si la sous-route déterminée correspond déjà à cette valeur, la redirection est évitée.
  */
 export async function handleTournamentRedirection(caller = '') {
-	console.log('Vérification du statut du tournoi...');
 	try {
 		const data = await getCurrentTournamentInformation();
 		let route;
 		if (data.tournament === null) {
-			console.log('Aucun tournoi en cours ou à venir.');
 			route = '/pong/play/tournament';
 			if (caller === '/pong/play/tournament-creation') {
-				console.log('Va créer un tournoi, aucune redirection.');
 				return false;
 			}
 		} else if (data.status === 'ongoing') {
@@ -224,11 +217,9 @@ export async function handleTournamentRedirection(caller = '') {
 			return false;
 		}
 
-		console.log('Redirection vers la route :', route);
 		handleRoute(route);
 		return true;
 	} catch (error) {
-		console.error('Erreur lors de la redirection du tournoi :', error);
 		if (caller !== '/pong/play/tournament') {
 			handleRoute('/pong/play/tournament');
 			return true;
@@ -247,10 +238,8 @@ export async function getCurrentTournamentInformation() {
 			throw new Error('Impossible de récupérer le statut du tournoi.');
 		}
 		const data = await response.json();
-		console.log('Statut du tournoi récupéré :', data);
 		return data;
 	} catch (error) {
-		console.error('Erreur lors de la récupération du statut du tournoi:', error);
 		throw error;
 	}
 }
