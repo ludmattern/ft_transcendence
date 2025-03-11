@@ -96,6 +96,7 @@ export const multiplayerContent = createComponent({
 			const opponentUsername = privateGameInput.value.trim();
 			if (!opponentUsername) {
 				console.log('Please enter a username code.');
+				createNotificationMessage('Please enter a username code.', 2500, false);
 				return;
 			}
 			if (notAuthenticatedThenRedirect()) return;

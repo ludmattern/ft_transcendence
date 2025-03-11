@@ -552,40 +552,27 @@ def try_join_random_tournament(request):
             return JsonResponse({"message": "Unauthorized"}, status=401)
 
         if user.current_tournament_id != 0:
-            return JsonResponse(
-                {"message": "User is already in a tournament"}, status=400
-            )
+            return JsonResponse({"message": "User is already in a tournament"}, status=400)
 
         tournament_size = body.get("tournamentSize")
         if not tournament_size:
             return JsonResponse({"message": "Tournament size is required"}, status=400)
 
-        tournament = (
-            ManualTournament.objects.filter(
-                status="upcoming", mode="online", size=tournament_size
-            )
-            .order_by("created_at")
-            .first()
-        )
+        tournament = (ManualTournament.objects.filter(status="upcoming", mode="online", size=tournament_size).order_by("created_at").first())
 
         if not tournament:
             return JsonResponse({"error": "No upcoming tournament found"}, status=404)
 
-        participant_count = ManualTournamentParticipants.objects.filter(
-            tournament=tournament, status__in=["accepted", "pending"]
-        ).count()
+        participant_count = ManualTournamentParticipants.objects.filter(tournament=tournament, status__in=["accepted", "pending"]).count()
 
         if participant_count >= tournament_size:
             return JsonResponse({"message": "Tournament is full"}, status=400)
 
+        # Add user to the tournament
+        ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
+
         logger.info(f"User {user.id} found {tournament.id} tournament to join")
-        return JsonResponse(
-            {
-                "success": True,
-                "message": "User found a random tournament",
-                "payload": {"userId": user.id, "tournament_id": tournament.id},
-            }
-        )
+        return JsonResponse({"success": True, "message": "User found a random tournament", "payload": {"userId": str(user.id), "tournament_id": str(tournament.id)},})
 
     except ManualUser.DoesNotExist:
         return JsonResponse({"message": "User not found"}, status=404)
@@ -614,23 +601,20 @@ def try_join_tournament_with_room_code(request):
             return JsonResponse({"message": "roomCode is required"}, status=400)
 
         if user.current_tournament_id != 0:
-            return JsonResponse(
-                {"message": "User is already in a tournament"}, status=400
-            )
+            return JsonResponse({"message": "User is already in a tournament"}, status=400)
 
-        tournament = ManualTournament.objects.filter(
-            status="upcoming", mode="online", serial_key=room_code
-        ).first()
+        tournament = ManualTournament.objects.filter(status="upcoming", mode="online", serial_key=room_code).first()
 
         if not tournament:
             return JsonResponse({"message": "No upcoming tournament found"}, status=404)
 
-        participant_count = ManualTournamentParticipants.objects.filter(
-            tournament=tournament, status__in=["accepted", "pending"]
-        ).count()
+        participant_count = ManualTournamentParticipants.objects.filter(tournament=tournament, status__in=["accepted", "pending"]).count()
 
         if participant_count >= tournament.size:
             return JsonResponse({"message": "Tournament is full"}, status=400)
+        
+        # Add user to the tournament
+        ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
 
         logger.info(f"User {user.id} joined tournament {tournament.id}")
         return JsonResponse(

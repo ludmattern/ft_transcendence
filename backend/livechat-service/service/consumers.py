@@ -481,7 +481,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         {
                             "type": "info_message",
                             "action": "updatePlayerList",
-                            "subaction": "join_tournament",
                             "tournament_id": tournament.id,
                             "player": recipient_username,
                         },
@@ -489,8 +488,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             await self.channel_layer.group_send(
                 f"user_{recipient_id}",
-                {"type": "info_message", "action": "tournament_invite"},
+                {"type": "info_message", "action": "tournament_invite", "subaction": "join_tournament"},
             )
+            
             await self.channel_layer.group_send(
                 f"user_{recipient_id}",
                 {"type": "info_message", "info": "You have joined the tournament."},

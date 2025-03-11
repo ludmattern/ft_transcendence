@@ -9,6 +9,7 @@ import { tournamentCreation } from '/src/components/pong/play/tournamentCreation
 import { emit } from '/src/services/eventEmitter.js';
 import { updateOnlinePlayersUI } from '/src/components/pong/play/onlineTournamentCreation.js';
 import { playGame } from '/src/components/pong/play/utils.js';
+import { navigateToPong } from '/src/services/navigation.js';
 
 const handleLogout = () => {
 	handleRoute('/');
@@ -49,17 +50,16 @@ const handleMatchFound = (data) => {
 };
 
 const handleInfoMessage = async (data) => {
+	console.log('Received data:', data); // Log the received data
+
 	if (data.action === 'updatePlayerList') {
-		if (data.subaction === 'join_tournament') {
-			handleRoute('/pong/play/current-tournament'); // DOesn't work like this. Need to find a way to update the current tournament page
-			// handleRoute('/pong/play/tournament-creation');
-			// componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
-			// const tournamentData = await getCurrentTournamentInformation();
-			// updateOnlinePlayersUI(tournamentData);
-			// emit('updatePlayerList', tournamentData);
-			// await updateAndCompareInfoData();
-		}
 		const tournamentData = await getCurrentTournamentInformation();
+		emit('updatePlayerList', tournamentData);
+		await updateAndCompareInfoData();
+	} else if (data.action === 'tournament_invite' && data.subaction === 'join_tournament') {
+		handleRoute('/pong/play/current-tournament'); // Update the route to the current tournament page
+		const tournamentData = await getCurrentTournamentInformation();
+		updateOnlinePlayersUI(tournamentData); // Update the UI with the current tournament information
 		emit('updatePlayerList', tournamentData);
 		await updateAndCompareInfoData();
 	} else if (data.action === 'refresh_brackets') {
