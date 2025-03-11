@@ -50,6 +50,15 @@ const handleMatchFound = (data) => {
 
 const handleInfoMessage = async (data) => {
 	if (data.action === 'updatePlayerList') {
+		if (data.subaction === 'join_tournament') {
+			handleRoute('/pong/play/current-tournament'); // DOesn't work like this. Need to find a way to update the current tournament page
+			// handleRoute('/pong/play/tournament-creation');
+			// componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
+			// const tournamentData = await getCurrentTournamentInformation();
+			// updateOnlinePlayersUI(tournamentData);
+			// emit('updatePlayerList', tournamentData);
+			// await updateAndCompareInfoData();
+		}
 		const tournamentData = await getCurrentTournamentInformation();
 		emit('updatePlayerList', tournamentData);
 		await updateAndCompareInfoData();

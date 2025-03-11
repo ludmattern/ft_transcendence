@@ -153,17 +153,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         if str(action) == "create_tournament_lobby":
             await self.handle_create_tournament_lobby(event)
         elif str(action) == "join_tournament":
-            await self.handle_participant_status_change(
-                event, "accepted", "back_join_tournament"
-            )
+            await self.handle_participant_status_change(event, "accepted", "back_join_tournament")
         elif str(action) == "reject_tournament":
-            await self.handle_participant_status_change(
-                event, "rejected", "back_reject_tournament"
-            )
+            await self.handle_participant_status_change(event, "rejected", "back_reject_tournament")
         elif str(action) == "cancel_tournament_invite":
-            await self.handle_participant_status_change(
-                event, "rejected", "back_cancel_tournament_invite"
-            )
+            await self.handle_participant_status_change(event, "rejected", "back_cancel_tournament_invite")
         elif str(action) == "tournament_invite":
             await self.handle_tournament_invite(event)
         elif str(action) == "kick_tournament":
@@ -209,6 +203,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         invited_id = event.get("userId")
         invited_user = await self.get_user(invited_id)
         invited_tournament = event.get("tournamentId")
+        
+        if new_status == "accepted" and invited_user.current_tournament_id != 0:
+            logger.warning(f"User {invited_user.username} is already in a tournament")
+            return
+
         participant = await self.update_invited_participant_status(
             invited_user, invited_tournament, new_status
         )
@@ -217,8 +216,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 f"User {invited_user.username} not found in tournament {invited_tournament}"
             )
             return
-        if new_status == "rejected":
-            invited_user.current_tournament_id = 0
         if new_status == "accepted":
             invited_user.current_tournament_id = invited_tournament
         await sync_to_async(invited_user.save)()
@@ -571,7 +568,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                             )()
                         await sync_to_async(next_match.save)()
 
-            user.tournament_status = "out"
             user.current_tournament_id = 0
             await sync_to_async(user.save)()
 

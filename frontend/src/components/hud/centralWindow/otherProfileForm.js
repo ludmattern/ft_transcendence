@@ -6,7 +6,7 @@ import { playGame } from '/src/components/pong/play/utils.js';
 import { getRelationshipStatus } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { handleRoute } from '/src/services/router.js';
 
-function sendWsInfoMessage(action, recipient) {
+export function sendWsInfoMessage(action, recipient) {
 	const payload = {
 		type: 'info_message',
 		action,

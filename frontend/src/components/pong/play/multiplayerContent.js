@@ -3,6 +3,8 @@ import { notAuthenticatedThenRedirect } from '/src/services/router.js';
 import { ws } from '/src/services/websocket.js';
 import { playGame } from '/src/components/pong/play/utils.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { fetchUserId, sendWsInfoMessage } from '/src/components/hud/centralWindow/otherProfileForm.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 
 export const multiplayerContent = createComponent({
 	tag: 'multiplayerContent',
@@ -97,15 +99,30 @@ export const multiplayerContent = createComponent({
 				return;
 			}
 			if (notAuthenticatedThenRedirect()) return;
-			const userId = await getUserIdFromCookieAPI();
-			const config = {
-				gameMode: 'private',
-				action: 'create',
-				matchkey: userId,
-				type: 'fullScreen',
-			};
-			console.log(config);
-			playGame(config);
+			const opponentId = await fetchUserId(opponentUsername);
+			if(!opponentId) {
+				createNotificationMessage('Opponent not found.', 2500, true);
+				return;
+			}
+			else {
+				console.log(`Opponent ID: ${opponentId}`);
+				console.log(`User ID: ${await getUserIdFromCookieAPI()}`);
+				const userId = await getUserIdFromCookieAPI();
+				if(opponentId === userId)
+				{
+					createNotificationMessage('You cannot invite yourself.', 2500, true);
+					return;
+				}
+				sendWsInfoMessage('private_game_invite', opponentId);
+				const config = {
+					gameMode: 'private',
+					action: 'create',
+					matchkey: await getUserIdFromCookieAPI(),
+					type: 'fullScreen',
+				};
+				privateGameInput.value = '';
+				playGame(config);
+			}
 		});
 
 		privateGameInput.addEventListener('keypress', (e) => {

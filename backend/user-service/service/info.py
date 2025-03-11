@@ -99,18 +99,25 @@ def info_getter(request):
         status="ready",
         tournament_id=user.current_tournament_id,
     )
+    
     logger.info(f"Pending matches: {next_ready_matches}")
 
-    next_match_data = [
-        {
+    next_match_data = []
+    
+    for match in next_ready_matches:
+        player1User = ManualUser.objects.get(username=match.player1)
+        player2User = ManualUser.objects.get(username=match.player2)
+        
+        inviter = match.player1 if match.player2 == user.username else match.player2
+        inviter_id = player1User.id if match.player2 == user.username else player2User.id
+        
+        next_match_data.append({
             "type": "tournament_next_game",
-            "inviter": match.player1
-            if match.player2 == user.username
-            else match.player2,
+            "inviter": inviter,
+            "inviter_id": inviter_id,
             "actions": "acknowledge",
-        }
-        for match in next_ready_matches
-    ]
+        })
+
 
     logger.info(f"next match data: {next_match_data}")
 

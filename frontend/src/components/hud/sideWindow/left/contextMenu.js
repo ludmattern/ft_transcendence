@@ -127,6 +127,7 @@ export async function showContextMenu(item, event) {
 	hideContextMenu();
 
 	const { author, username } = resolveUser(item);
+	console.log('Resolved user:', author, username);
 	item.author = author;
 	item.username = username;
 

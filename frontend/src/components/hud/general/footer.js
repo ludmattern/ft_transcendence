@@ -1,6 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { addCameraRotationListener } from '/src/3d/freeViewHandler.js';
-import { startAnimation } from '/src/components/hud/index.js';
+import { startAnimation } from '/src/components/hud/utils/utils.js';
 
 let lastOffset = 198;
 

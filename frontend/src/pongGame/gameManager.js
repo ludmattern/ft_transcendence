@@ -6,6 +6,7 @@ import * as THREE from 'https://esm.sh/three';
 import componentManagers from '/src/index.js';
 import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { emit } from '/src/services/eventEmitter.js';
 
 
 //mettre cette classe asynchone 
@@ -293,6 +294,7 @@ class GameManager {
 			if (Store.pongScene) Store.pongScene.clear();
 			const previousPongPlaySubRoute = getPreviousPongPlaySubRoute();
 			console.log(previousPongPlaySubRoute);
+			emit('updateBracket');
 			handleRoute(previousPongPlaySubRoute);
 		}
 	}

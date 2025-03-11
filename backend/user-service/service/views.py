@@ -15,6 +15,7 @@ from django.db.models import Q  # type: ignore
 from django.conf import settings  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
 from .models import ManualUser, GameHistory, ManualBlockedRelations
+import logging
 
 # Initialisation de Fernet pour le chiffrement/déchiffrement
 cipher = Fernet(settings.FERNET_KEY)
@@ -191,7 +192,8 @@ def register_user(request):
                 }
             )
         except Exception as e:
-            return JsonResponse({"success": False, "message": str(e)}, status=500)
+            logging.error("Error in register_user: %s", str(e))
+            return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
     else:
         return JsonResponse(
             {"success": False, "message": "Only POST method is allowed"}, status=405
@@ -222,7 +224,8 @@ def delete_account(request):
             }
         )
     except Exception as e:
-        return JsonResponse({"success": False, "message": str(e)}, status=500)
+        logging.error("Error in delete_account: %s", str(e))
+        return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
 
 @csrf_exempt
@@ -337,7 +340,7 @@ def get_user_id(request, username):
         return JsonResponse({"error": "GET method required"}, status=405)
     try:
         user = ManualUser.objects.get(username=username)
-        return JsonResponse({"success": True, "user_id": user.id})
+        return JsonResponse({"success": True, "user_id": str(user.id)})
     except ManualUser.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
 
@@ -385,7 +388,8 @@ def get_game_history(request):
             {"success": True, "history": history_list, "winrate": winrate}
         )
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        logging.error("An error occurred: %s", str(e))
+        return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
 
 @csrf_exempt
@@ -409,7 +413,8 @@ def get_profile(request):
     except ManualUser.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        logging.error("An error occurred: %s", str(e))
+        return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
 
 ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
@@ -526,4 +531,5 @@ def check_oauth_id(request):
         return JsonResponse({"oauth_null": user.oauth_id is None}, status=200)
 
     except Exception as e:
-        return JsonResponse({"success": False, "error": str(e)}, status=500)
+        logging.error("An error occurred in check_oauth_id: %s", str(e))
+        return JsonResponse({"success": False, "error": "An internal error has occurred!"}, status=500)

@@ -1,8 +1,9 @@
 import { buildScene } from '/src/3d/main.js';
-import { handleRoute } from '/src/services/router.js';
+import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.js';
 import ComponentManager from '/src/utils/component.js';
 import { CacheDB } from '/src/utils/IndexedDBCache.js';
 import { onWindowResize } from '/src/3d/main.js';
+import { getCurrentWindow } from '/src/3d/animation.js';
 
 const componentManagers = {
 	HUD: new ComponentManager('HUD'),
@@ -42,6 +43,24 @@ async function initializeApp() {
 	await buildScene();
 	handleRoute(targetRoute);
     onWindowResize();
+	const blurScreenEffect = document.querySelector('#blur-screen-effect');
+	blurScreenEffect.addEventListener('click', () => {
+		const currentWindow = getCurrentWindow();
+		switch (currentWindow) {
+			case 'home':
+				handleRoute('/');
+				break;
+			case 'pong':
+				handleRoute(getPreviousPongPlaySubRoute());
+				break;
+			case 'race':
+				handleRoute('/race');
+				break;
+			default:
+				console.log('Unknown window:', currentWindow);
+				break;
+		}
+	});
 }
 
 window.addEventListener('DOMContentLoaded', initializeApp);
