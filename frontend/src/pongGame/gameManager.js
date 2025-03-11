@@ -6,7 +6,7 @@ import * as THREE from 'https://esm.sh/three';
 import componentManagers from '/src/index.js';
 import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
-import { emit } from '/src/services/eventEmitter.js';
+import { emit, subscribe } from '/src/services/eventEmitter.js';
 
 //mettre cette classe asynchone
 async function getid() {
@@ -46,6 +46,12 @@ class GameManager {
 				this.stopMovement();
 			}
 		};
+
+		subscribe('routing', () => {
+			console.log('routing effect');
+			this.endGame();
+		  });
+		  
 	}
 	async initClientData() {
 		this.clientId = await getUserIdFromCookieAPI();
@@ -174,10 +180,10 @@ class GameManager {
 	}
 
 	endGame() {
-		endGameScreen();
 		if (!this.activeGame) {
 			return;
 		}
+		endGameScreen();
 
 		if (this.activeGame.mode === 'local') {
 			document.removeEventListener('keydown', this.localKeydownHandler);
@@ -319,9 +325,6 @@ export async function getUsername(playerId) {
 	}
 }
 
-async function username() {
-	return await getUsername(await getUserIdFromCookieAPI());
-}
 
 function triggerBallColorChange() {
 	if (!Store.meshBall) return;

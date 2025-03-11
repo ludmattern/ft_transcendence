@@ -44,15 +44,10 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
         if action == "start_game":
             if game_id not in self.running_games:
-                self.running_games[game_id] = {
-                    "task": asyncio.create_task(self.game_loop(game_id)),
-                }
+                self.running_games[game_id] = {"task": asyncio.create_task(self.game_loop(game_id)),}
 
             payload = game.to_dict()
-            await self.channel_layer.group_send(
-                f"game_{game_id}",
-                {"type": "game_state", "game_id": game_id, "payload": payload},
-            )
+            await self.channel_layer.group_send(f"game_{game_id}", {"type": "game_state", "game_id": game_id, "payload": payload},)
 
         elif action == "move":
             direction = event.get("direction")

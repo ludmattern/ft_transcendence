@@ -85,6 +85,7 @@ function updatePreviousRoute(route) {
  * @param {boolean} shouldPushState - Si `true`, met à jour l'historique du navigateur.
  */
 export async function handleRoute(route, shouldPushState = true) {
+	emit('routing');
 	if (route === '/loading') {
 		processRoute(route, shouldPushState);
 		return;
@@ -189,7 +190,6 @@ export async function handleTournamentRedirection(caller = '') {
 		}
 
 		if (caller === route) {
-			console.log('Déjà sur la page demandée, aucune redirection effectuée.');
 			return false;
 		}
 

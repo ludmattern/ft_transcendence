@@ -31,13 +31,16 @@ def get_id(user_username):
         return user.id
     return None
 
+
 @database_sync_to_async
 def get_users_id():
     return list(ManualUser.objects.values_list("id", flat=True))
 
+
 @database_sync_to_async
 def get_participants(tournament):
-    return (list(tournament.participants.values_list("username", flat=True)))
+    return list(tournament.participants.values_list("username", flat=True))
+
 
 @database_sync_to_async
 def get_accepted_participants(tournament_id):
@@ -47,6 +50,7 @@ def get_accepted_participants(tournament_id):
 
     return [p.user.username for p in participants_qs]
 
+
 @database_sync_to_async
 def get_accepted_and_pending_participants(tournament_id):
     participants_qs = ManualTournamentParticipants.objects.filter(
@@ -54,6 +58,7 @@ def get_accepted_and_pending_participants(tournament_id):
     ).select_related("user")
 
     return [p.user.username for p in participants_qs]
+
 
 async def get_profile_picture(user_id):
     try:
@@ -409,7 +414,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             participants = await get_accepted_participants(initiator_tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(
+                    username=participant_username
+                )
                 if (
                     participant_user.id != recipient_id
                     and participant_user.id != author_id
@@ -467,7 +474,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             participants = await get_accepted_participants(tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(
+                    username=participant_username
+                )
                 if str(participant_user.id) != recipient_id:
                     await self.channel_layer.group_send(
                         f"user_{participant_user.id}",
@@ -488,9 +497,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             await self.channel_layer.group_send(
                 f"user_{recipient_id}",
-                {"type": "info_message", "action": "tournament_invite", "subaction": "join_tournament"},
+                {
+                    "type": "info_message",
+                    "action": "tournament_invite",
+                    "subaction": "join_tournament",
+                },
             )
-            
+
             await self.channel_layer.group_send(
                 f"user_{recipient_id}",
                 {"type": "info_message", "info": "You have joined the tournament."},
@@ -512,7 +525,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             participants = await get_accepted_participants(tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(
+                    username=participant_username
+                )
                 if participant_user.id != int(recipient_id):
                     logger.info(f"Sending reject message to {participant_user.id}")
                     await self.channel_layer.group_send(
@@ -560,7 +575,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             participants = await get_accepted_participants(tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(
+                    username=participant_username
+                )
                 if participant_user.id != int(recipient_id):
                     await self.channel_layer.group_send(
                         f"user_{participant_user.id}",
@@ -606,7 +623,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             participants = await get_accepted_participants(tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(
+                    username=participant_username
+                )
                 if participant_user.id != int(recipient_id):
                     await self.channel_layer.group_send(
                         f"user_{participant_user.id}",
@@ -714,7 +733,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             participants = await get_accepted_participants(tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(
+                    username=participant_username
+                )
                 if participant_user.id != int(initiator_id):
                     await self.channel_layer.group_send(
                         f"user_{participant_user.id}",
@@ -824,8 +845,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             recipient_id = event.get("recipient")
 
             try:
-                author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
-                recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
+                author_user = await database_sync_to_async(ManualUser.objects.get)(
+                    id=author_id
+                )
+                recipient_user = await database_sync_to_async(ManualUser.objects.get)(
+                    id=recipient_id
+                )
                 # Check if the author has blocked the recipient (using initiator_id)
                 qs = ManualBlockedRelations.objects.filter(
                     initiator_id=author_id, blocked_user=recipient_id
@@ -855,7 +880,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     f"user_{author_id}",
                     {"type": "error_message", "error": "User not found."},
                 )
-                
+
         elif str(action) == "private_game_invite":
             logger.info(f"Private game invite received: {event}")
             recipient_id = event.get("recipient")
@@ -869,7 +894,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "error": f"Cannot send private game invite to yourself.",
                     },
                 )
-                return;
+                return
 
             if await is_blocked(author_id, recipient_id):
                 message = {
@@ -878,10 +903,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
                 await self.channel_layer.group_send(f"user_{author_id}", message)
                 return
-            
-            author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
-            
+
+            author_user = await database_sync_to_async(ManualUser.objects.get)(
+                id=author_id
+            )
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
+                id=recipient_id
+            )
+
             initiator = author_user
             recipient = recipient_user
 
@@ -898,7 +927,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             if await database_sync_to_async(qs.exists)():
                 relation = await database_sync_to_async(qs.first)()
-                existing_initiator  = await database_sync_to_async(
+                existing_initiator = await database_sync_to_async(
                     lambda: relation.initiator_id
                 )()
 
@@ -922,7 +951,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     )
                     return
             else:
-                await database_sync_to_async(ManualPrivateGames.objects.create)(initiator=initiator, user=user, recipient=recipient, status="pending")
+                await database_sync_to_async(ManualPrivateGames.objects.create)(
+                    initiator=initiator,
+                    user=user,
+                    recipient=recipient,
+                    status="pending",
+                )
 
             await self.channel_layer.group_send(
                 f"user_{author_id}",
@@ -932,7 +966,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 },
             )
             await self.channel_layer.group_send(f"user_{recipient_id}", event)
-            await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": f"Private game invite received from {author_id}",},)
+            await self.channel_layer.group_send(
+                f"user_{recipient_id}",
+                {
+                    "type": "info_message",
+                    "info": f"Private game invite received from {author_id}",
+                },
+            )
             logger.info(f"Invite private game sent to user_{recipient_id}")
 
         elif str(action) == "accept_private_game_invite":
@@ -940,8 +980,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             recipient_id = event.get("recipient")
             author_id = event.get("author")
 
-            author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
+            author_user = await database_sync_to_async(ManualUser.objects.get)(
+                id=author_id
+            )
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
+                id=recipient_id
+            )
 
             qs = ManualPrivateGames.objects.filter(
                 models.Q(user=author_id, recipient_id=recipient_id)
@@ -953,21 +997,46 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 if relation.status == "pending":
                     await database_sync_to_async(relation.delete)()
 
-                await self.channel_layer.group_send(f"user_{author_id}",{"type": "info_message","info": f"Private game invite accepted by {recipient_id}",},)
+                await self.channel_layer.group_send(
+                    f"user_{author_id}",
+                    {
+                        "type": "info_message",
+                        "info": f"Private game invite accepted by {recipient_id}",
+                    },
+                )
                 await self.channel_layer.group_send(f"user_{author_id}", event)
-                await self.channel_layer.group_send(f"user_{recipient_id}",{"type": "info_message","info": f"Private game invite accepted by {author_id}",},)
-                await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "updateAndCompareInfoData"})
+                await self.channel_layer.group_send(
+                    f"user_{recipient_id}",
+                    {
+                        "type": "info_message",
+                        "info": f"Private game invite accepted by {author_id}",
+                    },
+                )
+                await self.channel_layer.group_send(
+                    f"user_{recipient_id}",
+                    {"type": "info_message", "action": "updateAndCompareInfoData"},
+                )
             else:
-                await self.channel_layer.group_send(f"user_{author_id}",{"type": "error_message","error": "No pending private game invite found.",},)
-        
+                await self.channel_layer.group_send(
+                    f"user_{author_id}",
+                    {
+                        "type": "error_message",
+                        "error": "No pending private game invite found.",
+                    },
+                )
+
         elif str(action) == "refuse_private_game_invite":
             logger.info(f"Accepting private game invite: {event}")
             recipient_id = event.get("recipient")
             author_id = event.get("author")
 
             # Has to be pending
-            author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
+            author_user = await database_sync_to_async(ManualUser.objects.get)(
+                id=author_id
+            )
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
+                id=recipient_id
+            )
 
             qs = ManualPrivateGames.objects.filter(
                 models.Q(user=author_id, recipient_id=recipient_id)
@@ -978,12 +1047,33 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 relation = await database_sync_to_async(qs.first)()
                 if relation.status == "pending":
                     await database_sync_to_async(relation.delete)()
-                await self.channel_layer.group_send(f"user_{author_id}",{"type": "info_message","info": f"Private game invite rejected by {recipient_id}",},)
+                await self.channel_layer.group_send(
+                    f"user_{author_id}",
+                    {
+                        "type": "info_message",
+                        "info": f"Private game invite rejected by {recipient_id}",
+                    },
+                )
                 await self.channel_layer.group_send(f"user_{author_id}", event)
-                await self.channel_layer.group_send(f"user_{recipient_id}",{"type": "info_message","info": f"Private game invite rejected by {author_id}",},)
-                await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "action": "updateAndCompareInfoData"})
+                await self.channel_layer.group_send(
+                    f"user_{recipient_id}",
+                    {
+                        "type": "info_message",
+                        "info": f"Private game invite rejected by {author_id}",
+                    },
+                )
+                await self.channel_layer.group_send(
+                    f"user_{recipient_id}",
+                    {"type": "info_message", "action": "updateAndCompareInfoData"},
+                )
             else:
-                await self.channel_layer.group_send(f"user_{author_id}",{"type": "error_message","error": "No pending private game invite found.",},)
+                await self.channel_layer.group_send(
+                    f"user_{author_id}",
+                    {
+                        "type": "error_message",
+                        "error": "No pending private game invite found.",
+                    },
+                )
 
         else:
             logger.warning(f"Unknown action: {action}")

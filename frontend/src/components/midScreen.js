@@ -2,6 +2,7 @@ import { createComponent } from '/src/utils/component.js';
 import { CSS3DObject } from 'https://esm.sh/three/examples/jsm/renderers/CSS3DRenderer.js';
 import Store from '/src/3d/store.js';
 import { subscribe } from '/src/services/eventEmitter.js';
+import { gameManager } from '/src/pongGame/gameManager.js';
 
 function removeGiveUpButtons() {
 	const wait2 = document.querySelector('.wait2');
