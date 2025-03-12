@@ -3,6 +3,7 @@ import { CSS3DObject } from 'https://esm.sh/three/examples/jsm/renderers/CSS3DRe
 import Store from '/src/3d/store.js';
 import { subscribe } from '/src/services/eventEmitter.js';
 import { gameManager } from '/src/pongGame/gameManager.js';
+import { ws } from '/src/services/websocket.js';
 
 function removeGiveUpButtons() {
 	const wait2 = document.querySelector('.wait2');
@@ -98,12 +99,12 @@ export const midScreen = createComponent({
 	`,
 
 	attachEvents: () => {
-		subscribe('gameStarted', (data) => {
-			if (data === 'local' || (data && data.mode === 'local')) showGiveUpButtons('local');
-			else showGiveUpButtons('online');
-		});
-		subscribe('gameOver', removeGiveUpButtons);
-		subscribe('routing', sendDisconnectionEvent);
+		// subscribe('gameStarted', (data) => {
+		// 	if (data === 'local' || (data && data.mode === 'local')) showGiveUpButtons('local');
+		// 	else showGiveUpButtons('online');
+		// });
+		// subscribe('gameOver', removeGiveUpButtons);
+		// subscribe('routing', sendDisconnectionEvent);
 		initM2();
 	},
 });

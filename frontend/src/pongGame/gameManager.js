@@ -134,7 +134,6 @@ class GameManager {
 		this.gameId = this.generateGameId(gameConfig);
 		
 		buildGameScene(gameConfig);
-		console.log('gameConfig before emit:', gameConfig);
 		emit('gameStarted', gameConfig);
 		showCountdown();
 
