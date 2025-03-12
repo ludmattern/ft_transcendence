@@ -167,6 +167,12 @@ export function validateId(id) {
 		document.getElementById('bad-id').style.display = 'block';
 		return false;
 	}
+	const regex = /^[a-zA-Z0-9]+$/;
+	if (!regex.test(id)) 
+	{
+		// Need to add the error message for the id having alphanumeric characters only
+		return false;
+	}
 	return true;
 }
 
