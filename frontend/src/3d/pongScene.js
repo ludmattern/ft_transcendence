@@ -295,7 +295,7 @@ export function buildGameScene(gameConfig) {
 	Store.player2Paddle = paddleGroup2;
 	Store.pongScene.add(Store.player2Paddle);
 
-	const meshBallGeometry = new THREE.SphereGeometry(0.05, 30, 15);
+const meshBallGeometry = new THREE.SphereGeometry(0.05, 30, 15);
 	const meshBallMaterial = new THREE.MeshStandardMaterial({
 		color: 0x5588f1,
 		emissive: 0x5588f1,
@@ -377,7 +377,7 @@ export function buildGameScene(gameConfig) {
  */
 }
 
-const lerpFactor = 0.15;
+const lerpFactor = 0.3;
 const lerpFactorCam = 0.15;
 
 export function animatePong(renderer) {

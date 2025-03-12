@@ -118,18 +118,20 @@ class GameManager {
 
 	startGame(gameConfig) {
 		this.initClientData() 
-
+		
 		console.log('Starting game with config:', gameConfig);
 		componentManagers['HUD'].unloadComponent('pongTuto');
 		this.gameMode = gameConfig.mode;
 		console.log('gameMode:', this.gameMode);
 		if (this.activeGame) 
 			this.endGame();
-
+		
 		this.activeGame = gameConfig;
 		this.gameId = this.generateGameId(gameConfig);
-
+		
 		buildGameScene(gameConfig);
+		console.log('gameConfig before emit:', gameConfig);
+		emit('gameStarted', gameConfig);
 		showCountdown();
 
 		let player1 = gameConfig.side === 'left' ? gameConfig.user_id : gameConfig.opponent_id;
@@ -169,10 +171,6 @@ class GameManager {
 			player2 = gameConfig.player2;
 		}
 		console.log(` Sending start_game event: player1=${player1}, player2=${player2}, with game_id=${this.gameId}`);	
-		console.log(gameConfig.mode)
-		console.log(this.gameId)
-		console.log(player1)
-		console.log(player2)
 		ws.send(
 			JSON.stringify({
 				type: 'game_event',
@@ -183,7 +181,6 @@ class GameManager {
 				player2: player2,
 			})
 		);
-
 
 	}
 
@@ -202,6 +199,12 @@ class GameManager {
 			document.removeEventListener('keyup', this.matchMakingKeyupHandler);
 		}
 		this.stopMovement();
+		// ws.send(
+		// 	JSON.stringify({
+		// 		type: 'game_event',
+		// 		action: 'leave_game',
+		// 	})
+		// );
 		this.activeGame = null;
 		this.gameId = null;
 	}

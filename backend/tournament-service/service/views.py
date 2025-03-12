@@ -109,7 +109,6 @@ def getTournamentParticipants(request, tournament_id):
 
 # TODO ici pas de changement avec le online
 
-
 @jwt_required
 def get_current_tournament(request):
     if request.method != "GET":
@@ -133,6 +132,11 @@ def get_current_tournament(request):
 
     size = {}
     for match in matches:
+        if user.username in [match.player1, match.player2]:
+            match_key = match.match_key
+        else:
+            match_key = None
+
         size.setdefault(match.round_number, []).append(
             {
                 "id": match.id,
@@ -141,7 +145,7 @@ def get_current_tournament(request):
                 "status": match.status,
                 "winner": match.winner,
                 "score": match.score,
-                "match_key": match.match_key,
+                "match_key": match_key,
             }
         )
 
