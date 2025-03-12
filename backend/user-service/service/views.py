@@ -4,26 +4,27 @@ import os
 import jwt
 import pyotp  # type: ignore
 import qrcode  # type: ignore
+import re
+
+import logging
 
 from io import BytesIO
 from functools import wraps
 from PIL import Image  # type: ignore
 from cryptography.fernet import Fernet
 from django.http import JsonResponse, HttpResponse  # type: ignore
+from django.views.decorators.http import require_POST, require_GET
 from django.views.decorators.csrf import csrf_exempt  # type: ignore
 from django.db.models import Q  # type: ignore
 from django.conf import settings  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
 from .models import ManualUser, GameHistory, ManualBlockedRelations
-import logging
 
 # Initialisation de Fernet pour le chiffrement/déchiffrement
 cipher = Fernet(settings.FERNET_KEY)
 
 
 # --- Fonctions utilitaires ---
-
-
 def is_expired(expiry):
     """
     Vérifie si une datetime d'expiration est dépassée.
@@ -47,8 +48,6 @@ def encrypt_thing(text):
 
 
 # --- Décorateurs d'authentification ---
-
-
 def jwt_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
@@ -67,10 +66,7 @@ def jwt_required(view_func):
                 return JsonResponse({"success": False, "message": "User not found"}, status=404)
 
             if user.session_token != token:
-                return JsonResponse(
-                    {"success": False, "message": "Invalid or outdated token"},
-                    status=401,
-                )
+                return JsonResponse({"success": False, "message": "Invalid or outdated token"}, status=401)
 
             if is_expired(user.token_expiry):
                 return JsonResponse({"success": False, "message": "Token expired in DB"}, status=401)
@@ -88,8 +84,6 @@ def jwt_required(view_func):
 
 
 # --- Vues d'authentification et d'utilitaires ---
-
-
 def generate_qr_code(request, username):
     """
     Génère un QR code pour l'authentification 2FA via une application d'authentification.
@@ -107,82 +101,95 @@ def generate_qr_code(request, username):
         return HttpResponse("User not found", status=404)
 
 
-@csrf_exempt
-def register_user(request):
-    if request.method == "POST":
+def validate_username(username):
+    if len(username) < 6 or len(username) > 20:
+        return "Username must be between 6 and 20 characters"
+    if not re.match(r"^[a-zA-Z0-9_]+$", username):
+        return "Username can only contain alphanumeric characters and underscores"
+    if ManualUser.objects.filter(username=username).exists():
+        return "Username already taken"
+    return None
+
+
+def validate_email(email):
+    email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    if not re.match(email_regex, email):
+        return "Invalid email format"
+    if len(email) > 50:
+        return "Email must be less than 50 characters"
+    encrypted_email = encrypt_thing(email)
+    existing_users = ManualUser.objects.filter(is_dummy=False, email__isnull=False).exclude(email="")
+    for user in existing_users:
         try:
-            body = json.loads(request.body.decode("utf-8"))
-            username = body.get("username")
-            email = body.get("email")
-            password = body.get("password")
-            is_2fa_enabled = body.get("is_2fa_enabled", False)
-            twofa_method = body.get("twofa_method", None)
-            phone_number = body.get("phone_number", None)
-
-            if not username or not email or not password:
-                return JsonResponse({"success": False, "message": "Missing required fields"}, status=400)
-
-            if ManualUser.objects.filter(username=username).exists():
-                return JsonResponse({"success": False, "message": "Username already taken"}, status=409)
-
-            encrypted_email = encrypt_thing(email)
-
-            # Vérification des emails existants
-            existing_users = ManualUser.objects.filter(is_dummy=False, email__isnull=False).exclude(email="")
-            for user in existing_users:
-                try:
-                    if decrypt_thing(user.email) == email:
-                        return JsonResponse(
-                            {"success": False, "message": "Email already in use"},
-                            status=409,
-                        )
-                except Exception:
-                    return JsonResponse(
-                        {"success": False, "message": "Email decryption failed"},
-                        status=409,
-                    )
-
-            if is_2fa_enabled and twofa_method == "sms" and not phone_number:
-                return JsonResponse(
-                    {
-                        "success": False,
-                        "message": "Phone number is required for SMS 2FA",
-                    },
-                    status=400,
-                )
-
-            hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-            encrypted_phone = encrypt_thing(phone_number) if phone_number else None
-
-            user = ManualUser.objects.create(
-                username=username,
-                email=encrypted_email,
-                password=hashed_password,
-                is_2fa_enabled=is_2fa_enabled,
-                twofa_method=twofa_method,
-                phone_number=encrypted_phone,
-                is_dummy=False,
-            )
-
-            return JsonResponse(
-                {
-                    "success": True,
-                    "message": "User registered successfully",
-                    "user_id": user.id,
-                }
-            )
-        except Exception as e:
-            logging.error("Error in register_user: %s", str(e))
-            return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
-    else:
-        return JsonResponse({"success": False, "message": "Only POST method is allowed"}, status=405)
+            if decrypt_thing(user.email) == email:
+                return "Email already in use"
+        except Exception:
+            return "Email decryption failed"
+    return encrypted_email
 
 
-@csrf_exempt
+def validate_password(password):
+    if len(password) < 6 or len(password) > 20:
+        return "Password must be between 6 and 20 characters"
+    if not re.search(r"[a-z]", password):
+        return "Password must contain at least one lowercase letter"
+    if not re.search(r"[A-Z]", password):
+        return "Password must contain at least one uppercase letter"
+    if not re.search(r"[@$!%*?&#^]", password):
+        return "Password must contain at least one special character"
+    return None
+
+
+@require_POST
+def register_user(request):
+    body = json.loads(request.body.decode("utf-8"))
+    username = body.get("username")
+    email = body.get("email")
+    password = body.get("password")
+    is_2fa_enabled = body.get("is_2fa_enabled", False)
+    twofa_method = body.get("twofa_method", None)
+    phone_number = body.get("phone_number", None)
+    try:
+        if not username or not email or not password:
+            return JsonResponse({"success": False, "message": "Missing required fields"}, status=400)
+
+        username_error = validate_username(username)
+        if username_error:
+            return JsonResponse({"success": False, "message": username_error}, status=400)
+
+        email_error_or_encrypted = validate_email(email)
+        if isinstance(email_error_or_encrypted, str):
+            return JsonResponse({"success": False, "message": email_error_or_encrypted}, status=400)
+        encrypted_email = email_error_or_encrypted
+        if is_2fa_enabled and twofa_method == "sms" and not phone_number:
+            return JsonResponse({"success": False, "message": "Phone number is required for SMS 2FA"}, status=400)
+
+        password_error = validate_password(password)
+        if password_error:
+            return JsonResponse({"success": False, "message": password_error}, status=400)
+
+        hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+        encrypted_phone = encrypt_thing(phone_number) if phone_number else None
+
+        user = ManualUser.objects.create(
+            username=username,
+            email=encrypted_email,
+            password=hashed_password,
+            is_2fa_enabled=is_2fa_enabled,
+            twofa_method=twofa_method,
+            phone_number=encrypted_phone,
+            is_dummy=False,
+        )
+
+        return JsonResponse({"success": True, "message": "User registered successfully", "user_id": user.id}, status=201)
+    except Exception as e:
+        logging.error("Error in register_user: %s", str(e))
+        return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
+
+
+@require_POST
 @jwt_required
 def delete_account(request):
-    if request.method != "POST":
-        return JsonResponse({"success": False, "message": "Only POST method is allowed"}, status=405)
     try:
         user = request.user
         if not user:
@@ -190,23 +197,15 @@ def delete_account(request):
         user_id = user.id
         username = user.username
         user.delete()
-        return JsonResponse(
-            {
-                "success": True,
-                "message": f"User {username} deleted successfully",
-                "user_id": user_id,
-            }
-        )
+        return JsonResponse({"success": True, "message": f"User {username} deleted successfully", "user_id": user_id})
     except Exception as e:
         logging.error("Error in delete_account: %s", str(e))
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
 
-@csrf_exempt
+@require_POST
 @jwt_required
 def update_info(request):
-    if request.method != "POST":
-        return JsonResponse({"success": False, "message": "Only POST method is allowed"}, status=405)
     try:
         body = json.loads(request.body.decode("utf-8"))
         old_password = body.get("oldPassword", "")
@@ -221,16 +220,10 @@ def update_info(request):
             return JsonResponse({"success": False, "message": "Unauthorized"}, status=401)
 
         if not old_password:
-            return JsonResponse(
-                {"success": False, "message": "Please enter current password"},
-                status=401,
-            )
+            return JsonResponse({"success": False, "message": "Please enter current password"}, status=401)
 
         if not bcrypt.checkpw(old_password.encode("utf-8"), user.password.encode("utf-8")):
-            return JsonResponse(
-                {"success": False, "message": "Current password is incorrect"},
-                status=402,
-            )
+            return JsonResponse({"success": False, "message": "Current password is incorrect"}, status=402)
 
         if not any([new_username, new_email, new_password]):
             return JsonResponse({"success": False, "message": "No changes to update"}, status=400)
@@ -238,6 +231,9 @@ def update_info(request):
         if new_username:
             if ManualUser.objects.filter(username=new_username).exists():
                 return JsonResponse({"success": False, "message": "Username already taken"}, status=409)
+            new_username_error = validate_username(new_username)
+            if new_username_error:
+                return JsonResponse({"success": False, "message": new_username_error}, status=400)
             user.username = new_username
 
         if new_email:
@@ -246,44 +242,45 @@ def update_info(request):
             decrypted_email = decrypt_thing(user.email)
             if new_email != decrypted_email:
                 if ManualUser.objects.exclude(id=user.id).filter(email=encrypt_thing(new_email)).exists():
-                    return JsonResponse(
-                        {"success": False, "message": "Email already in use"},
-                        status=409,
-                    )
+                    return JsonResponse({"success": False, "message": "Email already in use"}, status=409)
+                new_email_error_or_encrypted = validate_email(new_email)
+                if isinstance(new_email_error_or_encrypted, str):
+                    return JsonResponse({"success": False, "message": new_email_error_or_encrypted}, status=400)
             user.email = encrypt_thing(new_email)
 
         if new_password:
             if new_password != confirm_password:
                 return JsonResponse({"success": False, "message": "Passwords do not match"}, status=400)
+            new_password_error = validate_password(new_password)
+            if new_password_error:
+                return JsonResponse({"success": False, "message": new_password_error}, status=400)
             user.password = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
         user.save()
         return JsonResponse({"success": True, "message": "Information updated successfully"})
     except Exception as e:
-        return JsonResponse({"success": False, "message": str(e)}, status=500)
+        logging.error("Error in update_info: %s", str(e))
+        return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
 
-@csrf_exempt
+@require_POST
 def getUsername(request):
-    if request.method == "POST":
-        try:
-            body = json.loads(request.body.decode("utf-8"))
-            user_id = body.get("id")
-            if not user_id:
-                return JsonResponse({"success": False, "message": "User ID is required"}, status=400)
-            user = ManualUser.objects.get(id=user_id)
-            return JsonResponse({"success": True, "username": user.username})
-        except ManualUser.DoesNotExist:
-            return JsonResponse({"success": False, "message": "User not found"}, status=404)
-        except Exception as e:
-            return JsonResponse({"success": False, "message": str(e)}, status=500)
-    else:
-        return JsonResponse({"success": False, "message": "Only POST method is allowed"}, status=405)
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        user_id = body.get("id")
+        if not user_id:
+            return JsonResponse({"success": False, "message": "User ID is required"}, status=400)
+        user = ManualUser.objects.get(id=user_id)
+        return JsonResponse({"success": True, "username": user.username})
+    except ManualUser.DoesNotExist:
+        return JsonResponse({"success": False, "message": "User not found"}, status=404)
+    except Exception as e:
+        logging.error("Error in getUsername: %s", str(e))
+        return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
 
+@require_GET
 def get_user_id(request, username):
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
     try:
         user = ManualUser.objects.get(username=username)
         return JsonResponse({"success": True, "user_id": str(user.id)})
@@ -291,10 +288,8 @@ def get_user_id(request, username):
         return JsonResponse({"error": "User not found"}, status=404)
 
 
-@csrf_exempt
+@require_GET
 def get_game_history(request):
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
     user_id = request.GET.get("user_id")
     if not user_id:
         return JsonResponse({"error": "user_id parameter is required"}, status=400)
@@ -330,14 +325,12 @@ def get_game_history(request):
         winrate = (wins / total_games * 100) if total_games > 0 else 0
         return JsonResponse({"success": True, "history": history_list, "winrate": winrate})
     except Exception as e:
-        logging.error("An error occurred: %s", str(e))
+        logging.error("An error occurred in get_game_history: %s", str(e))
         return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
 
-@csrf_exempt
+@require_GET
 def get_profile(request):
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
     user_id = request.GET.get("user_id")
     if not user_id:
         return JsonResponse({"error": "user_id parameter is required"}, status=400)
@@ -355,7 +348,7 @@ def get_profile(request):
     except ManualUser.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
     except Exception as e:
-        logging.error("An error occurred: %s", str(e))
+        logging.error("An error occurred in get_profile: %s", str(e))
         return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
 
@@ -363,11 +356,9 @@ ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
 MAX_FILE_SIZE = 5 * 1024 * 1024
 
 
-@csrf_exempt
+@require_POST
 @jwt_required
 def upload_profile_picture(request):
-    if request.method != "POST":
-        return JsonResponse({"success": False, "error": "POST method required"}, status=405)
     try:
         user = request.user
         if not user:
@@ -384,10 +375,7 @@ def upload_profile_picture(request):
             image = Image.open(file)
             image.verify()
         except Exception:
-            return JsonResponse(
-                {"success": False, "error": "Uploaded file is not a valid image"},
-                status=400,
-            )
+            return JsonResponse({"success": False, "error": "Uploaded file is not a valid image"}, status=400)
         old_image_path = user.profile_picture.path if user.profile_picture else None
         user.profile_picture = file
         user.save()
@@ -397,50 +385,33 @@ def upload_profile_picture(request):
                 try:
                     os.remove(old_image_path)
                 except Exception:
-                    return JsonResponse(
-                        {"success": False, "error": "Failed to remove old image"},
-                        status=500,
-                    )
+                    return JsonResponse({"success": False, "error": "Failed to remove old image"}, status=500)
         return JsonResponse({"success": True, "profile_picture": user.profile_picture.url}, status=200)
     except Exception as e:
-        return JsonResponse({"success": False, "error": str(e)}, status=500)
+        logging.error("An error occurred in upload_profile_picture: %s", str(e))
+        return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
 
-@csrf_exempt
+@require_GET
 @jwt_required
 def search_pilots(request):
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
-
     query = request.GET.get("query")
     if not query:
         return JsonResponse({"message": "Query parameter is required"}, status=400)
-
     try:
         user = request.user
-
         blocked_users = ManualBlockedRelations.objects.filter(blocked_user=user).values_list("user_id", flat=True)
-
         pilots = ManualUser.objects.filter(username__istartswith=query).exclude(id__in=blocked_users).exclude(id=user.id)
-
-        results = [
-            {
-                "username": pilot.username,
-                "user_id": pilot.id,
-                "is_connected": pilot.is_connected,
-            }
-            for pilot in pilots
-        ]
+        results = [{"username": pilot.username, "user_id": pilot.id, "is_connected": pilot.is_connected} for pilot in pilots]
         return JsonResponse({"success": True, "pilots": results}, status=200)
 
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        logging.error("An error occurred in search_pilots: %s", str(e))
+        return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
 
-@csrf_exempt
+@require_GET
 def get_leaderboard(request):
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
     players = ManualUser.objects.filter(elo__gt=0).order_by("-elo")[:500]
     results = [{"rank": index + 1, "username": player.username, "elo": player.elo} for index, player in enumerate(players)]
     return JsonResponse({"success": True, "players": results})
