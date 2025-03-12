@@ -54,12 +54,12 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             logger.info(f"Client ajouté au groupe {group_name}")
         logger.info("🔗 Client connecté au WebSocket Gateway")
 
-    async def disconnect(self, close_code):
+    async def disconnect(self):
         if self.user_id:
             await update_user_status(self.user_id, False)
-            await self.channel_layer.group_discard(
-                f"user_{self.user_id}", self.channel_name
-            )
+            await self.channel
+            await self.channel_layer.group_send("pong_service", {"type": "game_event", "action": "give_up", "user_id": self.user_id})
+            await self.channel_layer.group_discard(f"user_{self.user_id}", self.channel_name)
             logger.info(f"Utilisateur {self.user_id} est maintenant hors ligne.")
 
         await self.channel_layer.group_discard("gateway", self.channel_name)
