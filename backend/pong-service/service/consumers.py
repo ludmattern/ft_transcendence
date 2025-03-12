@@ -119,7 +119,12 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 self.running_games[game_id]["task"].cancel()
                 del self.running_games[game_id]
                 game_manager.cleanup_game(game_id)
-                logger.info(f" Partie {game_id} terminée (leave_game)")
+                await self.channel_layer.group_send(
+                    f"game_{game_id}",
+                    {
+                        "type": "leave_game",
+                    },
+                )
 
         elif action == "game_giveup":
             player_id = event.get("player_id")
@@ -385,3 +390,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         """Gère la fin de partie."""
 
     # logger.info(f"[PongGroupConsumer] game_over reçu: {event}")
+
+
+    async def leave_game(self, event):
+        logger.info(f"[PongGroupConsumer] leave_game reçu : {event}")
