@@ -445,10 +445,10 @@ def create_local_tournament_view(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST method required"}, status=405)
 
+    user = request.user 
+    body = json.loads(request.body.decode("utf-8"))
+    players = body.get("players", [])
     try:
-        user = request.user 
-        body = json.loads(request.body.decode("utf-8"))
-        players = body.get("players", [])
 
         if len(players) not in [4, 8, 16]:
             logger.error(
@@ -537,7 +537,16 @@ def create_local_tournament_view(request):
 
     except Exception as e:
         logger.exception("Error creating local tournament:")
-        return JsonResponse({"error": str(e)}, status=500)
+        # cleanup
+        tournament = ManualTournament.objects.filter(id=user.current_tournament_id).first()
+        if tournament:
+            tournament.delete()
+        user.current_tournament_id = 0
+        user.save()
+        for player in players:
+            ManualUser.objects.filter(username=player, is_dummy=True).delete()
+        logger.error(f"Exception error in create local tournament view : {str(e)}")
+        return JsonResponse("Internal Error", status=500)
 
 
 
