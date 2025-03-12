@@ -89,10 +89,11 @@ body {
 	width: 100%;
 }
 
-#hud-body .status-indicator {
+#hud-body .status-indicator,
+#hud-body .own-status-indicator {
 	display: flex;
 	align-items: center;
-	margin-right: 1rem;
+	margin-right: 0.5rem;
 }
 
 #hud-body .hud-title {

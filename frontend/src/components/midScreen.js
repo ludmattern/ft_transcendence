@@ -99,12 +99,12 @@ export const midScreen = createComponent({
 	`,
 
 	attachEvents: () => {
-		// subscribe('gameStarted', (data) => {
-		// 	if (data === 'local' || (data && data.mode === 'local')) showGiveUpButtons('local');
-		// 	else showGiveUpButtons('online');
-		// });
-		// subscribe('gameOver', removeGiveUpButtons);
-		// subscribe('routing', sendDisconnectionEvent);
+		subscribe('gameStarted', (data) => {
+			if (data === 'local' || (data && data.mode === 'local')) showGiveUpButtons('local');
+			else showGiveUpButtons('online');
+		});
+		subscribe('gameOver', removeGiveUpButtons);
+		subscribe('routing', sendDisconnectionEvent);
 		initM2();
 	},
 });
