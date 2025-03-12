@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 import random
 import time
 import logging
@@ -55,9 +55,9 @@ class BasePongGame:
     MAX_SCORE = 3
     BALL_RESET_DELAY = 1.0
     BALL_INITIAL_SPEED = 1.5
-    VMAX = 4.0
+    VMAX = 5.0
     MIN_SPEED = 1.5
-    STEP = 0.05
+    STEP = 0.045
 
     TUNNEL_WIDTH = 5
     TUNNEL_HEIGHT = 1.5
@@ -65,7 +65,8 @@ class BasePongGame:
     PADDLE_WIDTH = 0.07
     PADDLE_HEIGHT = 0.33
     PADDLE_DEPTH = 0.33
-    BALL_SIZE = 0.75
+
+    BALL_SIZE = 0.1
 
     def __init__(self, game_id: str, player1_id: str = None, player2_id: str = None):
         self.game_id = game_id
@@ -88,16 +89,25 @@ class BasePongGame:
             random.uniform(-1, 1),
         )
         ball = Ball(
-            position=Vector3D(0, 0, 0), velocity=ball_velocity, size=self.BALL_SIZE
+            position=Vector3D(0, 0, 0),
+            velocity=ball_velocity,
+            size=self.BALL_SIZE
         )
 
         players = {
-            1: Player(player_id=self.player1_id, paddle_position=Vector3D(-self.TUNNEL_WIDTH / 2.2, 0, 0),),
-            2: Player(player_id=self.player2_id, paddle_position=Vector3D(self.TUNNEL_WIDTH / 2.2, 0, 0),),
+            1: Player(
+                player_id=self.player1_id,
+                paddle_position=Vector3D(-self.TUNNEL_WIDTH / 2.2, 0, 0),
+            ),
+            2: Player(
+                player_id=self.player2_id,
+                paddle_position=Vector3D(self.TUNNEL_WIDTH / 2.2, 0, 0),
+            ),
         }
         scores = {1: 0, 2: 0}
 
         self.state = GameState(ball=ball, players=players, scores=scores)
+
         self.solo_mode = game_id.startswith("solo_")
         self.scoring_player: int = 0
         self.ball_reset_time: float = 0.0
@@ -106,6 +116,7 @@ class BasePongGame:
         return self.solo_mode
 
     def move_paddle(self, player_num: int, direction: str) -> None:
+        """Déplace la paddle, empêche de sortir du tunnel."""
         if player_num not in self.state.players:
             return
 
@@ -122,6 +133,7 @@ class BasePongGame:
             pos.z = min(self.TUNNEL_DEPTH / 2 - self.PADDLE_DEPTH / 2, pos.z + self.STEP)
 
     def update(self) -> None:
+        """Met à jour la position de la balle, gère les collisions et le score."""
         if self.game_over:
             return
 
@@ -144,17 +156,21 @@ class BasePongGame:
         self._handle_wall_collisions()
         self._handle_paddle_collisions_and_scoring()
 
-        if (self.user_scores[self.player1_id] >= self.MAX_SCORE or self.user_scores[self.player2_id] >= self.MAX_SCORE):
+        if (self.user_scores[self.player1_id] >= self.MAX_SCORE or
+            self.user_scores[self.player2_id] >= self.MAX_SCORE):
             self.game_over = True
 
     def _update_ball_waiting(self, now: float) -> None:
+        """Gère l'animation de la balle collée au paddle après un point."""
         if now - self.ball_reset_time < self.BALL_RESET_DELAY:
             if self.state.ball_following_paddle:
                 paddle = self.state.players[self.scoring_player]
                 lerp_factor = 0.1
                 offset_x = 0.5 if self.scoring_player == 1 else -0.5
+
                 ball = self.state.ball
                 paddle_pos = paddle.paddle_position
+
                 ball.position.x += (paddle_pos.x + offset_x - ball.position.x) * lerp_factor
                 ball.position.y += (paddle_pos.y - ball.position.y) * lerp_factor
                 ball.position.z += (paddle_pos.z - ball.position.z) * lerp_factor
@@ -162,8 +178,10 @@ class BasePongGame:
         else:
             paddle = self.state.players[self.scoring_player]
             offset_x = 0.5 if self.scoring_player == 1 else -0.5
+
             ball = self.state.ball
             paddle_pos = paddle.paddle_position
+
             ball.position.x = paddle_pos.x + offset_x
             ball.position.y = paddle_pos.y
             ball.position.z = paddle_pos.z
@@ -176,12 +194,14 @@ class BasePongGame:
             ball.velocity.x = self.BALL_INITIAL_SPEED * speed_factor * direction
 
     def _update_ball_position(self, dt: float) -> None:
+        """Fait avancer la balle en fonction de sa vélocité et du dt."""
         ball = self.state.ball
         ball.position.x += ball.velocity.x * dt
         ball.position.y += ball.velocity.y * dt
         ball.position.z += ball.velocity.z * dt
 
     def _limit_ball_speed(self) -> None:
+        """Limite la vitesse de la balle à [MIN_SPEED, VMAX]."""
         ball = self.state.ball
         speed = ball.velocity.magnitude()
         if speed > self.VMAX:
@@ -192,43 +212,50 @@ class BasePongGame:
             ball.velocity = ball.velocity.scale(factor)
 
         if abs(ball.velocity.x) < self.MIN_SPEED:
-            ball.velocity.x = (self.MIN_SPEED if ball.velocity.x >= 0 else -self.MIN_SPEED)
+            ball.velocity.x = self.MIN_SPEED if ball.velocity.x >= 0 else -self.MIN_SPEED
 
     def _handle_wall_collisions(self) -> None:
+        """Détecte les collisions balle / murs (y et z)."""
         ball = self.state.ball
+        radius = ball.size 
 
-        if ball.position.y + ball.size >= self.TUNNEL_HEIGHT / 2:
-            ball.position.y = self.TUNNEL_HEIGHT / 2 - ball.size
+        if ball.position.y + radius >= self.TUNNEL_HEIGHT / 2:
+            ball.position.y = self.TUNNEL_HEIGHT / 2 - radius
             ball.velocity.y *= -1
-        elif ball.position.y - ball.size <= -self.TUNNEL_HEIGHT / 2:
-            ball.position.y = -self.TUNNEL_HEIGHT / 2 + ball.size
+        elif ball.position.y - radius <= -self.TUNNEL_HEIGHT / 2:
+            ball.position.y = -self.TUNNEL_HEIGHT / 2 + radius
             ball.velocity.y *= -1
 
-        if ball.position.z + ball.size >= self.TUNNEL_DEPTH / 2:
-            ball.position.z = self.TUNNEL_DEPTH / 2 - ball.size
+        if ball.position.z + radius >= self.TUNNEL_DEPTH / 2:
+            ball.position.z = self.TUNNEL_DEPTH / 2 - radius
             ball.velocity.z *= -1
-        elif ball.position.z - ball.size <= -self.TUNNEL_DEPTH / 2:
-            ball.position.z = -self.TUNNEL_DEPTH / 2 + ball.size
+        elif ball.position.z - radius <= -self.TUNNEL_DEPTH / 2:
+            ball.position.z = -self.TUNNEL_DEPTH / 2 + radius
             ball.velocity.z *= -1
 
     def _handle_paddle_collisions_and_scoring(self) -> None:
+        """Gère les collisions balle / paddle et l'attribution de points."""
         ball = self.state.ball
+        radius = ball.size / 2 
         p1 = self.state.players[1]
         p2 = self.state.players[2]
         margin = 0.1
-
         if ball.position.x <= p1.paddle_position.x + self.PADDLE_WIDTH:
-            if (p1.paddle_position.y - self.PADDLE_HEIGHT / 2
-                <= ball.position.y + ball.size
-                <= p1.paddle_position.y + self.PADDLE_HEIGHT / 2
-                and p1.paddle_position.z - self.PADDLE_DEPTH / 2
-                <= ball.position.z + ball.size
-                <= p1.paddle_position.z + self.PADDLE_DEPTH / 2):
-                impact_y = (ball.position.y - p1.paddle_position.y) / (self.PADDLE_HEIGHT / 2)
-                impact_z = (ball.position.z - p1.paddle_position.z) / (self.PADDLE_DEPTH / 2)
+            if ((p1.paddle_position.y - self.PADDLE_HEIGHT / 2
+                 <= ball.position.y + radius
+                 <= p1.paddle_position.y + self.PADDLE_HEIGHT / 2)
+                and (p1.paddle_position.z - self.PADDLE_DEPTH / 2
+                     <= ball.position.z + radius
+                     <= p1.paddle_position.z + self.PADDLE_DEPTH / 2)):
+
+                impact_y = ((ball.position.y - p1.paddle_position.y)
+                            / (self.PADDLE_HEIGHT / 2))
+                impact_z = ((ball.position.z - p1.paddle_position.z)
+                            / (self.PADDLE_DEPTH / 2))
                 ball.velocity.x = abs(ball.velocity.x) * 1.05
                 ball.velocity.y += impact_y * 0.75
                 ball.velocity.z += impact_z * 0.75
+
             elif ball.position.x <= p1.paddle_position.x - margin:
                 scoring_player_id = self.player2_id
                 self.user_scores[scoring_player_id] += 1
@@ -236,17 +263,22 @@ class BasePongGame:
                 self._reset_ball("right")
 
         if ball.position.x >= p2.paddle_position.x - self.PADDLE_WIDTH:
-            if (p2.paddle_position.y - self.PADDLE_HEIGHT / 2
-                <= ball.position.y + ball.size
-                <= p2.paddle_position.y + self.PADDLE_HEIGHT / 2
-                and p2.paddle_position.z - self.PADDLE_DEPTH / 2
-                <= ball.position.z + ball.size
-                <= p2.paddle_position.z + self.PADDLE_DEPTH / 2):
-                impact_y = (ball.position.y - p2.paddle_position.y) / (self.PADDLE_HEIGHT / 2)
-                impact_z = (ball.position.z - p2.paddle_position.z) / (self.PADDLE_DEPTH / 2)
+            if ((p2.paddle_position.y - self.PADDLE_HEIGHT / 2
+                 <= ball.position.y + radius
+                 <= p2.paddle_position.y + self.PADDLE_HEIGHT / 2)
+                and (p2.paddle_position.z - self.PADDLE_DEPTH / 2
+                     <= ball.position.z + radius
+                     <= p2.paddle_position.z + self.PADDLE_DEPTH / 2)):
+
+                impact_y = ((ball.position.y - p2.paddle_position.y)
+                            / (self.PADDLE_HEIGHT / 2))
+                impact_z = ((ball.position.z - p2.paddle_position.z)
+                            / (self.PADDLE_DEPTH / 2))
+
                 ball.velocity.x = -abs(ball.velocity.x) * 1.07
                 ball.velocity.y += impact_y * 0.75
                 ball.velocity.z += impact_z * 0.75
+
             elif ball.position.x >= p2.paddle_position.x + margin:
                 scoring_player_id = self.player1_id
                 self.user_scores[scoring_player_id] += 1
@@ -254,6 +286,7 @@ class BasePongGame:
                 self._reset_ball("left")
 
     def _reset_ball(self, direction: str = "right") -> None:
+        """Prépare la balle pour un nouveau service depuis le joueur qui a marqué."""
         self.scoring_player = 1 if direction == "right" else 2
         self.state.ball_waiting = True
         self.state.ball_following_paddle = True
@@ -262,6 +295,7 @@ class BasePongGame:
         self.state.ball.velocity = Vector3D(0, 0, 0)
 
     def to_dict(self) -> dict:
+        """Retourne l'état du jeu sous forme de dict (similaire à la v1)."""
         return {
             "ball": {
                 "x": self.state.ball.position.x,
