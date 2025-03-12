@@ -169,10 +169,6 @@ class GameManager {
 			player2 = gameConfig.player2;
 		}
 		console.log(` Sending start_game event: player1=${player1}, player2=${player2}, with game_id=${this.gameId}`);	
-		console.log(gameConfig.mode)
-		console.log(this.gameId)
-		console.log(player1)
-		console.log(player2)
 		ws.send(
 			JSON.stringify({
 				type: 'game_event',
@@ -183,7 +179,6 @@ class GameManager {
 				player2: player2,
 			})
 		);
-
 
 	}
 
@@ -202,6 +197,12 @@ class GameManager {
 			document.removeEventListener('keyup', this.matchMakingKeyupHandler);
 		}
 		this.stopMovement();
+		// ws.send(
+		// 	JSON.stringify({
+		// 		type: 'game_event',
+		// 		action: 'leave_game',
+		// 	})
+		// );
 		this.activeGame = null;
 		this.gameId = null;
 	}
