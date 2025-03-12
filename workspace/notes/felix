@@ -39,3 +39,11 @@ Traceback (most recent call last):
     await handler(message)
   File "/app/service/consumers.py", line 90, in matchmaking_event
     match_info_p2 = matchmaking_manager.match_found[p2]
+
+
+
+
+
+
+checker les hiy box pour les annimataion de kla balle
+et regarder pour la texture de l ecran
