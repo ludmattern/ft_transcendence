@@ -32,32 +32,29 @@ def get_username(user_id):
     except ManualUser.DoesNotExist:
         return None
 
+
 cipher = Fernet(settings.FERNET_KEY)
+
 
 @database_sync_to_async
 def get_single_user_tournament(user_id):
-    return (
-        ManualTournament.objects.filter(
-            participants__user_id=user_id, status="upcoming"
-        )
-        .order_by("-created_at")
-        .first()
-    )
+    return ManualTournament.objects.filter(participants__user_id=user_id, status="upcoming").order_by("-created_at").first()
+
 
 @database_sync_to_async
 def get_accepted_participants(tournament_id):
-    participants_qs = ManualTournamentParticipants.objects.filter(
-        tournament_id=tournament_id, status="accepted"
-    ).select_related("user")
+    participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related(
+        "user"
+    )
 
     return [p.user.username for p in participants_qs]
 
 
 @database_sync_to_async
 def get_accepted_participants_id(tournament_id):
-    participants_qs = ManualTournamentParticipants.objects.filter(
-        tournament_id=tournament_id, status="accepted"
-    ).select_related("user")
+    participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related(
+        "user"
+    )
 
     return [p.user.id for p in participants_qs]
 
@@ -133,15 +130,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         self.room_group_name = "tournament_service"
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
-        logger.info(
-            "Connected to tournament_service group (channel=%s)", self.channel_name
-        )
+        logger.info("Connected to tournament_service group (channel=%s)", self.channel_name)
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        logger.info(
-            "Disconnected from tournament_service group (channel=%s)", self.channel_name
-        )
+        logger.info("Disconnected from tournament_service group (channel=%s)", self.channel_name)
 
     async def tournament_message(self, event):
         logger.info("Tournament message received: %s", event)
@@ -194,40 +187,25 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         )
         logger.info("Tournament lobby created successfully")
 
-    async def handle_participant_status_change(
-        self, event, new_status, callback_action
-    ):
+    async def handle_participant_status_change(self, event, new_status, callback_action):
         invited_id = event.get("userId")
         invited_user = await self.get_user(invited_id)
         invited_tournament = event.get("tournamentId")
-        
+
         if new_status == "accepted" and invited_user.current_tournament_id != 0:
             logger.warning(f"User {invited_user.username} is already in a tournament")
             return
 
-        participant = await self.update_invited_participant_status(
-            invited_user, invited_tournament, new_status
-        )
+        participant = await self.update_invited_participant_status(invited_user, invited_tournament, new_status)
         if not participant:
-            logger.warning(
-                f"User {invited_user.username} not found in tournament {invited_tournament}"
-            )
+            logger.warning(f"User {invited_user.username} not found in tournament {invited_tournament}")
             return
         if new_status == "accepted":
             invited_user.current_tournament_id = invited_tournament
         await sync_to_async(invited_user.save)()
-        logger.info(
-            f"Participant {invited_user.username} status updated to {new_status}"
-        )
-        logger.info(
-            f"Parameters: {invited_id}, {callback_action}, {invited_tournament}, {invited_id}"
-        )
-        await self.send_info(
-            invited_id,
-            callback_action,
-            tournament_id=invited_tournament,
-            recipient=invited_id,
-        )
+        logger.info(f"Participant {invited_user.username} status updated to {new_status}")
+        logger.info(f"Parameters: {invited_id}, {callback_action}, {invited_tournament}, {invited_id}")
+        await self.send_info(invited_id, callback_action, tournament_id=invited_tournament, recipient=invited_id)
 
     async def handle_tournament_invite(self, event):
         author_id = event.get("author")
@@ -237,27 +215,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
         event["author_username"] = await get_username(author_id)
         event["recipient_username"] = await get_username(recipient_id)
-        logger.info(
-            "Author: %s, Recipient: %s",
-            event["author_username"],
-            event["recipient_username"],
-        )
+        logger.info("Author: %s, Recipient: %s", event["author_username"], event["recipient_username"])
 
         tournament = await self.get_initiator_tournament(initiator)
         logger.info("Tournament: %s", tournament)
         if not tournament:
-            logger.warning(
-                f"No active tournament found for initiator {initiator.username}"
-            )
+            logger.warning(f"No active tournament found for initiator {initiator.username}")
             return
 
         await self.invite_participant(tournament, recipient_user)
-        await self.send_info(
-            author_id,
-            "back_tournament_invite",
-            author=author_id,
-            recipient=recipient_id,
-        )
+        await self.send_info(author_id, "back_tournament_invite", author=author_id, recipient=recipient_id)
         logger.info("Tournament invite sent to %s", event["recipient_username"])
 
     async def handle_kick_tournament(self, event):
@@ -268,29 +235,17 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
         event["author_username"] = await get_username(author_id)
         event["recipient_username"] = await get_username(recipient_id)
-        logger.info(
-            "Author: %s, Recipient: %s",
-            event["author_username"],
-            event["recipient_username"],
-        )
+        logger.info("Author: %s, Recipient: %s", event["author_username"], event["recipient_username"])
 
         tournament = await self.get_initiator_tournament(initiator)
         if not tournament:
-            logger.warning(
-                f"No active tournament found for initiator {initiator.username}"
-            )
+            logger.warning(f"No active tournament found for initiator {initiator.username}")
             return
 
         recipient_user.current_tournament_id = 0
         await sync_to_async(recipient_user.save)()
         await self.kick_participant(tournament, recipient_user)
-        await self.send_info(
-            author_id,
-            "back_kick_tournament",
-            author=author_id,
-            recipient=recipient_id,
-            tournament_id=tournament.id,
-        )
+        await self.send_info(author_id, "back_kick_tournament", author=author_id, recipient=recipient_id, tournament_id=tournament.id)
         logger.info("%s is kicked from tournament.", event["recipient_username"])
 
     async def handle_cancel_tournament(self, event):
@@ -300,9 +255,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
         tournament = await self.get_initiator_tournament(initiator)
         if not tournament:
-            logger.warning(
-                f"No active tournament found for initiator {initiator.username}"
-            )
+            logger.warning(f"No active tournament found for initiator {initiator.username}")
             return
 
         tournament_id = tournament.id
@@ -329,16 +282,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         initiator = await self.get_user(author_id)
 
         if not initiator.current_tournament_id:
-            logger.warning(
-                f"No active tournament found for initiator {initiator.username}"
-            )
+            logger.warning(f"No active tournament found for initiator {initiator.username}")
             return
 
         tournament = await self.get_tournament_from_id(initiator.current_tournament_id)
         if not tournament:
-            logger.warning(
-                f"No active tournament found for initiator {initiator.username}"
-            )
+            logger.warning(f"No active tournament found for initiator {initiator.username}")
             return
 
         initiator.current_tournament_id = 0
@@ -384,15 +333,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def add_participant(self, tournament, user):
-        return ManualTournamentParticipants.objects.get_or_create(
-            tournament=tournament, user=user, status="accepted"
-        )
+        return ManualTournamentParticipants.objects.get_or_create(tournament=tournament, user=user, status="accepted")
 
     @database_sync_to_async
     def kick_participant(self, tournament, user):
-        return ManualTournamentParticipants.objects.filter(
-            tournament=tournament, user=user
-        ).delete()
+        return ManualTournamentParticipants.objects.filter(tournament=tournament, user=user).delete()
 
     @database_sync_to_async
     def invite_participant(self, tournament, user):
@@ -411,9 +356,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_initiator_tournament(self, initiator):
-        return ManualTournament.objects.filter(
-            organizer=initiator, status="upcoming"
-        ).first()
+        return ManualTournament.objects.filter(organizer=initiator, status="upcoming").first()
 
     # Get tournament from participant
     @database_sync_to_async
@@ -422,9 +365,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def update_invited_participant_status(self, user, tournament, new_status):
-        participant = ManualTournamentParticipants.objects.filter(
-            user=user, tournament=tournament, status="pending"
-        ).first()
+        participant = ManualTournamentParticipants.objects.filter(user=user, tournament=tournament, status="pending").first()
         if participant:
             participant.status = new_status
             participant.save()
@@ -440,26 +381,19 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
             tournament = await get_single_user_tournament(user.id)
             if not tournament:
-                logger.warning(
-                    f"No upcoming tournament found for organizer {user.username}"
-                )
+                logger.warning(f"No upcoming tournament found for organizer {user.username}")
                 return
 
             usernames = await get_accepted_participants(tournament.id)
             if not usernames:
-                logger.warning(
-                    f"No participants found with status 'accepted' for tournament {tournament.id}"
-                )
+                logger.warning(f"No participants found with status 'accepted' for tournament {tournament.id}")
                 return
 
             await set_tournament_mode(tournament.id, "online")
 
-            updated_tournament = await create_matches_for_tournament(
-                tournament.id, usernames
-            )
+            updated_tournament = await create_matches_for_tournament(tournament.id, usernames)
             logger.info(
-                f"Online tournament bracket created successfully for tournament {updated_tournament.id} "
-                f"with {len(usernames)} participants."
+                f"Online tournament bracket created successfully for tournament {updated_tournament.id} with {len(usernames)} participants."
             )
 
             await self.channel_layer.group_send(
@@ -496,9 +430,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 return
 
             participant = await sync_to_async(
-                lambda: ManualTournamentParticipants.objects.filter(
-                    tournament_id=tournament_id, user=user
-                ).first()
+                lambda: ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, user=user).first()
             )()
 
             if not participant:
@@ -517,9 +449,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             next_match_player_ids = []
             current_match_player_ids = []
             if match:
-                opponent = (
-                    match.player1 if match.player2 == user.username else match.player2
-                )
+                opponent = match.player1 if match.player2 == user.username else match.player2
                 if opponent:
                     if opponent == "TBD":
                         current_match_player_ids = await sync_to_async(
@@ -555,12 +485,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                         if next_match.player1 != "TBD" and next_match.player2 != "TBD":
                             next_match_player_ids = await sync_to_async(
                                 lambda: [
-                                    ManualUser.objects.get(
-                                        username=next_match.player1
-                                    ).id,
-                                    ManualUser.objects.get(
-                                        username=next_match.player2
-                                    ).id,
+                                    ManualUser.objects.get(username=next_match.player1).id,
+                                    ManualUser.objects.get(username=next_match.player2).id,
                                 ]
                             )()
                         await sync_to_async(next_match.save)()
@@ -576,9 +502,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             )()
 
             left_players_count = await sync_to_async(
-                lambda: ManualTournamentParticipants.objects.filter(
-                    tournament_id=tournament_id, status="left"
-                ).count()
+                lambda: ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="left").count()
             )()
 
             logger.info(
@@ -586,18 +510,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             )
 
             if active_players_count > 0 and active_players_count == left_players_count:
-                logger.info(
-                    f"Deleting tournament {tournament_id} since all players have left."
-                )
-                await sync_to_async(
-                    lambda: ManualTournament.objects.filter(id=tournament_id).delete()
-                )()
+                logger.info(f"Deleting tournament {tournament_id} since all players have left.")
+                await sync_to_async(lambda: ManualTournament.objects.filter(id=tournament_id).delete())()
 
             participant_list = await sync_to_async(
                 lambda: list(
-                    ManualTournamentParticipants.objects.filter(
-                        tournament_id=tournament_id
-                    )
+                    ManualTournamentParticipants.objects.filter(tournament_id=tournament_id)
                     .exclude(Q(status="rejected") | Q(status="left"))
                     .values_list("id", flat=True)
                 )
@@ -622,11 +540,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         from service.models import ManualTournament
 
         while True:
-            key = "".join(
-                random.choices(string.ascii_uppercase + string.digits, k=length)
-            )
-            exists = await sync_to_async(
-                ManualTournament.objects.filter(serial_key=key).exists
-            )()
+            key = "".join(random.choices(string.ascii_uppercase + string.digits, k=length))
+            exists = await sync_to_async(ManualTournament.objects.filter(serial_key=key).exists)()
             if not exists:
                 return key

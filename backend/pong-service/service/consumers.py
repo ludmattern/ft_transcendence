@@ -77,7 +77,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard("pong_service", self.channel_name)
 
     async def game_event(self, event):
-        # logger.info(f"[PongGroupConsumer] Reçu un game_event: {event}")
+        logger.info(f"[PongGroupConsumer] Reçu un game_event: {event}")
 
         game_id = event.get("game_id")
         action = event.get("action", "")
@@ -91,15 +91,10 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         if action == "start_game":
             if game_id not in self.running_games:
                 logger.info(f"🎮 Démarrage de la partie {game_id}")
-                self.running_games[game_id] = {
-                    "task": asyncio.create_task(self.game_loop(game_id)),
-                }
+                self.running_games[game_id] = {"task": asyncio.create_task(self.game_loop(game_id))}
 
             payload = game.to_dict()
-            await self.channel_layer.group_send(
-                f"game_{game_id}",
-                {"type": "game_state", "game_id": game_id, "payload": payload},
-            )
+            await self.channel_layer.group_send(f"game_{game_id}", {"type": "game_state", "game_id": game_id, "payload": payload})
 
         elif action == "move":
             direction = event.get("direction")
@@ -113,7 +108,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 paddle_number = game.player_mapping.get(str(user_id))
 
             if paddle_number is None:
-                logger.error("Le champ indiquant le joueur (local_player ou user_id) ne correspond à aucun paddle dans la partie.")
+                logger.error(
+                    "Le champ indiquant le joueur (local_player ou user_id) ne correspond à aucun paddle dans la partie."
+                )
                 return
             game.move_paddle(paddle_number, direction)
 
@@ -187,8 +184,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 payload = game.to_dict()
 
                 await self.channel_layer.group_send(
-                    f"game_{game_id}",
-                    {"type": "game_state", "game_id": game_id, "payload": payload},
+                    f"game_{game_id}", {"type": "game_state", "game_id": game_id, "payload": payload}
                 )
                 from .models import GameHistory
 
@@ -218,9 +214,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
                         participant = await sync_to_async(
                             ManualTournamentParticipants.objects.filter(
-                                tournament_id=tournament_id,
-                                user=loser,
-                                status="accepted",
+                                tournament_id=tournament_id, user=loser, status="accepted"
                             ).first
                         )()
 
@@ -241,9 +235,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                             next_match_order = (match.match_order + 1) // 2
                             next_match = await sync_to_async(
                                 TournamentMatch.objects.filter(
-                                    tournament_id=tournament_id,
-                                    round_number=next_round,
-                                    match_order=next_match_order,
+                                    tournament_id=tournament_id, round_number=next_round, match_order=next_match_order
                                 ).first
                             )()
 
@@ -269,7 +261,13 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                                 next_match.status = "ready"
                                 await sync_to_async(next_match.save)()
 
-                        participant_list = await sync_to_async(lambda: list(ManualTournamentParticipants.objects.filter(tournament_id=tournament_id).exclude(Q(status="rejected") | Q(status="left")).values_list("id", flat=True)))()
+                        participant_list = await sync_to_async(
+                            lambda: list(
+                                ManualTournamentParticipants.objects.filter(tournament_id=tournament_id)
+                                .exclude(Q(status="rejected") | Q(status="left"))
+                                .values_list("id", flat=True)
+                            )
+                        )()
 
                         payload = {
                             "type": "info_message",
@@ -320,7 +318,12 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
                     await asyncio.sleep(0.01)
 
-                    if not (str(game_id).startswith("game_") or str(game_id).startswith("tournLocal_") or str(game_id).startswith("solo_") or str(game_id).startswith("tournOnline_")):
+                    if not (
+                        str(game_id).startswith("game_")
+                        or str(game_id).startswith("tournLocal_")
+                        or str(game_id).startswith("solo_")
+                        or str(game_id).startswith("tournOnline_")
+                    ):
                         await sync_to_async(GameHistory.objects.create)(
                             winner_id=winner_id,
                             loser_id=loser_id,

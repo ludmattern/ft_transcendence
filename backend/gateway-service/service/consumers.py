@@ -56,7 +56,9 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         if self.user_id:
             await update_user_status(self.user_id, False)
             await self.channel
-            await self.channel_layer.group_send("pong_service", {"type": "game_event", "action": "game_giveup", "user_id": self.user_id, "game_id": self.game_id})
+            await self.channel_layer.group_send(
+                "pong_service", {"type": "game_event", "action": "game_giveup", "user_id": self.user_id, "game_id": self.game_id}
+            )
             await self.channel_layer.group_discard(f"user_{self.user_id}", self.channel_name)
             logger.info(f"Utilisateur {self.user_id} est maintenant hors ligne.")
 
@@ -159,12 +161,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
                 await self.channel_layer.group_send(
                     "matchmaking_service",
-                    {
-                        "type": "matchmaking_event",
-                        "action": action,
-                        "user_id": str(self.user_id),
-                        "room_code": str(room_code),
-                    },
+                    {"type": "matchmaking_event", "action": action, "user_id": str(self.user_id), "room_code": str(room_code)},
                 )
                 logger.info(f"matchmaking_event/private_event => service : {action} {self.user_id}, room={room_code}")
 
@@ -184,7 +181,16 @@ class GatewayConsumer(AsyncWebsocketConsumer):
     async def info_message(self, event):
         """This method handles friend request sending events delivered to this consumer."""
         action = event.get("action")
-        if action == "back_tournament_invite" or action == "back_join_tournament" or action == "back_reject_tournament" or action == "back_cancel_tournament_invite" or action == "back_kick_tournament" or action == "back_cancel_tournament" or action == "back_leave_tournament" or action == "back_tournament_game_over":
+        if (
+            action == "back_tournament_invite"
+            or action == "back_join_tournament"
+            or action == "back_reject_tournament"
+            or action == "back_cancel_tournament_invite"
+            or action == "back_kick_tournament"
+            or action == "back_cancel_tournament"
+            or action == "back_leave_tournament"
+            or action == "back_tournament_game_over"
+        ):
             await self.channel_layer.group_send("chat_service", event)
             logger.info(f"Message transmis au chat_service (back_tournament): {event}")
         else:
@@ -217,7 +223,9 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
     async def private_match_found(self, event):
         await self.send(json.dumps(event))
-        logger.info(f"🔔 Private match_found envoyé au client {event['user_id']} : self.game_id={event['game_id']}, side={event['side']}")
+        logger.info(
+            f"🔔 Private match_found envoyé au client {event['user_id']} : self.game_id={event['game_id']}, side={event['side']}"
+        )
 
     async def tournament_creation(self, event):
         await self.send(json.dumps(event))
