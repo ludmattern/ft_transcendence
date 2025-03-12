@@ -2,14 +2,8 @@ CREATE TABLE
 	IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
 		username VARCHAR(50) NOT NULL UNIQUE CHECK (LENGTH(username) >=6 AND LENGTH(username) <= 20 AND username ~ '^[a-zA-Z0-9_]+$'),
-        email VARCHAR(255) DEFAULT NULL CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
-		password VARCHAR(255) CHECK (
-            LENGTH(password) >= 6 AND LENGTH(password) <= 20 AND
-            password ~ '[a-z]' AND
-            password ~ '[A-Z]' AND
-			password ~ '[0-9]' AND
-            password ~ '[@$!%*?&#^]'
-        ),
+        email VARCHAR(255) DEFAULT NULL ,
+		password VARCHAR(255) ,
 		rank INT DEFAULT 0,
 		tournament_status VARCHAR(20) DEFAULT 'out',
 		winrate FLOAT DEFAULT 0,
@@ -23,7 +17,7 @@ CREATE TABLE
 		is_dummy BOOLEAN DEFAULT FALSE,
 		current_tournament_id INT DEFAULT 0,
 		twofa_method VARCHAR(50) DEFAULT NULL,
-		phone_number VARCHAR(255) DEFAULT NULL CHECK (phone_number ~ '^\+?[0-9]{10,15}$'),
+		phone_number VARCHAR(255) DEFAULT NULL,
 		temp_2fa_code VARCHAR(255) DEFAULT NULL,
 		temp_reset_code VARCHAR(255) DEFAULT NULL,
 		reset_code_expiry TIMESTAMP DEFAULT NULL,
@@ -78,7 +72,7 @@ CREATE TABLE
 	IF NOT EXISTS tournaments (
 		id SERIAL PRIMARY KEY,
 		serial_key VARCHAR(255) NOT NULL UNIQUE, -- Unique identifier for the tournament
-		size INT DEFAULT 0,
+		size INT DEFAULT 0 CHECK (size == 4 OR size == 8 OR size == 16),
 		name VARCHAR(255) DEFAULT 'TOURNAMENT_DEFAULT_NAME',
 		organizer_id INT NOT NULL,
 		status VARCHAR(50) DEFAULT 'upcoming', -- 'upcoming', 'ongoing', 'completed'
