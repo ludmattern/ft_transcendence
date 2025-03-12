@@ -205,7 +205,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 from .models import GameHistory
 
                 if game.game_over:
-                    if game.user_scores[game.player1_id] >= game.max_score:
+                    if game.user_scores[game.player1_id] > game.user_scores[game.player2_id]:
                         winner_id = game.player1_id
                         loser_id = game.player2_id
                     else:
