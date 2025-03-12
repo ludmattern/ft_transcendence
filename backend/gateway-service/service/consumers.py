@@ -146,10 +146,8 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                     logger.info(f"Envoi à pong_service: self.game_id={self.game_id}, player1={player1_id}, player2={player2_id}")
                 if data.get("action") == "give_up":
                     await self.channel_layer.group_discard(f"game_{self.game_id}", self.channel_name)
-                    self.game_id = None
                     logger.info(f"Client quitte le groupe game_{self.game_id}")
                     logger.info(f"Envoi à pong_service: game_id={self.game_id}, player1={player1_id}, player2={player2_id}")
-                
 
                 await self.channel_layer.group_send(
                     "pong_service",
@@ -228,14 +226,14 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
     async def game_state(self, event):
         await self.send(json.dumps(event))
-        logger.info(f"Game state transmis au client : {event}")
 
     async def game_over(self, event):
         """Gère la fin du jeu et envoie le message au client."""
         await self.send(json.dumps(event))
-        self.game_id = None
         logger.info(f"🚨 Game over transmis au client WebSocket : {event}")
 
+    async def leave_game(self, event):
+          logger.info(f" leave_game tst")        
     async def match_found(self, event):
         await self.send(json.dumps(event))
         logger.info(f"🎯 Match trouvé! Envoyé au client {event['user_id']}")

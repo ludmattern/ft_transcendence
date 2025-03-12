@@ -196,13 +196,14 @@ class GameManager {
 			document.removeEventListener('keydown', this.matchMakingKeydownHandler);
 			document.removeEventListener('keyup', this.matchMakingKeyupHandler);
 		}
+		console.log('gameId on endin:', this.gameId);
 		this.stopMovement();
-		// ws.send(
-		// 	JSON.stringify({
-		// 		type: 'game_event',
-		// 		action: 'leave_game',
-		// 	})
-		// );
+		ws.send(
+			JSON.stringify({
+				type: 'game_event',
+				action: 'leave_game',
+			})
+		);
 		this.activeGame = null;
 		this.gameId = null;
 	}
