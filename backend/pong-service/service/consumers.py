@@ -147,42 +147,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
     async def game_state(self, event):
         pass
 
-    async def game_heartbeat(self, game_id, player_id, stop_event):
-        offline_duration = 0
-        check_interval = 0.5  # 500ms
-        max_offline_duration = 5  # 5 seconds
-
-        while not stop_event.is_set():
-            user_status = await self.get_user_status(player_id)
-            if user_status == "offline":
-                offline_duration += check_interval
-                if offline_duration >= max_offline_duration:
-                    # Declare the other player as the winner
-                    game = game_manager.get_game(game_id)
-                    if player_id == game.player1_id:
-                        winner_id = game.player2_id
-                    else:
-                        winner_id = game.player1_id
-
-                    await self.channel_layer.group_send(
-                        f"game_{game_id}",
-                        {
-                            "type": "game_event",
-                            "game_id": game_id,
-                            "action": "game_over",
-                            "winner": winner_id,
-                            "loser": player_id,
-                        },
-                    )
-
-                    # Signal the game loop to stop
-                    stop_event.set()
-                    break
-            else:
-                offline_duration = 0
-
-            await asyncio.sleep(check_interval)
-
     async def get_user_status(self, player_id):
         user = await sync_to_async(ManualUser.objects.get)(id=player_id)
         return user.status
@@ -193,12 +157,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         stop_event = asyncio.Event()
         game = game_manager.get_game(game_id)
 
-        # Start heartbeat checks for both players
-        asyncio.create_task(self.game_heartbeat(game_id, game.player1_id, stop_event))
-        asyncio.create_task(self.game_heartbeat(game_id, game.player2_id, stop_event))
         try:
             last_ai_time = time.time()
-            while not stop_event.is_set():
+            while True:
                 game = game_manager.get_game(game_id)
                 if not game:
                     break

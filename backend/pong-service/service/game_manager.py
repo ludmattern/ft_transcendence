@@ -1,6 +1,9 @@
 # service/game_manager.py
 from .games import BasePongGame
+import logging
 
+
+logger = logging.getLogger(__name__)
 class GameManager:
     def __init__(self):
         self.games = {}
@@ -8,6 +11,7 @@ class GameManager:
     def get_or_create_game(self, game_id, player1_id=None, player2_id=None):
         """Récupère une partie existante ou en crée une nouvelle avec les IDs des joueurs."""
         if game_id not in self.games:
+            logger.info(f"Creating new game with id {game_id} and players {player1_id} and {player2_id}")
             self.games[game_id] = BasePongGame(game_id, player1_id, player2_id)
         else:
             game = self.games[game_id]
