@@ -73,7 +73,6 @@ export const forgotPassword = (() => {
 				const email = emailInput.value;
 				// Stocker l'email pour les appels suivants
 				state.email = email;
-				console.log('Send reset code to:', email);
 				try {
 					const response = await fetch('/api/auth-service/request-password-reset/', {
 						method: 'POST',
@@ -84,8 +83,6 @@ export const forgotPassword = (() => {
 					if (data.success) {
 						el.innerHTML = render('code');
 						attachEvents(el);
-					} else {
-						console.error('Error:', data.message);
 					}
 				} catch (error) {
 					console.error('Error:', error);
@@ -99,7 +96,6 @@ export const forgotPassword = (() => {
 				e.preventDefault();
 				const codeInput = el.querySelector('#code');
 				const code = codeInput.value;
-				console.log('Verify code:', code);
 				try {
 					const response = await fetch('/api/auth-service/verify-reset-code/', {
 						method: 'POST',
@@ -112,8 +108,6 @@ export const forgotPassword = (() => {
 						state.resetToken = data.reset_token;
 						el.innerHTML = render('changePassword');
 						attachEvents(el);
-					} else {
-						console.error('Verification failed:', data.message);
 					}
 				} catch (error) {
 					console.error('Error:', error);
@@ -123,7 +117,6 @@ export const forgotPassword = (() => {
 			if (resendButton) {
 				resendButton.addEventListener('click', async (e) => {
 					e.preventDefault();
-					console.log('Resend code request');
 					try {
 						const response = await fetch('/api/auth-service/request-password-reset/', {
 							method: 'POST',
@@ -150,7 +143,6 @@ export const forgotPassword = (() => {
 				if (newPassword.value !== confirmPassword.value) {
 					errorMessage.classList.remove('d-none');
 				} else {
-					console.log('Change password:', newPassword.value);
 					try {
 						const response = await fetch('/api/auth-service/change-password/', {
 							method: 'POST',
@@ -163,8 +155,6 @@ export const forgotPassword = (() => {
 						const data = await response.json();
 						if (data.success) {
 							handleRoute('/login');
-						} else {
-							console.error('Change password failed:', data.message);
 						}
 					} catch (error) {
 						console.error('Error:', error);

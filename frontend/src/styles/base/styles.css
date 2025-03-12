@@ -86,8 +86,11 @@ body {
 
 #app .menu2 .wait2 {
 	opacity: 0;
-	visibility: hidden;
-	pointer-events: none;
+    visibility: hidden;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column-reverse;
 }
 
 @keyframes anime-dvd {

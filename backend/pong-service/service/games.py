@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 class BasePongGame:
     def __init__(self, game_id, player1_id=None, player2_id=None):
         self.game_id = game_id
+        logger.info(f"here : game_id={self.game_id}")
         self.start_delay = 3.0
         self.start_time = time.time()
         self.max_score = 3
@@ -47,7 +48,7 @@ class BasePongGame:
         self.vmax = 4
         self.last_update = time.time()
         self.solo_mode = game_id.startswith("solo_")
-
+        self.player_mapping = {str(self.player1_id): 1, str(self.player2_id): 2}
     def is_solo_mode(self):
         return self.solo_mode
     def move_paddle(self, player_id, direction):
@@ -82,6 +83,7 @@ class BasePongGame:
     def update(self):
         if self.game_over:
             return
+
 
         now = time.time()
         dt = now - self.last_update

@@ -64,13 +64,11 @@ export const contextMenu = createComponent({
 
 export async function handleFriendAction(is_friend, author) {
 	const action = is_friend ? 'remove_friend' : 'send_friend_request';
-	console.log(`${is_friend ? 'Removing' : 'Adding'} ${author} ${is_friend ? 'from' : 'to'} friends...`);
 	sendWsInfoMessage(action, author);
 }
 
 async function handleBlockAction(author, is_blocked) {
 	const action = is_blocked ? 'unblock_user' : 'block_user';
-	console.log(`${is_blocked ? 'Unblocking' : 'Blocking'} ${author}...`);
 	sendWsInfoMessage(action, author);
 }
 
@@ -91,8 +89,6 @@ async function handleProfileAction(author) {
 }
 
 async function handleMessageAction(username) {
-	console.log(`Messaging ${username}...`);
-
 	const activeTab = document.querySelector('.nav-link.active');
 	const setMessageInput = async () => {
 		const inputField = await waitForElement('#l-tab-content-container #message-input');
@@ -120,14 +116,12 @@ async function handleMessageAction(username) {
 }
 
 export async function showContextMenu(item, event) {
-	console.log('showContextMenu', item, event);
 	event.preventDefault();
 	event.stopPropagation();
 
 	hideContextMenu();
 
 	const { author, username } = resolveUser(item);
-	console.log('Resolved user:', author, username);
 	item.author = author;
 	item.username = username;
 
@@ -161,7 +155,6 @@ document.addEventListener('click', (e) => {
 });
 
 export async function getRelationshipStatus(otherUserId) {
-	console.log(`Checking relationship status for user ${otherUserId}...`);
 	try {
 		const response = await fetch('/api/user-service/get-relationship-status/', {
 			method: 'POST',
@@ -171,7 +164,6 @@ export async function getRelationshipStatus(otherUserId) {
 		});
 		const data = await response.json();
 		if (data.success) {
-			console.log('Relationship status:', data);
 			return data;
 		} else {
 			console.error('Error getting relationship status:', data.error);

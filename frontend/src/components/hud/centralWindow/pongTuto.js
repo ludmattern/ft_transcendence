@@ -64,7 +64,6 @@ export const pongTuto = (config) =>
 
 			// Gestion du bouton "Ready"
 			el.querySelector('#ready').addEventListener('click', () => {
-				console.log('Player is ready');
 				gameModeSelector(config);
 				el.querySelector('#ready').remove();
 				el.querySelector('.ready-question').remove();

@@ -9,7 +9,6 @@ export const infoPanelItem = createComponent({
 
 	render: (item) => {
 		const content = titleType(item);
-		console.log('item inside panel ITEM', item);
 
 		return `
 	<div class="panel-item" data-notification-id="${item.type}-${item.inviter_id}">
@@ -26,7 +25,6 @@ export const infoPanelItem = createComponent({
 	},
 
 	attachEvents: (el, item) => {
-		console.log('item', item);
 		switch (item.type) {
 			case 'friend_request':
 				behaviorFriendRequest(el, item);
@@ -40,7 +38,6 @@ export const infoPanelItem = createComponent({
 				behaviorPrivateGame(el, item);
 				break;
 			case 'miscellaneous':
-				behaviorMiscellaneous();
 				break;
 			default:
 				break;
@@ -59,24 +56,19 @@ function behaviorFriendRequest(el, item) {
 	const acceptButton = el.querySelector('#accept-action');
 	const refuseButton = el.querySelector('#refuse-action');
 
-	console.log('Friend request from:', item.inviter);
-
 	if (acceptButton) {
 		acceptButton.addEventListener('click', () => {
-			console.log(`Accepted ${item.inviter}'s request.`);
 			handleFriendAction(false, item.inviter_id);
 		});
 	}
 	if (refuseButton) {
 		refuseButton.addEventListener('click', () => {
-			console.log(`Refused ${item.inviter}'s request.`);
 			handleFriendAction(true, item.inviter_id);
 		});
 	}
 }
 
 function titleType(item) {
-	console.log('************************** item **************************', item);
 	switch (item.type) {
 		case 'friend_request':
 			return 'Friend request from: ';
@@ -95,17 +87,13 @@ function behaviorTournament(el, item) {
 	const acceptButton = el.querySelector('#accept-action');
 	const refuseButton = el.querySelector('#refuse-action');
 
-	console.log('tournament request from:', item.inviter);
-
 	if (acceptButton) {
 		acceptButton.addEventListener('click', () => {
-			console.log(`Accepted ${item.inviter}'s request.`);
 			handleTournamentAction(true, item);
 		});
 	}
 	if (refuseButton) {
 		refuseButton.addEventListener('click', () => {
-			console.log(`Refused ${item.inviter}'s request.`);
 			handleTournamentAction(false, item);
 		});
 	}
@@ -114,17 +102,13 @@ function behaviorTournament(el, item) {
 export async function handleTournamentAction(action, item) {
 	if (action) {
 		try {
-			console.log('Vérification de l\'existence d\'un lobby...');
-
 			let url = "/api/tournament-service/getCurrentTournamentInformation/";
-			console.log('Appel de l\'API pour récupérer la clé de tournoi :', url);
 
 			let response = await fetch(url, { credentials: "include" });
 			if (!response.ok) {
 				throw new Error(`Erreur HTTP lors de la vérification du lobby (code ${response.status})`);
 			}
 			let data = await response.json();
-			console.log('status de tournoi récupérée :', data.tournament_id);
 
 			if (data.tournament_id) {
 				createNotificationMessage('You are already in a tournament', 2500, true);
@@ -134,17 +118,14 @@ export async function handleTournamentAction(action, item) {
 			console.error('Erreur dans checkOrCreateLobby :', error);
 		}
 		action = 'join_tournament';
-		console.log('joining tournament...');
 	} else {
 		action = 'reject_tournament';
-		console.log('rejecting tournament...');
 	}
 	const payload = {
 		type: 'tournament_message',
 		action,
 		tournamentId: item.tournament_id,
 	};
-	console.log('payload', payload);
 	ws.send(JSON.stringify(payload));
 }
 
@@ -153,7 +134,6 @@ function behaviorPrivateGame(el, item) {
 	const refuseButton = el.querySelector("#refuse-action");
 	if (acceptButton) {
 	  acceptButton.addEventListener("click", () => {
-	    console.log(`Accepted ${item.inviter}'s request.`);
 		const payload = {	
 			type: 'info_message',
 			action: 'accept_private_game_invite',
@@ -166,7 +146,6 @@ function behaviorPrivateGame(el, item) {
 	}
 	if (refuseButton) {
 	  refuseButton.addEventListener("click", () => {
-	    console.log(`Refused ${item.inviter}'s request.`);
 		const payload = {	
 			type: 'info_message',
 			action: 'refuse_private_game_invite',
@@ -176,14 +155,4 @@ function behaviorPrivateGame(el, item) {
 		ws.send(JSON.stringify(payload));
 	  });
 	}
-}
-
-// Will be deleted imo
-function behaviorMiscellaneous(el, item) {
-	// const discardButton = el.querySelector("#discard-action");
-	// if (discardButton) {
-	//   discardButton.addEventListener("click", () => {
-	//     console.log(`Discarding ${item}.`);
-	//   });
-	// }
 }

@@ -1,6 +1,88 @@
 import { createComponent } from '/src/utils/component.js';
 import { CSS3DObject } from 'https://esm.sh/three/examples/jsm/renderers/CSS3DRenderer.js';
 import Store from '/src/3d/store.js';
+import { subscribe } from '/src/services/eventEmitter.js';
+import { gameManager } from '/src/pongGame/gameManager.js';
+
+function removeGiveUpButtons() {
+	const wait2 = document.querySelector('.wait2');
+	if (!wait2) return;
+
+	const btnContainer = wait2.querySelector('.giveup-buttons');
+	if (btnContainer) {
+		btnContainer.remove();
+	}
+}
+
+export const GiveUpButtons = createComponent({
+	tag: 'giveUpButtons',
+
+	render: ({ gameMode = 'local' } = {}) => {
+		const configs = {
+			local: [
+				{ id: 'btn-giveup-player-left', text: 'give up', wrapperClass: 'col-1' },
+				{ id: 'btn-giveup-player-right', text: 'give up', wrapperClass: 'col-1' },
+			],
+			online: [{ id: 'btn-giveup', text: 'give up', wrapperClass: 'col-12 text-center' }],
+		};
+
+		const config = configs[gameMode] || [];
+		const buttonsHtml = config
+			.map(
+				({ id, text, wrapperClass }) => `
+			<div class="${wrapperClass}">
+			  <button class="btn bi bi-x danger w-100" id="${id}">${text}</button>
+			</div>
+		  `
+			)
+			.join('');
+
+		return `<div class="giveup-buttons d-flex justify-content-around flex-row m-3">${buttonsHtml}</div>`;
+	},
+
+	attachEvents: (el, { gameMode = 'local' } = {}) => {
+		const eventHandlers = {
+			local: {
+				'btn-giveup-player-left': () => {
+					alert('Abandon local déclenché');
+				},
+				'btn-giveup-player-right': () => {
+					alert('Quitter local déclenché');
+				},
+			},
+			online: {
+				'btn-giveup': () => {
+					alert('Abandon online déclenché');
+					const payload = {
+						type: 'game_event'
+					};
+					ws.send(JSON.stringify(payload));
+				},
+			},
+		};
+
+		const handlers = eventHandlers[gameMode] || {};
+		Object.keys(handlers).forEach((id) => {
+			const btn = el.querySelector(`#${id}`);
+			if (btn) {
+				btn.addEventListener('click', handlers[id]);
+			}
+		});
+	},
+});
+
+export function showGiveUpButtons(data = { gameMode: 'local' }) {
+	const gameMode = typeof data === 'string' ? data : data.gameMode || 'local';
+	const wait2 = document.querySelector('.wait2');
+	if (!wait2) return;
+
+	wait2.insertAdjacentHTML('beforeend', GiveUpButtons.render({ gameMode }));
+
+	const btnContainer = wait2.querySelector('.giveup-buttons');
+	if (btnContainer) {
+		GiveUpButtons.attachEvents(btnContainer, { gameMode });
+	}
+}
 
 export const midScreen = createComponent({
 	tag: 'midScreen',
@@ -8,17 +90,21 @@ export const midScreen = createComponent({
 	render: () => `
 	  <div class="menu2" id="gameScreen">
 		<div class="row mt-3"></div>
-		<div class="wait2">
-		  <img class="mid-screensaver" src="/src/assets/img/42.png" />
-		  <h1 id="myCountdown" class="countdown-text"></h1>
+		<div class="wait2" style="display: block;">
+		  <img class="mid-screensaver" src="/src/assets/img/42.png">
 		  <div id="scoreContainer" style="display: none;">
-			<h2 classe="scoring" id="scoreText">0 - 0</h2>
+			<h2 class="scoring" id="scoreText">Player Right 0 - 1 Player Left</h2>
 		  </div>
 		</div>
 	  </div>
 	`,
 
-	attachEvents: (el) => {
+	attachEvents: () => {
+		subscribe('gameStarted', (data) => {
+			if (data === 'local' || (data && data.gameMode === 'local')) showGiveUpButtons('local');
+			else showGiveUpButtons('online');
+		});
+		subscribe('gameOver', removeGiveUpButtons);
 		initM2();
 	},
 });
@@ -26,7 +112,6 @@ export const midScreen = createComponent({
 function initM2() {
 	Store.menuElement = document.getElementById('gameScreen');
 	if (!Store.menuElement) {
-		console.error('The element with ID \'gameScreen\' was not found.');
 		return;
 	}
 	Store.menuObject = new CSS3DObject(Store.menuElement);
@@ -40,7 +125,6 @@ function initM2() {
 }
 export function showCountdown() {
 	if (!Store.menuElement) {
-		console.error('Store.menuElement is not defined.');
 		return;
 	}
 
@@ -49,13 +133,16 @@ export function showCountdown() {
 
 	const screensaverImg = Store.menuElement.querySelector('.mid-screensaver');
 	const scoreContainer = Store.menuElement.querySelector('#scoreContainer');
+	const wrapper = Store.menuElement.querySelector('.wait2');
 
 	if (screensaverImg) {
 		screensaverImg.style.display = 'none';
 	}
-	/*  */
 	if (scoreContainer) {
 		scoreContainer.style.display = 'block';
+	}
+	if (wrapper) {
+		wrapper.style.display = 'flex';
 	}
 
 	let countdownEl = Store.menuElement.querySelector('#myCountdown');
@@ -82,7 +169,6 @@ export function showCountdown() {
 
 			setTimeout(() => {
 				countdownEl.style.display = 'none';
-				//Store.menuElement.classList.remove("active");
 
 				if (scoreContainer) {
 					scoreContainer.style.display = 'block';
@@ -97,11 +183,15 @@ export function endGameScreen() {
 
 	const screensaverImg = Store.menuElement.querySelector('.mid-screensaver');
 	const scoreContainer = Store.menuElement.querySelector('#scoreContainer');
+	const wrapper = Store.menuElement.querySelector('.wait2');
 
 	if (scoreContainer) {
 		scoreContainer.style.display = 'none';
 	}
 	if (screensaverImg) {
 		screensaverImg.style.display = 'block';
+	}
+	if (wrapper) {
+		wrapper.style.display = 'block';
 	}
 }

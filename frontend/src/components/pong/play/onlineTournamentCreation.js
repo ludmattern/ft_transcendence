@@ -93,11 +93,9 @@ export const onlineTournamentCreation = createComponent({
 			sendInviteButton.addEventListener('click', async () => {
 				const invitedUsernamePilot = inviteInput.value.trim();
 				if (!invitedUsernamePilot) {
-					console.log('Aucun nom d\'utilisateur spécifié');
 					return;
 				}
 				if (data.participants_count >= data.size) {
-					console.log('Le tournoi est complet');
 					return;
 				}
 
@@ -105,12 +103,10 @@ export const onlineTournamentCreation = createComponent({
 				if (!recipientId) {
 					createNotificationMessage(`${invitedUsernamePilot} has not enlisted in Space Force yet`, 5000, true);
 					inviteInput.value = '';
-					console.log('Aucun utilisateur trouvé avec le nom spécifié');
 					return;
 				} else if (recipientId.toString() === data.user_id) {
 					createNotificationMessage('You cannot invite yourself', 5000, true);
 					inviteInput.value = '';
-					console.log('Vous ne pouvez pas vous inviter vous-même');
 					return;
 				}
 				const payload = {
@@ -119,7 +115,6 @@ export const onlineTournamentCreation = createComponent({
 					author: data.user_id,
 					recipient: recipientId,
 				};
-				console.log('Envoi de l\'invitation au joueur :', payload);
 				ws.send(JSON.stringify(payload));
 
 				inviteInput.value = '';
@@ -193,7 +188,6 @@ async function createNewLobby(userId, tournamentSize) {
 }
 
 export function updateOnlinePlayersUI(data) {
-	console.log('AAAAAAAAA ************** data a ce moment :', data);
 	const participants = document.querySelector('#online-players-list');
 	const participantsCountSpan = document.querySelector('#online-players-count');
 	const createTournamentButton = document.querySelector('#create-tournament');
@@ -201,7 +195,6 @@ export function updateOnlinePlayersUI(data) {
 	const roomCodeElement = document.querySelector('#room-code');
 
 	if (!participants || !participantsCountSpan || !maxPlayersOnlineSpan || !roomCodeElement) {
-		console.warn('updateOnlinePlayersUI: Certains éléments DOM sont manquants.');
 		return;
 	}
 
@@ -211,8 +204,6 @@ export function updateOnlinePlayersUI(data) {
 	maxPlayersOnlineSpan.textContent = data.size;
 
 	const sortedParticipants = data.participants.sort((a, b) => {
-		console.log('a:', a);
-		console.log('b:', b);
 		const aPending = a.status === 'pending' ? 1 : 0;
 		const bPending = b.status === 'pending' ? 1 : 0;
 		return aPending - bPending;

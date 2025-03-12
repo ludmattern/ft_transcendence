@@ -1,4 +1,3 @@
-import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { handleRoute } from '/src/services/router.js';
 
 function parseGameId(gameId) {
@@ -63,7 +62,6 @@ export async function createTournament(players) {
 		});
 
 		const data = await response.json();
-		console.log('Tournament created:', data);
 
 		if (data.success) {
 			handleRoute('/pong/play/current-tournament');
@@ -73,7 +71,6 @@ export async function createTournament(players) {
 
 		return data;
 	} catch (error) {
-		console.error('Error creating tournament:', error);
 		throw error;
 	}
 }

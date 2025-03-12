@@ -5,7 +5,7 @@ import { validatePassword } from '/src/components/hud/centralWindow/subscribeFor
 import { checkPasswordConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { checkEmailConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { pushInfo,getInfo } from '/src/services/infoStorage.js';
 
 export const settingsForm = createComponent({
 	tag: 'settingsForm',
@@ -55,8 +55,6 @@ attachEvents: async (el) => {
         e.preventDefault();
         const formData = collectFormData(el);
 
-        console.log('Form data:', formData);
-
         resetErrorMessages();
 
         let canUpdate = true;
@@ -102,7 +100,6 @@ attachEvents: async (el) => {
                 }
             } catch (error) {
                 console.error('Error updating information:', error);
-                alert('An unexpected error occurred.');
             }
         }
     });
@@ -256,7 +253,6 @@ async function checkOAuthStatus() {
         });
 
         const data = await response.json();
-        console.log("is null", data.oauth_null);
         return data.oauth_null;
     } catch (error) {
         console.error("Erreur lors de la vérification de OAuth:", error);

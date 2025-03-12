@@ -26,8 +26,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         await self.accept()
         query_string = self.scope["query_string"].decode("utf-8")
         query_params = urllib.parse.parse_qs(query_string)
-
-        # Si le paramètre "dummy" est présent dans l'URL, on considère la connexion comme dummy
+        self.game_id = None
         if query_params.get("dummy", [None])[0] == "true":
             self.user_id = 0
             logger.info("Connexion dummy détectée, bypass cookie auth.")
@@ -125,7 +124,10 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 logger.info(f"Message de tournoi reçu: {data}")
                 if data.get("action") == "leave_online_tournament":
                     data["user_id"] = self.user_id
-                elif data.get("action") == "join_tournament" or data.get("action") == "reject_tournament":
+                elif (
+                    data.get("action") == "join_tournament"
+                    or data.get("action") == "reject_tournament"
+                ):
                     data["userId"] = self.user_id
                 elif data.get("action") == "create_online_tournament":
                     data["organizer_id"] = self.user_id
@@ -133,38 +135,41 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 logger.info("Message général relayé à 'tournament_service")
 
             elif data.get("type") == "game_event":
-                game_id = data.get("game_id", "unknown_game")
                 player1_id = data.get("player1", "Player 1")
                 player2_id = data.get("player2", "Player 2")
 
                 if data.get("action") == "start_game":
-                    await self.channel_layer.group_add(
-                        f"game_{game_id}", self.channel_name
-                    )
-                    logger.info(f"👥 Client rejoint le groupe game_{game_id}")
-
-                    logger.info(
-                        f"🚀 Envoi à pong_service: game_id={game_id}, player1={player1_id}, player2={player2_id}"
-                    )
+                    game_id = data.get("game_id", "unknown_game")
+                    self.game_id = game_id
+                    await self.channel_layer.group_add(f"game_{self.game_id}", self.channel_name)
+                    logger.info(f"Client rejoint le groupe game_{self.game_id}")
+                    logger.info(f"Envoi à pong_service: self.game_id={self.game_id}, player1={player1_id}, player2={player2_id}")
+                if data.get("action") == "give_up":
+                    await self.channel_layer.group_discard(f"game_{self.game_id}", self.channel_name)
+                    self.game_id = None
+                    logger.info(f"Client quitte le groupe game_{self.game_id}")
+                    logger.info(f"Envoi à pong_service: self.game_id={self.game_id}, player1={player1_id}, player2={player2_id}")
+                
 
                 await self.channel_layer.group_send(
                     "pong_service",
                     {
                         "type": "game_event",
-                        "game_id": game_id,
+                        "game_id": self.game_id,
                         "action": data.get("action"),
                         "player1": player1_id,
                         "player2": player2_id,
                         "direction": data.get("direction"),
                         "player_id": data.get("player_id"),
+                        "user_id": self.user_id,
+                        "local_player": data.get("local_player"),
+
                     },
                 )
 
             elif data.get("type") in ["matchmaking", "private_event"]:
                 action = data.get("action")
-                logger.info(
-                    f"🚀 matchmaking_event/private_event => service : {action} {self.user_id}"
-                )
+                logger.info(f"matchmaking_event/private_event => service : {action} {self.user_id}")
                 room_code = data.get("room_code")
 
                 await self.channel_layer.group_send(
@@ -176,9 +181,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                         "room_code": str(room_code),
                     },
                 )
-                logger.info(
-                    f"🚀 matchmaking_event/private_event => service : {action} {self.user_id}, room={room_code}"
-                )
+                logger.info(f"matchmaking_event/private_event => service : {action} {self.user_id}, room={room_code}")
 
         except json.JSONDecodeError:
             await self.send(json.dumps({"error": "Format JSON invalide"}))
@@ -230,6 +233,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
     async def game_over(self, event):
         """Gère la fin du jeu et envoie le message au client."""
         await self.send(json.dumps(event))
+        self.game_id = None
         logger.info(f"🚨 Game over transmis au client WebSocket : {event}")
 
     async def match_found(self, event):
@@ -239,7 +243,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
     async def private_match_found(self, event):
         await self.send(json.dumps(event))
         logger.info(
-            f"🔔 Private match_found envoyé au client {event['user_id']} : game_id={event['game_id']}, side={event['side']}"
+            f"🔔 Private match_found envoyé au client {event['user_id']} : self.game_id={event['self.game_id']}, side={event['side']}"
         )
 
     async def tournament_creation(self, event):
@@ -248,25 +252,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
     async def logout(self, event):
         await self.send(
-            json.dumps(
-                {
-                    "type": "logout",
-                    "message": "Votre session a expiré ou a été supprimée.",
-                }
-            )
-        )
-        logger.info(f"Déconnexion envoyée à l'utilisateur {self.user_id}")
-        await self.close()
-
-    async def logout(self, event):
-        logger.info(f"Déconnexion envoyée à l'utilisateur {self.user_id}")
-        await self.send(
-            json.dumps(
-                {
-                    "type": "logout",
-                    "message": event["message"],
-                }
-            )
+            json.dumps({"type": "logout", "message": "Votre session a expiré ou a été supprimée.",})
         )
         logger.info(f"Déconnexion envoyée à l'utilisateur {self.user_id}")
         await self.close()
@@ -276,9 +262,7 @@ async def fetch_user_id(cookies):
     async with httpx.AsyncClient(
         base_url="https://auth_service:3001", verify=False
     ) as client:
-        response = await client.get(
-            "/get_user_id_from_cookie/", cookies=cookies
-        )
+        response = await client.get("/get_user_id_from_cookie/", cookies=cookies)
         if response.status_code == 200:
             data = response.json()
             return data.get("user_id")

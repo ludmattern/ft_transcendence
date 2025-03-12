@@ -4,7 +4,6 @@ function isIndexedDBAvailable() {
 	try {
 		return !!window.indexedDB;
 	} catch (error) {
-		console.error('IndexedDB n\'est pas disponible sur ce navigateur:', error);
 		return false;
 	}
 }
@@ -14,7 +13,6 @@ class IndexedDBCache {
 		if (IndexedDBCache.instance) return IndexedDBCache.instance;
 
 		if (!isIndexedDBAvailable()) {
-			console.warn('IndexedDB n\'est pas disponible, le cache ne fonctionnera pas.');
 			return;
 		}
 
@@ -36,7 +34,6 @@ class IndexedDBCache {
 		try {
 			const db = await this.dbPromise;
 			await db.put(storeName, data, key);
-			console.debug(`Sauvegarde réussie dans IndexedDB: ${storeName} → ${key}`);
 		} catch (error) {
 			console.error(`Erreur lors de la sauvegarde de "${key}" dans "${storeName}"`, error);
 		}

@@ -18,9 +18,6 @@ async function setDatabaseID() {
 	if (!dbID) {
 		dbID = crypto.randomUUID();
 		await db.put('json', dbID, 'databaseID');
-		console.warn('Nouvelle base IndexedDB détectée. ID :', dbID);
-	} else {
-		console.log('Existing database ID found:', dbID);
 	}
 }
 
@@ -57,7 +54,6 @@ async function initializeApp() {
 				handleRoute('/race');
 				break;
 			default:
-				console.log('Unknown window:', currentWindow);
 				break;
 		}
 	});

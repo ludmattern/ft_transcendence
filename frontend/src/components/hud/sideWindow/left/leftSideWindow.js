@@ -44,7 +44,6 @@ export const leftSideWindow = createComponent({
 		const leftSideWindow = el.querySelector('.l-tab-content');
 
 		if (!expanders.length || !leftSideWindow) {
-			console.warn('Expanders or left-side window not found in component.');
 			return;
 		}
 
@@ -85,7 +84,6 @@ export const leftSideWindow = createComponent({
 		subscribe('updatenotifications', (data) => {
 			const activeTab = el.querySelector('.nav-link.active');
 			if (activeTab && activeTab.dataset.tab === 'info') {
-				console.log('Mise à jour des notifications reçue:', data);
 				updateNotifications(data.toAdd, data.toRemove, tabContentContainer);
 			}
 		});

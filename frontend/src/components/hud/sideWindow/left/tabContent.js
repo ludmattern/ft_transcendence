@@ -19,7 +19,6 @@ export async function loadTabContent(tabName, container) {
 
 	if (tabName === 'info') {
 		let infoTabData = sessionStorage.getItem('infoTabData');
-		console.log('Info tab loading');
 
 		if (infoTabData && infoTabData !== '[]') {
 			try {
@@ -28,14 +27,11 @@ export async function loadTabContent(tabName, container) {
 					throw new Error('Données corrompues ou incomplètes !');
 				}
 				renderInfoTab(parsedData, container);
-				console.log(parsedData);
 			} catch (err) {
-				console.warn('SessionStorage corrompu, rechargement depuis le serveur...', err);
 				fetchAndStoreInfoData(container);
 			}
 		} else {
 			fetchAndStoreInfoData(container);
-			console.log('Info tab loaded from server');
 		}
 
 		removeChatInput();
@@ -48,7 +44,6 @@ export async function loadTabContent(tabName, container) {
 			try {
 				tabItems = JSON.parse(storedHistory);
 			} catch (err) {
-				console.warn('Erreur lors de la récupération de \'chatHistory\', réinitialisation...', err);
 				sessionStorage.removeItem('chatHistory');
 				tabItems = [];
 			}
@@ -57,7 +52,6 @@ export async function loadTabContent(tabName, container) {
 		const userIdRaw = await getUserIdFromCookieAPI();
 		const userId = userIdRaw ? userIdRaw.toString() : 'unknown';
 
-		console.log('UserId récupéré :', userId);
 		tabItems.forEach((item) => {
 			renderCommMessage(item, container, userId);
 		});
@@ -74,11 +68,8 @@ export async function fetchAndStoreInfoData(container) {
 		});
 		const data = await response.json();
 		if (data.info) {
-			console.log("Information received from the server:", data);
 			sessionStorage.setItem("infoTabData", JSON.stringify(data.info));
 			renderInfoTab(data.info, container);
-		} else {
-			console.log("Error getting information");
 		}
 	} catch (error) {
 		console.error("Error fetching information:", error);
@@ -184,7 +175,6 @@ export async function handleIncomingMessage(data) {
 
 	const activeTab = document.querySelector('.nav-link.active');
 	if (activeTab && activeTab.dataset.tab === 'comm') {
-		console.log('COMM message received:', data);
 		renderCommMessage(data, container, userId.toString());
 	} else {
 		if (data.channel === 'private') {

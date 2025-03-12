@@ -40,8 +40,6 @@ export const qrcode = createComponent({
 				const url = URL.createObjectURL(blob);
 				qrCodeImage.src = url;
 				qrCodeContainer.style.display = 'block';
-			} else {
-				console.error('Failed to load QR code:', response.statusText);
 			}
 		} catch (err) {
 			console.error('Error fetching QR code:', err.message);

@@ -25,7 +25,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         user_id = event.get("user_id")
         room_code = str(event.get("room_code"))
 
-        if room_code:
+        if room_code and room_code != "None":
             if action == "join":
                 result = private_manager.join_room(room_code, user_id)
                 if result:
@@ -77,7 +77,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 logger.info(
                     f"🔴 user_id={user_id} a quitté la private room {room_code}"
                 )
-        else:
+        elif not room_code or room_code == "None":
             if action == "join":
                 result = matchmaking_manager.join_queue(user_id)
                 if result:

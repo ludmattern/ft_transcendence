@@ -32,9 +32,7 @@ def get_username(user_id):
     except ManualUser.DoesNotExist:
         return None
 
-
 cipher = Fernet(settings.FERNET_KEY)
-
 
 @database_sync_to_async
 def get_single_user_tournament(user_id):
@@ -45,7 +43,6 @@ def get_single_user_tournament(user_id):
         .order_by("-created_at")
         .first()
     )
-
 
 @database_sync_to_async
 def get_accepted_participants(tournament_id):

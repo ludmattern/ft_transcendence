@@ -1,6 +1,5 @@
 // src/components/hud/notifications.js
 import { emit } from '/src/services/eventEmitter.js';
-import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 let notificationBuffer = [];
 
@@ -77,7 +76,6 @@ export function removePrivateNotifications() {
 }
 
 export async function updateAndCompareInfoData() {
-	console.log('Mise à jour des informations...');
 	try {
 		const response = await fetch(`/api/user-service/info-getter/`, {
 			method: "GET",
@@ -85,7 +83,6 @@ export async function updateAndCompareInfoData() {
 		});
 		const result = await response.json();
 
-		console.log('Info getter result:', result);
 		if (result.info) {
 			let localInfo = [];
 			const localInfoStr = sessionStorage.getItem('infoTabData');
@@ -99,23 +96,14 @@ export async function updateAndCompareInfoData() {
 			}
 
 			const serverInfo = Array.isArray(result.info) ? result.info : [];
-			console.log('Informations locales :', localInfo);
-			console.log('Informations serveur :', serverInfo);
-
 			const messagesToAdd = serverInfo.filter((newMsg) => !localInfo.some((localMsg) => localMsg.type === newMsg.type && localMsg.inviter_id === newMsg.inviter_id));
 			const messagesToRemove = localInfo.filter((localMsg) => !serverInfo.some((newMsg) => newMsg.type === localMsg.type && newMsg.inviter_id === localMsg.inviter_id));
 
 			if (messagesToAdd.length > 0 || messagesToRemove.length > 0) {
-				console.log('Nouveaux messages à ajouter :', messagesToAdd);
-				console.log('Messages à supprimer :', messagesToRemove);
 				emit('updatenotifications', { toAdd: messagesToAdd, toRemove: messagesToRemove });
-			} else {
-				console.log('Aucun nouveau message.');
 			}
 
 			sessionStorage.setItem('infoTabData', JSON.stringify(serverInfo));
-		} else {
-			console.log('Erreur lors de la récupération des informations depuis le serveur.');
 		}
 	} catch (error) {
 		console.error('Erreur lors de la mise à jour des informations :', error);

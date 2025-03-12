@@ -59,52 +59,52 @@ class GameManager {
 		this.moveInterval = setInterval(() => {
 			if (mode === 'local') {
 				if (this.activeKeys['w']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', player_id: 1, game_id: this.gameId }));
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', local_player: 1}));
 				}
 				if (this.activeKeys['s']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up', player_id: 1, game_id: this.gameId }));
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up', local_player: 1}));
 				}
 				if (this.activeKeys['a']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left', player_id: 1, game_id: this.gameId }));
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left' ,local_player: 1}));
 				}
 				if (this.activeKeys['d']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', player_id: 1, game_id: this.gameId }));
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', local_player: 1}));
 				}
 
 				if (this.activeKeys['ArrowUp']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', player_id: 2, game_id: this.gameId }));
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', local_player: 2}));
 				}
 				if (this.activeKeys['ArrowDown']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up', player_id: 2, game_id: this.gameId }));
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up', local_player: 2}));
 				}
 				if (this.activeKeys['ArrowRight']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left', player_id: 2, game_id: this.gameId }));
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left', local_player: 2}));
 				}
 				if (this.activeKeys['ArrowLeft']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', player_id: 2, game_id: this.gameId }));
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', local_player: 2}));
 				}
 			} else {
 				const playerId = this.activeGame.side === 'left' ? 1 : 2;
 
 				if (this.activeKeys['w'] || this.activeKeys['ArrowUp']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', player_id: playerId, game_id: this.gameId }));
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down' }));
 				}
 				if (this.activeKeys['s'] || this.activeKeys['ArrowDown']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up', player_id: playerId, game_id: this.gameId }));
+					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up' }));
 				}
 				if (playerId == 1) {
 					if (this.activeKeys['a'] || this.activeKeys['ArrowLeft']) {
-						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left', player_id: playerId, game_id: this.gameId }));
+						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left'}));
 					}
 					if (this.activeKeys['d'] || this.activeKeys['ArrowRight']) {
-						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', player_id: playerId, game_id: this.gameId }));
+						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right' }));
 					}
 				} else {
 					if (this.activeKeys['d'] || this.activeKeys['ArrowRight']) {
-						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left', player_id: playerId, game_id: this.gameId }));
+						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left' }));
 					}
 					if (this.activeKeys['a'] || this.activeKeys['ArrowLeft']) {
-						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', player_id: playerId, game_id: this.gameId }));
+						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right' }));
 					}
 				}
 			}
@@ -122,6 +122,7 @@ class GameManager {
 		console.log('Starting game with config:', gameConfig);
 		componentManagers['HUD'].unloadComponent('pongTuto');
 		this.gameMode = gameConfig.mode;
+		console.log('gameMode:', this.gameMode);
 		if (this.activeGame) this.endGame();
 
 		this.activeGame = gameConfig;
@@ -166,7 +167,7 @@ class GameManager {
 			player1 = gameConfig.player1;
 			player2 = gameConfig.player2;
 		}
-		console.log(` Sending start_game event: player1=${player1}, player2=${player2}`);
+		console.log(` Sending start_game event: player1=${player1}, player2=${player2}, with game_id=${this.gameId}`);	
 		ws.send(
 			JSON.stringify({
 				type: 'game_event',
@@ -177,6 +178,7 @@ class GameManager {
 				player2: player2,
 			})
 		);
+
 	}
 
 	endGame() {
@@ -270,12 +272,10 @@ class GameManager {
 
 			if (this.username1 === this.clientName)
 			{
-				console.log("clientName", this.clientName)
 				oppennentName = this.username2;
 			}
 			else
 				oppennentName = this.username1;
-
 
 			if (scoreTextEl) 
 				scoreTextEl.innerHTML = `<strong>You</strong> ${clientScore}  -  ${opponentScore} ${oppennentName}`;
@@ -298,6 +298,7 @@ class GameManager {
 	}
 
 	generateGameId(gameConfig) {
+		console.log('Generating game in:', gameConfig.mode);
 		if (!gameConfig.gameId) {
 			if (gameConfig.mode === 'private') {
 				return gameConfig.matchkey;

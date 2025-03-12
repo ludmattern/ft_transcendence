@@ -10,7 +10,6 @@ let draftMessage = "";
 export async function setupChatInput() {
 	const container = document.querySelector('#l-tab-content-container');
 	if (!container) {
-		console.error('l-tab-content-container not found.');
 		return;
 	}
 
@@ -51,8 +50,6 @@ export async function setupChatInput() {
 			payload.message = message;
 			payload.channel = 'general';
 		}
-
-		console.log('Sending message:', payload);
 
 		messageHistory.push(message);
 		historyIndex = messageHistory.length;

@@ -23,7 +23,6 @@ export const logoutForm = createComponent({
 		el.querySelector('#cancel-logout').addEventListener('click', (e) => {
 			e.preventDefault();
 			handleRoute(getPreviousRoute());
-			console.info('Logout canceled. Returning to settings.');
 		});
 
 		el.querySelector('#confirm-logout').addEventListener('click', async (e) => {
@@ -31,10 +30,8 @@ export const logoutForm = createComponent({
 
 			try {
 				await logoutUser();
-				console.info('User logged out successfully.');
 			} catch (error) {
 				console.warn('Error during logout:', error);
-				alert('An error occurred while logging out. Please try again.');
 			}
 		});
 	},

@@ -9,7 +9,6 @@ import { tournamentCreation } from '/src/components/pong/play/tournamentCreation
 import { emit } from '/src/services/eventEmitter.js';
 import { updateOnlinePlayersUI } from '/src/components/pong/play/onlineTournamentCreation.js';
 import { playGame } from '/src/components/pong/play/utils.js';
-import { navigateToPong } from '/src/services/navigation.js';
 
 const handleLogout = () => {
 	handleRoute('/');
@@ -37,7 +36,6 @@ const handleErrorMessage = (data) => {
 };
 
 const handleChatOrPrivateMessage = (data) => {
-	console.log('Message reçu :', data);
 	handleIncomingMessage(data);
 };
 
@@ -47,19 +45,18 @@ const handlePrivateMatchFound = (data) => {
 
 const handleMatchFound = (data) => {
 	startMatchmakingGame(data.game_id, data.side, data);
+	console.log('Match found:', data);
 };
 
 const handleInfoMessage = async (data) => {
-	console.log('Received data:', data); // Log the received data
 
 	if (data.action === 'updatePlayerList') {
 		const tournamentData = await getCurrentTournamentInformation();
 		emit('updatePlayerList', tournamentData);
 		await updateAndCompareInfoData();
 	} else if (data.action === 'tournament_invite' && data.subaction === 'join_tournament') {
-		handleRoute('/pong/play/current-tournament'); // Update the route to the current tournament page
+		handleRoute('/pong/play/current-tournament');
 		const tournamentData = await getCurrentTournamentInformation();
-		updateOnlinePlayersUI(tournamentData); // Update the UI with the current tournament information
 		emit('updatePlayerList', tournamentData);
 		await updateAndCompareInfoData();
 	} else if (data.action === 'refresh_brackets') {

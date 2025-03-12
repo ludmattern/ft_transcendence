@@ -53,13 +53,11 @@ export const loginForm = createComponent({
 			const password = el.querySelector('#password').value;
 
 			const data = await loginUser(pilotId, password);
-			console.log(data);
 			if (data.twofa_method) {
 				sessionStorage.setItem('pending2FA_user', pilotId);
 				sessionStorage.setItem('pending2FA_method', data.twofa_method);
 				handleRoute('/login/2fa');
 			} else if (data.success) {
-				console.log('here SUCCESS');
 				handleRoute('/');
 			}
 
@@ -76,11 +74,8 @@ export const loginForm = createComponent({
 			try {
 				const response = await fetch('/api/auth-service/get-42-url/');
 				const data = await response.json();
-				console.log(data);
 				if (data.url) {
 					window.location.href = data.url;
-				} else {
-					console.error('Erreur : Impossible d\'obtenir l\'URL d\'authentification.');
 				}
 			} catch (error) {
 				console.error('Erreur lors de l\'appel API :', error);

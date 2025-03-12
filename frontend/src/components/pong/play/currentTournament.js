@@ -5,7 +5,7 @@ import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { ws } from '/src/services/websocket.js';
 import { subscribe } from '/src/services/eventEmitter.js';
 import { handleTournamentRedirection } from '/src/services/router.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { pushInfo, getInfo, deleteInfo } from '/src/services/infoStorage.js';
 
 export const currentTournament = createComponent({
 	tag: 'currentTournament',
@@ -14,79 +14,6 @@ export const currentTournament = createComponent({
 	<section class="col-12 d-flex flex-column align-items-center text-center p-5" 
 			style="color: white; background-color: #111111; max-height: 700px; overflow: auto;">
 		<h1 class="mb-4">Current Tournament</h1>
-
-		<style>
-		/* Conteneur global : on se contente de la largeur ici */
-		#bracket-container {
-			width: 100%;
-		}
-		/* Bloc des titres des size */
-		.round-titles {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			gap: 8rem;
-			width: 100%;
-			margin-bottom: 20px;
-		}
-		.round-title {
-			min-width: 150px;
-			text-align: center;
-			font-weight: bold;
-			color: white;
-		}
-		/* Bloc des colonnes de size */
-		.size-content {
-			display: flex;
-			align-items: stretch;
-			gap: 20px;
-			width: 100%;
-			justify-content: center;
-		}
-		/* Colonne de round : contient la liste des matchs */
-		.round-column {
-			display: flex;
-			flex-direction: column;
-		}
-		/* Conteneur des matchs, répartis verticalement */
-		.matches-container {
-			flex: 1;
-			display: flex;
-			flex-direction: column;
-			justify-content: space-around;
-		}
-		/* Style pour chaque match */
-		.match {
-			margin-bottom: 8px;
-		}
-		/* Ligne de bracket entre colonnes */
-		.bracket-line {
-			position: relative;
-			width: 50px;
-			height: 120px;
-			margin: auto 0;
-		}
-		.bracket-line::before {
-			content: "";
-			position: absolute;
-			left: 50%;
-			top: 0;
-			bottom: 0;
-			width: 2px;
-			background: white;
-		}
-		.bracket-line::after {
-			content: "";
-			position: absolute;
-			left: 50%;
-			top: 50%;
-			width: 50%;
-			height: 2px;
-			background: white;
-			transform: translateY(-50%);
-		}
-		</style>
-		
 		<div id="tournament-state" class="mb-4">
 		<p class="text-secondary">The tournament is in progress.</p>
 		</div>
@@ -99,9 +26,8 @@ export const currentTournament = createComponent({
 	`;
 	},
 	attachEvents: async (el) => {
-		console.log('currentTournament attachEvents');
 		currentTournament.el = el;
-			const data = await getInfo('TournamentCreationNeeded');
+		const data = await getInfo('TournamentCreationNeeded');
 		if (data.success && data.value === 'True') {
 			try {
 				await deleteInfo('TournamentCreationNeeded');
@@ -110,18 +36,15 @@ export const currentTournament = createComponent({
 					action: 'create_online_tournament',
 				};
 				ws.send(JSON.stringify(payload));
-				console.log('Online tournament created:', payload);
 			} catch (error) {
 				console.error('Error creating online tournament:', error);
 			}
 		} else {
 			if (await handleTournamentRedirection('/pong/play/current-tournament')) {
-				console.log('Tournament redirection has occurred.');
 				return;
 			}
 			renderBracket();
 		}
-	
 		subscribe('updateBracket', renderBracket);
 	},
 });
@@ -131,11 +54,8 @@ export async function renderBracket() {
 	const username = (await getInfo('username')).success ? (await getInfo('username')).value : null;
 	const data = await getBracketData();
 	if (!data || !data.size) {
-		console.warn('No bracket data available.');
 		return;
 	}
-
-	console.log('Bracket data:', data);
 
 	const mode = data.mode;
 	const bracketData = data.size;
@@ -213,8 +133,6 @@ export async function renderBracket() {
 				})
 				.join('');
 
-			console.log('roundIndex', roundIndex);
-
 			sizeHtml += `<div class="round-column">
 							<div class="matches-container">${matchesHtml}</div>
 						</div>`;
@@ -238,31 +156,28 @@ export async function renderBracket() {
 
 	const abandonTournamentButton = document.getElementById('abandon-tournament');
 	if (abandonTournamentButton) {
-		abandonTournamentButton.addEventListener("click", async () => {
-			try {	
-				const response = await fetch("/api/tournament-service/abandon_local_tournament/", {
-					method: "POST",
+		abandonTournamentButton.addEventListener('click', async () => {
+			try {
+				const response = await fetch('/api/tournament-service/abandon_local_tournament/', {
+					method: 'POST',
 					headers: {
-						"Content-Type": "application/json",
+						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({ tournament_id: tournament_id }),
-					credentials: "include",
+					credentials: 'include',
 				});
-	
+
 				const result = await response.json();
-				console.log("Tournament abandoned:", result);
-	
+
 				if (result.success) {
-					handleRoute("/pong/play");
-				} 
-				else if (mode === 'online') {
+					handleRoute('/pong/play');
+				} else if (mode === 'online') {
 					const payload = {
 						type: 'tournament_message',
 						action: 'leave_online_tournament',
 					};
-					
+
 					ws.send(JSON.stringify(payload));
-					console.log('Online tournament abandoned:', payload);
 					handleRoute('/pong/play');
 				}
 			} catch (error) {
@@ -281,14 +196,12 @@ export async function renderBracket() {
 			const matchKey = button.getAttribute('data-match-key');
 
 			if (mode === 'online') {
-				console.log('Join Online Match:', { matchId, player1, player2 });
 				const config = {
 					gameMode: 'private',
 					action: 'create',
 					matchkey: matchKey,
 					type: 'fullScreen',
 				};
-				console.log(config);
 				playGame(config);
 			} else {
 				const config = {
@@ -299,7 +212,6 @@ export async function renderBracket() {
 					matchId: matchId,
 					tournament_id: tournament_id,
 				};
-				console.log('Join Local Match with config:', config);
 				playGame(config);
 			}
 		});
@@ -329,7 +241,6 @@ function hasUserCompletedInPreviousRound(bracketData, roundIndex, username) {
 }
 
 function createCompletedMatchHtml(match, displayHtml) {
-	console.log('score', match.score);
 	return `<div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
 			data-player1="${match.player1}" data-player2="${match.player2}">
 				<span class="text-white">${displayHtml}</span>
@@ -338,8 +249,7 @@ function createCompletedMatchHtml(match, displayHtml) {
 }
 
 function getCompletedMatchHtml(match) {
-	if (!match.score) 
-	{
+	if (!match.score) {
 		return `${match.player1} vs ${match.player2}`;
 	}
 
@@ -347,10 +257,8 @@ function getCompletedMatchHtml(match) {
 		return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
 	}
 
-	if (match.score === 'Forfeit') 
-	{
+	if (match.score === 'Forfeit') {
 		const winner = match.winner;
-		console.log('winner:', winner);
 		if (winner === match.player1) {
 			return `<span class="text-success fw-bold">${match.player1}</span> vs <span class="text-danger">${match.player2}</span>`;
 		} else {
