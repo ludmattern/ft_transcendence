@@ -44,18 +44,14 @@ def get_participants(tournament):
 
 @database_sync_to_async
 def get_accepted_participants(tournament_id):
-    participants_qs = ManualTournamentParticipants.objects.filter(
-        tournament_id=tournament_id, status="accepted"
-    ).select_related("user")
+    participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related("user")
 
     return [p.user.username for p in participants_qs]
 
 
 @database_sync_to_async
 def get_accepted_and_pending_participants(tournament_id):
-    participants_qs = ManualTournamentParticipants.objects.filter(
-        tournament_id=tournament_id, status="accepted" or "pending"
-    ).select_related("user")
+    participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted" or "pending").select_related("user")
 
     return [p.user.username for p in participants_qs]
 
@@ -69,27 +65,11 @@ async def get_profile_picture(user_id):
 
 
 async def get_non_blocked_users_id(author_id):
-    users_blocked_by_author = await database_sync_to_async(
-        lambda: list(
-            ManualBlockedRelations.objects.filter(initiator_id=author_id).values_list(
-                "blocked_user_id", flat=True
-            )
-        )
-    )()
-    users_who_blocked_author = await database_sync_to_async(
-        lambda: list(
-            ManualBlockedRelations.objects.filter(
-                blocked_user_id=author_id
-            ).values_list("user_id", flat=True)
-        )
-    )()
+    users_blocked_by_author = await database_sync_to_async(lambda: list(ManualBlockedRelations.objects.filter(initiator_id=author_id).values_list("blocked_user_id", flat=True)))()
+    users_who_blocked_author = await database_sync_to_async(lambda: list(ManualBlockedRelations.objects.filter(blocked_user_id=author_id).values_list("user_id", flat=True)))()
     blocked_set = set(users_blocked_by_author + users_who_blocked_author)
     all_users = await get_users_id()
-    non_blocked_users = [
-        user_id
-        for user_id in all_users
-        if user_id not in blocked_set and user_id != author_id
-    ]
+    non_blocked_users = [user_id for user_id in all_users if user_id not in blocked_set and user_id != author_id]
 
     return non_blocked_users
 
@@ -97,12 +77,8 @@ async def get_non_blocked_users_id(author_id):
 async def is_blocked(author_id, recipient_id):
     blocked_relation = await database_sync_to_async(
         lambda: ManualBlockedRelations.objects.filter(
-            models.Q(
-                initiator_id=author_id, blocked_user_id=recipient_id
-            )  # Author blocked recipient
-            | models.Q(
-                initiator_id=recipient_id, blocked_user_id=author_id
-            )  # Recipient blocked author
+            models.Q(initiator_id=author_id, blocked_user_id=recipient_id)  # Author blocked recipient
+            | models.Q(initiator_id=recipient_id, blocked_user_id=author_id)  # Recipient blocked author
         ).exists()
     )()
     return blocked_relation
@@ -112,9 +88,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         await self.channel_layer.group_add("chat_service", self.channel_name)
-        logger.info(
-            f"🔗 Connecté au groupe chat_service sur livechat-service (channel: {self.channel_name})"
-        )
+        logger.info(f"🔗 Connecté au groupe chat_service sur livechat-service (channel: {self.channel_name})")
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard("chat_service", self.channel_name)
@@ -136,9 +110,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         for userid in non_blocked_users:
             await self.channel_layer.group_send(f"user_{userid}", event)
-        logger.info(
-            f"Message transmis aux active users depuis chat_service (General): {event}"
-        )
+        logger.info(f"Message transmis aux active users depuis chat_service (General): {event}")
 
     async def private_message(self, event):
         logger.info(f"ChatConsumer.private_message received event: {event}")
@@ -185,9 +157,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_send(f"user_{recipient_id}", event)
         await self.channel_layer.group_send(f"user_{author_id}", event)
-        logger.info(
-            f"Message transmitted to groups user_{recipient_id} and user_{author_id}: {event}"
-        )
+        logger.info(f"Message transmitted to groups user_{recipient_id} and user_{author_id}: {event}")
 
     async def info_message(self, event):
         """Send a friend request or accept an existing one if initiated by the other user."""
@@ -224,12 +194,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 )
                 return
 
-            initiator = await database_sync_to_async(ManualUser.objects.get)(
-                id=author_id
-            )
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=recipient_id
-            )
+            initiator = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 
             if initiator.id > recipient_user.id:
                 user, friend = recipient_user, initiator
@@ -248,9 +214,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             if await database_sync_to_async(qs.exists)():
                 relation = await database_sync_to_async(qs.first)()
                 if relation.status == "pending":
-                    initiator_id = await database_sync_to_async(
-                        lambda: relation.initiator.id
-                    )()
+                    initiator_id = await database_sync_to_async(lambda: relation.initiator.id)()
                     if str(initiator_id) != str(author_id):
                         relation.status = "accepted"
                         await database_sync_to_async(relation.save)()
@@ -268,13 +232,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                                 "info": f"You are now friend with {recipient_username}",
                             },
                         )
-                        await self.channel_layer.group_send(
-                            f"user_{recipient_id}", event
-                        )
+                        await self.channel_layer.group_send(f"user_{recipient_id}", event)
                         await self.channel_layer.group_send(f"user_{author_id}", event)
-                        logger.info(
-                            f"Friend request accepted between {author_id} and {recipient_id} : {event}"
-                        )
+                        logger.info(f"Friend request accepted between {author_id} and {recipient_id} : {event}")
                     else:
                         await self.channel_layer.group_send(
                             f"user_{author_id}",
@@ -291,9 +251,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     )
                     return
 
-            await database_sync_to_async(ManualFriendsRelations.objects.create)(
-                user=user, friend=friend, status="pending", initiator=initiator
-            )
+            await database_sync_to_async(ManualFriendsRelations.objects.create)(user=user, friend=friend, status="pending", initiator=initiator)
             await self.channel_layer.group_send(
                 f"user_{author_id}",
                 {
@@ -310,17 +268,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
             await self.channel_layer.group_send(f"user_{recipient_id}", event)
             await self.channel_layer.group_send(f"user_{author_id}", event)
-            logger.info(
-                f"Friend request sent from {author_id} to {recipient_id} : {event}"
-            )
+            logger.info(f"Friend request sent from {author_id} to {recipient_id} : {event}")
 
         elif str(action) in ["reject_friend_request", "remove_friend"]:
-            initiator = await database_sync_to_async(ManualUser.objects.get)(
-                id=author_id
-            )
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=recipient_id
-            )
+            initiator = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
             author_username = await get_username(author_id)
             event["author_username"] = author_username
             recipient_username = await get_username(recipient_id)
@@ -380,12 +332,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 )
             return
         elif str(action) == "back_tournament_invite":
-            initiator = await database_sync_to_async(ManualUser.objects.get)(
-                id=author_id
-            )
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=recipient_id
-            )
+            initiator = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
             author_username = await get_username(author_id)
             event["author_username"] = author_username
             recipient_username = await get_username(recipient_id)
@@ -393,15 +341,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             @database_sync_to_async
             def get_initiator_tournament(initiator):
-                return ManualTournament.objects.filter(
-                    organizer=initiator, status="upcoming"
-                ).first()
+                return ManualTournament.objects.filter(organizer=initiator, status="upcoming").first()
 
             initiator_tournament = await get_initiator_tournament(initiator)
             if not initiator_tournament:
-                logger.warning(
-                    f"No active tournament found for initiator {initiator.username}"
-                )
+                logger.warning(f"No active tournament found for initiator {initiator.username}")
                 await self.channel_layer.group_send(
                     f"user_{author_id}",
                     {
@@ -414,13 +358,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             participants = await get_accepted_participants(initiator_tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(
-                    username=participant_username
-                )
-                if (
-                    participant_user.id != recipient_id
-                    and participant_user.id != author_id
-                ):
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
+                if participant_user.id != recipient_id and participant_user.id != author_id:
                     await self.channel_layer.group_send(
                         f"user_{participant_user.id}",
                         {
@@ -461,22 +400,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
         elif str(action) == "back_join_tournament":
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=recipient_id
-            )
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
             recipient_username = await get_username(recipient_id)
             tournament_id = event.get("tournament_id")
             event["recipient_username"] = recipient_username
-            tournament = await database_sync_to_async(ManualTournament.objects.get)(
-                id=tournament_id
-            )
+            tournament = await database_sync_to_async(ManualTournament.objects.get)(id=tournament_id)
 
             participants = await get_accepted_participants(tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(
-                    username=participant_username
-                )
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
                 if str(participant_user.id) != recipient_id:
                     await self.channel_layer.group_send(
                         f"user_{participant_user.id}",
@@ -511,23 +444,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         elif str(action) == "back_reject_tournament":
             logger.info("Rejecting tournament invite")
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=recipient_id
-            )
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
             recipient_username = await get_username(recipient_id)
             tournament_id = event.get("tournament_id")
             event["recipient_username"] = recipient_username
 
-            tournament = await database_sync_to_async(ManualTournament.objects.get)(
-                id=tournament_id
-            )
+            tournament = await database_sync_to_async(ManualTournament.objects.get)(id=tournament_id)
 
             participants = await get_accepted_participants(tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(
-                    username=participant_username
-                )
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
                 if participant_user.id != int(recipient_id):
                     logger.info(f"Sending reject message to {participant_user.id}")
                     await self.channel_layer.group_send(
@@ -561,23 +488,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         elif str(action) == "back_cancel_tournament_invite":
             logger.info("cancelling tournament invite")
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=recipient_id
-            )
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
             recipient_username = await get_username(recipient_id)
             tournament_id = event.get("tournament_id")
             event["recipient_username"] = recipient_username
 
-            tournament = await database_sync_to_async(ManualTournament.objects.get)(
-                id=tournament_id
-            )
+            tournament = await database_sync_to_async(ManualTournament.objects.get)(id=tournament_id)
 
             participants = await get_accepted_participants(tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(
-                    username=participant_username
-                )
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
                 if participant_user.id != int(recipient_id):
                     await self.channel_layer.group_send(
                         f"user_{participant_user.id}",
@@ -609,23 +530,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
         elif str(action) == "back_kick_tournament":
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=recipient_id
-            )
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
             recipient_username = await get_username(recipient_id)
             tournament_id = event.get("tournament_id")
             event["recipient_username"] = recipient_username
 
-            tournament = await database_sync_to_async(ManualTournament.objects.get)(
-                id=tournament_id
-            )
+            tournament = await database_sync_to_async(ManualTournament.objects.get)(id=tournament_id)
 
             participants = await get_accepted_participants(tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(
-                    username=participant_username
-                )
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
                 if participant_user.id != int(recipient_id):
                     await self.channel_layer.group_send(
                         f"user_{participant_user.id}",
@@ -718,24 +633,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         elif str(action) == "back_leave_tournament":
             author_id = event.get("author")
-            initiator_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=author_id
-            )
+            initiator_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
             initiator_username = initiator_user.username
             initiator_id = initiator_user.id
             tournament_id = event.get("tournament_id")
             event["initiator_username"] = initiator_username
 
-            tournament = await database_sync_to_async(ManualTournament.objects.get)(
-                id=tournament_id
-            )
+            tournament = await database_sync_to_async(ManualTournament.objects.get)(id=tournament_id)
 
             participants = await get_accepted_participants(tournament.id)
 
             for participant_username in participants:
-                participant_user = await database_sync_to_async(ManualUser.objects.get)(
-                    username=participant_username
-                )
+                participant_user = await database_sync_to_async(ManualUser.objects.get)(username=participant_username)
                 if participant_user.id != int(initiator_id):
                     await self.channel_layer.group_send(
                         f"user_{participant_user.id}",
@@ -772,12 +681,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             author_id = event.get("author")
             recipient_id = event.get("recipient")
             try:
-                author_user = await database_sync_to_async(ManualUser.objects.get)(
-                    id=author_id
-                )
-                recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                    id=recipient_id
-                )
+                author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+                recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 
                 if author_user.id > recipient_user.id:
                     user, friend = recipient_user, author_user
@@ -785,16 +690,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     user, friend = author_user, recipient_user
 
                 # Check if a block already exists in either direction
-                qs = ManualBlockedRelations.objects.filter(
-                    models.Q(user=user, blocked_user=friend)
-                    | models.Q(user=friend, blocked_user=user)
-                )
+                qs = ManualBlockedRelations.objects.filter(models.Q(user=user, blocked_user=friend) | models.Q(user=friend, blocked_user=user))
 
                 if await database_sync_to_async(qs.exists)():
                     relation = await database_sync_to_async(qs.first)()
-                    initiator_id = await database_sync_to_async(
-                        lambda: relation.initiator_id
-                    )()
+                    initiator_id = await database_sync_to_async(lambda: relation.initiator_id)()
 
                     if str(initiator_id) != str(author_id):
                         await self.channel_layer.group_send(
@@ -828,12 +728,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     )
 
                 # Remove friendship if it exists (both directions)
-                await database_sync_to_async(
-                    lambda: ManualFriendsRelations.objects.filter(
-                        models.Q(user=author_user, friend=recipient_user)
-                        | models.Q(user=recipient_user, friend=author_user)
-                    ).delete()
-                )()
+                await database_sync_to_async(lambda: ManualFriendsRelations.objects.filter(models.Q(user=author_user, friend=recipient_user) | models.Q(user=recipient_user, friend=author_user)).delete())()
             except ManualUser.DoesNotExist:
                 await self.channel_layer.group_send(
                     f"user_{author_user.id}",
@@ -845,16 +740,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             recipient_id = event.get("recipient")
 
             try:
-                author_user = await database_sync_to_async(ManualUser.objects.get)(
-                    id=author_id
-                )
-                recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                    id=recipient_id
-                )
+                author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+                recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
                 # Check if the author has blocked the recipient (using initiator_id)
-                qs = ManualBlockedRelations.objects.filter(
-                    initiator_id=author_id, blocked_user=recipient_id
-                )
+                qs = ManualBlockedRelations.objects.filter(initiator_id=author_id, blocked_user=recipient_id)
                 if await database_sync_to_async(qs.exists)():
                     # If the block exists and the author is the initiator, delete the block
                     await database_sync_to_async(qs.delete)()
@@ -904,12 +793,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 await self.channel_layer.group_send(f"user_{author_id}", message)
                 return
 
-            author_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=author_id
-            )
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=recipient_id
-            )
+            author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 
             initiator = author_user
             recipient = recipient_user
@@ -920,16 +805,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 user, recipient = author_user, recipient_user
 
             # Check if a private game invite already exists in either direction
-            qs = ManualPrivateGames.objects.filter(
-                models.Q(initiator=user, recipient=recipient)
-                | models.Q(initiator=recipient, recipient=user)
-            )
+            qs = ManualPrivateGames.objects.filter(models.Q(initiator=user, recipient=recipient) | models.Q(initiator=recipient, recipient=user))
 
             if await database_sync_to_async(qs.exists)():
                 relation = await database_sync_to_async(qs.first)()
-                existing_initiator = await database_sync_to_async(
-                    lambda: relation.initiator_id
-                )()
+                existing_initiator = await database_sync_to_async(lambda: relation.initiator_id)()
 
                 if str(existing_initiator) != str(author_id):
                     await self.channel_layer.group_send(
@@ -980,17 +860,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             recipient_id = event.get("recipient")
             author_id = event.get("author")
 
-            author_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=author_id
-            )
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=recipient_id
-            )
+            author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 
-            qs = ManualPrivateGames.objects.filter(
-                models.Q(user=author_id, recipient_id=recipient_id)
-                | models.Q(user=recipient_id, recipient_id=author_id)
-            )
+            qs = ManualPrivateGames.objects.filter(models.Q(user=author_id, recipient_id=recipient_id) | models.Q(user=recipient_id, recipient_id=author_id))
 
             if await database_sync_to_async(qs.exists)():
                 relation = await database_sync_to_async(qs.first)()
@@ -1031,17 +904,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             author_id = event.get("author")
 
             # Has to be pending
-            author_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=author_id
-            )
-            recipient_user = await database_sync_to_async(ManualUser.objects.get)(
-                id=recipient_id
-            )
+            author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
+            recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 
-            qs = ManualPrivateGames.objects.filter(
-                models.Q(user=author_id, recipient_id=recipient_id)
-                | models.Q(user=recipient_id, recipient_id=author_id)
-            )
+            qs = ManualPrivateGames.objects.filter(models.Q(user=author_id, recipient_id=recipient_id) | models.Q(user=recipient_id, recipient_id=author_id))
 
             if await database_sync_to_async(qs.exists)():
                 relation = await database_sync_to_async(qs.first)()

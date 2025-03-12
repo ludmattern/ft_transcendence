@@ -116,6 +116,10 @@ class GameManager {
 		this.moveInterval = null;
 	}
 
+	isGameActive() {
+		return this.activeGame !== null;
+	}
+
 	startGame(gameConfig) {
 		this.initClientData() 
 		

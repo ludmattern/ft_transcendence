@@ -23,35 +23,36 @@ ort_session = ort.InferenceSession(MODEL_PATH)
 # now = time.time()
 #                 if game.is_solo_mode():
 #                     ai_paddle_num = 2
-#                     if now - last_ai_time >= 1:  
+#                     if now - last_ai_time >= 1:
 #                         last_ai_time = now
-#                         target_y, target_z = ai_decision(game, "Player 2") 
+#                         target_y, target_z = ai_decision(game, "Player 2")
 #                     paddle = game.state["players"][ai_paddle_num]
 #                     threshold = 0.02
-#                     if abs(paddle["y"] - target_y) > threshold: 
+#                     if abs(paddle["y"] - target_y) > threshold:
 #                         if paddle["y"] < target_y:
 #                             game.move_paddle(ai_paddle_num, "up")
 #                         elif paddle["y"] > target_y:
 #                             game.move_paddle(ai_paddle_num, "down")
-#                     if abs(paddle["z"] - target_z) > threshold:  
+#                     if abs(paddle["z"] - target_z) > threshold:
 #                         if paddle["z"] < target_z:
 #                             game.move_paddle(ai_paddle_num, "right")
 #                         elif paddle["z"] > target_z:
 #                             game.move_paddle(ai_paddle_num, "left")
+
 
 def predict_ai_action(obs):
     obs = np.array(obs, dtype=np.float32).reshape(1, -1)
     try:
         action_outputs = ort_session.run(None, {"input": obs})
         if isinstance(action_outputs, list) and len(action_outputs) > 0:
-            main_action = action_outputs[0] 
+            main_action = action_outputs[0]
 
             if main_action.shape == (1, 2):  # ✅ Cas normal (batch=1, deux valeurs)
                 target_y, target_z = float(main_action[0][0]), float(main_action[0][1])
             elif main_action.shape == (2,):  # Cas rare (directement 2 valeurs sans batch)
                 target_y, target_z = float(main_action[0]), float(main_action[1])
             else:
-                target_y, target_z = 0.0, 0.0 
+                target_y, target_z = 0.0, 0.0
 
             logger.info(f"🤖 AI action: (target_y={target_y}, target_z={target_z})")
             return target_y, target_z
@@ -62,15 +63,15 @@ def predict_ai_action(obs):
     except Exception as e:
         logger.exception("🚨 Error during AI action prediction")
         return 0.0, 0.0  # 🔴 Fallback en cas d'erreur
+
+
 class PongGroupConsumer(AsyncWebsocketConsumer):
     running_games = {}
 
     async def connect(self):
         await self.accept()
         await self.channel_layer.group_add("pong_service", self.channel_name)
-        logger.info(
-            f"🔗 Connecté au groupe 'pong_service' (channel={self.channel_name})"
-        )
+        logger.info(f"🔗 Connecté au groupe 'pong_service' (channel={self.channel_name})")
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard("pong_service", self.channel_name)
@@ -85,18 +86,20 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         user_id = event.get("user_id")
 
         await self.channel_layer.group_add(f"game_{game_id}", self.channel_name)
-        # logger.info(f"Client ajouté au groupe game_{game_id}")
-        logger.info(f"🎮 Reçu un game_event: {action} (game_id={game_id})")
         game = game_manager.get_or_create_game(game_id, player1_id, player2_id)
-        #logger.info(f"🎮 Game récupérée: {game_id}, Player1={game.player1_id}, Player2={game.player2_id}")
 
         if action == "start_game":
             if game_id not in self.running_games:
                 logger.info(f"🎮 Démarrage de la partie {game_id}")
-                self.running_games[game_id] = {"task": asyncio.create_task(self.game_loop(game_id)),}
+                self.running_games[game_id] = {
+                    "task": asyncio.create_task(self.game_loop(game_id)),
+                }
 
             payload = game.to_dict()
-            await self.channel_layer.group_send(f"game_{game_id}", {"type": "game_state", "game_id": game_id, "payload": payload},)
+            await self.channel_layer.group_send(
+                f"game_{game_id}",
+                {"type": "game_state", "game_id": game_id, "payload": payload},
+            )
 
         elif action == "move":
             direction = event.get("direction")
@@ -108,7 +111,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 return
             else:
                 paddle_number = game.player_mapping.get(str(user_id))
-            
+
             if paddle_number is None:
                 logger.error("Le champ indiquant le joueur (local_player ou user_id) ne correspond à aucun paddle dans la partie.")
                 return
@@ -119,35 +122,10 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 self.running_games[game_id]["task"].cancel()
                 del self.running_games[game_id]
                 game_manager.cleanup_game(game_id)
-                await self.channel_layer.group_send(
-                    f"game_{game_id}",
-                    {
-                        "type": "leave_game",
-                    },
-                )
 
         elif action == "game_giveup":
-            player_id = event.get("player_id")
-            if player_id == player1_id:
-                winner_id = player2_id
-            else:
-                winner_id = player1_id
-
-            await self.channel_layer.group_send(
-                f"game_{game_id}",
-                {
-                    "type": "game_event",
-                    "game_id": game_id,
-                    "action": "game_over",
-                    "winner": winner_id,
-                    "loser": player_id,
-                },
-            )
-            if game_id in self.running_games:
-                self.running_games[game_id]["task"].cancel()
-                del self.running_games[game_id]
-                game_manager.cleanup_game(game_id)
-                logger.info(f" Partie {game_id} terminée (game_local_giveup)")
+            game.quitter_id = user_id
+            game.game_over = True
 
     async def game_state(self, event):
         pass
@@ -179,10 +157,16 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                         last_ai_time = now
 
                         obs = [
-                            game.state["ball"]["x"], game.state["ball"]["y"], game.state["ball"]["z"],
-                            game.state["ball"]["vx"], game.state["ball"]["vy"], game.state["ball"]["vz"],
-                            game.state["players"][1]["y"], game.state["players"][1]["z"],
-                            game.state["players"][2]["y"], game.state["players"][2]["z"]
+                            game.state["ball"]["x"],
+                            game.state["ball"]["y"],
+                            game.state["ball"]["z"],
+                            game.state["ball"]["vx"],
+                            game.state["ball"]["vy"],
+                            game.state["ball"]["vz"],
+                            game.state["players"][1]["y"],
+                            game.state["players"][1]["z"],
+                            game.state["players"][2]["y"],
+                            game.state["players"][2]["z"],
                         ]
 
                         target_y, target_z = predict_ai_action(obs)
@@ -200,7 +184,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     elif target_z < current_z:
                         game.move_paddle(ai_paddle_num, "left")
 
-
                 payload = game.to_dict()
 
                 await self.channel_layer.group_send(
@@ -210,7 +193,14 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 from .models import GameHistory
 
                 if game.game_over:
-                    if game.user_scores[game.player1_id] > game.user_scores[game.player2_id]:
+                    if game.quitter_id:
+                        if game.quitter_id == game.player1_id:
+                            winner_id = game.player2_id
+                            loser_id = game.player1_id
+                        else:
+                            winner_id = game.player1_id
+                            loser_id = game.player2_id
+                    elif game.user_scores[game.player1_id] > game.user_scores[game.player2_id]:
                         winner_id = game.player1_id
                         loser_id = game.player2_id
                     else:
@@ -220,13 +210,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     logger.info(f"loser_id: {loser_id}")
 
                     if game_id.startswith("tournOnline_"):
-                        winner = await sync_to_async(ManualUser.objects.get)(
-                            id=winner_id
-                        )
+                        winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
                         loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
-                        match = await sync_to_async(
-                            TournamentMatch.objects.filter(match_key=game_id).first
-                        )()
+                        match = await sync_to_async(TournamentMatch.objects.filter(match_key=game_id).first)()
 
                         tournament_id = match.tournament_id
 
@@ -262,11 +248,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                             )()
 
                         if next_match:
-                            winner_username = await sync_to_async(
-                                lambda: ManualUser.objects.get(
-                                    id=int(winner_id)
-                                ).username
-                            )()
+                            winner_username = await sync_to_async(lambda: ManualUser.objects.get(id=int(winner_id)).username)()
 
                             if match.match_order % 2 == 1:
                                 next_match.player1 = winner_username
@@ -277,32 +259,17 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                         # *******************over game over au live chat ***********************
                         next_match_player_ids = []
                         if next_match:
-                            if (
-                                next_match.player1 != "TBD"
-                                and next_match.player2 != "TBD"
-                            ):
+                            if next_match.player1 != "TBD" and next_match.player2 != "TBD":
                                 next_match_player_ids = await sync_to_async(
                                     lambda: [
-                                        ManualUser.objects.get(
-                                            username=next_match.player1
-                                        ).id,
-                                        ManualUser.objects.get(
-                                            username=next_match.player2
-                                        ).id,
+                                        ManualUser.objects.get(username=next_match.player1).id,
+                                        ManualUser.objects.get(username=next_match.player2).id,
                                     ]
                                 )()
                                 next_match.status = "ready"
                                 await sync_to_async(next_match.save)()
 
-                        participant_list = await sync_to_async(
-                            lambda: list(
-                                ManualTournamentParticipants.objects.filter(
-                                    tournament_id=tournament_id
-                                )
-                                .exclude(Q(status="rejected") | Q(status="left"))
-                                .values_list("id", flat=True)
-                            )
-                        )()
+                        participant_list = await sync_to_async(lambda: list(ManualTournamentParticipants.objects.filter(tournament_id=tournament_id).exclude(Q(status="rejected") | Q(status="left")).values_list("id", flat=True)))()
 
                         payload = {
                             "type": "info_message",
@@ -313,15 +280,11 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                             "current_match_player_ids": [int(winner_id), int(loser_id)],
                         }
 
-                        logger.info(
-                            f"back_tournament_game_over sent to gateway: {payload}"
-                        )
+                        logger.info(f"back_tournament_game_over sent to gateway: {payload}")
                         await self.channel_layer.group_send(f"user_{0}", payload)
 
                     if str(game_id).startswith("matchmaking_"):
-                        winner = await sync_to_async(ManualUser.objects.get)(
-                            id=winner_id
-                        )
+                        winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
                         loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
 
                         logger.info(f"winner elo: {winner.id}")
@@ -332,9 +295,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                             loser.elo = 1000
                             await sync_to_async(loser.save)()
 
-                        new_winner_elo, new_loser_elo = calculate_elo(
-                            winner.elo, loser.elo
-                        )
+                        new_winner_elo, new_loser_elo = calculate_elo(winner.elo, loser.elo)
 
                         def elo():
                             with transaction.atomic():
@@ -359,12 +320,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
                     await asyncio.sleep(0.01)
 
-                    if not (
-                        str(game_id).startswith("game_")
-                        or str(game_id).startswith("tournLocal_")
-                        or str(game_id).startswith("solo_")
-                        or str(game_id).startswith("tournOnline_")
-                    ):
+                    if not (str(game_id).startswith("game_") or str(game_id).startswith("tournLocal_") or str(game_id).startswith("solo_") or str(game_id).startswith("tournOnline_")):
                         await sync_to_async(GameHistory.objects.create)(
                             winner_id=winner_id,
                             loser_id=loser_id,
@@ -390,7 +346,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         """Gère la fin de partie."""
 
     # logger.info(f"[PongGroupConsumer] game_over reçu: {event}")
-
 
     async def leave_game(self, event):
         logger.info(f"[PongGroupConsumer] leave_game reçu : {event}")

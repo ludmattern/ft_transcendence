@@ -73,6 +73,7 @@ class BasePongGame:
         self.start_time = time.time()
         self.last_update = self.start_time
         self.game_over = False
+        self.quitter_id = None
 
         self.player1_id = player1_id if player1_id else "unknown1"
         self.player2_id = player2_id if player2_id else "unknown2"
