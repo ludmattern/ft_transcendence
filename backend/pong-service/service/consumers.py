@@ -99,13 +99,17 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         elif action == "move":
             direction = event.get("direction")
             if game.player1_id == "Player 1" and game.player2_id == "Player 2" or game.game_id.startswith("tournLocal_"):
+                if game.game_id.startswith("solo_"):
+                    game.move_paddle(1, direction)
                 local_player = event.get("local_player")
                 if not local_player:
                     return
                 game.move_paddle(local_player, direction)
                 return
             else:
+                logger.info(f"🎮 Déplacement du joueur {user_id} ({direction})")
                 paddle_number = game.player_mapping.get(str(user_id))
+                logger.info(f"player_mapping: {game.player_mapping}")
 
             if paddle_number is None:
                 logger.error(
@@ -154,22 +158,22 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                         last_ai_time = now
 
                         obs = [
-                            game.state["ball"]["x"],
-                            game.state["ball"]["y"],
-                            game.state["ball"]["z"],
-                            game.state["ball"]["vx"],
-                            game.state["ball"]["vy"],
-                            game.state["ball"]["vz"],
-                            game.state["players"][1]["y"],
-                            game.state["players"][1]["z"],
-                            game.state["players"][2]["y"],
-                            game.state["players"][2]["z"],
+                            game.state.ball.position.x,
+                            game.state.ball.position.y,
+                            game.state.ball.position.z,
+                            game.state.ball.velocity.x,
+                            game.state.ball.velocity.y,
+                            game.state.ball.velocity.z,
+                            game.state.players[1].paddle_position.y,
+                            game.state.players[1].paddle_position.z,
+                            game.state.players[2].paddle_position.y,
+                            game.state.players[2].paddle_position.z,
                         ]
-
                         target_y, target_z = predict_ai_action(obs)
 
-                    current_y = game.state["players"][ai_paddle_num]["y"]
-                    current_z = game.state["players"][ai_paddle_num]["z"]
+                    current_y = game.state.players[ai_paddle_num].paddle_position.y
+                    current_z = game.state.players[ai_paddle_num].paddle_position.z
+
 
                     if target_y > current_y:
                         game.move_paddle(ai_paddle_num, "up")
