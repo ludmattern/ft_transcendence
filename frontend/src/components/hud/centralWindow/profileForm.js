@@ -18,13 +18,6 @@ export const profileForm = createComponent({
           </div>
           <!-- Profile Details -->
           <div class="profile-details modifiable-pilot text-start">
-            <!-- Profile Status -->
-            <div class="profile-status mb-2">
-              <span class="status-indicator bi bi-circle-fill text-success"></span>
-              <div class="d-inline-block">
-                <div class="d-inline-block" id="pseudo" style="color:var(--content-color); font-weight: bold;"></div>
-              </div>
-            </div>
             <!-- Profile Statistics -->
             <div class="profile-stats">
               <div class="stat-item d-flex align-items-center mb-1">
@@ -190,17 +183,6 @@ export async function loadUserProfile(userId) {
 			const eloElement = document.getElementById('elo');
 			if (eloElement) {
 				eloElement.textContent = `Elo: ${data.profile.elo}`;
-			}
-
-			const statusIndicator = document.querySelector('.status-indicator');
-			if (statusIndicator) {
-				if (data.profile.is_connected) {
-					statusIndicator.classList.remove('text-danger');
-					statusIndicator.classList.add('text-success');
-				} else {
-					statusIndicator.classList.remove('text-success');
-					statusIndicator.classList.add('text-danger');
-				}
 			}
 		}
 	} catch (error) {

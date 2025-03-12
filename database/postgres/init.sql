@@ -1,8 +1,8 @@
 CREATE TABLE
 	IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
-		username VARCHAR(50) NOT NULL UNIQUE,
-		email VARCHAR(255) DEFAULT NULL,
+		username VARCHAR(50) NOT NULL UNIQUE CHECK (LENGTH(username) >=6 AND LENGTH(username) <= 20 AND username ~ '^[a-zA-Z0-9_]+$'),
+        email VARCHAR(255) DEFAULT NULL CHECK (email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
 		password VARCHAR(255),
 		rank INT DEFAULT 0,
 		tournament_status VARCHAR(20) DEFAULT 'out',
@@ -17,7 +17,7 @@ CREATE TABLE
 		is_dummy BOOLEAN DEFAULT FALSE,
 		current_tournament_id INT DEFAULT 0,
 		twofa_method VARCHAR(50) DEFAULT NULL,
-		phone_number VARCHAR(255) DEFAULT NULL,
+		phone_number VARCHAR(255) DEFAULT NULL CHECK (phone_number ~ '^\+?[0-9]*$'),
 		temp_2fa_code VARCHAR(255) DEFAULT NULL,
 		temp_reset_code VARCHAR(255) DEFAULT NULL,
 		reset_code_expiry TIMESTAMP DEFAULT NULL,
