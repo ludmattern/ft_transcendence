@@ -52,7 +52,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             logger.info(f"Client ajouté au groupe {group_name}")
         logger.info("🔗 Client connecté au WebSocket Gateway")
 
-    async def disconnect(self):
+    async def disconnect(self, close_code):
         if self.user_id:
             await update_user_status(self.user_id, False)
             await self.channel
@@ -128,6 +128,13 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 if data.get("action") == "start_game":
                     game_id = data.get("game_id", "unknown_game")
                     self.game_id = game_id
+                    await self.channel_layer.group_add(f"game_{self.game_id}", self.channel_name)
+                    logger.info(f"Client rejoint le groupe game_{self.game_id}")
+                    logger.info(f"Envoi à pong_service: self.game_id={self.game_id}, player1={player1_id}, player2={player2_id}")
+                if data.get("action") == "give_up":
+                    await self.channel_layer.group_discard(f"game_{self.game_id}", self.channel_name)
+                    logger.info(f"Client quitte le groupe game_{self.game_id}")
+                    logger.info(f"Envoi à pong_service: game_id={self.game_id}, player1={player1_id}, player2={player2_id}")
 
                 await self.channel_layer.group_send(
                     "pong_service",
@@ -141,6 +148,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                         "player_id": data.get("player_id"),
                         "user_id": self.user_id,
                         "local_player": data.get("local_player"),
+
                     },
                 )
 
