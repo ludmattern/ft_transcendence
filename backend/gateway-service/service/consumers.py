@@ -148,7 +148,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                     await self.channel_layer.group_discard(f"game_{self.game_id}", self.channel_name)
                     self.game_id = None
                     logger.info(f"Client quitte le groupe game_{self.game_id}")
-                    logger.info(f"Envoi à pong_service: self.game_id={self.game_id}, player1={player1_id}, player2={player2_id}")
+                    logger.info(f"Envoi à pong_service: game_id={self.game_id}, player1={player1_id}, player2={player2_id}")
                 
 
                 await self.channel_layer.group_send(
@@ -243,7 +243,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
     async def private_match_found(self, event):
         await self.send(json.dumps(event))
         logger.info(
-            f"🔔 Private match_found envoyé au client {event['user_id']} : self.game_id={event['self.game_id']}, side={event['side']}"
+            f"🔔 Private match_found envoyé au client {event['user_id']} : self.game_id={event['game_id']}, side={event['side']}"
         )
 
     async def tournament_creation(self, event):
