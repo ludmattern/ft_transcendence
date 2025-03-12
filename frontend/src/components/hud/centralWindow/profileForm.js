@@ -18,6 +18,13 @@ export const profileForm = createComponent({
           </div>
           <!-- Profile Details -->
           <div class="profile-details modifiable-pilot text-start">
+            <!-- Profile Status -->
+            <div class="profile-status mb-2">
+              <span class="own-status-indicator bi bi-circle-fill text-success"></span>
+              <div class="d-inline-block">
+                <div class="d-inline-block" id="pseudo" style="color:var(--content-color); font-weight: bold;"></div>
+              </div>
+            </div>
             <!-- Profile Statistics -->
             <div class="profile-stats">
               <div class="stat-item d-flex align-items-center mb-1">
@@ -74,44 +81,44 @@ export const profileForm = createComponent({
  */
 
 function attachProfilePicUpload() {
-    const profilePicLink = document.getElementById('profile-pic-link');
-    const fileInput = document.getElementById('profile-image-input');
+	const profilePicLink = document.getElementById('profile-pic-link');
+	const fileInput = document.getElementById('profile-image-input');
 
-    if (profilePicLink && fileInput) {
-        profilePicLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            fileInput.click();
-        });
+	if (profilePicLink && fileInput) {
+		profilePicLink.addEventListener('click', (e) => {
+			e.preventDefault();
+			fileInput.click();
+		});
 
-        fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+		fileInput.addEventListener('change', async (e) => {
+			const file = e.target.files[0];
+			if (!file) return;
 
-            const formData = new FormData();
-            formData.append('profile_picture', file);
+			const formData = new FormData();
+			formData.append('profile_picture', file);
 
-            try {
-                const response = await fetch('/api/user-service/upload_profile_picture/', {
-                    method: 'POST',
-                    body: formData,
-                    credentials: 'include'
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error ${response.status}`);
-                }
-                const data = await response.json();
+			try {
+				const response = await fetch('/api/user-service/upload_profile_picture/', {
+					method: 'POST',
+					body: formData,
+					credentials: 'include',
+				});
+				if (!response.ok) {
+					throw new Error(`HTTP error ${response.status}`);
+				}
+				const data = await response.json();
 
-                if (data.success && data.profile_picture) {
-                    const profilePicImg = document.querySelector('.profile-pic');
-                    if (profilePicImg) {
-                        profilePicImg.src = data.profile_picture;
-                    }
-                }
-            } catch (error) {
-                console.error('Erreur lors de l\'upload de l\'image:', error);
-            }
-        });
-    }
+				if (data.success && data.profile_picture) {
+					const profilePicImg = document.querySelector('.profile-pic');
+					if (profilePicImg) {
+						profilePicImg.src = data.profile_picture;
+					}
+				}
+			} catch (error) {
+				console.error("Erreur lors de l'upload de l'image:", error);
+			}
+		});
+	}
 }
 
 export async function loadMatchHistory(userId) {
@@ -170,7 +177,7 @@ export async function loadUserProfile(userId) {
 			const profilePicImg = document.querySelector('.profile-pic');
 			if (profilePicImg) {
 				profilePicImg.src = data.profile.profile_picture;
-				profilePicImg.alt = data.profile.username + '\'s profile picture';
+				profilePicImg.alt = data.profile.username + "'s profile picture";
 				profilePicImg.style.width = '150px';
 				profilePicImg.style.height = '150px';
 			}
@@ -183,6 +190,16 @@ export async function loadUserProfile(userId) {
 			const eloElement = document.getElementById('elo');
 			if (eloElement) {
 				eloElement.textContent = `Elo: ${data.profile.elo}`;
+			}
+			const statusIndicator = document.querySelector('.status-indicator');
+			if (statusIndicator) {
+				if (data.profile.is_connected) {
+					statusIndicator.classList.remove('text-danger');
+					statusIndicator.classList.add('text-success');
+				} else {
+					statusIndicator.classList.remove('text-success');
+					statusIndicator.classList.add('text-danger');
+				}
 			}
 		}
 	} catch (error) {
