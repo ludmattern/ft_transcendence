@@ -962,7 +962,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 f"user_{author_id}",
                 {
                     "type": "info_message",
-                    "info": f"Private game invite sent to {recipient_id}",
+                    "info": f"Private game invite sent to {recipient_user.username}",
                 },
             )
             await self.channel_layer.group_send(f"user_{recipient_id}", event)
@@ -970,7 +970,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 f"user_{recipient_id}",
                 {
                     "type": "info_message",
-                    "info": f"Private game invite received from {author_id}",
+                    "info": f"Private game invite received from {author_user.username}.",
                 },
             )
             logger.info(f"Invite private game sent to user_{recipient_id}")
@@ -1001,7 +1001,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     f"user_{author_id}",
                     {
                         "type": "info_message",
-                        "info": f"Private game invite accepted by {recipient_id}",
+                        "info": f"Private game invite accepted by {recipient_user.username}",
                     },
                 )
                 await self.channel_layer.group_send(f"user_{author_id}", event)
@@ -1009,7 +1009,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     f"user_{recipient_id}",
                     {
                         "type": "info_message",
-                        "info": f"Private game invite accepted by {author_id}",
+                        "info": f"Private game invite accepted by {author_user.username}",
                     },
                 )
                 await self.channel_layer.group_send(
@@ -1051,7 +1051,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     f"user_{author_id}",
                     {
                         "type": "info_message",
-                        "info": f"Private game invite rejected by {recipient_id}",
+                        "info": f"Private game invite rejected by {recipient_user.username}",
                     },
                 )
                 await self.channel_layer.group_send(f"user_{author_id}", event)
@@ -1059,7 +1059,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     f"user_{recipient_id}",
                     {
                         "type": "info_message",
-                        "info": f"Private game invite rejected by {author_id}",
+                        "info": f"Private game invite rejected by {author_user.username}",
                     },
                 )
                 await self.channel_layer.group_send(
