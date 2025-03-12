@@ -103,9 +103,17 @@ export const midScreen = createComponent({
 			else showGiveUpButtons('online');
 		});
 		subscribe('gameOver', removeGiveUpButtons);
+		subscribe('routing', sendDisconnectionEvent);
 		initM2();
 	},
 });
+
+export function sendDisconnectionEvent() {
+	if (gameManager.isGameActive()) {
+		const payload = { type: 'game_event', action: 'game_giveup' };
+		ws.send(JSON.stringify(payload));
+	}
+}
 
 function initM2() {
 	Store.menuElement = document.getElementById('gameScreen');

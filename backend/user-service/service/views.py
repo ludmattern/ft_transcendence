@@ -54,25 +54,17 @@ def jwt_required(view_func):
     def wrapper(request, *args, **kwargs):
         token = request.COOKIES.get("access_token")
         if not token:
-            return JsonResponse(
-                {"success": False, "message": "No access_token cookie"}, status=401
-            )
+            return JsonResponse({"success": False, "message": "No access_token cookie"}, status=401)
         try:
-            payload = jwt.decode(
-                token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
-            )
+            payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
             user_id = payload.get("sub")
             if not user_id:
-                return JsonResponse(
-                    {"success": False, "message": "Invalid token: no sub"}, status=401
-                )
+                return JsonResponse({"success": False, "message": "Invalid token: no sub"}, status=401)
 
             try:
                 user = ManualUser.objects.get(pk=user_id)
             except ManualUser.DoesNotExist:
-                return JsonResponse(
-                    {"success": False, "message": "User not found"}, status=404
-                )
+                return JsonResponse({"success": False, "message": "User not found"}, status=404)
 
             if user.session_token != token:
                 return JsonResponse(
@@ -81,16 +73,12 @@ def jwt_required(view_func):
                 )
 
             if is_expired(user.token_expiry):
-                return JsonResponse(
-                    {"success": False, "message": "Token expired in DB"}, status=401
-                )
+                return JsonResponse({"success": False, "message": "Token expired in DB"}, status=401)
 
             request.user = user
 
         except jwt.ExpiredSignatureError:
-            return JsonResponse(
-                {"success": False, "message": "Token expired"}, status=401
-            )
+            return JsonResponse({"success": False, "message": "Token expired"}, status=401)
         except jwt.InvalidTokenError as e:
             return JsonResponse({"success": False, "message": str(e)}, status=401)
 
@@ -132,21 +120,15 @@ def register_user(request):
             phone_number = body.get("phone_number", None)
 
             if not username or not email or not password:
-                return JsonResponse(
-                    {"success": False, "message": "Missing required fields"}, status=400
-                )
+                return JsonResponse({"success": False, "message": "Missing required fields"}, status=400)
 
             if ManualUser.objects.filter(username=username).exists():
-                return JsonResponse(
-                    {"success": False, "message": "Username already taken"}, status=409
-                )
+                return JsonResponse({"success": False, "message": "Username already taken"}, status=409)
 
             encrypted_email = encrypt_thing(email)
 
             # Vérification des emails existants
-            existing_users = ManualUser.objects.filter(
-                is_dummy=False, email__isnull=False
-            ).exclude(email="")
+            existing_users = ManualUser.objects.filter(is_dummy=False, email__isnull=False).exclude(email="")
             for user in existing_users:
                 try:
                     if decrypt_thing(user.email) == email:
@@ -169,9 +151,7 @@ def register_user(request):
                     status=400,
                 )
 
-            hashed_password = bcrypt.hashpw(
-                password.encode("utf-8"), bcrypt.gensalt()
-            ).decode("utf-8")
+            hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
             encrypted_phone = encrypt_thing(phone_number) if phone_number else None
 
             user = ManualUser.objects.create(
@@ -195,24 +175,18 @@ def register_user(request):
             logging.error("Error in register_user: %s", str(e))
             return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
     else:
-        return JsonResponse(
-            {"success": False, "message": "Only POST method is allowed"}, status=405
-        )
+        return JsonResponse({"success": False, "message": "Only POST method is allowed"}, status=405)
 
 
 @csrf_exempt
 @jwt_required
 def delete_account(request):
     if request.method != "POST":
-        return JsonResponse(
-            {"success": False, "message": "Only POST method is allowed"}, status=405
-        )
+        return JsonResponse({"success": False, "message": "Only POST method is allowed"}, status=405)
     try:
         user = request.user
         if not user:
-            return JsonResponse(
-                {"success": False, "message": "Unauthorized"}, status=401
-            )
+            return JsonResponse({"success": False, "message": "Unauthorized"}, status=401)
         user_id = user.id
         username = user.username
         user.delete()
@@ -232,9 +206,7 @@ def delete_account(request):
 @jwt_required
 def update_info(request):
     if request.method != "POST":
-        return JsonResponse(
-            {"success": False, "message": "Only POST method is allowed"}, status=405
-        )
+        return JsonResponse({"success": False, "message": "Only POST method is allowed"}, status=405)
     try:
         body = json.loads(request.body.decode("utf-8"))
         old_password = body.get("oldPassword", "")
@@ -246,9 +218,7 @@ def update_info(request):
 
         user = request.user
         if not user:
-            return JsonResponse(
-                {"success": False, "message": "Unauthorized"}, status=401
-            )
+            return JsonResponse({"success": False, "message": "Unauthorized"}, status=401)
 
         if not old_password:
             return JsonResponse(
@@ -256,38 +226,26 @@ def update_info(request):
                 status=401,
             )
 
-        if not bcrypt.checkpw(
-            old_password.encode("utf-8"), user.password.encode("utf-8")
-        ):
+        if not bcrypt.checkpw(old_password.encode("utf-8"), user.password.encode("utf-8")):
             return JsonResponse(
                 {"success": False, "message": "Current password is incorrect"},
                 status=402,
             )
 
         if not any([new_username, new_email, new_password]):
-            return JsonResponse(
-                {"success": False, "message": "No changes to update"}, status=400
-            )
+            return JsonResponse({"success": False, "message": "No changes to update"}, status=400)
 
         if new_username:
             if ManualUser.objects.filter(username=new_username).exists():
-                return JsonResponse(
-                    {"success": False, "message": "Username already taken"}, status=409
-                )
+                return JsonResponse({"success": False, "message": "Username already taken"}, status=409)
             user.username = new_username
 
         if new_email:
             if new_email != confirm_email:
-                return JsonResponse(
-                    {"success": False, "message": "Emails do not match"}, status=400
-                )
+                return JsonResponse({"success": False, "message": "Emails do not match"}, status=400)
             decrypted_email = decrypt_thing(user.email)
             if new_email != decrypted_email:
-                if (
-                    ManualUser.objects.exclude(id=user.id)
-                    .filter(email=encrypt_thing(new_email))
-                    .exists()
-                ):
+                if ManualUser.objects.exclude(id=user.id).filter(email=encrypt_thing(new_email)).exists():
                     return JsonResponse(
                         {"success": False, "message": "Email already in use"},
                         status=409,
@@ -296,17 +254,11 @@ def update_info(request):
 
         if new_password:
             if new_password != confirm_password:
-                return JsonResponse(
-                    {"success": False, "message": "Passwords do not match"}, status=400
-                )
-            user.password = bcrypt.hashpw(
-                new_password.encode("utf-8"), bcrypt.gensalt()
-            ).decode("utf-8")
+                return JsonResponse({"success": False, "message": "Passwords do not match"}, status=400)
+            user.password = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
         user.save()
-        return JsonResponse(
-            {"success": True, "message": "Information updated successfully"}
-        )
+        return JsonResponse({"success": True, "message": "Information updated successfully"})
     except Exception as e:
         return JsonResponse({"success": False, "message": str(e)}, status=500)
 
@@ -318,21 +270,15 @@ def getUsername(request):
             body = json.loads(request.body.decode("utf-8"))
             user_id = body.get("id")
             if not user_id:
-                return JsonResponse(
-                    {"success": False, "message": "User ID is required"}, status=400
-                )
+                return JsonResponse({"success": False, "message": "User ID is required"}, status=400)
             user = ManualUser.objects.get(id=user_id)
             return JsonResponse({"success": True, "username": user.username})
         except ManualUser.DoesNotExist:
-            return JsonResponse(
-                {"success": False, "message": "User not found"}, status=404
-            )
+            return JsonResponse({"success": False, "message": "User not found"}, status=404)
         except Exception as e:
             return JsonResponse({"success": False, "message": str(e)}, status=500)
     else:
-        return JsonResponse(
-            {"success": False, "message": "Only POST method is allowed"}, status=405
-        )
+        return JsonResponse({"success": False, "message": "Only POST method is allowed"}, status=405)
 
 
 def get_user_id(request, username):
@@ -353,9 +299,7 @@ def get_game_history(request):
     if not user_id:
         return JsonResponse({"error": "user_id parameter is required"}, status=400)
     try:
-        history_entries = GameHistory.objects.filter(
-            Q(winner_id=user_id) | Q(loser_id=user_id)
-        ).order_by("-created_at")[:20]
+        history_entries = GameHistory.objects.filter(Q(winner_id=user_id) | Q(loser_id=user_id)).order_by("-created_at")[:20]
         history_list = []
         wins = 0
         total_games = history_entries.count()
@@ -384,9 +328,7 @@ def get_game_history(request):
                 }
             )
         winrate = (wins / total_games * 100) if total_games > 0 else 0
-        return JsonResponse(
-            {"success": True, "history": history_list, "winrate": winrate}
-        )
+        return JsonResponse({"success": True, "history": history_list, "winrate": winrate})
     except Exception as e:
         logging.error("An error occurred: %s", str(e))
         return JsonResponse({"error": "An internal error has occurred!"}, status=500)
@@ -425,27 +367,19 @@ MAX_FILE_SIZE = 5 * 1024 * 1024
 @jwt_required
 def upload_profile_picture(request):
     if request.method != "POST":
-        return JsonResponse(
-            {"success": False, "error": "POST method required"}, status=405
-        )
+        return JsonResponse({"success": False, "error": "POST method required"}, status=405)
     try:
         user = request.user
         if not user:
             return JsonResponse({"success": False, "error": "Unauthorized"}, status=401)
         if "profile_picture" not in request.FILES:
-            return JsonResponse(
-                {"success": False, "error": "No file uploaded"}, status=400
-            )
+            return JsonResponse({"success": False, "error": "No file uploaded"}, status=400)
         file = request.FILES["profile_picture"]
         if file.size > MAX_FILE_SIZE:
-            return JsonResponse(
-                {"success": False, "error": "File too large"}, status=400
-            )
+            return JsonResponse({"success": False, "error": "File too large"}, status=400)
         ext = os.path.splitext(file.name)[1].lower().strip(".")
         if ext not in ALLOWED_EXTENSIONS:
-            return JsonResponse(
-                {"success": False, "error": "Invalid file format"}, status=400
-            )
+            return JsonResponse({"success": False, "error": "Invalid file format"}, status=400)
         try:
             image = Image.open(file)
             image.verify()
@@ -467,9 +401,7 @@ def upload_profile_picture(request):
                         {"success": False, "error": "Failed to remove old image"},
                         status=500,
                     )
-        return JsonResponse(
-            {"success": True, "profile_picture": user.profile_picture.url}, status=200
-        )
+        return JsonResponse({"success": True, "profile_picture": user.profile_picture.url}, status=200)
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)}, status=500)
 
@@ -487,15 +419,9 @@ def search_pilots(request):
     try:
         user = request.user
 
-        blocked_users = ManualBlockedRelations.objects.filter(
-            blocked_user=user
-        ).values_list("user_id", flat=True)
+        blocked_users = ManualBlockedRelations.objects.filter(blocked_user=user).values_list("user_id", flat=True)
 
-        pilots = (
-            ManualUser.objects.filter(username__istartswith=query)
-            .exclude(id__in=blocked_users)
-            .exclude(id=user.id)
-        )
+        pilots = ManualUser.objects.filter(username__istartswith=query).exclude(id__in=blocked_users).exclude(id=user.id)
 
         results = [
             {
@@ -516,10 +442,7 @@ def get_leaderboard(request):
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
     players = ManualUser.objects.filter(elo__gt=0).order_by("-elo")[:500]
-    results = [
-        {"rank": index + 1, "username": player.username, "elo": player.elo}
-        for index, player in enumerate(players)
-    ]
+    results = [{"rank": index + 1, "username": player.username, "elo": player.elo} for index, player in enumerate(players)]
     return JsonResponse({"success": True, "players": results})
 
 
