@@ -118,18 +118,20 @@ class GameManager {
 
 	startGame(gameConfig) {
 		this.initClientData() 
-
+		
 		console.log('Starting game with config:', gameConfig);
 		componentManagers['HUD'].unloadComponent('pongTuto');
 		this.gameMode = gameConfig.mode;
 		console.log('gameMode:', this.gameMode);
 		if (this.activeGame) 
 			this.endGame();
-
+		
 		this.activeGame = gameConfig;
 		this.gameId = this.generateGameId(gameConfig);
-
+		
 		buildGameScene(gameConfig);
+		console.log('gameConfig before emit:', gameConfig);
+		emit('gameStarted', gameConfig);
 		showCountdown();
 
 		let player1 = gameConfig.side === 'left' ? gameConfig.user_id : gameConfig.opponent_id;

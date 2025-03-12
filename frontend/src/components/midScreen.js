@@ -53,9 +53,7 @@ export const GiveUpButtons = createComponent({
 			online: {
 				'btn-giveup': () => {
 					alert('Abandon online déclenché');
-					const payload = {
-						type: 'game_event'
-					};
+					const payload = { type: 'game_event' };
 					ws.send(JSON.stringify(payload));
 				},
 			},
@@ -101,7 +99,7 @@ export const midScreen = createComponent({
 
 	attachEvents: () => {
 		subscribe('gameStarted', (data) => {
-			if (data === 'local' || (data && data.gameMode === 'local')) showGiveUpButtons('local');
+			if (data === 'local' || (data && data.mode === 'local')) showGiveUpButtons('local');
 			else showGiveUpButtons('online');
 		});
 		subscribe('gameOver', removeGiveUpButtons);

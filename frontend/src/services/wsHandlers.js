@@ -19,6 +19,7 @@ const handleGameState = (data) => {
 };
 
 const handleGameOver = (data) => {
+	emit('gameOver');
 	if (data.game_id.startsWith('tournLocal_')) {
 		handleLocalTournamentGameEnding(data);
 	} else if (data.game_id.startsWith('tournOnline_')) {
