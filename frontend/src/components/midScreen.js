@@ -45,16 +45,17 @@ export const GiveUpButtons = createComponent({
 		const eventHandlers = {
 			local: {
 				'btn-giveup-player-left': () => {
-					alert('Abandon local déclenché');
+					const payload = { type: 'game_event', action: 'game_giveup' };
+					ws.send(JSON.stringify(payload));
 				},
 				'btn-giveup-player-right': () => {
-					alert('Quitter local déclenché');
+					const payload = { type: 'game_event', action: 'game_giveup' };
+					ws.send(JSON.stringify(payload));
 				},
 			},
 			online: {
 				'btn-giveup': () => {
-					alert('Abandon online déclenché');
-					const payload = { type: 'game_event' };
+					const payload = { type: 'game_event', action: 'game_giveup' };
 					ws.send(JSON.stringify(payload));
 				},
 			},
