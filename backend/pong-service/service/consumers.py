@@ -86,7 +86,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_add(f"game_{game_id}", self.channel_name)
         # logger.info(f"Client ajouté au groupe game_{game_id}")
-
+        logger.info(f"🎮 Reçu un game_event: {action} (game_id={game_id})")
         game = game_manager.get_or_create_game(game_id, player1_id, player2_id)
         #logger.info(f"🎮 Game récupérée: {game_id}, Player1={game.player1_id}, Player2={game.player2_id}")
 

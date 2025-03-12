@@ -123,7 +123,8 @@ class GameManager {
 		componentManagers['HUD'].unloadComponent('pongTuto');
 		this.gameMode = gameConfig.mode;
 		console.log('gameMode:', this.gameMode);
-		if (this.activeGame) this.endGame();
+		if (this.activeGame) 
+			this.endGame();
 
 		this.activeGame = gameConfig;
 		this.gameId = this.generateGameId(gameConfig);
@@ -195,17 +196,7 @@ class GameManager {
 			document.removeEventListener('keydown', this.matchMakingKeydownHandler);
 			document.removeEventListener('keyup', this.matchMakingKeyupHandler);
 		}
-
 		this.stopMovement();
-
-		ws.send(
-			JSON.stringify({
-				type: 'game_event',
-				action: 'leave_game',
-				game_id: this.gameId,
-			})
-		);
-
 		this.activeGame = null;
 		this.gameId = null;
 	}
