@@ -189,6 +189,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             or action == "back_cancel_tournament"
             or action == "back_leave_tournament"
             or action == "back_tournament_game_over"
+            or action == "back_create_online_tournament"
         ):
             await self.channel_layer.group_send("chat_service", event)
             logger.info(f"Message transmis au chat_service (back_tournament): {event}")
