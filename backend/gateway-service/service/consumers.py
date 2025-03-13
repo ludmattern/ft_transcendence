@@ -55,7 +55,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         if self.user_id:
             await update_user_status(self.user_id, False)
-            await self.channel
             await self.channel_layer.group_send(
                 "pong_service", {"type": "game_event", "action": "game_giveup", "user_id": self.user_id, "game_id": self.game_id}
             )

@@ -243,12 +243,17 @@ function hasUserCompletedInPreviousRound(bracketData, roundIndex, username) {
 }
 
 function createCompletedMatchHtml(match, displayHtml) {
+	// On compte le nombre de tirets dans match.score
+	const dashCount = (match.score.match(/-/g) || []).length;
+	const scoreText = dashCount === 2 ? "forfeit" : match.score;
+	
 	return `<div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
-			data-player1="${match.player1}" data-player2="${match.player2}">
+			  data-player1="${match.player1}" data-player2="${match.player2}">
 				<span class="text-white">${displayHtml}</span>
-				<span class="badge ms-2">${match.score}</span>
+				<span class="badge ms-2">${scoreText}</span>
 			</div>`;
-}
+  }
+  
 
 function getCompletedMatchHtml(match) {
 	if (!match.score) {

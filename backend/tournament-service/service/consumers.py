@@ -245,7 +245,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         recipient_user.current_tournament_id = 0
         await sync_to_async(recipient_user.save)()
         await self.kick_participant(tournament, recipient_user)
-        await self.send_info(author_id, "back_kick_tournament", author=author_id, recipient=recipient_id, tournament_id=tournament.id)
+        await self.send_info(
+            author_id, "back_kick_tournament", author=author_id, recipient=recipient_id, tournament_id=tournament.id
+        )
         logger.info("%s is kicked from tournament.", event["recipient_username"])
 
     async def handle_cancel_tournament(self, event):
@@ -440,10 +442,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             await sync_to_async(participant.save)()
             match = await sync_to_async(
                 lambda: TournamentMatch.objects.filter(tournament_id=tournament_id)
-                .filter(
-                    Q(status="pending") | Q(status="ready"),
-                    Q(player1=user.username) | Q(player2=user.username),
-                )
+                .filter(Q(status="pending") | Q(status="ready"), Q(player1=user.username) | Q(player2=user.username))
                 .first()
             )()
             next_match_player_ids = []
@@ -471,9 +470,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                     next_match_order = (match.match_order + 1) // 2
                     next_match = await sync_to_async(
                         lambda: TournamentMatch.objects.filter(
-                            tournament_id=tournament_id,
-                            round_number=next_round,
-                            match_order=next_match_order,
+                            tournament_id=tournament_id, round_number=next_round, match_order=next_match_order
                         ).first()
                     )()
 

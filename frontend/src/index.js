@@ -54,7 +54,7 @@ async function initializeApp() {
 				handleRoute('/race');
 				break;
 			default:
-				break;
+				handleRoute('/');
 		}
 	});
 }

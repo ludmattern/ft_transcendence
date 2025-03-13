@@ -139,13 +139,28 @@ export async function loadMatchHistory(userId) {
 			historyContainer.innerHTML = '';
 
 			data.history.forEach((match) => {
-				const outcome = String(match.winner_id) == userId ? 'Win' : 'Loss';
-				const date = match.created_at;
-				const opponents = `${match.winner_username} vs ${match.loser_username}`;
-				const outcomeClass = String(match.winner_id) == userId ? 'text-success' : 'text-danger';
-				const score = `${match.winner_score} - ${match.loser_score}`;
+				let scoreText;
+				if (match.winner_score === -1 || match.loser_score === -1) {
+					scoreText = 'Forfeit';
+				} else {
+					scoreText = `${match.winner_score} - ${match.loser_score}`;
+				}
 
-				const matchHtml = createMatchItem(outcome, date, opponents, outcomeClass, score);
+				const outcome = String(match.winner_id) === userId ? 'Win' : 'Loss';
+
+				let opponentUsername = '';
+				if (String(match.winner_id) === userId) {
+					opponentUsername = match.loser_username;
+				} else if (String(match.loser_id) === userId) {
+					opponentUsername = match.winner_username;
+				} else {
+					opponentUsername = `${match.winner_username} vs ${match.loser_username}`;
+				}
+
+				const outcomeClass = String(match.winner_id) === userId ? 'text-success' : 'text-danger';
+				const date = match.created_at;
+
+				const matchHtml = createMatchItem(outcome, date, opponentUsername, outcomeClass, scoreText);
 				historyContainer.innerHTML += matchHtml;
 			});
 		}

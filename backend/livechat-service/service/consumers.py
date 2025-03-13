@@ -44,14 +44,18 @@ def get_participants(tournament):
 
 @database_sync_to_async
 def get_accepted_participants(tournament_id):
-    participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related("user")
+    participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related(
+        "user"
+    )
 
     return [p.user.username for p in participants_qs]
 
 
 @database_sync_to_async
 def get_accepted_and_pending_participants(tournament_id):
-    participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted" or "pending").select_related("user")
+    participants_qs = ManualTournamentParticipants.objects.filter(
+        tournament_id=tournament_id, status="accepted" or "pending"
+    ).select_related("user")
 
     return [p.user.username for p in participants_qs]
 
@@ -65,8 +69,12 @@ async def get_profile_picture(user_id):
 
 
 async def get_non_blocked_users_id(author_id):
-    users_blocked_by_author = await database_sync_to_async(lambda: list(ManualBlockedRelations.objects.filter(initiator_id=author_id).values_list("blocked_user_id", flat=True)))()
-    users_who_blocked_author = await database_sync_to_async(lambda: list(ManualBlockedRelations.objects.filter(blocked_user_id=author_id).values_list("user_id", flat=True)))()
+    users_blocked_by_author = await database_sync_to_async(
+        lambda: list(ManualBlockedRelations.objects.filter(initiator_id=author_id).values_list("blocked_user_id", flat=True))
+    )()
+    users_who_blocked_author = await database_sync_to_async(
+        lambda: list(ManualBlockedRelations.objects.filter(blocked_user_id=author_id).values_list("user_id", flat=True))
+    )()
     blocked_set = set(users_blocked_by_author + users_who_blocked_author)
     all_users = await get_users_id()
     non_blocked_users = [user_id for user_id in all_users if user_id not in blocked_set and user_id != author_id]
@@ -251,7 +259,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     )
                     return
 
-            await database_sync_to_async(ManualFriendsRelations.objects.create)(user=user, friend=friend, status="pending", initiator=initiator)
+            await database_sync_to_async(ManualFriendsRelations.objects.create)(
+                user=user, friend=friend, status="pending", initiator=initiator
+            )
             await self.channel_layer.group_send(
                 f"user_{author_id}",
                 {
@@ -690,7 +700,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     user, friend = author_user, recipient_user
 
                 # Check if a block already exists in either direction
-                qs = ManualBlockedRelations.objects.filter(models.Q(user=user, blocked_user=friend) | models.Q(user=friend, blocked_user=user))
+                qs = ManualBlockedRelations.objects.filter(
+                    models.Q(user=user, blocked_user=friend) | models.Q(user=friend, blocked_user=user)
+                )
 
                 if await database_sync_to_async(qs.exists)():
                     relation = await database_sync_to_async(qs.first)()
@@ -728,7 +740,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     )
 
                 # Remove friendship if it exists (both directions)
-                await database_sync_to_async(lambda: ManualFriendsRelations.objects.filter(models.Q(user=author_user, friend=recipient_user) | models.Q(user=recipient_user, friend=author_user)).delete())()
+                await database_sync_to_async(
+                    lambda: ManualFriendsRelations.objects.filter(
+                        models.Q(user=author_user, friend=recipient_user) | models.Q(user=recipient_user, friend=author_user)
+                    ).delete()
+                )()
             except ManualUser.DoesNotExist:
                 await self.channel_layer.group_send(
                     f"user_{author_user.id}",
@@ -805,7 +821,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 user, recipient = author_user, recipient_user
 
             # Check if a private game invite already exists in either direction
-            qs = ManualPrivateGames.objects.filter(models.Q(initiator=user, recipient=recipient) | models.Q(initiator=recipient, recipient=user))
+            qs = ManualPrivateGames.objects.filter(
+                models.Q(initiator=user, recipient=recipient) | models.Q(initiator=recipient, recipient=user)
+            )
 
             if await database_sync_to_async(qs.exists)():
                 relation = await database_sync_to_async(qs.first)()
@@ -863,7 +881,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
             recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 
-            qs = ManualPrivateGames.objects.filter(models.Q(user=author_id, recipient_id=recipient_id) | models.Q(user=recipient_id, recipient_id=author_id))
+            qs = ManualPrivateGames.objects.filter(
+                models.Q(user=author_id, recipient_id=recipient_id) | models.Q(user=recipient_id, recipient_id=author_id)
+            )
 
             if await database_sync_to_async(qs.exists)():
                 relation = await database_sync_to_async(qs.first)()
@@ -907,7 +927,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
             recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
 
-            qs = ManualPrivateGames.objects.filter(models.Q(user=author_id, recipient_id=recipient_id) | models.Q(user=recipient_id, recipient_id=author_id))
+            qs = ManualPrivateGames.objects.filter(
+                models.Q(user=author_id, recipient_id=recipient_id) | models.Q(user=recipient_id, recipient_id=author_id)
+            )
 
             if await database_sync_to_async(qs.exists)():
                 relation = await database_sync_to_async(qs.first)()
