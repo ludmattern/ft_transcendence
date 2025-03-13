@@ -58,14 +58,12 @@ def ai_decision(game, ai_player_id):
 
     return target_y, target_z
 
-
 class Pong3DEnv(gym.Env):
     def __init__(self, frame_skip=1, max_steps=2000):
         super(Pong3DEnv, self).__init__()
         self.frame_skip = frame_skip
         self.max_steps = max_steps
         self.current_steps = 0
-        self.tick_counter = 0 
         self.target_y = 0.0 
         self.target_z = 0.0
         self.action_space = spaces.Box(low=np.array([-1.5, -0.75]), 
@@ -78,32 +76,30 @@ class Pong3DEnv(gym.Env):
             dtype=np.float32
         )
         self.last_obs = None  
-        self.frames_per_decision = 15
+        self.frames_per_decision = frame_skip  # Ici on utilise 60 frames par décision
         self.game = None
         self.out_of_bounds_penalty = 0.0
+        self.script_z = 0.0
+        self.script_y = 0.0
 
     def reset(self, seed=None, options=None):
         """Réinitialise le jeu"""
         self.game = BasePongGame(game_id="ai_vs_script", player1_id="Script", player2_id="AI")
         self.current_steps = 0
-        self.tick_counter = 0 
         self.last_obs = self._get_obs().astype(np.float32)  
         return self.last_obs, {}
 
     def step(self, action):
         self.current_steps += 1
-        self.tick_counter += 1 
         
         if self.current_steps > self.max_steps:
             custom_log(f"🎮 Step {self.current_steps}/{self.max_steps} RESTART - Maximum steps reached")
             return self._get_obs(), 0, True, False, {}
 
-        if self.tick_counter % self.frames_per_decision == 0:
-            self.target_y, self.target_z = action  
-            self.last_obs = self._get_obs().astype(np.float32) 
+        self.target_y, self.target_z = action  
+        self.last_obs = self._get_obs().astype(np.float32)
 
         ai_player = self.game.state["players"][2]
-        
         if self.target_y > ai_player["y"]:
             self.game.move_paddle(2, "up")
         elif self.target_y < ai_player["y"]:
@@ -114,59 +110,79 @@ class Pong3DEnv(gym.Env):
         elif self.target_z < ai_player["z"]:
             self.game.move_paddle(2, "left")
 
-
-        max_y, min_y = 0.585, -0.585
-        max_z, min_z = 0.585, -0.585
+        max_y, min_y = 0.65, -0.65
+        max_z, min_z = 0.65, -0.65
 
         out_of_bounds_penalty = 0.0
         if self.target_y > max_y or self.target_y < min_y:
-            out_of_bounds_penalty -= 1.0
+            out_of_bounds_penalty += 0.5
         if self.target_z > max_z or self.target_z < min_z:
-            out_of_bounds_penalty -= 1.0
+            out_of_bounds_penalty += 0.5
         self.out_of_bounds_penalty = out_of_bounds_penalty
-
         self._opponent_script()  
         self.game.update()  
         
         reward = self._compute_reward()
-        
         done = self.game.game_over
         if done:
-            custom_log(f"🎮 Step {self.current_steps}/{self.max_steps} - Reward: {reward:.2f} RESATRTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+            score_p1 = self.game.state["scores"][1]
+            score_p2 = self.game.state["scores"][2]
 
+            if score_p1 >= self.game.max_score:
+                winner = self.game.player1_id
+            elif score_p2 >= self.game.max_score:
+                winner = self.game.player2_id
+            else:
+                winner = "Aucun"
+
+            custom_log(f"Final Score: {score_p1} - {score_p2}, Winner: {winner}")
+
+        # Retourner toujours la dernière observation mise à jour
         return self.last_obs, reward, done, False, {}
 
-
     def _opponent_script(self):
-        if self.tick_counter % 20 == 0: 
-            target_y, target_z = ai_decision(self.game, "Script")
-            
-            
-            self.game.move_paddle(1, "up" if target_y > self.game.state["players"][1]["y"] else "down")
-            self.game.move_paddle(1, "right" if target_z > self.game.state["players"][1]["z"] else "left")
+        self.script_y, self.script_z = ai_decision(self.game, "Script")
+        self.game.move_paddle(1, "up" if self.script_y > self.game.state["players"][1]["y"] else "down")
+        self.game.move_paddle(1, "right" if self.script_z > self.game.state["players"][1]["z"] else "left")
+
     def _get_obs(self):
         """Renvoie l'état du jeu sous forme de vecteur"""
         ball = self.game.state["ball"]
         p1 = self.game.state["players"][1]
         p2 = self.game.state["players"][2]
-        return np.array([ball["x"], ball["y"], ball["z"], ball["vx"], ball["vy"], ball["vz"], p1["y"], p1["z"], p2["y"], p2["z"]], dtype=np.float32)
+        return np.array([
+            ball["x"], ball["y"], ball["z"], 
+            ball["vx"], ball["vy"], ball["vz"], 
+            p1["y"], p1["z"], 
+            p2["y"], p2["z"]
+        ], dtype=np.float32)
 
     def _compute_reward(self):
         reward = 0.0
-        if self.out_of_bounds_penalty < 0:
-            reward += self.out_of_bounds_penalty
-        if self.game.ball_hit_paddle_p1:
-            reward += 2.0  
-            custom_log("🏓 Reward +1.0: Ball hit paddle")
 
-        if self.game.last_score_update == "AI":  
-           #reward += 3.0 
-            custom_log("🥇 Reward +3.0: AI scored a point {self.game.last_score_update}")
+        ball = self.game.state["ball"]
+        ai_player = self.game.state["players"][2]
 
-        elif self.game.last_score_update == "Script":
-            reward -= 10.0  
-            custom_log("😢 Penalty -3.0: AI lost a point {self.game.last_score_update}")
-       
+        # Vérifier si la balle se déplace vers l'IA
+        ball_coming_toward_ai = ball["vx"] > 0  # Si vx > 0, la balle va vers le joueur 2
+        ball_is_moving = abs(ball["vx"]) > 1e-6  # Empêche de donner des rewards si la balle ne bouge pas
+        reward -= self.out_of_bounds_penalty
+        if ball_coming_toward_ai and ball_is_moving:
+         
+
+            distance_to_ball = ((ai_player["y"] - ball["y"])**2 + (ai_player["z"] - ball["z"])**2) ** 0.5
+
+            if distance_to_ball < 0.2:
+                reward += 2.0  
+            elif distance_to_ball > 0.5:
+                reward -= 3.0  
+            else:
+                reward += 0.5  # 🟡 Récompense intermédiaire
+
+            custom_log(f"🏓 Distance to ball: {distance_to_ball}, Reward: {reward}")
+
         self.out_of_bounds_penalty = 0.0
         self.game.last_score_update = None  
+
         return reward
+
