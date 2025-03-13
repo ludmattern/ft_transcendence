@@ -44,7 +44,6 @@ export async function logoutUser() {
 		await deleteInfo('pending2FA_method');
 		await deleteInfo('registered_user');
 		sessionStorage.clear();
-		sessionStorage.clear();
 
 		const response = await fetch('/api/auth-service/logout/', {
 			method: 'POST',

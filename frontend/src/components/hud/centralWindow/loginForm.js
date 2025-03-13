@@ -35,17 +35,14 @@ export const loginForm = createComponent({
     </div>
   `,
 	attachEvents: (el) => {
-		// Redirection vers l'inscription
 		el.querySelector('#enlist-link').addEventListener('click', (e) => {
 			e.preventDefault();
 			handleRoute('/subscribe');
 		});
-		// Redirection vers "mot de passe oublié"
 		el.querySelector('#forgot-password-link').addEventListener('click', (e) => {
 			e.preventDefault();
 			handleRoute('/forgot-password');
 		});
-		// Login classique
 		el.querySelector('form').addEventListener('submit', async (e) => {
 			e.preventDefault();
 			const pilotId = el.querySelector('#pilot-id').value;
@@ -66,7 +63,6 @@ export const loginForm = createComponent({
 				el.querySelector('#error-message').classList.remove('d-none');
 			}
 		});
-		// Authentification via 42 : ouverture de la popup
 		el.querySelector('#login-42').addEventListener('click', async () => {
 			try {
 				const response = await fetch('/api/auth-service/get-42-url/');
@@ -82,13 +78,9 @@ export const loginForm = createComponent({
 	},
 });
 
-// Listener global pour récupérer le message depuis la popup
 window.addEventListener('message', (event) => {
-	// Ici, vous pouvez vérifier event.origin si nécessaire
 	const data = event.data;
 	if (data.authenticated) {
-		console.log('Utilisateur authentifié via 42, token:', data.token);
-		// Puisque le cookie est défini dans la réponse, vous pouvez rediriger
 		handleRoute('/');
 	}
 });

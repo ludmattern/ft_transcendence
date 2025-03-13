@@ -1,7 +1,10 @@
 import { createComponent } from '/src/utils/component.js';
-import { handleRoute, getPreviousRoute } from '/src/services/router.js';
+import { handleRoute, resetPreviousRoutes } from '/src/services/router.js';
 import { deleteInfo } from '/src/services/infoStorage.js';
 import { closeCentralWindow } from '/src/components/hud/utils/utils.js';
+import { closeWebSocket } from '/src/services/websocket.js';
+import componentManagers from '/src/index.js';
+import { switchwindow } from '/src/3d/animation.js';
 
 export const deleteAccountForm = createComponent({
 	tag: 'deleteAccountForm',
@@ -28,24 +31,46 @@ export const deleteAccountForm = createComponent({
 			}
 			if (e.target.matches('#confirm-delete')) {
 				try {
-					const response = await fetch('/api/user-service/delete/', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						credentials: 'include',
-					});
-					const data = await response.json();
-					if (data.success) {
-						await deleteInfo('username');
-						alert('Your account has been deleted.');
-						handleRoute('/login');
-					} else {
-						alert(`Error: ${data.message}`);
-					}
+					await clearSession();
 				} catch (error) {
-					alert('An unexpected error occurred.');
+					console.error('An unexpected error occurred while deleting your account.');
 				}
 				e.preventDefault();
 			}
 		});
 	},
 });
+
+async function clearSession() {
+	try {
+		await deleteInfo('userId');
+		await deleteInfo('username');
+		await deleteInfo('tournamentMode');
+		await deleteInfo('tournamentSize');
+		await deleteInfo('roomCode');
+		await deleteInfo('activeTournamentTab');
+		await deleteInfo('difficulty');
+		await deleteInfo('liabilityCheckbox');
+		await deleteInfo('pending2FA_user');
+		await deleteInfo('pending2FA_method');
+		await deleteInfo('registered_user');
+		sessionStorage.clear();
+
+		const response = await fetch('/api/user-service/delete/', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			credentials: 'include',
+		});
+		if (response.ok) {
+			await closeWebSocket();
+		} else {
+			console.error('An unexpected error occurred while deleting your account.');
+		}
+	} catch (err) {
+		console.error('Error during clearing session:', err);
+	}
+	resetPreviousRoutes();
+	componentManagers['Pong'].cleanupComponents([]);
+	switchwindow('home');
+	handleRoute('/login');
+}
