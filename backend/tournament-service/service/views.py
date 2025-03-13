@@ -372,11 +372,21 @@ def abandon_local_tournament(request):
         if not tournament:
             return JsonResponse({"error": "Tournament not found or unauthorized"}, status=404)
 
+        participants = ManualTournamentParticipants.objects.filter(tournament=tournament).exclude(user=tournament.organizer)
+
+        participant_users = [p.user for p in participants]
+        participants.delete()
+
+        for user in participant_users:
+            user.delete()
+
+        tournament.delete()
         user.current_tournament_id = 0
         user.save()
-        tournament.delete()
-        logger.info(f"Tournament {tournament_id} abandoned. Organizer {user.id} reset.")
-        return JsonResponse({"success": True, "message": "Tournament abandoned and organizer updated"})
+
+        logger.info(f"Tournament {tournament_id} abandoned. All players removed except organizer {user.id}.")
+        return JsonResponse({"success": True, "message": "Tournament abandoned and players removed except organizer"})
+
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
     except Exception as e:
@@ -423,20 +433,28 @@ def create_local_tournament_view(request):
         logger.info(f"🏆 Tournament créé: ID={tournament.id}, serial_key={serial_key}, organizer_id={user.id}")
 
         for username in players:
-            user_obj, created = ManualUser.objects.get_or_create(
-                username=username,
-                defaults={
-                    "email": encrypt_thing(f"{username.lower()}@local.fake"),
-                    "password": "fakepassword",
-                    "is_dummy": True,
-                },
-            )
+            if username == user.username:
+                user_obj = user
+            else:
+                base_username = username
+                new_username = base_username
+                counter = 1
+
+                while ManualUser.objects.filter(username=new_username).exists():
+                    new_username = f"{base_username}_{counter}"
+                    counter += 1
+
+                user_obj = ManualUser.objects.create(
+                    username=new_username,
+                    email=encrypt_thing(f"{new_username.lower()}@local.fake"),
+                    password="fakepassword",
+                    is_dummy=True, 
+                )
+            
             user_obj.tournament_status = "participating"
             user_obj.current_tournament_id = tournament.id
             user_obj.save()
-
             ManualTournamentParticipants.objects.create(tournament=tournament, user=user_obj, status="accepted")
-            logger.info(f"✅ Participant ajouté: TournamentID={tournament.id}, User={user_obj.username}, status=accepted")
 
         n = len(players)
         size_count = int(math.log2(n))
@@ -482,7 +500,7 @@ def create_local_tournament_view(request):
 
     except Exception as e:
         logger.exception("Error creating local tournament:")
-        # cleanup
+
         tournament = ManualTournament.objects.filter(id=user.current_tournament_id).first()
         if tournament:
             tournament.delete()
