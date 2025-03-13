@@ -97,7 +97,7 @@ def create_matches_for_tournament(tournament_id, usernames):
             match_order=match_order,
             player1=player1,
             player2=player2,
-            status="pending",
+            status="ready",
             match_key=generate_online_match_key(),
         )
 
@@ -386,26 +386,29 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 logger.warning(f"No upcoming tournament found for organizer {user.username}")
                 return
 
-            usernames = await get_accepted_participants(tournament.id)
-            if not usernames:
+            participants_usernames = await get_accepted_participants(tournament.id)
+            if not participants_usernames:
+                logger.warning(f"No participants found with status 'accepted' for tournament {tournament.id}")
+                return
+
+            participant_list = await get_accepted_participants_id(tournament.id)
+            if not participant_list:
                 logger.warning(f"No participants found with status 'accepted' for tournament {tournament.id}")
                 return
 
             await set_tournament_mode(tournament.id, "online")
 
-            updated_tournament = await create_matches_for_tournament(tournament.id, usernames)
+            updated_tournament = await create_matches_for_tournament(tournament.id, participants_usernames)
             logger.info(
-                f"Online tournament bracket created successfully for tournament {updated_tournament.id} with {len(usernames)} participants."
+                f"Online tournament bracket created successfully for tournament {updated_tournament.id} with {len(participants_usernames)} participants."
             )
 
-            await self.channel_layer.group_send(
-                f"user_{user_id}",
-                {
-                    "type": "tournament_message",
-                    "action": "back_create_online_tournament",
-                    "tournament_id": updated_tournament.id,
-                    "bracket_created": True,
-                },
+            await self.send_info(
+                user.id,
+                "back_create_online_tournament",
+                author=user.id,
+                tournament_id=tournament.id,
+                participant_list=participant_list,
             )
 
         except ValueError as ve:
