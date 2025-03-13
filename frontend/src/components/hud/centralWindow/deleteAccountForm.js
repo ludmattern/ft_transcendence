@@ -1,10 +1,11 @@
 import { createComponent } from '/src/utils/component.js';
-import { handleRoute, resetPreviousRoutes } from '/src/services/router.js';
+import { handleRoute, resetPreviousRoutes, getCurrentTournamentInformation } from '/src/services/router.js';
 import { deleteInfo } from '/src/services/infoStorage.js';
 import { closeCentralWindow } from '/src/components/hud/utils/utils.js';
 import { closeWebSocket } from '/src/services/websocket.js';
 import componentManagers from '/src/index.js';
 import { switchwindow } from '/src/3d/animation.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 
 export const deleteAccountForm = createComponent({
 	tag: 'deleteAccountForm',
@@ -43,6 +44,11 @@ export const deleteAccountForm = createComponent({
 
 async function clearSession() {
 	try {
+		const data = await getCurrentTournamentInformation();
+		if (data.tournament !== null) {
+			createNotificationMessage('You must first leave your tournament', 2500, true);
+			return;
+		}
 		await deleteInfo('userId');
 		await deleteInfo('username');
 		await deleteInfo('tournamentMode');
