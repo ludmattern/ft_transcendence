@@ -9,13 +9,6 @@ x-common-networks: &common_networks
   - backend_network
   - frontend_network
 
-x-postgres-env: &postgres_env
-  POSTGRES_DB: ${POSTGRES_DB}
-  POSTGRES_USER: ${POSTGRES_USER}
-  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  DB_HOST: postgres_db
-  DB_PORT: "5432"
-
 x-redis-env: &redis_env
   REDIS_HOST: redis
   REDIS_PORT: "6379"
@@ -107,8 +100,6 @@ services:
       <<: *build_defaults
       dockerfile: backend/auth-service/Dockerfile
     container_name: auth_service
-    environment:
-      <<: *postgres_env
     secrets:
       - fernet_key
       - smtp_host_user
@@ -129,8 +120,6 @@ services:
       <<: *build_defaults
       dockerfile: backend/user-service/Dockerfile
     container_name: user_service
-    environment:
-      <<: *postgres_env
     secrets:
       - fernet_key
       - jwt_secret
@@ -149,7 +138,7 @@ services:
       dockerfile: backend/livechat-service/Dockerfile
     container_name: livechat_service
     environment:
-      <<: [ *postgres_env, *redis_env ]
+      <<: [ *redis_env ]
     ports:
       - "3003:3003"
 
@@ -160,7 +149,7 @@ services:
       dockerfile: backend/pong-service/Dockerfile
     container_name: pong_service
     environment:
-      <<: [ *postgres_env, *redis_env ]
+      <<: [ *redis_env ]
     ports:
       - "3004:3004"
 
@@ -170,8 +159,6 @@ services:
       <<: *build_defaults
       dockerfile: backend/matchmaking-service/Dockerfile
     container_name: matchmaking_service
-    environment:
-      <<: *postgres_env
     ports:
       - "3005:3005"
 
@@ -181,8 +168,6 @@ services:
       <<: *build_defaults
       dockerfile: backend/tournament-service/Dockerfile
     container_name: tournament_service
-    environment:
-      <<: *postgres_env
     secrets:
       - fernet_key
       - jwt_secret

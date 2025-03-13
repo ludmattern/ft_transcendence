@@ -1,5 +1,5 @@
 import { createComponent } from '/src/utils/component.js';
-import { handleRoute, getPreviousRoute } from '/src/services/router.js';
+import { handleRoute } from '/src/services/router.js';
 
 export const lostForm = createComponent({
 	tag: 'lostForm',
@@ -11,17 +11,16 @@ export const lostForm = createComponent({
       <span class="background-central-span">
         <p>It seems you're lost, let me help you</p>
         <div class="d-flex justify-content-center">
-          <button class="btn bi bi-x" id="go-back">Back</button>
+          <button class="btn bi bi-x" id="go-back">Return to home</button>
         </div>
       </span>
     </div>
   `,
 
 	attachEvents: (el) => {
-		// Annuler la déconnexion
 		el.querySelector('#go-back').addEventListener('click', (e) => {
 			e.preventDefault();
-			handleRoute(getPreviousRoute());
+			handleRoute('/');
 		});
 	},
 });
