@@ -251,7 +251,8 @@ def update_info(request):
                 if ManualUser.objects.exclude(id=user.id).filter(email=encrypt_thing(new_email)).exists():
                     return JsonResponse({"success": False, "message": "Email already in use"}, status=409)
                 new_email_error_or_encrypted = validate_email(new_email)
-                if isinstance(new_email_error_or_encrypted, str):
+                if new_email_error_or_encrypted == "Email decryption failed" or  new_email_error_or_encrypted == "Email already in use" or new_email_error_or_encrypted == "Email must be less than 50 characters" or new_email_error_or_encrypted == "Invalid email format":
+                    logging.error("Email error: %s", new_email_error_or_encrypted)
                     return JsonResponse({"success": False, "message": new_email_error_or_encrypted}, status=400)
             user.email = encrypt_thing(new_email)
 
