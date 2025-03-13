@@ -83,6 +83,7 @@ const handleInfoMessage = async (data) => {
 
 const handleTournamentMessage = async (data) => {
 	if (data.action === 'back_create_online_tournament') {
+		await updateAndCompareInfoData();
 		emit('updateBracket');
 	} else if (data.action === 'create_tournament_lobby') {
 		handleRoute('/pong/play/tournament-creation');
