@@ -16,6 +16,7 @@ from django.http import JsonResponse, HttpResponse  # type: ignore
 from django.views.decorators.http import require_POST, require_GET
 from django.views.decorators.csrf import csrf_exempt  # type: ignore
 from django.db.models import Q  # type: ignore
+from django.db.models.functions import Length  # type: ignore
 from django.conf import settings  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
 from .models import ManualUser, GameHistory, ManualBlockedRelations
@@ -401,7 +402,9 @@ def search_pilots(request):
     try:
         user = request.user
         blocked_users = ManualBlockedRelations.objects.filter(blocked_user=user).values_list("user_id", flat=True)
-        pilots = ManualUser.objects.filter(username__icontains=query).exclude(id__in=blocked_users).exclude(id=user.id)
+        pilots = ManualUser.objects.filter(username__icontains=query).exclude(id__in=blocked_users).exclude(id=user.id).annotate(
+            username_length=Length('username')
+        ).order_by('username_length', 'username')
         results = [{"username": pilot.username, "user_id": pilot.id, "is_connected": pilot.is_connected} for pilot in pilots]
         return JsonResponse({"success": True, "pilots": results}, status=200)
 

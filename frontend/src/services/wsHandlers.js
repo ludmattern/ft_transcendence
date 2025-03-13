@@ -50,22 +50,18 @@ const handleMatchFound = (data) => {
 };
 
 const handleInfoMessage = async (data) => {
-
 	if (data.action === 'updatePlayerList') {
 		const tournamentData = await getCurrentTournamentInformation();
 		emit('updatePlayerList', tournamentData);
-		await updateAndCompareInfoData();
 	} else if (data.action === 'tournament_invite' && data.subaction === 'join_tournament') {
 		handleRoute('/pong/play/current-tournament');
 		const tournamentData = await getCurrentTournamentInformation();
 		emit('updatePlayerList', tournamentData);
-		await updateAndCompareInfoData();
 	} else if (data.action === 'refresh_brackets') {
 		emit('updateBracket');
 	} else if (data.action === 'leavingLobby' || (data.info && data.action === 'You have been kicked.')) {
 		emit('leavingLobby');
 	} else if (data.action === 'accept_private_game_invite') {
-		await updateAndCompareInfoData();
 		const config = {
 			gameMode: 'private',
 			action: 'join',
@@ -73,10 +69,11 @@ const handleInfoMessage = async (data) => {
 			type: 'fullScreen',
 		};
 		playGame(config);
-	} else if (data.action == "startTournament") {
+	} else if (data.action == 'startTournament') {
 		handleRoute('/pong/play/current-tournament');
 		emit('updateBracket');
-	} else if (data.action) {
+	}
+	if (data.action) {
 		await updateAndCompareInfoData();
 		emit('updateFriendsList');
 	} else {

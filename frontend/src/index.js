@@ -3,7 +3,7 @@ import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.j
 import ComponentManager from '/src/utils/component.js';
 import { CacheDB } from '/src/utils/IndexedDBCache.js';
 import { onWindowResize } from '/src/3d/main.js';
-import { getCurrentWindow } from '/src/3d/animation.js';
+import { closeCentralWindow } from '/src/components/hud/utils/utils.js';
 
 const componentManagers = {
 	HUD: new ComponentManager('HUD'),
@@ -42,20 +42,7 @@ async function initializeApp() {
     onWindowResize();
 	const blurScreenEffect = document.querySelector('#blur-screen-effect');
 	blurScreenEffect.addEventListener('click', () => {
-		const currentWindow = getCurrentWindow();
-		switch (currentWindow) {
-			case 'home':
-				handleRoute('/');
-				break;
-			case 'pong':
-				handleRoute(getPreviousPongPlaySubRoute());
-				break;
-			case 'race':
-				handleRoute('/race');
-				break;
-			default:
-				handleRoute('/');
-		}
+		closeCentralWindow();
 	});
 }
 

@@ -5,116 +5,112 @@ import { validatePassword } from '/src/components/hud/centralWindow/subscribeFor
 import { checkPasswordConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { checkEmailConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
-import { pushInfo,getInfo } from '/src/services/infoStorage.js';
+import { pushInfo } from '/src/services/infoStorage.js';
 
 export const settingsForm = createComponent({
 	tag: 'settingsForm',
 
 	// Générer le HTML
-	render: () => `
-	<div id="settings-form" class="form-container">
-	<h5>SETTINGS</h5>
-	<span class="background-central-span">
-		<form action="#" method="post" class="w-100">
-		<!-- New Username -->
-		${createFormGroup('new-username', 'username', 'New username')}
-		<!-- Old Password -->
-		${createFormGroup('old-password', 'password', 'Current password')}
-		<!-- New Password -->
-		${createFormGroup('new-password', 'password', 'New Password')}
-		<!-- Confirm New Password -->
-		${createFormGroup('confirm-new-password', 'password', 'Confirm new password')}
-		<!-- New Email -->
-		${createFormGroup('new-email', 'email', 'New Email')}
-		<!-- Confirm New Email -->
-		${createFormGroup('confirm-new-email', 'email', 'Confirm new Email')}
-		<!-- Update Button -->
-		<button class="btn bi bi-arrow-repeat" id="update-button">Update</button>
-		</form>
-		<!-- Delete Account -->
-		<div>
-		<span>
-			<p>
-			Delete Account? 
-			<a href="#" id="delete-account-link" class="text-info">resign</a>
-			</p>
-		</span>
+	render: () =>
+		`
+		<div id="settings-form" class="form-container d-none">
+		  <h5>SETTINGS</h5>
+		  <span class="background-central-span">
+			<form action="#" method="post" class="w-100">
+			  <!-- New Username -->
+			  ${createFormGroup('new-username', 'username', 'New username')}
+			  <!-- Old Password -->
+			  ${createFormGroup('old-password', 'password', 'Current password')}
+			  <!-- New Password -->
+			  ${createFormGroup('new-password', 'password', 'New Password')}
+			  <!-- Confirm New Password -->
+			  ${createFormGroup('confirm-new-password', 'password', 'Confirm new password')}
+			  <!-- New Email -->
+			  ${createFormGroup('new-email', 'email', 'New Email')}
+			  <!-- Confirm New Email -->
+			  ${createFormGroup('confirm-new-email', 'email', 'Confirm new Email')}
+			  <!-- Update Button -->
+			  <button class="btn bi bi-arrow-repeat" id="update-button">Update</button>
+			</form>
+			<!-- Delete Account -->
+			<div>
+			  <span>
+				<p>Delete Account? <a href="" id="delete-account-link" class="text-info">resign</a></p>
+			  </span>
+			</div>
+		  </span>
 		</div>
-	</span>
-	</div>
-`,
+	  `,
 
-attachEvents: async (el) => {
+	attachEvents: async (el) => {
 
-	const oauth_null = await checkOAuthStatus();
-	if (oauth_null === false) {
-		handleRoute('/settings/delete-account');
-	}
+		const oauth_null = await checkOAuthStatus();
+		if (oauth_null === false) {
+			handleRoute('/settings/delete-account');
+			return;
+		}
 
-    el.querySelector('#update-button').addEventListener('click', async (e) => {
-        e.preventDefault();
-        const formData = collectFormData(el);
+		const settingsForm = document.getElementById('settings-form');
+		settingsForm.classList.remove('d-none');
 
-        resetErrorMessages();
+		el.querySelector('form').addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const formData = await collectFormData(el);
+			resetErrorMessages();
 
-        let canUpdate = true;
+			let canUpdate = true;
 
-        if (canUpdate && formData.newEmail) {
-            if (!validateMail(formData.newEmail)) canUpdate = false;
-        }
-        if (canUpdate && formData.newPassword && !validatePassword(formData.newPassword)) {
-            canUpdate = false;
-        }
-        if (canUpdate && formData.newPassword && formData.confirmPassword && 
-            !checkPasswordConfirmation(formData.newPassword, formData.confirmPassword)) {
-            canUpdate = false;
-        }
-        if (canUpdate && formData.newEmail && formData.confirmMail && 
-            !checkEmailConfirmation(formData.newEmail, formData.confirmMail)) {
-            canUpdate = false;
-        }
+			if (canUpdate && formData.newEmail) {
+				if (!validateMail(formData.newEmail)) canUpdate = false;
+			}
+			if (canUpdate && formData.newPassword && !validatePassword(formData.newPassword)) {
+				canUpdate = false;
+			}
+			if (canUpdate && formData.newPassword && formData.confirmPassword && !checkPasswordConfirmation(formData.newPassword, formData.confirmPassword)) {
+				canUpdate = false;
+			}
+			if (canUpdate && formData.newEmail && formData.confirmEmail && !checkEmailConfirmation(formData.newEmail, formData.confirmEmail)) {
+				canUpdate = false;
+			}
 
-        if (canUpdate) {
-            try {
-                const response = await fetch('/api/user-service/update/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData),
-                    credentials: 'include'
-                });
-                const data = await response.json();
+			if (canUpdate) {
+				try {
+					const response = await fetch('/api/user-service/update/', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(formData),
+						credentials: 'include',
+					});
+					const data = await response.json();
+					if (data.success) {
+						if (formData.newUsername) {
+							await pushInfo('registered_user', formData.newUsername);
+							await pushInfo('username', formData.newUsername);
+						}
+						alert('Information updated successfully.');
+						resetErrorMessages();
+						emptyFields();
+					} else {
+						passwordError(data);
+						usernameError(data);
+						emailError(data);
+						emptyFormError(data);
+					}
+				} catch (error) {
+					console.error('Error updating information:', error);
+				}
+			}
+		});
 
-                if (data.success) {
-                    if (formData.newUsername) {
-                        await pushInfo('registered_user', formData.newUsername);
-                        await pushInfo('username', formData.newUsername);
-                    }
-                    alert('Information updated successfully.');
-                    resetErrorMessages();
-                    emptyFields();
-                } else {
-                    passwordError(data);
-                    usernameError(data);
-                    emailError(data);
-                    emptyFormError(data);
-                }
-            } catch (error) {
-                console.error('Error updating information:', error);
-            }
-        }
-    });
-
-    el.querySelector('#delete-account-link').addEventListener('click', (e) => {
-        e.preventDefault();
-        handleRoute('/settings/delete-account');
-    });
-}
+		el.querySelector('#delete-account-link').addEventListener('click', (e) => {
+			e.preventDefault();
+			handleRoute('/settings/delete-account');
+		});
+	},
 });
 
-
 function emptyFormError(data) {
-	if (data.message.includes('No changes to update')) 
-	{
+	if (data.message.includes('No changes to update')) {
 		alert('No changes to update');
 	}
 }
@@ -244,18 +240,17 @@ function resetErrorMessages() {
 	});
 }
 
-
 async function checkOAuthStatus() {
-    try {
-        const response = await fetch("/api/user-service/check_oauth_id/", {
-            method: "GET",
-            credentials: "include",
-        });
+	try {
+		const response = await fetch('/api/user-service/check_oauth_id/', {
+			method: 'GET',
+			credentials: 'include',
+		});
 
-        const data = await response.json();
-        return data.oauth_null;
-    } catch (error) {
-        console.error("Erreur lors de la vérification de OAuth:", error);
-        return null;
-    }
+		const data = await response.json();
+		return data.oauth_null;
+	} catch (error) {
+		console.error('Erreur lors de la vérification de OAuth:', error);
+		return null;
+	}
 }

@@ -5,7 +5,7 @@ import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { handleRoute } from '/src/services/router.js';
 import { getCurrentTournamentInformation } from '/src/services/router.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { pushInfo,getInfo } from '/src/services/infoStorage.js';
 
 export const onlineTournamentCreation = createComponent({
 	tag: 'onlineTournamentCreation',
