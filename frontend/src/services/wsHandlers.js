@@ -73,6 +73,9 @@ const handleInfoMessage = async (data) => {
 			type: 'fullScreen',
 		};
 		playGame(config);
+	} else if (data.action == "startTournament") {
+		handleRoute('/pong/play/current-tournament');
+		emit('updateBracket');
 	} else if (data.action) {
 		await updateAndCompareInfoData();
 		emit('updateFriendsList');
@@ -82,10 +85,7 @@ const handleInfoMessage = async (data) => {
 };
 
 const handleTournamentMessage = async (data) => {
-	if (data.action === 'back_create_online_tournament') {
-		await updateAndCompareInfoData();
-		emit('updateBracket');
-	} else if (data.action === 'create_tournament_lobby') {
+	if (data.action === 'create_tournament_lobby') {
 		handleRoute('/pong/play/tournament-creation');
 		componentManagers['Pong'].replaceComponent('#content-window-container', tournamentCreation);
 		const tournamentData = await getCurrentTournamentInformation();
