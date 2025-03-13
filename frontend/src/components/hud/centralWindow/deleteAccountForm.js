@@ -1,6 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute, getPreviousRoute } from '/src/services/router.js';
-import { deleteInfo} from '/src/services/infoStorage.js';
+import { deleteInfo } from '/src/services/infoStorage.js';
+import { closeCentralWindow } from '/src/components/hud/utils/utils.js';
 
 export const deleteAccountForm = createComponent({
 	tag: 'deleteAccountForm',
@@ -23,7 +24,7 @@ export const deleteAccountForm = createComponent({
 		el.addEventListener('click', async (e) => {
 			if (e.target.matches('#cancel-delete')) {
 				e.preventDefault();
-				handleRoute(getPreviousRoute()); 
+				closeCentralWindow();
 			}
 			if (e.target.matches('#confirm-delete')) {
 				try {

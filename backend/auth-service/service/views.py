@@ -420,36 +420,39 @@ def oauth_callback(request):
     error = request.GET.get("error")
     if error:
         return redirect(f"https://{SERVER_IP}:8443/login")
+
     code = request.GET.get("code")
     if not code:
         return JsonResponse({"success": False, "message": "No code provided"}, status=400)
+
     token_url = "https://api.intra.42.fr/oauth/token"
-    headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    data = {
+    token_data = {
         "grant_type": "authorization_code",
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
         "code": code,
         "redirect_uri": REDIRECT_URI,
     }
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
     try:
-        response = requests.post(token_url, data=urlencode(data), headers=headers)
-        response_data = response.json()
-        if "access_token" not in response_data:
+        token_response = requests.post(token_url, data=urlencode(token_data), headers=headers)
+        token_response_data = token_response.json()
+        if "access_token" not in token_response_data:
             return JsonResponse({"success": False, "message": "Failed to get access token"}, status=400)
-        access_token = response_data["access_token"]
+
+        access_token = token_response_data["access_token"]
+
         user_info_url = "https://api.intra.42.fr/v2/me"
-        headers = {"Authorization": f"Bearer {access_token}"}
-        user_response = requests.get(user_info_url, headers=headers)
+        user_response = requests.get(user_info_url, headers={"Authorization": f"Bearer {access_token}"})
         user_data = user_response.json()
         username = user_data.get("login")
         oauth_id = user_data.get("id")
         if not username or not oauth_id:
             return JsonResponse({"success": False, "message": "Invalid user data from 42"}, status=400)
-        existing_user = ManualUser.objects.filter(oauth_id=oauth_id).first()
-        if existing_user:
-            user = existing_user
-        else:
+
+        user = ManualUser.objects.filter(oauth_id=oauth_id).first()
+        if not user:
             original_username = username
             counter = 1
             while ManualUser.objects.filter(username=username).exists():
@@ -464,17 +467,19 @@ def oauth_callback(request):
                 phone_number=None,
                 is_dummy=False,
             )
+
         token_str, expiry = generate_session_token(user)
         user.token_expiry = expiry
         user.session_token = token_str
         user.status = "online"
         user.save()
-        html = f"""
+
+        html_content = f"""
         <!DOCTYPE html>
         <html>
           <head>
             <meta charset="utf-8">
-            <title>Authentification</title>
+            <title>Authentication</title>
             <script type="text/javascript">
               window.onload = function() {{
                 if (window.opener) {{
@@ -491,13 +496,13 @@ def oauth_callback(request):
           </body>
         </html>
         """
-        response = HttpResponse(html)
+        response = HttpResponse(html_content)
         set_access_token_cookie(response, token_str)
         return response
+
     except Exception:
         logger.exception("OAuth callback error")
         return JsonResponse({"success": False, "message": "Internal Server Error"}, status=500)
-
 
 # --- Vues de réinitialisation du mot de passe ---
 

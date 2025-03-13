@@ -1,3 +1,6 @@
+import { getCurrentWindow } from '/src/3d/animation.js';
+import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.js';
+
 /**
  * Commence une animation sur un élément.
  *
@@ -45,4 +48,21 @@ export function waitForElement(selector, timeout = 5000) {
 			}
 		}, 50); // vérifie toutes les 50ms
 	});
+}
+
+export function closeCentralWindow() {
+	const currentWindow = getCurrentWindow();
+	switch (currentWindow) {
+		case 'home':
+			handleRoute('/');
+			break;
+		case 'pong':
+			handleRoute(getPreviousPongPlaySubRoute());
+			break;
+		case 'race':
+			handleRoute('/race');
+			break;
+		default:
+			handleRoute('/');
+	}
 }
