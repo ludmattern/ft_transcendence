@@ -148,7 +148,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     ai_paddle_num = 2
                     if now - last_ai_time >= 1:
                         last_ai_time = now
-                        obs = [
+                        obs = np.array([
                             game.state.ball.position.x,
                             game.state.ball.position.y,
                             game.state.ball.position.z,
@@ -159,7 +159,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                             game.state.players[1].paddle_position.z,
                             game.state.players[2].paddle_position.y,
                             game.state.players[2].paddle_position.z,
-                        ]
+                        ], dtype=np.float32)
                         target_y, target_z = predict_ai_action(obs)
                     current_y = game.state.players[ai_paddle_num].paddle_position.y
                     current_z = game.state.players[ai_paddle_num].paddle_position.z

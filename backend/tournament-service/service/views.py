@@ -361,14 +361,14 @@ def abandon_local_tournament(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST method required"}, status=405)
     try:
-        user = request.user
+        organizer = request.user
         body = json.loads(request.body.decode("utf-8"))
 
         tournament_id = body.get("tournament_id")
         if not tournament_id:
             return JsonResponse({"error": "tournament_id is required"}, status=400)
 
-        tournament = ManualTournament.objects.filter(id=tournament_id, organizer=user).first()
+        tournament = ManualTournament.objects.filter(id=tournament_id, organizer=organizer).first()
         if not tournament:
             return JsonResponse({"error": "Tournament not found or unauthorized"}, status=404)
 
@@ -381,10 +381,10 @@ def abandon_local_tournament(request):
             user.delete()
 
         tournament.delete()
-        user.current_tournament_id = 0
-        user.save()
+        organizer.current_tournament_id = 0
+        organizer.save()
 
-        logger.info(f"Tournament {tournament_id} abandoned. All players removed except organizer {user.id}.")
+        logger.info(f"Tournament {tournament_id} abandoned. All players removed except organizer {organizer.id}.")
         return JsonResponse({"success": True, "message": "Tournament abandoned and players removed except organizer"})
 
     except json.JSONDecodeError:
