@@ -2,6 +2,7 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { createTournament } from '/src/services/tournamentHandler.js';
 import { getInfo } from '/src/services/infoStorage.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 
 export const localTournamentCreation = createComponent({
 	tag: 'localTournamentCreation',
@@ -92,14 +93,26 @@ export const localTournamentCreation = createComponent({
 		addPlayerButton.addEventListener('click', () => {
 			const name = playerNameInput.value.trim();
 			if (!name) return;
+
+			// Vérification via la fonction externe
+			const validation = 	(name);
+			if (!validation.success) {
+				createNotificationMessage(validation.message, 2500, true);
+				playerNameInput.value = '';
+				return;
+			}
+
 			if (players.includes(name)) {
-				alert('This player is already inside this tournament');
+				createNotificationMessage('This player is already in tournament', 2500, true);
+				playerNameInput.value = '';
 				return;
 			}
 			if (players.length >= tournamentSize) {
-				alert(`You can only add up to ${tournamentSize} players.`);
+				createNotificationMessage(`You can only add up to ${tournamentSize} players.`, 2500, true);
+				playerNameInput.value = '';
 				return;
 			}
+
 			players.push(name);
 			playerNameInput.value = '';
 			updateLocalUI();
@@ -127,3 +140,13 @@ export const localTournamentCreation = createComponent({
 		});
 	},
 });
+
+function validateUsername(name) {
+	if (name.length < 6 || name.length > 20) {
+		return { success: false, message: 'Username must be between 6 and 20 characters.' };
+	}
+	if (!/^[a-zA-Z0-9_]+$/.test(name)) {
+		return { success: false, message: 'Username can only contain letters, numbers, and underscores.' };
+	}
+	return { success: true };
+}
