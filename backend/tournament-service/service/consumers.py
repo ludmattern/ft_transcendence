@@ -213,6 +213,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         initiator = await self.get_user(author_id)
         recipient_user = await self.get_user(recipient_id)
 
+        if(str(recipient_id) == str(author_id) ):
+            logger.warning("You can't invite yourself to a tournamnet.")
+            await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": "You can't invite yourself to a tournamnet."})
+            return
+
         event["author_username"] = await get_username(author_id)
         event["recipient_username"] = await get_username(recipient_id)
         logger.info("Author: %s, Recipient: %s", event["author_username"], event["recipient_username"])
@@ -254,6 +259,9 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         logger.info("Cancel tournament event received: %s", event)
         author_id = event.get("userId")
         initiator = await self.get_user(author_id)
+        if not initiator.current_tournament_id:
+            logger.warning(f"No active tournament found for initiator {initiator.username}")
+            return
 
         tournament = await self.get_initiator_tournament(initiator)
         if not tournament:
