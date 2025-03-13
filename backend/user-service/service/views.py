@@ -152,21 +152,27 @@ def register_user(request):
     phone_number = body.get("phone_number", None)
     try:
         if not username or not email or not password:
+            logging.error("Missing required fields")
             return JsonResponse({"success": False, "message": "Missing required fields"}, status=400)
 
         username_error = validate_username(username)
         if username_error:
+            logging.error("Username error: %s", username_error)
             return JsonResponse({"success": False, "message": username_error}, status=400)
 
         email_error_or_encrypted = validate_email(email)
-        if isinstance(email_error_or_encrypted, str):
+        if email_error_or_encrypted == "Email decryption failed" or  email_error_or_encrypted == "Email already in use" or email_error_or_encrypted == "Email must be less than 50 characters" or email_error_or_encrypted == "Invalid email format":
+            logging.error("Email error: %s", email_error_or_encrypted)
             return JsonResponse({"success": False, "message": email_error_or_encrypted}, status=400)
         encrypted_email = email_error_or_encrypted
+
         if is_2fa_enabled and twofa_method == "sms" and not phone_number:
+            logging.error("Phone number is required for SMS 2FA")
             return JsonResponse({"success": False, "message": "Phone number is required for SMS 2FA"}, status=400)
 
         password_error = validate_password(password)
         if password_error:
+            logging.error("Password error: %s", password_error)
             return JsonResponse({"success": False, "message": password_error}, status=400)
 
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
