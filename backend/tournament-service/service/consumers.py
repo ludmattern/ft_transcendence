@@ -97,7 +97,7 @@ def create_matches_for_tournament(tournament_id, usernames):
             match_order=match_order,
             player1=player1,
             player2=player2,
-            status="pending",
+            status="ready",
             match_key=generate_online_match_key(),
         )
 
