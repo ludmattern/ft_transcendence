@@ -4,7 +4,6 @@ import { loginUser } from '/src/services/auth.js';
 
 export const loginForm = createComponent({
 	tag: 'loginForm',
-
 	render: () => `
     <div id="login-form" class="form-container flex-column justify-content-around text-center active">
       <h5>PILOT IDENTIFICATION - LOG IN</h5>
@@ -19,9 +18,7 @@ export const loginForm = createComponent({
             <input type="password" id="password" name="password" class="form-control" required />
             <div id="error-message-co" class="text-danger mt-2 d-none">User already connected</div>
             <div id="error-message" class="text-danger mt-2 d-none">Invalid credentials</div>
-            <p class="text-end">
-              <a href="#" id="forgot-password-link" class="text-info">Forgot password?</a>
-            </p>
+            <p class="text-end"><a href="#" id="forgot-password-link" class="text-info">Forgot password?</a></p>
           </div>
           <button class="btn bi bi-check">accept</button>
         </form>
@@ -37,27 +34,22 @@ export const loginForm = createComponent({
       </span>
     </div>
   `,
-
 	attachEvents: (el) => {
 		// Redirection vers l'inscription
 		el.querySelector('#enlist-link').addEventListener('click', (e) => {
 			e.preventDefault();
 			handleRoute('/subscribe');
 		});
-
-		// Redirection vers la page "mot de passe oublié"
+		// Redirection vers "mot de passe oublié"
 		el.querySelector('#forgot-password-link').addEventListener('click', (e) => {
 			e.preventDefault();
 			handleRoute('/forgot-password');
 		});
-
-		// Traitement du formulaire de login classique
+		// Login classique
 		el.querySelector('form').addEventListener('submit', async (e) => {
 			e.preventDefault();
-
 			const pilotId = el.querySelector('#pilot-id').value;
 			const password = el.querySelector('#password').value;
-
 			const data = await loginUser(pilotId, password);
 			if (data.twofa_method) {
 				sessionStorage.setItem('pending2FA_user', pilotId);
@@ -66,7 +58,6 @@ export const loginForm = createComponent({
 			} else if (data.success) {
 				handleRoute('/');
 			}
-
 			if (data === 'User is already connected.') {
 				el.querySelector('#error-message-co').classList.remove('d-none');
 				el.querySelector('#error-message').classList.add('d-none');
@@ -75,20 +66,29 @@ export const loginForm = createComponent({
 				el.querySelector('#error-message').classList.remove('d-none');
 			}
 		});
-
-		// Ouverture de la popup pour l'authentification via 42
+		// Authentification via 42 : ouverture de la popup
 		el.querySelector('#login-42').addEventListener('click', async () => {
 			try {
 				const response = await fetch('/api/auth-service/get-42-url/');
 				const data = await response.json();
 				if (data.url) {
 					console.log('Opening 42 login popup');
-					console.log(data.url);
-					window.open(data.url, 'popup', 'width=600,height=600');
+					window.open(data.url, 'oauthPopup', 'width=600,height=600');
 				}
 			} catch (error) {
-				console.error('Erreur lors de l\'appel API :', error);
+				console.error("Erreur lors de l'appel API :", error);
 			}
 		});
 	},
+});
+
+// Listener global pour récupérer le message depuis la popup
+window.addEventListener('message', (event) => {
+	// Ici, vous pouvez vérifier event.origin si nécessaire
+	const data = event.data;
+	if (data.authenticated) {
+		console.log('Utilisateur authentifié via 42, token:', data.token);
+		// Puisque le cookie est défini dans la réponse, vous pouvez rediriger
+		handleRoute('/');
+	}
 });
