@@ -52,13 +52,7 @@ def get_relationship_status(request):
         is_me = str(user.id) == str(other_user_id)
         if is_me:
             return JsonResponse(
-                {
-                    "success": True,
-                    "is_friend": False,
-                    "is_blocked": False,
-                    "is_me": True,
-                    "can_unblock": False,
-                },
+                {"success": True, "is_friend": False, "is_blocked": False, "is_me": True, "can_unblock": False},
                 status=200,
             )
 
@@ -76,13 +70,7 @@ def get_relationship_status(request):
         can_unblock = block_relation_user is not None
 
         return JsonResponse(
-            {
-                "success": True,
-                "is_friend": is_friend,
-                "is_blocked": is_blocked,
-                "is_me": False,
-                "can_unblock": can_unblock,
-            },
+            {"success": True, "is_friend": is_friend, "is_blocked": is_blocked, "is_me": False, "can_unblock": can_unblock},
             status=200,
         )
     except json.JSONDecodeError:
