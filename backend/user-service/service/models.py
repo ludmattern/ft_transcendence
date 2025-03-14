@@ -79,7 +79,6 @@ class ManualBlockedRelations(models.Model):
 
 class ManualTournament(models.Model):
     id = models.AutoField(primary_key=True)
-    serial_key = models.CharField(max_length=255, unique=True)
     size = models.IntegerField(default=0)
     name = models.CharField(max_length=255, default="TOURNAMENT_DEFAULT_NAME")
     organizer = models.ForeignKey(ManualUser, on_delete=models.SET_NULL, null=True, related_name="organized_tournaments")
@@ -141,6 +140,20 @@ class ManualGameHistory(models.Model):
     def __str__(self):
         return f"ManualGameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
 
+
+class ManualGameHistory(models.Model):
+    id = models.AutoField(primary_key=True)
+    winner = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="games_won")
+    loser = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="games_lost")
+    winner_score = models.IntegerField(default=0)
+    loser_score = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = "game_history"
+        managed = True
+
+    def __str__(self):
+        return f"Game {self.id}: {self.winner.username} vs {self.loser.username}"
 
 class TournamentMatch(models.Model):
     id = models.AutoField(primary_key=True)
