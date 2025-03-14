@@ -100,7 +100,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         game = game_manager.get_game(game_id)
         try:
             last_ai_time = time.time()
-            ai_paddle = AIPaddle(2, game)
+            ai_paddle = AIPaddle(2, game, difficulty="easy")
 
             while True:
                 game = game_manager.get_game(game_id)

@@ -474,7 +474,6 @@ def oauth_callback(request):
         user.status = "online"
         user.save()
 
-        # Utilisation du template "authentication.html" avec le contexte
         response = render(request, 'authenticating.html', {'token_str': token_str})
         set_access_token_cookie(response, token_str)
         return response

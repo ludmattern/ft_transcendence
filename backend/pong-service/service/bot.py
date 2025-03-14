@@ -3,14 +3,22 @@ import random
 from .games import BasePongGame
 
 class AIPaddle:
-    def __init__(self, player_num, game):
+    def __init__(self, player_num, game, difficulty):
         self.player_num = player_num
         self.game = game
+        self.difficulty = difficulty
         self.last_observation_time = 0
         self.target_y = 0
         self.target_z = 0
         self.last_move_time = 0
         self.start_time = time.time()
+        if difficulty == "difficult":
+            self.allowed_to_observe = 1.0
+        elif difficulty == "medium":
+            self.allowed_to_observe = 1.5
+        else:
+            self.allowed_to_observe = 2.0
+        
 
     def update(self):
         now = time.time()
@@ -18,7 +26,7 @@ class AIPaddle:
         if now - self.start_time < 3:
             return
 
-        if now - self.last_observation_time >= 1:
+        if now - self.last_observation_time >= self.allowed_to_observe:
             self.observe()
             self.last_observation_time = now
 
@@ -73,7 +81,7 @@ class AIPaddle:
             
             risk_factor = 1 - (opponent_score / max_score)
 
-            max_risk = 0.7 * risk_factor
+            max_risk = 0.99 * risk_factor
             min_risk = 0.2
             angle_factor = random.uniform(min_risk, max_risk)
 
