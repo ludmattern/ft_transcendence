@@ -64,7 +64,7 @@ def get_relationship_status(request):
 
         friend = ManualUser.objects.filter(id=other_user_id).first()
         if not friend:
-            return JsonResponse({"success": False, "error": "User not found"}, status=404)
+            return JsonResponse({"success": False, "error": "User not found"})
 
         is_friend = ManualFriendsRelations.objects.filter(
             Q(user=user, friend=friend, status="accepted") | Q(user=friend, friend=user, status="accepted")

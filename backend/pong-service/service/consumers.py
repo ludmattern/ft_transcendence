@@ -335,7 +335,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             str(game_id).startswith("game_")
             or str(game_id).startswith("tournLocal_")
             or str(game_id).startswith("solo_")
-            or str(game_id).startswith("tournOnline_")
         ):
             from .models import GameHistory
 
