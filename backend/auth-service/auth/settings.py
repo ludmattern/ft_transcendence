@@ -8,6 +8,23 @@ INSTALLED_APPS = COMMON_INSTALLED_APPS + [  # noqa: F405
     "channels",
 ]
 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR, 'templates')], # noqa: F405
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+
 ROOT_URLCONF = "auth.urls"
 
 WSGI_APPLICATION = "auth.wsgi.application"
