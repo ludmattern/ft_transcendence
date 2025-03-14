@@ -49,13 +49,11 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             )
 
         elif action == "move":
-            # On ignore les mouvements si le jeu est terminé
             if game.game_over:
                 logger.info(f"Déplacement ignoré : la partie {game_id} est terminée.")
                 return
 
             direction = event.get("direction")
-            # Cas particulier pour une partie solo ou tournoi local
             if game.player1_id == "Player 1" and game.player2_id == "Player 2" or game.game_id.startswith("tournLocal_"):
                 if game.game_id.startswith("solo_"):
                     game.move_paddle(1, direction)
@@ -95,11 +93,8 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         return user.status
 
     async def game_loop(self, game_id):
-        target_y = 0.0
-        target_z = 0.0
         game = game_manager.get_game(game_id)
         try:
-            last_ai_time = time.time()
             ai_paddle = AIPaddle(2, game)
 
             while True:
@@ -128,7 +123,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 await asyncio.sleep(0.0167)
 
         except asyncio.CancelledError:
-            # Si la tâche est annulée alors que le jeu est terminé, on lance la finalisation
             if game and game.game_over:
                 await self.finalize_game(game_id, game)
             else:
@@ -262,6 +256,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
         if game_id.startswith("tournOnline_"):
             await self.process_tournament(game_id, game, winner_id, loser_id)
+            await self.process_matchmaking(game_id, game, winner_id, loser_id)
         elif str(game_id).startswith("matchmaking_"):
             await self.process_matchmaking(game_id, game, winner_id, loser_id)
 
