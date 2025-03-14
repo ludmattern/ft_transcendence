@@ -45,11 +45,11 @@ export const GiveUpButtons = createComponent({
 		const eventHandlers = {
 			local: {
 				'btn-giveup-player-left': () => {
-					const payload = { type: 'game_event', action: 'game_giveup' };
+					const payload = { type: 'game_event', action: 'game_giveup', local_leave: 1 };
 					ws.send(JSON.stringify(payload));
 				},
 				'btn-giveup-player-right': () => {
-					const payload = { type: 'game_event', action: 'game_giveup' };
+					const payload = { type: 'game_event', action: 'game_giveup', local_leave: 2};
 					ws.send(JSON.stringify(payload));
 				},
 			},
@@ -166,7 +166,7 @@ export function showCountdown() {
 
 	let count = 3;
 	countdownEl.textContent = count;
-
+	countdownEl.style.display = 'block';
 	const intervalId = setInterval(() => {
 		count--;
 		if (count > 0) {
