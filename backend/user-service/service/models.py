@@ -11,7 +11,6 @@ class ManualUser(models.Model):
     is_2fa_enabled = models.BooleanField(default=False)
     twofa_method = models.CharField(max_length=50, null=True, blank=True)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
-    temp_2fa_code = models.CharField(max_length=10, null=True, blank=True)
     is_dummy = models.BooleanField(default=False)
     current_tournament_id = models.IntegerField(default=0)
     is_connected = models.BooleanField(default=False)
@@ -38,7 +37,6 @@ class ManualUser(models.Model):
 
 
 
-
 class ManualFriendsRelations(models.Model):
     id = models.AutoField(primary_key=True)  # Added primary key for Django ORM
     user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friends_initiated")
@@ -57,7 +55,7 @@ class ManualFriendsRelations(models.Model):
 
     class Meta:
         db_table = "friends"
-        managed = True
+        managed = False
         constraints = [models.UniqueConstraint(fields=["user", "friend"], name="unique_friendship")]
 
     def __str__(self):
@@ -72,7 +70,7 @@ class ManualBlockedRelations(models.Model):
 
     class Meta:
         db_table = "blocks"
-        managed = True
+        managed = False
         constraints = [models.UniqueConstraint(fields=["user", "blocked_user"], name="unique_block")]
 
     def __str__(self):
@@ -99,7 +97,7 @@ class ManualTournament(models.Model):
 
     class Meta:
         db_table = "tournaments"
-        managed = True
+        managed = False
 
     def __str__(self):
         return self.name
@@ -115,8 +113,6 @@ class ManualTournamentParticipants(models.Model):
             ("pending", "Pending"),
             ("accepted", "Accepted"),
             ("rejected", "Rejected"),
-            ("still flying", "Still Flying"),
-            ("eliminated", "Eliminated"),
         ],
         default="pending",
     )
@@ -124,14 +120,14 @@ class ManualTournamentParticipants(models.Model):
 
     class Meta:
         db_table = "tournament_participants"
-        managed = True
+        managed = False
         constraints = [models.UniqueConstraint(fields=["tournament", "user"], name="unique_tournament_participant")]
 
     def __str__(self):
         return f"{self.user.username} in {self.tournament.name} ({self.status})"
 
 
-class GameHistory(models.Model):
+class ManualGameHistory(models.Model):
     id = models.AutoField(primary_key=True)
     winner_id = models.IntegerField(default=0)
     loser_id = models.IntegerField(default=0)
@@ -143,7 +139,7 @@ class GameHistory(models.Model):
         db_table = "game_history"
 
     def __str__(self):
-        return f"GameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
+        return f"ManualGameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
 
 
 class ManualGameHistory(models.Model):
@@ -188,7 +184,6 @@ class ManualPrivateGames(models.Model):
             ("pending", "Pending"),
             ("accepted", "Accepted"),
             ("rejected", "Rejected"),
-            ("expired", "Expired"),
         ],
         default="pending",
     )
@@ -196,7 +191,7 @@ class ManualPrivateGames(models.Model):
 
     class Meta:
         db_table = "private_games"
-        managed = True
+        managed = False
         constraints = [models.UniqueConstraint(fields=["user", "recipient"], name="unique_private_game")]
 
     def __str__(self):

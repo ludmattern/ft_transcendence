@@ -6,14 +6,17 @@ import jwt
 import pyotp  # type: ignore
 from functools import wraps
 
-from cryptography.fernet import Fernet
+# Need to get rid of this
+from django.views.decorators.csrf import csrf_exempt  # type: ignore
 
+from cryptography.fernet import Fernet
+from django.views.decorators.http import require_POST, require_GET
 from django.http import JsonResponse, HttpResponse  # type: ignore
 from django.conf import settings  # type: ignore
 from django.core.mail import send_mail  # type: ignore
-from django.views.decorators.csrf import csrf_exempt  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
 from django.shortcuts import redirect, render # type: ignore
+
 
 import requests
 from urllib.parse import urlencode
@@ -21,6 +24,9 @@ from urllib.parse import urlencode
 from twilio.rest import Client  # type: ignore
 
 from service.models import ManualUser
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 import logging
 
@@ -79,6 +85,7 @@ def set_access_token_cookie(response, token_str):
 # --- Vues d'authentification ---
 
 
+@require_GET
 def check_auth_view(request):
     token = request.COOKIES.get("access_token")
     if not token:
@@ -175,12 +182,6 @@ def jwt_required(view_func):
     return wrapper
 
 
-@jwt_required
-def protected_view(request):
-    user = request.user
-    return JsonResponse({"success": True, "message": f"Hello, {user.username}. You are authenticated!"})
-
-
 # --- Fonctions 2FA ---
 
 
@@ -210,15 +211,9 @@ def send_2fa_sms(phone_number, code):
 
 # --- Vues de connexion/déconnexion ---
 
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
 
-
-@csrf_exempt
+@require_POST
 def login_view(request):
-    if request.method != "POST":
-        return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)
-
     body = json.loads(request.body.decode("utf-8"))
     username = body.get("username")
     password = body.get("password")
@@ -481,6 +476,7 @@ def oauth_callback(request):
     except Exception:
         logger.exception("OAuth callback error")
         return JsonResponse({"success": False, "message": "Internal Server Error"}, status=500)
+
 
 # --- Vues de réinitialisation du mot de passe ---
 

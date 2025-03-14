@@ -86,6 +86,10 @@ async function handleInviteAction(author) {
 
 async function handleProfileAction(author) {
 	const username = await getUsername(author);
+	if (!username) {
+		createNotificationMessage('this user left the Space Force', 2500, true);
+		return;
+	}
 	handleRoute(`/social/pilot=${username}`);
 }
 

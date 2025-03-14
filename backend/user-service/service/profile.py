@@ -1,7 +1,6 @@
 import json
 from django.http import JsonResponse  # type: ignore
-from .models import ManualUser
-from .models import ManualGameHistory
+from .models import ManualUser, ManualGameHistory
 
 
 def profile_info(request):

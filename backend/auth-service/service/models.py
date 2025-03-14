@@ -20,11 +20,6 @@ class ManualUser(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     session_token = models.CharField(max_length=255, null=True, default=None)
     is_dummy = models.BooleanField(default=False)
-    profile_picture = models.ImageField(
-        upload_to="profile_pics/",
-        default="profile_pics/default-profile-150.png",
-        validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png"])],
-    )
     oauth_id = models.CharField(max_length=255, null=True, blank=True, unique=True)
 
     class Meta:

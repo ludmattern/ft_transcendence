@@ -2,7 +2,7 @@ from django.db import models  # type: ignore
 import pyotp  # type: ignore
 
 
-class GameHistory(models.Model):
+class ManualGameHistory(models.Model):
     id = models.AutoField(primary_key=True)
     winner_id = models.IntegerField(default=0)
     loser_id = models.IntegerField(default=0)
@@ -15,7 +15,7 @@ class GameHistory(models.Model):
 
     def __str__(self):
         return (
-            f"GameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
+            f"ManualGameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
         )
 
 
