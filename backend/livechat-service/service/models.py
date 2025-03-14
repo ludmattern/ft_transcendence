@@ -1,5 +1,5 @@
-from django.db import models  # type: ignore
-from django.core.validators import FileExtensionValidator  # type: ignore
+from django.db import models # type: ignore
+from django.core.validators import FileExtensionValidator # type: ignore
 
 
 class ManualUser(models.Model):
@@ -12,15 +12,6 @@ class ManualUser(models.Model):
             FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "webp"])
         ],
     )
-    tournament_status = models.CharField(
-        max_length=20,
-        choices=[
-            ("out", "Out"),
-            ("lobby", "Lobby"),
-            ("participating", "Participating"),
-        ],
-        default="out",
-    )
 
     class Meta:
         db_table = "users"
@@ -28,26 +19,6 @@ class ManualUser(models.Model):
 
     def __str__(self):
         return self.username
-
-
-class ManualGameHistory(models.Model):
-    id = models.AutoField(primary_key=True)
-    winner = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="games_won"
-    )
-    loser = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="games_lost"
-    )
-    winner_score = models.IntegerField(default=0)
-    loser_score = models.IntegerField(default=0)
-
-    class Meta:
-        db_table = "game_history"
-        managed = True
-
-    def __str__(self):
-        return f"Game {self.id}: {self.winner.username} vs {self.loser.username}"
-
 
 class ManualFriendsRelations(models.Model):
     id = models.AutoField(primary_key=True)
@@ -83,7 +54,7 @@ class ManualFriendsRelations(models.Model):
 
 
 class ManualBlockedRelations(models.Model):
-    id = models.AutoField(primary_key=True)  # Added primary key
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
         ManualUser, on_delete=models.CASCADE, related_name="blocked_users"
     )
@@ -108,8 +79,6 @@ class ManualBlockedRelations(models.Model):
 
 class ManualTournament(models.Model):
     id = models.AutoField(primary_key=True)
-    serial_key = models.CharField(max_length=255, unique=True)
-    size = models.IntegerField(default=0)
     name = models.CharField(max_length=255, default="TOURNAMENT_DEFAULT_NAME")
     organizer = models.ForeignKey(ManualUser, on_delete=models.SET_NULL, null=True, related_name="organized_tournaments")
     status = models.CharField(
@@ -146,8 +115,6 @@ class ManualTournamentParticipants(models.Model):
             ("pending", "Pending"),
             ("accepted", "Accepted"),
             ("rejected", "Rejected"),
-            ("still flying", "Still Flying"),
-            ("eliminated", "Eliminated"),
         ],
         default="pending",
     )
@@ -177,7 +144,6 @@ class ManualPrivateGames(models.Model):
             ("pending", "Pending"),
             ("accepted", "Accepted"),
             ("rejected", "Rejected"),
-            ("expired", "Expired"),
         ],
         default="pending",
     )

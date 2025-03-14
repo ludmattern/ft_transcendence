@@ -660,121 +660,135 @@ class ChatConsumer(AsyncWebsocketConsumer):
             except ManualUser.DoesNotExist:
                 await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "User not found."})
 
-        elif str(action) == "private_game_invite":
-            logger.info(f"Private game invite received: {event}")
-            recipient_id = event.get("recipient")
-            author_id = event.get("author")
-
-            if str(recipient_id) == str(author_id):
-                await self.channel_layer.group_send(
-                    f"user_{author_id}", {"type": "error_message", "error": "Cannot send private game invite to yourself"}
-                )
-                return
-
-            if await is_blocked(author_id, recipient_id):
-                await self.channel_layer.group_send(
-                    f"user_{author_id}", {"type": "error_message", "error": "You cannot send a private game invite to this user"}
-                )
-                return
-
-            try:
-                author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
-            except ManualUser.DoesNotExist:
-                await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "Author not found."})
-                return
-
-            try:
-                recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
-            except ManualUser.DoesNotExist:
-                await self.channel_layer.group_send(
-                    f"user_{author_id}", {"type": "error_message", "error": "Recipient not found."}
-                )
-                return
-
-            sorted_users = sorted([author_user, recipient_user], key=lambda u: u.id)
-            user, recipient = sorted_users[0], sorted_users[1]
-
-            qs = ManualPrivateGames.objects.filter(user=user, recipient=recipient)
-            if await database_sync_to_async(qs.exists)():
-                relation = await database_sync_to_async(qs.first)()
-                existing_initiator = relation.initiator_id
-
-                if str(existing_initiator) != str(author_id):
-                    await self.channel_layer.group_send(
-                        f"user_{author_id}",
-                        {"type": "error_message", "error": f"Game invite already received from {recipient_user.username}"},
-                    )
-                else:
-                    await self.channel_layer.group_send(
-                        f"user_{author_id}",
-                        {"type": "error_message", "error": f"Game invite already sent to {recipient_user.username}"},
-                    )
-                return
-
-            await database_sync_to_async(ManualPrivateGames.objects.create)(
-                initiator=author_user, user=user, recipient=recipient, status="pending"
-            )
-
-            await self.channel_layer.group_send(f"user_{recipient_id}", event)
-            await self.channel_layer.group_send(
-                f"user_{author_id}", {"type": "info_message", "info": f"Game invite sent to {recipient_user.username}"}
-            )
-            await self.channel_layer.group_send(
-                f"user_{recipient_id}",
-                {"type": "info_message", "info": f"Game invite received from {author_user.username}"},
-            )
-            logger.info(f"Private game invite sent to user_{recipient_id}")
+        # Gestionnaire principal d'actions
+        if str(action) == "private_game_invite":
+            await private_game_invite(self, event)
 
         elif str(action) in ["accept_private_game_invite", "refuse_private_game_invite"]:
-            logger.info(f"{action.capitalize()} private game invite: {event}")
-            recipient_id = event.get("recipient")
-            author_id = event.get("author")
-
-            try:
-                author_user = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
-            except ManualUser.DoesNotExist:
-                await self.channel_layer.group_send(
-                    f"user_{author_id}", {"type": "error_message", "error": "Author not found. Invitation cancelled."}
-                )
-                return
-
-            try:
-                recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
-            except ManualUser.DoesNotExist:
-                await self.channel_layer.group_send(
-                    f"user_{author_id}", {"type": "error_message", "error": "Recipient not found. Invitation cancelled."}
-                )
-                return
-
-            invite = await database_sync_to_async(
-                ManualPrivateGames.objects.filter(
-                    models.Q(user=author_id, recipient_id=recipient_id) | models.Q(user=recipient_id, recipient_id=author_id)
-                ).first
-            )()
-
-            if not invite:
-                await self.channel_layer.group_send(
-                    f"user_{author_id}", {"type": "error_message", "error": "No pending game invite found."}
-                )
-                return
-
-            if invite.status == "pending":
-                await database_sync_to_async(invite.delete)()
-
-            if str(action) == "accept_private_game_invite":
-                message_author = f"Game invite from {recipient_user.username} accepted"
-                message_recipient = f"Game invite accepted by {author_user.username}"
-            else:  # refuse_private_game_invite
-                message_author = f"Game invite from {recipient_user.username} rejected"
-                message_recipient = f"Game invite rejected by {author_user.username}"
-
-            await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": message_author})
-            await self.channel_layer.group_send(f"user_{author_id}", event)
-
-            await self.channel_layer.group_send(f"user_{recipient_id}", {"type": "info_message", "info": message_recipient})
-            await self.channel_layer.group_send(
-                f"user_{recipient_id}", {"type": "info_message", "action": "updateAndCompareInfoData"}
-            )
+            await private_game_invite_action(self, event, action)
 
         else:
             logger.warning(f"Unknown action: {action}")
+
+
+async def private_game_invite(self, event):
+    logger.info(f"Private game invite received: {event}")
+    inviter_id = event.get("author")
+    invitee_id = event.get("recipient")
+
+    # Empêcher l'auto-invitation
+    if str(inviter_id) == str(invitee_id):
+        await self.channel_layer.group_send(
+            f"user_{inviter_id}", {"type": "error_message", "error": "Cannot send private game invite to yourself"}
+        )
+        return
+
+    # Vérifier si l'un des utilisateurs est bloqué
+    if await is_blocked(inviter_id, invitee_id):
+        await self.channel_layer.group_send(
+            f"user_{inviter_id}", {"type": "error_message", "error": "You cannot send a private game invite to this user"}
+        )
+        return
+
+    # Récupérer les objets utilisateurs
+    try:
+        inviter = await database_sync_to_async(ManualUser.objects.get)(id=inviter_id)
+    except ManualUser.DoesNotExist:
+        await self.channel_layer.group_send(f"user_{inviter_id}", {"type": "error_message", "error": "Inviter not found."})
+        return
+
+    try:
+        invitee = await database_sync_to_async(ManualUser.objects.get)(id=invitee_id)
+    except ManualUser.DoesNotExist:
+        await self.channel_layer.group_send(f"user_{inviter_id}", {"type": "error_message", "error": "Invitee not found."})
+        return
+
+    # Normalisation de l'ordre pour l'unicité :
+    # l'utilisateur avec le plus petit id sera stocké dans le champ "user" et l'autre dans "recipient"
+    sorted_users = sorted([inviter, invitee], key=lambda u: u.id)
+    user, recipient = sorted_users[0], sorted_users[1]
+
+    qs = ManualPrivateGames.objects.filter(user=user, recipient=recipient)
+    if await database_sync_to_async(qs.exists)():
+        existing_relation = await database_sync_to_async(qs.first)()
+        # On détermine l'autre utilisateur par rapport à l'inviteur
+        if inviter.id == user.id:
+            other_user = recipient
+        else:
+            other_user = user
+
+        if str(existing_relation.initiator_id) != str(inviter_id):
+            await self.channel_layer.group_send(
+                f"user_{inviter_id}",
+                {"type": "error_message", "error": f"Game invite already received from {other_user.username}"},
+            )
+        else:
+            await self.channel_layer.group_send(
+                f"user_{inviter_id}", {"type": "error_message", "error": f"Game invite already sent to {other_user.username}"}
+            )
+        return
+
+    # Créer la nouvelle invitation en conservant l'information sur l'initiateur
+    await database_sync_to_async(ManualPrivateGames.objects.create)(
+        initiator=inviter, user=user, recipient=recipient, status="pending"
+    )
+
+    # Notifier l'invitee et l'inviteur
+    await self.channel_layer.group_send(f"user_{invitee_id}", event)
+    await self.channel_layer.group_send(
+        f"user_{inviter_id}", {"type": "info_message", "info": f"Game invite sent to {invitee.username}"}
+    )
+    await self.channel_layer.group_send(
+        f"user_{invitee_id}", {"type": "info_message", "info": f"Game invite received from {inviter.username}"}
+    )
+    logger.info(f"Private game invite sent to user_{invitee_id}")
+
+
+async def private_game_invite_action(self, event, action):
+    logger.info(f"{action.capitalize()} private game invite: {event}")
+    # Dans ce contexte :
+    # - actor_id correspond à l'utilisateur qui clique sur "accepter" ou "refuser"
+    # - inviter_id correspond à l'utilisateur qui a envoyé l'invitation initiale
+    actor_id = event.get("author")
+    inviter_id = event.get("recipient")
+    user_action = str(action)
+
+    try:
+        actor_user = await database_sync_to_async(ManualUser.objects.get)(id=actor_id)
+    except ManualUser.DoesNotExist:
+        await self.channel_layer.group_send(
+            f"user_{actor_id}", {"type": "error_message", "error": "Your user record was not found. Invitation cancelled."}
+        )
+        return
+
+    try:
+        inviter_user = await database_sync_to_async(ManualUser.objects.get)(id=inviter_id)
+    except ManualUser.DoesNotExist:
+        await self.channel_layer.group_send(
+            f"user_{actor_id}", {"type": "error_message", "error": "Inviter not found. Invitation cancelled."}
+        )
+        return
+
+    sorted_users = sorted([actor_user, inviter_user], key=lambda u: u.id)
+    user, recipient = sorted_users[0], sorted_users[1]
+    invite = await database_sync_to_async(ManualPrivateGames.objects.filter(user=user, recipient=recipient).first)()
+    if not invite:
+        await self.channel_layer.group_send(
+            f"user_{actor_id}", {"type": "error_message", "error": "No pending game invite found."}
+        )
+        return
+
+    if invite.status == "pending":
+        await database_sync_to_async(invite.delete)()
+
+    if user_action == "accept_private_game_invite":
+        message_inviter = f"Your game invite has been accepted by {actor_user.username}"
+        message_actor = f"You accepted the game invite from {inviter_user.username}"
+    else:  # refuse_private_game_invite
+        message_inviter = f"Your game invite has been rejected by {actor_user.username}"
+        message_actor = f"You rejected the game invite from {inviter_user.username}"
+
+    await self.channel_layer.group_send(f"user_{inviter_id}", {"type": "info_message", "info": message_inviter})
+    await self.channel_layer.group_send(f"user_{actor_id}", {"type": "info_message", "info": message_actor})
+    await self.channel_layer.group_send(f"user_{actor_id}", event)
+    await self.channel_layer.group_send(f"user_{actor_id}", {"type": "info_message", "action": "updateAndCompareInfoData"})

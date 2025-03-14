@@ -1,7 +1,5 @@
 from django.db import models  # type: ignore
 import pyotp  # type: ignore
-from django.core.validators import FileExtensionValidator  # type: ignore
-
 
 class ManualUser(models.Model):
     id = models.AutoField(primary_key=True)

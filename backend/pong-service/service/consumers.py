@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import time
 
 from channels.generic.websocket import AsyncWebsocketConsumer  # type: ignore
 from asgiref.sync import sync_to_async  # type: ignore
@@ -98,10 +97,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     self.running_games[game_id]["task"].cancel()
                     del self.running_games[game_id]
                     game_manager.cleanup_game(game_id)
-
-    async def get_user_status(self, player_id):
-        user = await sync_to_async(ManualUser.objects.get)(id=player_id)
-        return user.status
 
     async def game_loop(self, game_id):
         game = game_manager.get_game(game_id)
