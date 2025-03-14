@@ -2,6 +2,8 @@ import { createComponent } from '/src/utils/component.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { showContextMenu } from '/src/components/hud/sideWindow/left/contextMenu.js';
 import { handleFriendAction } from '/src/components/hud/sideWindow/left/contextMenu.js';
+import { getCurrentWindow } from '/src/3d/animation.js';
+
 import { ws } from '/src/services/websocket.js';
 
 export const infoPanelItem = createComponent({
@@ -89,7 +91,13 @@ function behaviorTournament(el, item) {
 
 	if (acceptButton) {
 		acceptButton.addEventListener('click', () => {
-			handleTournamentAction(true, item);
+			const currentWindow = getCurrentWindow();
+			if (currentWindow === 'game') {
+				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+				return;
+			} else {
+				handleTournamentAction(true, item);
+			}
 		});
 	}
 	if (refuseButton) {
@@ -102,9 +110,9 @@ function behaviorTournament(el, item) {
 export async function handleTournamentAction(action, item) {
 	if (action) {
 		try {
-			let url = "/api/tournament-service/getCurrentTournamentInformation/";
+			let url = '/api/tournament-service/getCurrentTournamentInformation/';
 
-			let response = await fetch(url, { credentials: "include" });
+			let response = await fetch(url, { credentials: 'include' });
 			if (!response.ok) {
 				throw new Error(`Erreur HTTP lors de la vérification du lobby (code ${response.status})`);
 			}
@@ -130,29 +138,33 @@ export async function handleTournamentAction(action, item) {
 }
 
 function behaviorPrivateGame(el, item) {
-	const acceptButton = el.querySelector("#accept-action");
-	const refuseButton = el.querySelector("#refuse-action");
+	const acceptButton = el.querySelector('#accept-action');
+	const refuseButton = el.querySelector('#refuse-action');
 	if (acceptButton) {
-	  acceptButton.addEventListener("click", () => {
-		const payload = {	
-			type: 'info_message',
-			action: 'accept_private_game_invite',
-			recipient: item.inviter_id,
-			timestamp: new Date().toISOString(),
-		};
-	    ws.send(JSON.stringify(payload));
-	  });
-	  
+		acceptButton.addEventListener('click', () => {
+			const currentWindow = getCurrentWindow();
+			if (currentWindow === 'game') {
+				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+			} else {
+				const payload = {
+					type: 'info_message',
+					action: 'accept_private_game_invite',
+					recipient: item.inviter_id,
+					timestamp: new Date().toISOString(),
+				};
+				ws.send(JSON.stringify(payload));
+			}
+		});
 	}
 	if (refuseButton) {
-	  refuseButton.addEventListener("click", () => {
-		const payload = {	
-			type: 'info_message',
-			action: 'refuse_private_game_invite',
-			recipient: item.inviter_id,
-			timestamp: new Date().toISOString(),
-		};
-		ws.send(JSON.stringify(payload));
-	  });
+		refuseButton.addEventListener('click', () => {
+			const payload = {
+				type: 'info_message',
+				action: 'refuse_private_game_invite',
+				recipient: item.inviter_id,
+				timestamp: new Date().toISOString(),
+			};
+			ws.send(JSON.stringify(payload));
+		});
 	}
 }

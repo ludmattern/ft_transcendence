@@ -6,6 +6,7 @@ import { handleRoute } from '/src/services/router.js';
 import { getUsername } from '/src/pongGame/gameManager.js';
 import { playGame } from '/src/components/pong/play/utils.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
+import { getCurrentWindow } from '/src/3d/animation.js';
 
 function sendWsInfoMessage(action, recipient) {
 	const payload = {
@@ -74,6 +75,11 @@ async function handleBlockAction(author, is_blocked) {
 }
 
 async function handleInviteAction(author) {
+	const currentWindow = getCurrentWindow();
+	if (currentWindow === 'game') {
+		createNotificationMessage('stay focus on the game pilot !', 2500, true);
+		return;
+	}
 	sendWsInfoMessage('private_game_invite', author);
 	const config = {
 		gameMode: 'private',
@@ -85,6 +91,11 @@ async function handleInviteAction(author) {
 }
 
 async function handleProfileAction(author) {
+	const currentWindow = getCurrentWindow();
+	if (currentWindow === 'game') {
+		createNotificationMessage('stay focus on the game pilot !', 2500, true);
+		return;
+	}
 	const username = await getUsername(author);
 	if (!username) {
 		createNotificationMessage('this user left the Space Force', 2500, true);
@@ -120,17 +131,9 @@ async function handleMessageAction(username) {
 	}
 }
 
-import { getCurrentWindow } from '/src/3d/animation.js';
-
 export async function showContextMenu(item, event) {
 	event.preventDefault();
 	event.stopPropagation();
-
-	const currentWindow = getCurrentWindow();
-	if (currentWindow === 'game') {
-		createNotificationMessage('stay focus on the game pilot !', 2500, true);
-		return;
-	}
 
 	hideContextMenu();
 

@@ -679,14 +679,16 @@ async def private_game_invite(self, event):
     # Empêcher l'auto-invitation
     if str(inviter_id) == str(invitee_id):
         await self.channel_layer.group_send(
-            f"user_{inviter_id}", {"type": "error_message", "error": "Cannot send private game invite to yourself"}
+            f"user_{inviter_id}",
+            {"type": "error_message", "error": "Cannot send private game invite to yourself"}
         )
         return
 
     # Vérifier si l'un des utilisateurs est bloqué
     if await is_blocked(inviter_id, invitee_id):
         await self.channel_layer.group_send(
-            f"user_{inviter_id}", {"type": "error_message", "error": "You cannot send a private game invite to this user"}
+            f"user_{inviter_id}",
+            {"type": "error_message", "error": "You cannot send a private game invite to this user"}
         )
         return
 
@@ -694,16 +696,20 @@ async def private_game_invite(self, event):
     try:
         inviter = await database_sync_to_async(ManualUser.objects.get)(id=inviter_id)
     except ManualUser.DoesNotExist:
-        await self.channel_layer.group_send(f"user_{inviter_id}", {"type": "error_message", "error": "Inviter not found."})
+        await self.channel_layer.group_send(
+            f"user_{inviter_id}", {"type": "error_message", "error": "Inviter not found."}
+        )
         return
 
     try:
         invitee = await database_sync_to_async(ManualUser.objects.get)(id=invitee_id)
     except ManualUser.DoesNotExist:
-        await self.channel_layer.group_send(f"user_{inviter_id}", {"type": "error_message", "error": "Invitee not found."})
+        await self.channel_layer.group_send(
+            f"user_{inviter_id}", {"type": "error_message", "error": "Invitee not found."}
+        )
         return
 
-    # Normalisation de l'ordre pour l'unicité :
+    # Normalisation de l'ordre pour l'unicité : 
     # l'utilisateur avec le plus petit id sera stocké dans le champ "user" et l'autre dans "recipient"
     sorted_users = sorted([inviter, invitee], key=lambda u: u.id)
     user, recipient = sorted_users[0], sorted_users[1]
@@ -720,11 +726,12 @@ async def private_game_invite(self, event):
         if str(existing_relation.initiator_id) != str(inviter_id):
             await self.channel_layer.group_send(
                 f"user_{inviter_id}",
-                {"type": "error_message", "error": f"Game invite already received from {other_user.username}"},
+                {"type": "error_message", "error": f"Game invite already received from {other_user.username}"}
             )
         else:
             await self.channel_layer.group_send(
-                f"user_{inviter_id}", {"type": "error_message", "error": f"Game invite already sent to {other_user.username}"}
+                f"user_{inviter_id}",
+                {"type": "error_message", "error": f"Game invite already sent to {other_user.username}"}
             )
         return
 
@@ -736,12 +743,15 @@ async def private_game_invite(self, event):
     # Notifier l'invitee et l'inviteur
     await self.channel_layer.group_send(f"user_{invitee_id}", event)
     await self.channel_layer.group_send(
-        f"user_{inviter_id}", {"type": "info_message", "info": f"Game invite sent to {invitee.username}"}
+        f"user_{inviter_id}",
+        {"type": "info_message", "info": f"Game invite sent to {invitee.username}"}
     )
     await self.channel_layer.group_send(
-        f"user_{invitee_id}", {"type": "info_message", "info": f"Game invite received from {inviter.username}"}
+        f"user_{invitee_id}",
+        {"type": "info_message", "info": f"Game invite received from {inviter.username}"}
     )
     logger.info(f"Private game invite sent to user_{invitee_id}")
+
 
 
 async def private_game_invite_action(self, event, action):
