@@ -41,9 +41,7 @@ class ManualTournament(models.Model):
     serial_key = models.CharField(max_length=255, unique=True)
     size = models.IntegerField(default=0)
     name = models.CharField(max_length=255, default="TOURNAMENT_DEFAULT_NAME")
-    organizer = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="organized_tournaments"
-    )
+    organizer = models.ForeignKey(ManualUser, on_delete=models.SET_NULL, null=True, related_name="organized_tournaments")
     status = models.CharField(
         max_length=50,
         choices=[
@@ -71,12 +69,8 @@ class ManualTournament(models.Model):
 
 class ManualTournamentParticipants(models.Model):
     id = models.AutoField(primary_key=True)
-    tournament = models.ForeignKey(
-        ManualTournament, on_delete=models.CASCADE, related_name="participants"
-    )
-    user = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="tournaments"
-    )
+    tournament = models.ForeignKey(ManualTournament, on_delete=models.CASCADE, related_name="participants")
+    user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="tournaments")
     status = models.CharField(
         max_length=20,
         choices=[
@@ -94,11 +88,7 @@ class ManualTournamentParticipants(models.Model):
     class Meta:
         db_table = "tournament_participants"
         managed = True
-        constraints = [
-            models.UniqueConstraint(
-                fields=["tournament", "user"], name="unique_tournament_participant"
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=["tournament", "user"], name="unique_tournament_participant")]
 
     def __str__(self):
         return f"{self.user.username} in {self.tournament.name} ({self.status})"
@@ -106,16 +96,12 @@ class ManualTournamentParticipants(models.Model):
 
 class TournamentMatch(models.Model):
     id = models.AutoField(primary_key=True)
-    tournament = models.ForeignKey(
-        "ManualTournament", on_delete=models.CASCADE, related_name="matches"
-    )
+    tournament = models.ForeignKey("ManualTournament", on_delete=models.CASCADE, related_name="matches")
     round_number = models.IntegerField()
     match_order = models.IntegerField()  # l'ordre dans le round
     player1 = models.CharField(max_length=50, blank=True, null=True)
     player2 = models.CharField(max_length=50, blank=True, null=True)
-    status = models.CharField(
-        max_length=20, default="pending"
-    )  # 'pending', 'ready', 'completed', etc.
+    status = models.CharField(max_length=20, default="pending")  # 'pending', 'ready', 'completed', etc.
     winner = models.CharField(max_length=50, blank=True, null=True)
     score = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

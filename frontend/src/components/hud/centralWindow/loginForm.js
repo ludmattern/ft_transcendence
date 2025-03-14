@@ -68,7 +68,6 @@ export const loginForm = createComponent({
 				const response = await fetch('/api/auth-service/get-42-url/');
 				const data = await response.json();
 				if (data.url) {
-					console.log('Opening 42 login popup');
 					window.open(data.url, 'oauthPopup', 'width=600,height=600');
 				}
 			} catch (error) {

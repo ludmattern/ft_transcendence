@@ -151,7 +151,9 @@ def getTournamentSerialKey(request, user_id):
         return JsonResponse({"error": "user_id parameter is required"}, status=400)
 
     try:
-        tournament = ManualTournament.objects.filter(status="upcoming" or "ongoing", participants__user__id=user_id).latest("created_at")
+        tournament = ManualTournament.objects.filter(status="upcoming" or "ongoing", participants__user__id=user_id).latest(
+            "created_at"
+        )
         serial_key = tournament.serial_key
     except ManualTournament.DoesNotExist:
         serial_key = ""
@@ -169,7 +171,11 @@ def getParticipantStatusInTournament(request):
     try:
         user = request.user
 
-        participant = ManualTournamentParticipants.objects.filter(user=user, status__in=["accepted", "pending"]).order_by("-created_at").first()
+        participant = (
+            ManualTournamentParticipants.objects.filter(user=user, status__in=["accepted", "pending"])
+            .order_by("-created_at")
+            .first()
+        )
 
         status = participant.status if participant else "none"
 
@@ -263,7 +269,9 @@ def getCurrentTournamentInformation(request):
             }
         )
 
-    participants_qs = ManualTournamentParticipants.objects.filter(tournament=tournament).exclude(status="rejected").select_related("user")
+    participants_qs = (
+        ManualTournamentParticipants.objects.filter(tournament=tournament).exclude(status="rejected").select_related("user")
+    )
     participants_list = [
         {
             "id": participant.user.id,
@@ -279,7 +287,7 @@ def getCurrentTournamentInformation(request):
         "serial_key": tournament.serial_key,
         "size": tournament.size,
         "status": tournament.status,
-        "organizer_id": tournament.organizer.id,
+        "organizer_id": tournament.organizer.id if tournament.organizer else None,
         "participants": participants_list,
         "participants_count": len(participants_list),
         "participants_accepted": len([p for p in participants_list if p["status"] == "accepted"]),
@@ -326,7 +334,9 @@ def update_match_result(request):
         match.status = "completed"
         match.save()
 
-        logger.info(f"Match updated for tournament {tournament_id}: {payload_player1} vs {payload_player2} - winner: {winner_id}, score: {match.score}")
+        logger.info(
+            f"Match updated for tournament {tournament_id}: {payload_player1} vs {payload_player2} - winner: {winner_id}, score: {match.score}"
+        )
 
         current_round = match.round_number
         current_match_order = match.match_order
@@ -448,9 +458,9 @@ def create_local_tournament_view(request):
                     username=new_username,
                     email=encrypt_thing(f"{new_username.lower()}@local.fake"),
                     password="fakepassword",
-                    is_dummy=True, 
+                    is_dummy=True,
                 )
-            
+
             user_obj.tournament_status = "participating"
             user_obj.current_tournament_id = tournament.id
             user_obj.save()
@@ -533,12 +543,16 @@ def try_join_random_tournament(request):
         if not tournament_size:
             return JsonResponse({"message": "Tournament size is required"}, status=400)
 
-        tournament = ManualTournament.objects.filter(status="upcoming", mode="online", size=tournament_size).order_by("created_at").first()
+        tournament = (
+            ManualTournament.objects.filter(status="upcoming", mode="online", size=tournament_size).order_by("created_at").first()
+        )
 
         if not tournament:
             return JsonResponse({"error": "No upcoming tournament found"}, status=404)
 
-        participant_count = ManualTournamentParticipants.objects.filter(tournament=tournament, status__in=["accepted", "pending"]).count()
+        participant_count = ManualTournamentParticipants.objects.filter(
+            tournament=tournament, status__in=["accepted", "pending"]
+        ).count()
 
         if participant_count >= tournament_size:
             return JsonResponse({"message": "Tournament is full"}, status=400)
@@ -589,7 +603,9 @@ def try_join_tournament_with_room_code(request):
         if not tournament:
             return JsonResponse({"message": "No upcoming tournament found"}, status=404)
 
-        participant_count = ManualTournamentParticipants.objects.filter(tournament=tournament, status__in=["accepted", "pending"]).count()
+        participant_count = ManualTournamentParticipants.objects.filter(
+            tournament=tournament, status__in=["accepted", "pending"]
+        ).count()
 
         if participant_count >= tournament.size:
             return JsonResponse({"message": "Tournament is full"}, status=400)

@@ -40,65 +40,38 @@ def get_friends(request):
 def get_relationship_status(request):
     logger.info("Checking relationship status between two users")
     if request.method != "POST":
-        return JsonResponse(
-            {"success": False, "error": "Invalid request method"}, status=405
-        )
+        return JsonResponse({"success": False, "error": "Invalid request method"}, status=405)
     try:
         body = json.loads(request.body)
         other_user_id = body.get("otherUserId")
         if not other_user_id:
-            return JsonResponse(
-                {"success": False, "error": "otherUserId is required"}, status=400
-            )
+            return JsonResponse({"success": False, "error": "otherUserId is required"}, status=400)
 
         user = request.user
 
         is_me = str(user.id) == str(other_user_id)
         if is_me:
             return JsonResponse(
-                {
-                    "success": True,
-                    "is_friend": False,
-                    "is_blocked": False,
-                    "is_me": True,
-                    "can_unblock": False,
-                },
+                {"success": True, "is_friend": False, "is_blocked": False, "is_me": True, "can_unblock": False},
                 status=200,
             )
 
         friend = ManualUser.objects.filter(id=other_user_id).first()
         if not friend:
-            return JsonResponse(
-                {"success": False, "error": "User not found"}, status=404
-            )
+            return JsonResponse({"success": False, "error": "User not found"})
 
         is_friend = ManualFriendsRelations.objects.filter(
-            Q(user=user, friend=friend, status="accepted")
-            | Q(user=friend, friend=user, status="accepted")
+            Q(user=user, friend=friend, status="accepted") | Q(user=friend, friend=user, status="accepted")
         ).exists()
 
-        block_relation_user = ManualBlockedRelations.objects.filter(
-            user=user, blocked_user=friend
-        ).first()
-        block_relation_friend = ManualBlockedRelations.objects.filter(
-            user=friend, blocked_user=user
-        ).first()
-        is_blocked = (block_relation_user is not None) or (
-            block_relation_friend is not None
-        )
+        block_relation_user = ManualBlockedRelations.objects.filter(user=user, blocked_user=friend).first()
+        block_relation_friend = ManualBlockedRelations.objects.filter(user=friend, blocked_user=user).first()
+        is_blocked = (block_relation_user is not None) or (block_relation_friend is not None)
         can_unblock = block_relation_user is not None
 
         return JsonResponse(
-            {
-                "success": True,
-                "is_friend": is_friend,
-                "is_blocked": is_blocked,
-                "is_me": False,
-                "can_unblock": can_unblock,
-            },
+            {"success": True, "is_friend": is_friend, "is_blocked": is_blocked, "is_me": False, "can_unblock": can_unblock},
             status=200,
         )
     except json.JSONDecodeError:
-        return JsonResponse(
-            {"success": False, "error": "Invalid JSON data"}, status=400
-        )
+        return JsonResponse({"success": False, "error": "Invalid JSON data"}, status=400)

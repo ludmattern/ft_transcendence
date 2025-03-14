@@ -5,6 +5,7 @@ import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { handleRoute } from '/src/services/router.js';
 import { getUsername } from '/src/pongGame/gameManager.js';
 import { playGame } from '/src/components/pong/play/utils.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 
 function sendWsInfoMessage(action, recipient) {
 	const payload = {
@@ -126,8 +127,11 @@ export async function showContextMenu(item, event) {
 	item.username = username;
 
 	const userStatus = await getRelationshipStatus(author);
-	if (!userStatus || !userStatus.success || userStatus.is_me) {
-		console.error('Error getting relationship status:', userStatus);
+	if (!userStatus || !userStatus.success) {
+		return;
+	}
+
+	if (userStatus.is_me) {
 		return;
 	}
 
@@ -166,11 +170,11 @@ export async function getRelationshipStatus(otherUserId) {
 		if (data.success) {
 			return data;
 		} else {
-			console.error('Error getting relationship status:', data.error);
+			createNotificationMessage('this user left the Space Force', 2500, true);
 			return null;
 		}
 	} catch (error) {
-		console.error('Fetch error:', error);
+		createNotificationMessage('this user left the Space Force', 2500, true);
 		return null;
 	}
 }

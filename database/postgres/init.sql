@@ -74,12 +74,11 @@ CREATE TABLE
 		serial_key VARCHAR(255) NOT NULL UNIQUE, -- Unique identifier for the tournament
 		size INT DEFAULT 0 CHECK (size = 2 OR size = 4 OR size = 8),
 		name VARCHAR(255) DEFAULT 'TOURNAMENT_DEFAULT_NAME',
-		organizer_id INT NOT NULL,
+		organizer_id INT DEFAULT NULL,
 		status VARCHAR(50) DEFAULT 'upcoming', -- 'upcoming', 'ongoing', 'completed'
 		mode VARCHAR(10) DEFAULT 'local',
 		created_at TIMESTAMP NOT NULL DEFAULT NOW (),
-		updated_at TIMESTAMP NOT NULL DEFAULT NOW (),
-		FOREIGN KEY (organizer_id) REFERENCES users (id) ON DELETE CASCADE
+		updated_at TIMESTAMP NOT NULL DEFAULT NOW ()
 	);
 
 CREATE TABLE
@@ -90,7 +89,6 @@ CREATE TABLE
 		status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'accepted', 'rejected', 'eliminated'
 		created_at TIMESTAMP NOT NULL DEFAULT NOW (),
 		FOREIGN KEY (tournament_id) REFERENCES tournaments (id) ON DELETE CASCADE,
-		FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
 		UNIQUE (tournament_id, user_id) -- Ensures no duplicate entries
 	);
 
@@ -105,22 +103,6 @@ CREATE TABLE
 		FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
 		FOREIGN KEY (recipient_id) REFERENCES users (id) ON DELETE CASCADE,
 		UNIQUE (user_id, recipient_id) -- Ensures no duplicate friendships
-	);
-
-CREATE TABLE
-	IF NOT EXISTS notifications (
-		id SERIAL PRIMARY KEY,
-		sender_id INT NOT NULL,
-		receiver_id INT NOT NULL,
-		type VARCHAR(50) DEFAULT 'private_game', -- 'private_game', 'tournament_invite', 'tournament_turn'
-		status VARCHAR(20) DEFAULT 'pending', -- 'pending', 'accepted', 'rejected', 'expired'
-		tournament_id INT DEFAULT NULL, -- Used for tournament-related notifications
-		game_id INT DEFAULT NULL, -- Used for game invitations
-		created_at TIMESTAMP NOT NULL DEFAULT NOW (),
-		updated_at TIMESTAMP NOT NULL DEFAULT NOW (),
-		FOREIGN KEY (sender_id) REFERENCES users (id) ON DELETE CASCADE,
-		FOREIGN KEY (receiver_id) REFERENCES users (id) ON DELETE CASCADE,
-		FOREIGN KEY (tournament_id) REFERENCES tournaments (id) ON DELETE CASCADE
 	);
 
 CREATE TABLE
