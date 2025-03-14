@@ -104,7 +104,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def chat_message(self, event):
         logger.info(f"ChatConsumer.chat_message received event: {event}")
-        # Need to trim event's message size to 150 characters to avoid long messages
         message = event.get("message")
         if len(message) > 150:
             message = message[:150] + "..."

@@ -13,6 +13,7 @@ class AuthConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard("auth_service", self.channel_name)
         logger.info("Déconnecté du groupe auth_service")
 
+    # USED ???
     async def logout_message(self, event):
         await self.send_json({
             "type": "z",
