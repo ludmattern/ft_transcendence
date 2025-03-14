@@ -111,9 +111,7 @@ class ManualTournament(models.Model):
     serial_key = models.CharField(max_length=255, unique=True)
     size = models.IntegerField(default=0)
     name = models.CharField(max_length=255, default="TOURNAMENT_DEFAULT_NAME")
-    organizer = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="organized_tournaments"
-    )
+    organizer = models.ForeignKey(ManualUser, on_delete=models.SET_NULL, null=True, related_name="organized_tournaments")
     status = models.CharField(
         max_length=50,
         choices=[
