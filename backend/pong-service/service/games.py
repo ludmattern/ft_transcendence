@@ -52,7 +52,7 @@ class GameState:
 
 class BasePongGame:
     START_DELAY = 3.0
-    MAX_SCORE = 10
+    MAX_SCORE = 3
     BALL_RESET_DELAY = 1.0
     BALL_INITIAL_SPEED = 1.5
     VMAX = 5.0
