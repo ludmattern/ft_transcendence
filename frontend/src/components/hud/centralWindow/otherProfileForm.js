@@ -111,7 +111,6 @@ export const otherProfileForm = createComponent({
 		const actions = {
 			'#invite-link': async () => {
 				sendWsInfoMessage('private_game_invite', profile_id);
-				// clearPageContent();
 				const config = {
 					gameMode: 'private',
 					action: 'create',
@@ -163,10 +162,3 @@ export async function fetchUserId(username) {
 		console.error('Error fetching user ID:', error);
 	}
 }
-
-// function clearPageContent() {
-// 	const profileForm = document.getElementById('profile-form');
-// 	if (profileForm) profileForm.style.display = 'none';
-// 	const blurScreenEffect = document.getElementById('blur-screen-effect');
-// 	if (blurScreenEffect) blurScreenEffect.classList.add('hidden');
-// }

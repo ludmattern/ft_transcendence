@@ -279,7 +279,7 @@ def getCurrentTournamentInformation(request):
         "serial_key": tournament.serial_key,
         "size": tournament.size,
         "status": tournament.status,
-        "organizer_id": tournament.organizer.id,
+        "organizer_id": tournament.organizer.id if tournament.organizer else None,
         "participants": participants_list,
         "participants_count": len(participants_list),
         "participants_accepted": len([p for p in participants_list if p["status"] == "accepted"]),

@@ -74,7 +74,7 @@ CREATE TABLE
 		serial_key VARCHAR(255) NOT NULL UNIQUE, -- Unique identifier for the tournament
 		size INT DEFAULT 0 CHECK (size = 2 OR size = 4 OR size = 8),
 		name VARCHAR(255) DEFAULT 'TOURNAMENT_DEFAULT_NAME',
-		organizer_id INT NOT NULL,
+		organizer_id INT DEFAULT NULL,
 		status VARCHAR(50) DEFAULT 'upcoming', -- 'upcoming', 'ongoing', 'completed'
 		mode VARCHAR(10) DEFAULT 'local',
 		created_at TIMESTAMP NOT NULL DEFAULT NOW (),
