@@ -74,8 +74,21 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 game.move_paddle(paddle_number, direction)
 
         elif action == "game_giveup":
-            game.quitter_id = user_id
+            local_leave = event.get("local_leave")
+
+            if local_leave:
+                if int(local_leave) == 1:
+                    game.quitter_id = game.player1_id
+                elif int(local_leave) == 2:
+                    game.quitter_id = game.player2_id
+                else:
+                    game.quitter_id = user_id 
+            else:
+                game.quitter_id = user_id 
+
             game.game_over = True
+
+
 
         elif action == "leave_game":
             current_game = game_manager.get_game(game_id)
@@ -95,7 +108,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
     async def game_loop(self, game_id):
         game = game_manager.get_game(game_id)
         try:
-            ai_paddle = AIPaddle(2, game, difficulty="easy")
+            ai_paddle = AIPaddle(2, game, difficulty="difficult")
 
             while True:
                 game = game_manager.get_game(game_id)
@@ -136,7 +149,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
     async def determine_winner(self, game):
         if game.quitter_id:
-            # Affecte -1 au score du joueur qui a abandonné
             game.user_scores[game.quitter_id] = -1
             if game.quitter_id == game.player1_id:
                 return game.player2_id, game.player1_id
@@ -273,7 +285,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         )
         await asyncio.sleep(0.01)
 
-        # Mise à jour de l'historique si le game_id ne correspond pas à un type particulier
         if not (
             str(game_id).startswith("game_")
             or str(game_id).startswith("tournLocal_")

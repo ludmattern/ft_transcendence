@@ -149,6 +149,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                         "player_id": data.get("player_id"),
                         "user_id": self.user_id,
                         "local_player": data.get("local_player"),
+                        "local_leave" : data.get("local_leave"),
 
                     },
                 )
