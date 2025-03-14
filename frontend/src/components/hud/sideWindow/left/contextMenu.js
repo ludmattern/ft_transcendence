@@ -120,9 +120,17 @@ async function handleMessageAction(username) {
 	}
 }
 
+import { getCurrentWindow } from '/src/3d/animation.js';
+
 export async function showContextMenu(item, event) {
 	event.preventDefault();
 	event.stopPropagation();
+
+	const currentWindow = getCurrentWindow();
+	if (currentWindow === 'game') {
+		createNotificationMessage('stay focus on the game pilot !', 2500, true);
+		return;
+	}
 
 	hideContextMenu();
 
