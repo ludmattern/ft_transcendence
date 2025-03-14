@@ -156,6 +156,10 @@ export async function loadMatchHistory(userId) {
 				} else {
 					opponentUsername = `${match.winner_username} vs ${match.loser_username}`;
 				}
+				
+				if (!opponentUsername) {
+					opponentUsername = 'deleted_user';
+				}
 
 				const outcomeClass = String(match.winner_id) === userId ? 'text-success' : 'text-danger';
 				const date = match.created_at;
