@@ -1,6 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { playGame } from '/src/components/pong/play/utils.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { pushInfo,getInfo } from '/src/services/infoStorage.js';
+import { getCurrentWindow } from '/src/3d/animation.js';
 
 export const soloContent = createComponent({
 	tag: 'soloContent',
@@ -68,6 +69,11 @@ export const soloContent = createComponent({
 		const launchButton = document.getElementById('launch');
 
 		launchButton.addEventListener('click', () => {
+			const currentWindow = getCurrentWindow();
+			if (currentWindow === 'game') {
+				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+				return;
+			}
 			const config = {
 				gameMode: 'solo',
 				type: 'fullScreen',

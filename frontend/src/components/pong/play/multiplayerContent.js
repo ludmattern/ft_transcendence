@@ -5,6 +5,7 @@ import { playGame } from '/src/components/pong/play/utils.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { fetchUserId, sendWsInfoMessage } from '/src/components/hud/centralWindow/otherProfileForm.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
+import { getCurrentWindow } from '/src/3d/animation.js';
 
 export const multiplayerContent = createComponent({
 	tag: 'multiplayerContent',
@@ -65,6 +66,11 @@ export const multiplayerContent = createComponent({
 	attachEvents: async (el) => {
 		const localButton = el.querySelector('#launchLocal');
 		localButton.addEventListener('click', () => {
+			const currentWindow = getCurrentWindow();
+			if (currentWindow === 'game') {
+				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+				return;
+			}
 			const config = {
 				gameMode: 'local',
 				type: 'splitScreen',
@@ -76,6 +82,11 @@ export const multiplayerContent = createComponent({
 		const matchButton = el.querySelector('#launchMatch');
 		const leaveMatchButton = el.querySelector('#leaveMatch');
 		matchButton.addEventListener('click', () => {
+			const currentWindow = getCurrentWindow();
+			if (currentWindow === 'game') {
+				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+				return;
+			}
 			const config = {
 				gameMode: 'matchmaking',
 				type: 'fullScreen',
@@ -93,6 +104,11 @@ export const multiplayerContent = createComponent({
 		const privateGameInput = el.querySelector('#privateGameInput');
 
 		createPrivateButton.addEventListener('click', async () => {
+			const currentWindow = getCurrentWindow();
+			if (currentWindow === 'game') {
+				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+				return;
+			}
 			const opponentUsername = privateGameInput.value.trim();
 			if (!opponentUsername) {
 				createNotificationMessage('Please enter a username code.', 2500, false);
@@ -100,14 +116,12 @@ export const multiplayerContent = createComponent({
 			}
 			if (notAuthenticatedThenRedirect()) return;
 			const opponentId = await fetchUserId(opponentUsername);
-			if(!opponentId) {
+			if (!opponentId) {
 				createNotificationMessage('Opponent not found.', 2500, true);
 				return;
-			}
-			else {
+			} else {
 				const userId = await getUserIdFromCookieAPI();
-				if(opponentId === userId)
-				{
+				if (opponentId === userId) {
 					createNotificationMessage('You cannot invite yourself.', 2500, true);
 					return;
 				}
