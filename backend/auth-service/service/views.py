@@ -13,7 +13,7 @@ from django.conf import settings  # type: ignore
 from django.core.mail import send_mail  # type: ignore
 from django.views.decorators.csrf import csrf_exempt  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
-from django.shortcuts import redirect  # type: ignore
+from django.shortcuts import redirect, render # type: ignore
 
 
 import requests
@@ -467,29 +467,7 @@ def oauth_callback(request):
         user.status = "online"
         user.save()
 
-        html_content = f"""
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <title>Authentication</title>
-            <script type="text/javascript">
-              window.onload = function() {{
-                if (window.opener) {{
-                  window.opener.postMessage({{"authenticated": true, "token": "{token_str}"}}, "*");
-                  window.close();
-                }} else {{
-                  window.location.href = "/";
-                }}
-              }};
-            </script>
-          </head>
-          <body>
-            <p>Authenticating...</p>
-          </body>
-        </html>
-        """
-        response = HttpResponse(html_content)
+        response = render(request, 'authenticating.html', {'token_str': token_str})
         set_access_token_cookie(response, token_str)
         return response
 

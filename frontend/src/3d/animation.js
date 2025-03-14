@@ -88,11 +88,14 @@ export function animateCameraToTarget(endPosition, endRotation, nb) {
 			if (nb == 0) {
 				Store.menuElement.querySelector('.mid-screensaver').display = 'block';
 				Store.menuElement.classList.add('active');
+				Store.screenObject1.material = Store.material;
 			}
 			if (nb == 2) {
+				Store.screenObject1.material = Store.material;
 				//   Store.menuElement2.classList.remove("active");
 			}
 			if (nb == 3) {
+				Store.screenObject1.material = Store.material;
 				Store.menuElement3.classList.remove('active');
 			}
 			Store.initialCameraRotation.x = Store.camera.rotation.x;
