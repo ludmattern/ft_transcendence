@@ -35,19 +35,6 @@ class ManualUser(models.Model):
         return self.username
 
 
-class ManualGameHistory(models.Model):
-    id = models.AutoField(primary_key=True)
-    winner = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="games_won")
-    loser = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="games_lost")
-    winner_score = models.IntegerField(default=0)
-    loser_score = models.IntegerField(default=0)
-
-    class Meta:
-        db_table = "game_history"
-        managed = False
-
-    def __str__(self):
-        return f"Game {self.id}: {self.winner.username} vs {self.loser.username}"
 
 
 class ManualFriendsRelations(models.Model):
@@ -140,7 +127,7 @@ class ManualTournamentParticipants(models.Model):
         return f"{self.user.username} in {self.tournament.name} ({self.status})"
 
 
-class GameHistory(models.Model):
+class ManualGameHistory(models.Model):
     id = models.AutoField(primary_key=True)
     winner_id = models.IntegerField(default=0)
     loser_id = models.IntegerField(default=0)
@@ -152,7 +139,7 @@ class GameHistory(models.Model):
         db_table = "game_history"
 
     def __str__(self):
-        return f"GameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
+        return f"ManualGameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
 
 
 class TournamentMatch(models.Model):

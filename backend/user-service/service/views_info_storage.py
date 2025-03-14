@@ -1,7 +1,11 @@
 import json
 import redis
 from django.http import JsonResponse  # type: ignore
+
+# Need to get rid of this
 from django.views.decorators.csrf import csrf_exempt  # type: ignore
+
+
 from service.views import jwt_required
 
 r = redis.Redis(host="redis", port=6379, db=0)

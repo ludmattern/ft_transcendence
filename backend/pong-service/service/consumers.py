@@ -2,13 +2,11 @@ import asyncio
 import logging
 import time
 
-from .models import GameHistory
-
 from channels.generic.websocket import AsyncWebsocketConsumer  # type: ignore
 from asgiref.sync import sync_to_async  # type: ignore
 from django.db import transaction  # type: ignore
 from django.db.models import Q  # type: ignore
-from service.models import ManualUser, TournamentMatch, ManualTournamentParticipants
+from service.models import ManualUser, TournamentMatch, ManualTournamentParticipants, ManualGameHistory
 from service.utils import calculate_elo
 from .game_manager import game_manager
 
@@ -280,7 +278,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             or str(game_id).startswith("solo_")
         ):
 
-            await sync_to_async(GameHistory.objects.create)(
+            await sync_to_async(ManualGameHistory.objects.create)(
                 winner_id=winner_id,
                 loser_id=loser_id,
                 winner_score=game.user_scores.get(winner_id),

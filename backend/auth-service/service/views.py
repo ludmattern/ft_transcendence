@@ -6,12 +6,14 @@ import jwt
 import pyotp  # type: ignore
 from functools import wraps
 
+# Need to get rid of this
+from django.views.decorators.csrf import csrf_exempt  # type: ignore
+
 from cryptography.fernet import Fernet
 from django.views.decorators.http import require_POST, require_GET
 from django.http import JsonResponse, HttpResponse  # type: ignore
 from django.conf import settings  # type: ignore
 from django.core.mail import send_mail  # type: ignore
-from django.views.decorators.csrf import csrf_exempt  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
 from django.shortcuts import redirect, render # type: ignore
 
