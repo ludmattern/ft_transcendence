@@ -18,12 +18,21 @@ export const header = createComponent({
   `,
 
 	attachEvents: (el) => {
+		function sanitizePath(path) {
+			const safePath = path.replace(/[^\w\-\/]/g, '');
+			const maxLength = 50;
+			return safePath.length > maxLength ? safePath.substring(0, maxLength) : safePath;
+		}
+
 		function updatePath(route) {
 			const pathElement = el.querySelector('#shipctrl-path');
 
 			if (!route) {
 				route = window.location.pathname;
 			}
+
+			// Sécurise et tronque la route
+			route = sanitizePath(route);
 
 			if (route.startsWith('/pong')) {
 				pathElement.textContent = `shipctrl:///appData/useless${route}.shp`;
