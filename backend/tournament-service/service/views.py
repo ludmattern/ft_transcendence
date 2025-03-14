@@ -1,5 +1,8 @@
 from django.http import JsonResponse  # type: ignore
+
+# Need to get rid of this
 from django.views.decorators.csrf import csrf_exempt  # type: ignore
+
 import math
 import random
 import string

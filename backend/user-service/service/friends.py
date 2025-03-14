@@ -1,13 +1,16 @@
 import json
 import logging
 from django.http import JsonResponse  # type: ignore
+
+# Need to get rid of this
 from django.views.decorators.csrf import csrf_exempt  # type: ignore
+
+
 from django.db.models import Q  # type: ignore
 from .models import ManualUser, ManualFriendsRelations, ManualBlockedRelations
 from service.views import jwt_required
 
 logger = logging.getLogger(__name__)
-
 
 @csrf_exempt
 @jwt_required

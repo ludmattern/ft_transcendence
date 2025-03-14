@@ -4,7 +4,6 @@ from service.views import (
     oauth_callback,
     get_user_id_from_cookie,
     login_view,
-    protected_view,
     check_auth_view,
     logout_view,
     verify_2fa_view,
@@ -15,7 +14,6 @@ from service.views import (
 
 urlpatterns = [
     path("logindb/", login_view, name="logindb"),
-    path("protected/", protected_view, name="protected_view"),
     path("check-auth/", check_auth_view, name="check_auth"),
     path("logout/", logout_view, name="logout"),
     path("verify-2fa/", verify_2fa_view, name="verify-2fa"),

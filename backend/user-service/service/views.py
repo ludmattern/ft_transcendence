@@ -14,12 +14,16 @@ from PIL import Image  # type: ignore
 from cryptography.fernet import Fernet
 from django.http import JsonResponse, HttpResponse  # type: ignore
 from django.views.decorators.http import require_POST, require_GET
+
+# Need to get rid of this
 from django.views.decorators.csrf import csrf_exempt  # type: ignore
+
+
 from django.db.models import Q  # type: ignore
 from django.db.models.functions import Length  # type: ignore
 from django.conf import settings  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
-from .models import ManualUser, GameHistory, ManualBlockedRelations
+from .models import ManualUser, ManualGameHistory, ManualBlockedRelations
 
 # Initialisation de Fernet pour le chiffrement/déchiffrement
 cipher = Fernet(settings.FERNET_KEY)
@@ -302,7 +306,7 @@ def get_game_history(request):
     if not user_id:
         return JsonResponse({"error": "user_id parameter is required"}, status=400)
     try:
-        history_entries = GameHistory.objects.filter(Q(winner_id=user_id) | Q(loser_id=user_id)).order_by("-created_at")[:20]
+        history_entries = ManualGameHistory.objects.filter(Q(winner_id=user_id) | Q(loser_id=user_id)).order_by("-created_at")[:20]
         history_list = []
         wins = 0
         total_games = history_entries.count()
