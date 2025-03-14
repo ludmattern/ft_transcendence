@@ -1,7 +1,8 @@
 import asyncio
 import logging
 import time
-import numpy as np  # type: ignore
+
+from .models import GameHistory
 
 from channels.generic.websocket import AsyncWebsocketConsumer  # type: ignore
 from asgiref.sync import sync_to_async  # type: ignore
@@ -10,33 +11,10 @@ from django.db.models import Q  # type: ignore
 from service.models import ManualUser, TournamentMatch, ManualTournamentParticipants
 from service.utils import calculate_elo
 from .game_manager import game_manager
-import onnxruntime as ort  # type: ignore
+
+from .bot import AIPaddle
 
 logger = logging.getLogger(__name__)
-
-MODEL_PATH = "/app/service/aiModels/pong3d_agent.onnx"
-ort_session = ort.InferenceSession(MODEL_PATH)
-
-
-def predict_ai_action(obs):
-    obs = np.array(obs, dtype=np.float32).reshape(1, -1)
-    try:
-        action_outputs = ort_session.run(None, {"input": obs})
-        if isinstance(action_outputs, list) and len(action_outputs) > 0:
-            main_action = action_outputs[0]
-            if main_action.shape == (1, 2):  # Cas normal (batch=1, deux valeurs)
-                target_y, target_z = float(main_action[0][0]), float(main_action[0][1])
-            elif main_action.shape == (2,):  # Cas rare (directement 2 valeurs sans batch)
-                target_y, target_z = float(main_action[0]), float(main_action[1])
-            else:
-                target_y, target_z = 0.0, 0.0
-            logger.info(f"🤖 AI action: (target_y={target_y}, target_z={target_z})")
-            return target_y, target_z
-        else:
-            return 0.0, 0.0  # Sécurité
-    except Exception:
-        logger.exception("🚨 Error during AI action prediction")
-        return 0.0, 0.0  # Fallback en cas d'erreur
 
 
 class PongGroupConsumer(AsyncWebsocketConsumer):
@@ -59,9 +37,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         player2_id = event.get("player2", "Player 2")
         user_id = event.get("user_id")
 
-        # Pour certains événements, on récupère le jeu existant
         game = game_manager.get_or_create_game(game_id, player1_id, player2_id)
-
         if action == "start_game":
             if game_id not in self.running_games:
                 logger.info(f"🎮 Démarrage de la partie {game_id}")
@@ -100,12 +76,10 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 game.move_paddle(paddle_number, direction)
 
         elif action == "game_giveup":
-            # Le joueur abandonne : on marque le jeu comme terminé
             game.quitter_id = user_id
             game.game_over = True
 
         elif action == "leave_game":
-            # On vérifie si la partie est déjà terminée pour ne pas interrompre la finalisation
             current_game = game_manager.get_game(game_id)
             if current_game and current_game.game_over:
                 logger.info(f"Partie {game_id} déjà terminée, leave_game ignoré.")
@@ -126,6 +100,8 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         game = game_manager.get_game(game_id)
         try:
             last_ai_time = time.time()
+            ai_paddle = AIPaddle(2, game)
+
             while True:
                 game = game_manager.get_game(game_id)
                 if not game:
@@ -133,44 +109,16 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
                 game.update()
 
-                # Si le jeu est terminé, on lance la finalisation dans une zone protégée contre l'annulation
                 if game.game_over:
                     try:
                         await self.finalize_game(game_id, game)
                     except asyncio.CancelledError:
-                        # En cas d'annulation pendant la finalisation, on s'assure qu'elle est bien effectuée
                         await self.finalize_game(game_id, game)
                     break
+                
 
-                # Mode solo avec IA
-                now = time.time()
                 if game.is_solo_mode():
-                    ai_paddle_num = 2
-                    if now - last_ai_time >= 1:
-                        last_ai_time = now
-                        obs = np.array([
-                            game.state.ball.position.x,
-                            game.state.ball.position.y,
-                            game.state.ball.position.z,
-                            game.state.ball.velocity.x,
-                            game.state.ball.velocity.y,
-                            game.state.ball.velocity.z,
-                            game.state.players[1].paddle_position.y,
-                            game.state.players[1].paddle_position.z,
-                            game.state.players[2].paddle_position.y,
-                            game.state.players[2].paddle_position.z,
-                        ], dtype=np.float32)
-                        target_y, target_z = predict_ai_action(obs)
-                    current_y = game.state.players[ai_paddle_num].paddle_position.y
-                    current_z = game.state.players[ai_paddle_num].paddle_position.z
-                    if target_y > current_y:
-                        game.move_paddle(ai_paddle_num, "up")
-                    elif target_y < current_y:
-                        game.move_paddle(ai_paddle_num, "down")
-                    if target_z > current_z:
-                        game.move_paddle(ai_paddle_num, "right")
-                    elif target_z < current_z:
-                        game.move_paddle(ai_paddle_num, "left")
+                    ai_paddle.update()  
 
                 payload = game.to_dict()
                 await self.channel_layer.group_send(
@@ -337,7 +285,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             or str(game_id).startswith("solo_")
             or str(game_id).startswith("tournOnline_")
         ):
-            from .models import GameHistory
 
             await sync_to_async(GameHistory.objects.create)(
                 winner_id=winner_id,
