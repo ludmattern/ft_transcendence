@@ -47,7 +47,6 @@ export const pongTuto = (config) =>
   `,
 
 		attachEvents: async (el) => {
-			// Récupérer dynamiquement le pseudo
 			const usernameData = await getInfo('username');
 			const username = usernameData.success ? usernameData.value : 'Guest';
 			const usernamePlaceholder = el.querySelector('#username-placeholder');
@@ -55,17 +54,18 @@ export const pongTuto = (config) =>
 				usernamePlaceholder.textContent = username;
 			}
 
-			// Gestion du bouton "Cancel"
+			const readyButton = el.querySelector('#ready');
+			readyButton.focus();
+
 			el.querySelector('#close').addEventListener('click', (e) => {
 				e.preventDefault();
 				cancelMode(config);
 				handleRoute('/topong');
 			});
 
-			// Gestion du bouton "Ready"
-			el.querySelector('#ready').addEventListener('click', () => {
+			readyButton.addEventListener('click', () => {
 				gameModeSelector(config);
-				el.querySelector('#ready').remove();
+				readyButton.remove();
 				el.querySelector('.ready-question').remove();
 				el.querySelector('.pong-loader').classList.remove('d-none');
 				el.querySelector('.waiting-msg').classList.remove('d-none');
