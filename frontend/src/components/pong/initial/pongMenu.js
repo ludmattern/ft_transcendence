@@ -43,11 +43,6 @@ export const pongMenu = createComponent({
             </li>
           </ul>
         </div>
-        <div class="col text-end">
-          <button id="backButton" class="btn btn-outline-secondary bi bi-arrow-left rounded-0">
-            Back
-          </button>
-        </div>
       </header>
 
       <main id="pong-skeleton-container" class="d-flex flex-column flex-grow-1" style="border: 1px solid #2a312f; border-top: 0; border-bottom: 0; margin: -0.78rem;">
