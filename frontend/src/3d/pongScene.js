@@ -316,65 +316,7 @@ const meshBallGeometry = new THREE.SphereGeometry(0.05, 30, 15);
 
 	const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 	Store.pongScene.add(ambientLight);
-	/*
-  const guiParams = {
-	// Pour le mode manuel ou par nombre de cellules
-	cellSize: 0.1,       
-	numCells: 10,
-	useNumCells: true,
-	// uCellAspect < 1 rendra la cellule plus étroite (par exemple, 0.5 pour la moitié de la largeur)
-	cellAspect: 0.5,
-	thickness: 0.03,
-	modOffset: 0.5,
-	gridCenter: 0.5,
-	lineMultiplier: 2.0,
-	backgroundColor: "#000000",
-	neonColor: "#006680"
-  };
-  
-  const gui = new dat.GUI();
-  
-  // Choix du mode : taille manuelle ou nombre de cellules
-  gui.add(guiParams, 'useNumCells').name("Use Num Cells").onChange(value => {
-	neonMaterial.uniforms.uUseNumCells.value = value ? 1.0 : 0.0;
-  });
-  
-  // Contrôle de la taille manuelle de la cellule (hauteur)
-  gui.add(guiParams, 'cellSize', 0.01, 1).name("Cell Size").onChange(value => {
-	neonMaterial.uniforms.uCellSize.value = value;
-  });
-  
-  // Contrôle du nombre de cellules par axe
-  gui.add(guiParams, 'numCells', 1, 50).step(1).name("Num Cells").onChange(value => {
-	neonMaterial.uniforms.uNumCells.value = value;
-  });
-  
-  // Contrôle du facteur d'aspect pour la largeur de la cellule
-  gui.add(guiParams, 'cellAspect', 0.1, 1.0).name("Cell Aspect").onChange(value => {
-	neonMaterial.uniforms.uCellAspect.value = value;
-  });
-  
-  // Les autres contrôles
-  gui.add(guiParams, 'thickness', 0.001, 0.1).name("Thickness").onChange(value => {
-	neonMaterial.uniforms.uThickness.value = value;
-  });
-  gui.add(guiParams, 'modOffset', 0, 1).name("Mod Offset").onChange(value => {
-	neonMaterial.uniforms.uModOffset.value = value;
-  });
-  gui.add(guiParams, 'gridCenter', 0, 1).name("Grid Center").onChange(value => {
-	neonMaterial.uniforms.uGridCenter.value = value;
-  });
-  gui.add(guiParams, 'lineMultiplier', 1, 5).name("Line Multiplier").onChange(value => {
-	neonMaterial.uniforms.uLineMultiplier.value = value;
-  });
-  gui.addColor(guiParams, 'backgroundColor').name("Background Color").onChange(value => {
-	neonMaterial.uniforms.uBackgroundColor.value.set(value);
-  });
-  gui.addColor(guiParams, 'neonColor').name("Neon Color").onChange(value => {
-	neonMaterial.uniforms.uNeonColor.value.set(value);
-  });
-  
- */
+
 }
 
 const lerpFactor = 0.3;
@@ -464,4 +406,60 @@ export function animatePong(renderer) {
 		renderer.setRenderTarget(null);
 		renderer.render(Store.pongScene, cameraCube);
 	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+export function triggerBallColorChange() {
+	if (!Store.meshBall) return;
+
+	const originalColor = new THREE.Color(0x5588f1);
+	const hitColor = new THREE.Color(0xffffff);
+
+	let elapsed = 0;
+	const duration = 0.15;
+	const interval = 30;
+
+	Store.meshBall.material.emissive.set(hitColor);
+
+	const fadeBack = setInterval(() => {
+		elapsed += interval / 1000;
+		const t = Math.min(elapsed / duration, 1);
+		Store.meshBall.material.emissive.lerpColors(hitColor, originalColor, t);
+
+		if (t >= 1) {
+			clearInterval(fadeBack);
+		}
+	}, interval);
+}
+
+export function triggerPaddleColorChange(paddle, originalColor) {
+	if (!paddle) return;
+
+	const hitColor = new THREE.Color(0xffffff);
+	let elapsed = 0;
+	const duration = 0.15;
+	const interval = 30;
+
+	paddle.children[0].material.color = new THREE.Color(hitColor);
+
+	const fadeBack = setInterval(() => {
+		elapsed += interval / 1000;
+		const t = Math.min(elapsed / duration, 1);
+
+		paddle.children[0].material.color.lerpColors(hitColor, originalColor, t);
+
+		if (t >= 1) {
+			clearInterval(fadeBack);
+		}
+	}, interval);
 }

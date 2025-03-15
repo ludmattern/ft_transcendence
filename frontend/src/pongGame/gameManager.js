@@ -7,6 +7,7 @@ import componentManagers from '/src/index.js';
 import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { emit } from '/src/services/eventEmitter.js';
+import { triggerBallColorChange, triggerPaddleColorChange} from '/src/3d/pongScene.js';
 
 
 //mettre cette classe asynchone 
@@ -136,6 +137,8 @@ class GameManager {
 		buildGameScene(gameConfig);
 		emit('gameStarted', gameConfig);
 		showCountdown();
+		const scoreTextEl = document.getElementById('scoreText');
+		scoreTextEl.style.display = 'block';
 
 		let player1 = gameConfig.side === 'left' ? gameConfig.user_id : gameConfig.opponent_id;
 		let player2 = gameConfig.side === 'right' ? gameConfig.user_id : gameConfig.opponent_id;
@@ -193,6 +196,8 @@ class GameManager {
 		if (!this.activeGame) {
 			return;
 		}
+		const scoreTextEl = document.getElementById('scoreText');
+		scoreTextEl.style.display = 'none';
 
 		if (this.activeGame.mode === 'local') {
 			document.removeEventListener('keydown', this.localKeydownHandler);
@@ -249,8 +254,8 @@ class GameManager {
 			}
 		}
 		if (!gameState || !gameState.user_scores) return;
-		if (this.gameMode === 'local' || this.gameMode === 'solo') {
-			
+
+		if (this.gameMode === 'local' || this.gameMode === 'solo'){
 			const players = Object.keys(gameState.user_scores);
 			const scores = Object.values(gameState.user_scores);
 			const score1 = scores[0];
@@ -264,22 +269,17 @@ class GameManager {
 		} else {
 			let oppennentName = null;
 			const scores = gameState.user_scores;
-
 			const clientScore = scores[this.clientId] ?? 0;
-
 			const opponentId = Object.keys(scores).find(id => id !== this.clientId);
 			const opponentScore = opponentId ? scores[opponentId] : 0;
-			
 			const scoreTextEl = document.getElementById('scoreText');
 			
-
 			if (this.username1 === this.clientName)
 			{
 				oppennentName = this.username2;
 			}
 			else
 				oppennentName = this.username1;
-
 			if (scoreTextEl) 
 				scoreTextEl.innerHTML = `<strong>You</strong> ${clientScore}  -  ${opponentScore} ${oppennentName}`;
 		}
@@ -303,18 +303,14 @@ class GameManager {
 	generateGameId(gameConfig) {
 		console.log('Generating game in:', gameConfig.mode);
 		if (!gameConfig.gameId) {
-			if (gameConfig.mode === 'private') {
+			if (gameConfig.mode === 'private')
 				return gameConfig.matchkey;
-			}
-			if (gameConfig.mode === 'matchmaking') {
+			if (gameConfig.mode === 'matchmaking')
 				return `matchmaking_${Date.now()}`;
-			}
-			if (gameConfig.mode === 'solo') {
+			if (gameConfig.mode === 'solo') 
 				return `solo_${Date.now()}`;
-			}
-			if (gameConfig.subMode === 'local-tournament') {
-				return `tournLocal_${gameConfig.player1}_vs_tournLocal_${gameConfig.player2}_id_${gameConfig.tournament_id}`;
-			}
+			if (gameConfig.subMode === 'local-tournament') 
+				return `tournLocal_${gameConfig.player1}_vs_tournLocal_${gameConfig.player2}_id_${gameConfig.tournament_id}`;	
 			return `game_${Date.now()}`;
 		}
 		return gameConfig.gameId;
@@ -343,51 +339,8 @@ export async function getUsername(playerId) {
 	}
 }
 
-async function username() {
-	return await getUsername(await getUserIdFromCookieAPI());
-}
 
-function triggerBallColorChange() {
-	if (!Store.meshBall) return;
 
-	const originalColor = new THREE.Color(0x5588f1);
-	const hitColor = new THREE.Color(0xffffff);
 
-	let elapsed = 0;
-	const duration = 0.15;
-	const interval = 30;
 
-	Store.meshBall.material.emissive.set(hitColor);
 
-	const fadeBack = setInterval(() => {
-		elapsed += interval / 1000;
-		const t = Math.min(elapsed / duration, 1);
-		Store.meshBall.material.emissive.lerpColors(hitColor, originalColor, t);
-
-		if (t >= 1) {
-			clearInterval(fadeBack);
-		}
-	}, interval);
-}
-
-function triggerPaddleColorChange(paddle, originalColor) {
-	if (!paddle) return;
-
-	const hitColor = new THREE.Color(0xffffff);
-	let elapsed = 0;
-	const duration = 0.15;
-	const interval = 30;
-
-	paddle.children[0].material.color = new THREE.Color(hitColor);
-
-	const fadeBack = setInterval(() => {
-		elapsed += interval / 1000;
-		const t = Math.min(elapsed / duration, 1);
-
-		paddle.children[0].material.color.lerpColors(hitColor, originalColor, t);
-
-		if (t >= 1) {
-			clearInterval(fadeBack);
-		}
-	}, interval);
-}
