@@ -146,3 +146,28 @@ export async function getUserIdFromCookieAPI() {
 		return null;
 	}
 }
+
+export async function getUsername(playerId) {
+	try {
+		const response = await fetch('/api/user-service/getUsername/', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ id: playerId }),
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
+		}
+
+		const data = await response.json();
+		return data.username;
+	} catch (error) {
+		console.error('Error fetching username:', error);
+		return `${playerId}`;
+	}
+}
+
+
+
+
+

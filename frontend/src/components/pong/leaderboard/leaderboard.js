@@ -1,7 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { updateActiveLink } from '/src/components/hud/general/header.js';
-import { getUsername } from '/src/pongGame/gameManager.js';
+import { getUsername } from '/src/services/auth.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 // Variables globales

@@ -90,7 +90,6 @@ export function buildGameScene(gameConfig) {
 		cameraPlayer2.position.set(0, 0, 12);
 		cameraPlayer2.lookAt(0, 0, 0);
 
-		// Applique le shader split-screen
 		screenMaterial.vertexShader = shaders.local.vertex;
 		screenMaterial.fragmentShader = shaders.local.fragment;
 		screenMaterial.needsUpdate = true;
@@ -165,9 +164,9 @@ export function buildGameScene(gameConfig) {
 		vertexShader,
 		fragmentShader,
 		uniforms: {
-			uCellSize: { value: 0.1 }, // Taille manuelle (sera ignorée si uUseNumCells == 1)
-			uNumCells: { value: 19.0 }, // Nombre de cellules par axe
-			uUseNumCells: { value: 1.0 }, // 1.0 = utiliser uNumCells, 0.0 = utiliser uCellSize
+			uCellSize: { value: 0.1 },
+			uNumCells: { value: 19.0 },
+			uUseNumCells: { value: 1.0 },
 			uCellAspect: { value: 0.26 },
 			uThickness: { value: 0.02 },
 			uModOffset: { value: 0.55 },
@@ -179,20 +178,11 @@ export function buildGameScene(gameConfig) {
 	});
 
 	const floorCeilingMaterial = neonMaterial;
-	const sideWallMaterial = neonMaterial;
 	const endWallMaterial = neonMaterial;
 
 	const tunnelWidth = 7.5;
 	const tunnelHeight = 1.5;
 	const tunnelDepth = 1.5;
-
-	const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(tunnelDepth, tunnelHeight), sideWallMaterial);
-	leftWall.position.set(-tunnelWidth / 2, 0, 0);
-	leftWall.rotation.y = Math.PI / 2;
-
-	const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(tunnelDepth, tunnelHeight), sideWallMaterial);
-	rightWall.position.set(tunnelWidth / 2, 0, 0);
-	rightWall.rotation.y = -Math.PI / 2;
 
 	const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(tunnelWidth, tunnelDepth), floorCeilingMaterial);
 	ceiling.position.set(0, tunnelHeight / 2, 0);
@@ -210,8 +200,6 @@ export function buildGameScene(gameConfig) {
 	backWall.rotation.y = Math.PI;
 	backWall.rotation.z = -Math.PI;
 
-	//Store.pongScene.add(leftWall);
-	//Store.pongScene.add(rightWall);
 	Store.pongScene.add(ceiling);
 	Store.pongScene.add(floor);
 	Store.pongScene.add(frontWall);
@@ -322,97 +310,99 @@ const meshBallGeometry = new THREE.SphereGeometry(0.05, 30, 15);
 const lerpFactor = 0.3;
 const lerpFactorCam = 0.15;
 
-export function animatePong(renderer) {
-	if (!Store.pongScene || !Store.gameConfig) return;
+function updatePaddleAndFocus(paddle, target, focus) {
+    if (!paddle || !target) return;
+    paddle.position.lerp(target, lerpFactor);
+    focus.lerp(target, lerpFactor);
+}
 
-	if (Store.gameConfig.mode === 'local') {
-		if (!cameraPlayer1 || !cameraPlayer2) return;
-
-		if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
-		if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
-
-		if (Store.player1Paddle && Store.p1Target) {
-			Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
-			Store.p1Focus.lerp(Store.p1Target, lerpFactor);
-		}
-		if (Store.player2Paddle && Store.p2Target) {
-			Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
-			Store.p2Focus.lerp(Store.p2Target, lerpFactor);
-		}
-
-		const offsetP1 = new THREE.Vector3(-0.75, 0, 0);
-		const offsetP2 = new THREE.Vector3(0.75, 0, 0);
-
-		cameraPlayer1.position.lerp(Store.p1Focus.clone().add(offsetP1), lerpFactorCam);
-		cameraPlayer1.lookAt(Store.p1Focus);
-
-		cameraPlayer2.position.lerp(Store.p2Focus.clone().add(offsetP2), lerpFactorCam);
-		cameraPlayer2.lookAt(Store.p2Focus);
-
-		screenMesh.visible = false;
-
-		renderer.setRenderTarget(renderTargetP1);
-		renderer.render(Store.pongScene, cameraPlayer1);
-
-		renderer.setRenderTarget(renderTargetP2);
-		renderer.render(Store.pongScene, cameraPlayer2);
-
-		screenMesh.visible = true;
-
-		screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
-		screenMaterial.uniforms.textureP2.value = renderTargetP2.texture;
-
-		renderer.setRenderTarget(null);
-		renderer.render(Store.pongScene, cameraCube);
-	} else if (Store.gameConfig.mode === 'matchmaking' || Store.gameConfig.mode === 'private' || Store.gameConfig.mode === 'solo') {
-		if (!cameraPlayer1) return;
-		let cam;
-		if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
-		if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
-
-		if (Store.gameConfig.side == 'left') {
-			if (Store.player1Paddle && Store.p1Target) {
-				Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
-				Store.p1Focus.lerp(Store.p1Target, lerpFactor);
-				const offsetP1 = new THREE.Vector3(-0.75, 0, 0);
-				cameraPlayer1.position.lerp(Store.p1Focus.clone().add(offsetP1), lerpFactorCam);
-				cameraPlayer1.lookAt(Store.p1Focus);
-				cam = cameraPlayer1;
-			}
-			if (Store.player2Paddle && Store.p2Target) {
-				Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
-			}
-		} else if (Store.gameConfig.side == 'right') {
-			if (Store.player2Paddle && Store.p2Target) {
-				Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
-				Store.p2Focus.lerp(Store.p2Target, lerpFactor);
-				const offsetP2 = new THREE.Vector3(0.75, 0, 0);
-				cameraPlayer2.position.lerp(Store.p2Focus.clone().add(offsetP2), lerpFactorCam);
-				cameraPlayer2.lookAt(Store.p2Focus);
-				cam = cameraPlayer2;
-			}
-			if (Store.player1Paddle && Store.p1Target) {
-				Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
-			}
-		}
-		screenMesh.visible = false;
-
-		renderer.setRenderTarget(renderTargetP1);
-		renderer.render(Store.pongScene, cam);
-
-		screenMesh.visible = true;
-		screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
-
-		renderer.setRenderTarget(null);
-		renderer.render(Store.pongScene, cameraCube);
-	}
+function updateCameraPosition(camera, focus, offset) {
+    camera.position.lerp(focus.clone().add(offset), lerpFactorCam);
+    camera.lookAt(focus);
 }
 
 
+function renderNetworkMode(renderer) 
+{
+    if (!cameraPlayer1) return; 
+
+    const { side } = Store.gameConfig;
+
+    if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
+    if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
+
+    let activeCamera = null;
+
+    if (side === 'left') {
+        updatePaddleAndFocus(Store.player1Paddle, Store.p1Target, Store.p1Focus);
+        activeCamera = cameraPlayer1;
+        const offsetLeft = new THREE.Vector3(-0.75, 0, 0);
+        updateCameraPosition(activeCamera, Store.p1Focus, offsetLeft);
+        if (Store.player2Paddle && Store.p2Target) 
+            Store.player2Paddle.position.lerp(Store.p2Target, lerpFactor);
+
+    } else if (side === 'right') {
+        updatePaddleAndFocus(Store.player2Paddle, Store.p2Target, Store.p2Focus);
+        activeCamera = cameraPlayer2;
+        const offsetRight = new THREE.Vector3(0.75, 0, 0);
+        updateCameraPosition(activeCamera, Store.p2Focus, offsetRight);
+        if (Store.player1Paddle && Store.p1Target)
+            Store.player1Paddle.position.lerp(Store.p1Target, lerpFactor);
+	}
+    
+    screenMesh.visible = false;
+    renderer.setRenderTarget(renderTargetP1);
+    renderer.render(Store.pongScene, activeCamera);
+
+    screenMesh.visible = true;
+    screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
+
+    renderer.setRenderTarget(null);
+    renderer.render(Store.pongScene, cameraCube);
+}
+
+function renderLocalMode(renderer) {
+    if (!cameraPlayer1 || !cameraPlayer2) return;
+
+    if (!Store.p1Focus) Store.p1Focus = new THREE.Vector3();
+    if (!Store.p2Focus) Store.p2Focus = new THREE.Vector3();
+
+    updatePaddleAndFocus(Store.player1Paddle, Store.p1Target, Store.p1Focus);
+    updatePaddleAndFocus(Store.player2Paddle, Store.p2Target, Store.p2Focus);
+
+    const offsetP1 = new THREE.Vector3(-0.75, 0, 0);
+    const offsetP2 = new THREE.Vector3(0.75, 0, 0);
+    updateCameraPosition(cameraPlayer1, Store.p1Focus, offsetP1);
+    updateCameraPosition(cameraPlayer2, Store.p2Focus, offsetP2);
+
+    screenMesh.visible = false;
+    renderer.setRenderTarget(renderTargetP1);
+    renderer.render(Store.pongScene, cameraPlayer1);
+
+    renderer.setRenderTarget(renderTargetP2);
+    renderer.render(Store.pongScene, cameraPlayer2);
+
+    screenMesh.visible = true;
+
+    screenMaterial.uniforms.textureP1.value = renderTargetP1.texture;
+    screenMaterial.uniforms.textureP2.value = renderTargetP2.texture;
+
+    renderer.setRenderTarget(null);
+    renderer.render(Store.pongScene, cameraCube);
+}
 
 
+export function animatePong(renderer) {
+    if (!Store.pongScene || !Store.gameConfig) return;
 
+    const { mode } = Store.gameConfig;
 
+    if (mode === 'local') {
+        renderLocalMode(renderer);
+    } else if (['matchmaking', 'private', 'solo'].includes(mode)) {
+        renderNetworkMode(renderer);
+    }
+}
 
 
 

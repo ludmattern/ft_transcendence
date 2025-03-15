@@ -216,7 +216,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         logger.info(f"🚨 Game over transmis au client WebSocket : {event}")
 
     async def leave_game(self, event):
-        logger.info(f" leave_game tst")
+        logger.info("leave_game tst")
 
     async def match_found(self, event):
         await self.send(json.dumps(event))

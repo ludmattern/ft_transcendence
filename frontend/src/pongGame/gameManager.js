@@ -8,13 +8,8 @@ import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.j
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { emit } from '/src/services/eventEmitter.js';
 import { triggerBallColorChange, triggerPaddleColorChange} from '/src/3d/pongScene.js';
+import { getUsername } from '/src/services/auth.js';
 
-
-//mettre cette classe asynchone 
-async function getid()
-{
-	return await getUserIdFromCookieAPI();
-}
 
 class GameManager {
 	constructor()  {
@@ -36,13 +31,11 @@ class GameManager {
 				this.stopMovement();
 			}
 		};
-
 		this.matchMakingKeydownHandler = (e) => {
 			if (!this.activeGame) return;
 			this.activeKeys[e.key] = true;
 			this.startMovement('matchmaking');
 		};
-
 		this.matchMakingKeyupHandler = (e) => {
 			delete this.activeKeys[e.key];
 			if (Object.keys(this.activeKeys).length === 0) {
@@ -56,61 +49,45 @@ class GameManager {
 	}
 	startMovement(mode) {
 		if (this.moveInterval) return;
-
+	
+		const movementMapping = {
+			'w': { direction: 'down', player: 1 },
+			's': { direction: 'up', player: 1 },
+			'a': { direction: 'left', player: 1 },
+			'd': { direction: 'right', player: 1 },
+			'ArrowUp': { direction: 'down', player: 2 },
+			'ArrowDown': { direction: 'up', player: 2 },
+			'ArrowLeft': { direction: 'right', player: 2 },
+			'ArrowRight': { direction: 'left', player: 2 },
+		};
+	
 		this.moveInterval = setInterval(() => {
 			if (mode === 'local') {
-				if (this.activeKeys['w']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', local_player: 1}));
-				}
-				if (this.activeKeys['s']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up', local_player: 1}));
-				}
-				if (this.activeKeys['a']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left' ,local_player: 1}));
-				}
-				if (this.activeKeys['d']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', local_player: 1}));
-				}
-
-				if (this.activeKeys['ArrowUp']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down', local_player: 2}));
-				}
-				if (this.activeKeys['ArrowDown']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up', local_player: 2}));
-				}
-				if (this.activeKeys['ArrowRight']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left', local_player: 2}));
-				}
-				if (this.activeKeys['ArrowLeft']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right', local_player: 2}));
-				}
+				Object.keys(movementMapping).forEach((key) => {
+					if (this.activeKeys[key]) {
+						const { direction, player } = movementMapping[key];
+						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction, local_player: player }));
+					}
+				});
 			} else {
 				const playerId = this.activeGame.side === 'left' ? 1 : 2;
-
-				if (this.activeKeys['w'] || this.activeKeys['ArrowUp']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'down' }));
-				}
-				if (this.activeKeys['s'] || this.activeKeys['ArrowDown']) {
-					ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'up' }));
-				}
-				if (playerId == 1) {
-					if (this.activeKeys['a'] || this.activeKeys['ArrowLeft']) {
-						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left'}));
+	
+				const movementKeys = {
+					up: ['s', 'ArrowDown'],
+					down: ['w', 'ArrowUp'],
+					left: playerId === 1 ? ['a', 'ArrowLeft'] : ['d', 'ArrowRight'],
+					right: playerId === 1 ? ['d', 'ArrowRight'] : ['a', 'ArrowLeft'],
+				};
+	
+				Object.entries(movementKeys).forEach(([direction, keys]) => {
+					if (keys.some((key) => this.activeKeys[key])) {
+						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction }));
 					}
-					if (this.activeKeys['d'] || this.activeKeys['ArrowRight']) {
-						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right' }));
-					}
-				} else {
-					if (this.activeKeys['d'] || this.activeKeys['ArrowRight']) {
-						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'left' }));
-					}
-					if (this.activeKeys['a'] || this.activeKeys['ArrowLeft']) {
-						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction: 'right' }));
-					}
-				}
+				});
 			}
 		}, 40);
 	}
+	
 
 	stopMovement() {
 		clearInterval(this.moveInterval);
@@ -231,15 +208,14 @@ class GameManager {
 			}
 		}
 		if (gameState.ball_hit_paddle) {
-			if (gameState.ball.vx < 0) {
+			if (gameState.ball.vx < 0)
 				triggerPaddleColorChange(Store.player2Paddle, new THREE.Color(0xff007f));
-			} else {
+			else 
 				triggerPaddleColorChange(Store.player1Paddle, new THREE.Color(0x7f00ff));
-			}
 		}
-		if (gameState.ball_hit_wall) {
+		if (gameState.ball_hit_wall)
 			triggerBallColorChange();
-		}
+
 		if (gameState.players) {
 			const p1 = gameState.players['1'];
 			const p2 = gameState.players['2'];
@@ -256,7 +232,6 @@ class GameManager {
 		if (!gameState || !gameState.user_scores) return;
 
 		if (this.gameMode === 'local' || this.gameMode === 'solo'){
-			const players = Object.keys(gameState.user_scores);
 			const scores = Object.values(gameState.user_scores);
 			const score1 = scores[0];
 			const score2 = scores[1];
@@ -318,26 +293,6 @@ class GameManager {
 }
 
 export const gameManager = new GameManager();
-
-export async function getUsername(playerId) {
-	try {
-		const response = await fetch('/api/user-service/getUsername/', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ id: playerId }),
-		});
-
-		if (!response.ok) {
-			throw new Error(`HTTP error! Status: ${response.status}`);
-		}
-
-		const data = await response.json();
-		return data.username;
-	} catch (error) {
-		console.error('Error fetching username:', error);
-		return `${playerId}`;
-	}
-}
 
 
 

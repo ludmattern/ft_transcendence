@@ -3,7 +3,7 @@ import { waitForElement } from '/src/components/hud/utils/utils.js';
 import { ws } from '/src/services/websocket.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { handleRoute } from '/src/services/router.js';
-import { getUsername } from '/src/pongGame/gameManager.js';
+import { getUsername } from '/src/services/auth.js';
 import { playGame } from '/src/components/pong/play/utils.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { getCurrentWindow } from '/src/3d/animation.js';
