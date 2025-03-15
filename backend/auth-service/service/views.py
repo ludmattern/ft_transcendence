@@ -137,7 +137,7 @@ def check_auth_view(request):
             }
         )
     except jwt.ExpiredSignatureError:
-        return JsonResponse({"success": False, "message": "Token expired"}, status=200)
+        return JsonResponse({"success": False, "message": "Token expired"}, status=401)
     except jwt.InvalidTokenError as e:
         return JsonResponse({"success": False, "message": f"Invalid token: {e}"}, status=200)
     except Exception as e:
@@ -346,10 +346,27 @@ def verify_2fa_view(request):
         user = ManualUser.objects.get(username=username)
     except ManualUser.DoesNotExist:
         return JsonResponse({"success": False, "message": "User not found"}, status=404)
-
+    
+    cookie_token = request.COOKIES.get("access_token")
     now_utc = datetime.datetime.utcnow()
     if user.token_expiry and user.token_expiry > now_utc:
-        return JsonResponse({"success": False, "message": "User is already connected."}, status=403)
+            logger.info(f"User {user.id}: session is still valid")
+            if not cookie_token or cookie_token != user.session_token:
+                logger.info(f"User {user.id}: session token mismatch, invalidating session")
+                user.token_expiry = None
+                user.session_token = None
+                user.save()
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f"user_{user.id}",
+                    {
+                        "type": "logout",
+                        "message": "session replaced",
+                    },
+                )
+            else:
+                logger.info(f"User {user.id}: already connected")
+                return JsonResponse({"success": False, "message": "User is already connected"}, status=403)
 
     if user.twofa_method == "authenticator-app":
         totp = pyotp.TOTP(user.totp_secret)
