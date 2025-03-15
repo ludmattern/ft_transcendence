@@ -89,12 +89,12 @@ def set_access_token_cookie(response, token_str):
 def check_auth_view(request):
     token = request.COOKIES.get("access_token")
     if not token:
-        return JsonResponse({"success": False, "message": "Cookie missing"}, status=401)
+        return JsonResponse({"success": False, "message": "Cookie missing"}, status=200)
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         current_timestamp = datetime.datetime.utcnow().timestamp()
         if "exp" not in payload or "sub" not in payload:
-            return JsonResponse({"success": False, "message": "Invalid token payload"}, status=401)
+            return JsonResponse({"success": False, "message": "Invalid token payload"}, status=200)
 
         try:
             user = ManualUser.objects.get(id=int(payload["sub"]))
@@ -108,7 +108,7 @@ def check_auth_view(request):
             )
 
         if not user.token_expiry or user.token_expiry.timestamp() < current_timestamp:
-            return JsonResponse({"success": False, "message": "Token expired (DB)"}, status=401)
+            return JsonResponse({"success": False, "message": "Token expired (DB)"}, status=200)
 
         remaining = payload["exp"] - current_timestamp
         if remaining < 1000:
@@ -137,9 +137,9 @@ def check_auth_view(request):
             }
         )
     except jwt.ExpiredSignatureError:
-        return JsonResponse({"success": False, "message": "Token expired"}, status=401)
+        return JsonResponse({"success": False, "message": "Token expired"}, status=200)
     except jwt.InvalidTokenError as e:
-        return JsonResponse({"success": False, "message": f"Invalid token: {e}"}, status=401)
+        return JsonResponse({"success": False, "message": f"Invalid token: {e}"}, status=200)
     except Exception as e:
         return JsonResponse({"success": False, "message": f"Unexpected error: {e}"}, status=500)
 
