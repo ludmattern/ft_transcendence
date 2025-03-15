@@ -99,12 +99,12 @@ def check_auth_view(request):
         try:
             user = ManualUser.objects.get(id=int(payload["sub"]))
         except ManualUser.DoesNotExist:
-            return JsonResponse({"success": False, "message": "User not found"}, status=404)
+            return JsonResponse({"success": False, "message": "User not found"}, status=200)
 
         if user.session_token != token:
             return JsonResponse(
                 {"success": False, "message": "Token does not match active session"},
-                status=401,
+                status=200,
             )
 
         if not user.token_expiry or user.token_expiry.timestamp() < current_timestamp:
@@ -160,7 +160,7 @@ def jwt_required(view_func):
             try:
                 user = ManualUser.objects.get(pk=user_id)
             except ManualUser.DoesNotExist:
-                return JsonResponse({"success": False, "message": "User not found"}, status=404)
+                return JsonResponse({"success": False, "message": "User not found"}, status=200)
 
             if user.session_token != token:
                 return JsonResponse(
@@ -494,9 +494,7 @@ def oauth_callback(request):
         logger.exception("OAuth callback error")
         return JsonResponse({"success": False, "message": "Internal Server Error"}, status=500)
 
-
 # --- Vues de réinitialisation du mot de passe ---
-
 
 @csrf_exempt
 def request_password_reset(request):

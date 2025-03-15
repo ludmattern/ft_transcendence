@@ -7,11 +7,9 @@ export const menu3 = createComponent({
 
 	render: () => `
     <div class="menu3" id="menu3">
-    <div class="spinner-border text-light spinner-slow-big" role="status">
+    <div class="spinner-border text-light spinner-slow-big" id="blue" role="status">
       <span class="visually-hidden">Chargement...</span>
     </div>
-		<img class="bluescreen" src="/src/assets/img/bluesceen.png" />
-	</div>
   `,
 
 	attachEvents: (el) => {
