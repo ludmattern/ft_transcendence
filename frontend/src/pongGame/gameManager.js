@@ -11,46 +11,19 @@ import { triggerBallColorChange, triggerPaddleColorChange} from '/src/3d/pongSce
 import { getUsername } from '/src/services/auth.js';
 
 
+
+
 class GameManager {
-	constructor()  {
+	constructor() {
 		this.gameMode = null;
 		this.activeGame = null;
 		this.activeKeys = {};
-		this.moveInterval = null;
 		this.username1 = null;
 		this.username2 = null;
-		this.localKeydownHandler = (e) => {
-			this.activeKeys[e.key] = true;
-			this.startMovement('local');
-		};
 		this.clientId = null;
 		this.clientName = null;
-		this.localKeyupHandler = (e) => {
-			delete this.activeKeys[e.key];
-			if (Object.keys(this.activeKeys).length === 0) {
-				this.stopMovement();
-			}
-		};
-		this.matchMakingKeydownHandler = (e) => {
-			if (!this.activeGame) return;
-			this.activeKeys[e.key] = true;
-			this.startMovement('matchmaking');
-		};
-		this.matchMakingKeyupHandler = (e) => {
-			delete this.activeKeys[e.key];
-			if (Object.keys(this.activeKeys).length === 0) {
-				this.stopMovement();
-			}
-		};
-	}
-	async initClientData() {
-		this.clientId = await getUserIdFromCookieAPI();
-		this.clientName = await getUsername(this.clientId);
-	}
-	startMovement(mode) {
-		if (this.moveInterval) return;
-	
-		const movementMapping = {
+		
+		this.movementMapping = {
 			'w': { direction: 'down', player: 1 },
 			's': { direction: 'up', player: 1 },
 			'a': { direction: 'left', player: 1 },
@@ -60,39 +33,99 @@ class GameManager {
 			'ArrowLeft': { direction: 'right', player: 2 },
 			'ArrowRight': { direction: 'left', player: 2 },
 		};
-	
-		this.moveInterval = setInterval(() => {
-			if (mode === 'local') {
-				Object.keys(movementMapping).forEach((key) => {
-					if (this.activeKeys[key]) {
-						const { direction, player } = movementMapping[key];
-						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction, local_player: player }));
-					}
-				});
-			} else {
+
+		this.localKeydownHandler = (e) => {
+			if (!this.activeKeys[e.key]) {
+				this.activeKeys[e.key] = true;
+				const mapping = this.movementMapping[e.key];
+				if (mapping) {
+					ws.send(
+						JSON.stringify({
+							type: 'game_event',
+							action: 'start_move',
+							direction: mapping.direction,
+							local_player: mapping.player,
+						})
+					);
+				}
+			}
+		};
+
+		this.localKeyupHandler = (e) => {
+			if (this.activeKeys[e.key]) {
+				delete this.activeKeys[e.key];
+				const mapping = this.movementMapping[e.key];
+				if (mapping) {
+					ws.send(
+						JSON.stringify({
+							type: 'game_event',
+							action: 'stop_move',
+							direction: mapping.direction,
+							local_player: mapping.player,
+						})
+					);
+				}
+			}
+		};
+
+		this.matchMakingKeydownHandler = (e) => {
+			if (!this.activeGame) return;
+			if (!this.activeKeys[e.key]) {
+				this.activeKeys[e.key] = true;
 				const playerId = this.activeGame.side === 'left' ? 1 : 2;
-	
 				const movementKeys = {
 					up: ['s', 'ArrowDown'],
 					down: ['w', 'ArrowUp'],
 					left: playerId === 1 ? ['a', 'ArrowLeft'] : ['d', 'ArrowRight'],
 					right: playerId === 1 ? ['d', 'ArrowRight'] : ['a', 'ArrowLeft'],
 				};
-	
 				Object.entries(movementKeys).forEach(([direction, keys]) => {
-					if (keys.some((key) => this.activeKeys[key])) {
-						ws.send(JSON.stringify({ type: 'game_event', action: 'move', direction }));
+					if (keys.includes(e.key)) {
+						ws.send(
+							JSON.stringify({
+								type: 'game_event',
+								action: 'start_move',
+								direction,
+							})
+						);
 					}
 				});
 			}
-		}, 40);
-	}
-	
+		};
 
-	stopMovement() {
-		clearInterval(this.moveInterval);
-		this.moveInterval = null;
+		this.matchMakingKeyupHandler = (e) => {
+			if (this.activeKeys[e.key]) {
+				delete this.activeKeys[e.key];
+				const playerId = this.activeGame.side === 'left' ? 1 : 2;
+				const movementKeys = {
+					up: ['s', 'ArrowDown'],
+					down: ['w', 'ArrowUp'],
+					left: playerId === 1 ? ['a', 'ArrowLeft'] : ['d', 'ArrowRight'],
+					right: playerId === 1 ? ['d', 'ArrowRight'] : ['a', 'ArrowLeft'],
+				};
+				Object.entries(movementKeys).forEach(([direction, keys]) => {
+					if (keys.includes(e.key)) {
+						ws.send(
+							JSON.stringify({
+								type: 'game_event',
+								action: 'stop_move',
+								direction,
+							})
+						);
+					}
+				});
+			}
+		};
+
+		window.addEventListener('blur', () => {
+			this.activeKeys = {};
+		});
 	}
+	async initClientData() {
+		this.clientId = await getUserIdFromCookieAPI();
+		this.clientName = await getUsername(this.clientId);
+	}
+
 
 	isGameActive() {
 		return this.activeGame !== null;
@@ -186,7 +219,6 @@ class GameManager {
 			document.removeEventListener('keyup', this.matchMakingKeyupHandler);
 		}
 		console.log('gameId on endin:', this.gameId);
-		this.stopMovement();
 		ws.send(
 			JSON.stringify({
 				type: 'game_event',

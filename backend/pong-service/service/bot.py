@@ -14,13 +14,10 @@ class AIPaddle:
         self.start_time = time.time()
         if difficulty == "hard":
             self.allowed_to_observe = 1.0
-            self.move_delay = 0.04
         elif difficulty == "very-hard":
             self.allowed_to_observe = 0.5
-            self.move_delay = 0.02
         else:
             self.allowed_to_observe = 0.1
-            self.move_delay = 0.002
         
 
     def update(self):
@@ -34,9 +31,7 @@ class AIPaddle:
             self.observe()
             self.last_observation_time = now
 
-        if now - self.last_move_time >= self.move_delay:
-            self.last_move_time = now
-            self.move_towards_target()
+        self.move_towards_target()
 
     def observe(self):
         """Observe the ball and decide where to move the paddle."""
@@ -114,19 +109,25 @@ class AIPaddle:
         self.target_z = max(-self.game.TUNNEL_DEPTH / 2, min(self.target_z, self.game.TUNNEL_DEPTH / 2))
 
     def move_towards_target(self):
-        """Move the paddle towards the target position."""
-        
         paddle = self.game.state.players[self.player_num]
-        threshold = 0.03
+        threshold = 0.03 
 
-        if abs(paddle.paddle_position.y - self.target_y) > threshold:
-            if paddle.paddle_position.y < self.target_y:
-                self.game.move_paddle(self.player_num, "up")
-            elif paddle.paddle_position.y > self.target_y:
-                self.game.move_paddle(self.player_num, "down")
+        if paddle.paddle_position.y < self.target_y - threshold:
+            self.game.set_movement(self.player_num, "up", True)
+            self.game.set_movement(self.player_num, "down", False)
+        elif paddle.paddle_position.y > self.target_y + threshold:
+            self.game.set_movement(self.player_num, "down", True)
+            self.game.set_movement(self.player_num, "up", False)
+        else:
+            self.game.set_movement(self.player_num, "up", False)
+            self.game.set_movement(self.player_num, "down", False)
 
-        if abs(paddle.paddle_position.z - self.target_z) > threshold:
-            if paddle.paddle_position.z < self.target_z:
-                self.game.move_paddle(self.player_num, "right")
-            elif paddle.paddle_position.z > self.target_z:
-                self.game.move_paddle(self.player_num, "left")
+        if paddle.paddle_position.z < self.target_z - threshold:
+            self.game.set_movement(self.player_num, "right", True)
+            self.game.set_movement(self.player_num, "left", False)
+        elif paddle.paddle_position.z > self.target_z + threshold:
+            self.game.set_movement(self.player_num, "left", True)
+            self.game.set_movement(self.player_num, "right", False)
+        else:
+            self.game.set_movement(self.player_num, "left", False)
+            self.game.set_movement(self.player_num, "right", False)

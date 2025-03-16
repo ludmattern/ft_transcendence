@@ -57,7 +57,7 @@ class BasePongGame:
     BALL_INITIAL_SPEED = 1.5
     VMAX = 5.0
     MIN_SPEED = 1.5
-    STEP = 0.045
+    STEP = 1.1
 
     TUNNEL_WIDTH = 5
     TUNNEL_HEIGHT = 1.5
@@ -83,7 +83,10 @@ class BasePongGame:
 
         self.user_scores = {self.player1_id: 0, self.player2_id: 0}
         self.player_mapping = {self.player1_id: 1, self.player2_id: 2}
-
+        self.movement_state = {
+            1: {"up": False, "down": False, "left": False, "right": False},
+            2: {"up": False, "down": False, "left": False, "right": False},
+        }
         ball_velocity = Vector3D(
             random.choice([-self.BALL_INITIAL_SPEED, self.BALL_INITIAL_SPEED]),
             random.uniform(-1, 1),
@@ -117,31 +120,45 @@ class BasePongGame:
     def is_solo_mode(self) -> bool:
         return self.solo_mode
 
-    def move_paddle(self, player_num: int, direction: str) -> None:
+
+    def set_movement(self, player_num: int, direction: str, moving: bool) -> None:
+        """set movement"""
+        if player_num not in self.movement_state:
+            self.movement_state[player_num] = {"up": False, "down": False, "left": False, "right": False}
+        self.movement_state[player_num][direction] = moving
+        
+
+    def move_paddle(self, player_num: int, direction: str, dt: float = 1.0) -> None:
         """move paddle"""
         if player_num not in self.state.players:
             return
-
+        #logger.info(f"Player {player_num} moving paddle {direction}")
         player = self.state.players[player_num]
         pos = player.paddle_position
 
+        step = self.STEP * dt
+
         if direction == "up":
-            pos.y = min(self.TUNNEL_HEIGHT / 2 - self.PADDLE_HEIGHT / 2, pos.y + self.STEP)
+            pos.y = min(self.TUNNEL_HEIGHT / 2 - self.PADDLE_HEIGHT / 2, pos.y + step)
         elif direction == "down":
-            pos.y = max(-self.TUNNEL_HEIGHT / 2 + self.PADDLE_HEIGHT / 2, pos.y - self.STEP)
+            pos.y = max(-self.TUNNEL_HEIGHT / 2 + self.PADDLE_HEIGHT / 2, pos.y - step)
         elif direction == "left":
-            pos.z = max(-self.TUNNEL_DEPTH / 2 + self.PADDLE_DEPTH / 2, pos.z - self.STEP)
+            pos.z = max(-self.TUNNEL_DEPTH / 2 + self.PADDLE_DEPTH / 2, pos.z - step)
         elif direction == "right":
-            pos.z = min(self.TUNNEL_DEPTH / 2 - self.PADDLE_DEPTH / 2, pos.z + self.STEP)
+            pos.z = min(self.TUNNEL_DEPTH / 2 - self.PADDLE_DEPTH / 2, pos.z + step)
 
     def update(self, dt: float) -> None:
-        """Met à jour l'état du jeu en utilisant le delta_time fourni."""
+        """update game state"""
         if self.game_over:
             return
 
         self.ball_hit_paddle = False
         self.ball_hit_wall = False
 
+        for player_num, moves in self.movement_state.items():
+            for direction, active in moves.items():
+                if active:
+                    self.move_paddle(player_num, direction, dt)
         elapsed_since_start = time.time() - self.start_time
         if elapsed_since_start < self.START_DELAY:
             self.state.waiting_for_start = True

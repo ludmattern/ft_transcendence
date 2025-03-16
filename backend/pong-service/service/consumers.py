@@ -29,7 +29,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
     async def game_event(self, event):
         """Handle game events."""
-        logger.info(f"[PongGroupConsumer] Reçu un game_event: {event}")
+        #logger.info(f"[PongGroupConsumer] Reçu un game_event: {event}")
 
         game_id = event.get("game_id")
         action = event.get("action", "")
@@ -48,30 +48,33 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 {"type": "game_state", "game_id": game_id, "payload": payload},
             )
 
-        elif action == "move":
+        elif action in ["start_move", "stop_move"]:
             if game.game_over:
                 logger.info(f"Déplacement ignoré : la partie {game_id} est terminée.")
                 return
-
+            logger.info(f"🎮 Déplacement du joueur {user_id} ({action})")
             direction = event.get("direction")
-            if game.player1_id == "Player 1" and game.player2_id == "Player 2" or game.game_id.startswith("tournLocal_"):
+            moving = (action == "start_move")
+
+            if (game.player1_id == "Player 1" and game.player2_id == "Player 2") or game.game_id.startswith("tournLocal_"):
                 if game.game_id.startswith("solo_"):
-                    game.move_paddle(1, direction)
-                local_player = event.get("local_player")
-                if not local_player:
-                    return
-                game.move_paddle(local_player, direction)
+                    game.set_movement(1, direction, moving)
+                else:
+                    local_player = event.get("local_player")
+                    if not local_player:
+                        return
+                    game.set_movement(local_player, direction, moving)
                 return
+
             else:
                 logger.info(f"🎮 Déplacement du joueur {user_id} ({direction})")
                 paddle_number = game.player_mapping.get(str(user_id))
                 logger.info(f"player_mapping: {game.player_mapping}")
                 if paddle_number is None:
-                    logger.error(
-                        "Le champ indiquant le joueur (local_player ou user_id) ne correspond à aucun paddle dans la partie."
-                    )
+                    logger.error("Le champ indiquant le joueur (local_player ou user_id) ne correspond à aucun paddle dans la partie.")
                     return
-                game.move_paddle(paddle_number, direction)
+                game.set_movement(paddle_number, direction, moving)
+
 
         elif action == "game_giveup":
             local_leave = event.get("local_leave")
