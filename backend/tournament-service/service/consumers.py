@@ -61,10 +61,6 @@ def get_accepted_participants_id(tournament_id):
 
 @database_sync_to_async
 def set_tournament_mode(tournament_id, mode):
-    """
-    Récupère un tournoi, met à jour son mode et le sauvegarde.
-    Retourne le tournoi mis à jour.
-    """
     tournament = ManualTournament.objects.get(id=tournament_id)
     tournament.mode = mode
     tournament.save()
@@ -332,7 +328,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             mode="online",
         )
 
-    # Delete all participants and tournament from the database
     @database_sync_to_async
     def cancel_tournament(self, tournament):
         try:
@@ -368,7 +363,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
     def get_initiator_tournament(self, initiator):
         return ManualTournament.objects.filter(organizer=initiator, status="upcoming").first()
 
-    # Get tournament from participant
     @database_sync_to_async
     def get_tournament_from_id(self, tournament_id):
         return ManualTournament.objects.get(id=tournament_id)

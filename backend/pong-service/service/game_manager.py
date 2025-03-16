@@ -8,7 +8,7 @@ class GameManager:
         self.games = {}
 
     def get_or_create_game(self, game_id, player1_id=None, player2_id=None):
-        """Récupère une partie existante ou en crée une nouvelle avec les IDs des joueurs."""
+        """Get or create a game with the given game_id and player_ids."""
         if game_id not in self.games:
             logging.info(f"Creating game {game_id} with players {player1_id} and {player2_id} on get or create game")
             self.games[game_id] = BasePongGame(game_id, player1_id, player2_id)

@@ -2,8 +2,6 @@ import json
 import redis
 from django.http import JsonResponse  # type: ignore
 
-# Need to get rid of this
-from django.views.decorators.csrf import csrf_exempt  # type: ignore
 
 
 from service.views import jwt_required
@@ -11,14 +9,8 @@ from service.views import jwt_required
 r = redis.Redis(host="redis", port=6379, db=0)
 
 
-@csrf_exempt
 @jwt_required
 def push_info_storage(request):
-    """
-    POST /storage/push/
-    Body JSON: {"key": "roomCode", "value": "XYZ"}
-    Stocke la valeur dans Redis avec expiration automatique de 1 heure.
-    """
     if request.method != "POST":
         return JsonResponse(
             {"success": False, "error": "Method not allowed"}, status=405
@@ -39,7 +31,7 @@ def push_info_storage(request):
         return JsonResponse({"success": False, "error": "Key is required"}, status=400)
 
     redis_key = f"user_storage:{user.id}:{key}"
-    expiration_time = 3600  # 1 heure
+    expiration_time = 3600
 
     r.setex(redis_key, expiration_time, str(value))
 
@@ -51,7 +43,6 @@ def push_info_storage(request):
     )
 
 
-@csrf_exempt
 @jwt_required
 def get_info_storage(request):
     """
@@ -80,7 +71,6 @@ def get_info_storage(request):
     )
 
 
-@csrf_exempt
 @jwt_required
 def delete_info_storage(request):
     """

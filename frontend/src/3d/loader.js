@@ -32,10 +32,8 @@ export async function loadModels() {
 	}
 
 	try {
-		// Charger les modèles en parallèle
 		const [gltfSaturn, gltfSN13] = await Promise.all([loadAndCacheModel('/src/assets/models/saturn.glb'), loadAndCacheModel('/src/assets/models/sn13.glb')]);
 
-		// Configurer Saturn
 		Store.planet = gltfSaturn.scene;
 		Store.planet.position.set(Store.saturnConfig.positionX, Store.saturnConfig.positionY, Store.saturnConfig.positionZ);
 		Store.planet.rotation.set(
@@ -46,7 +44,6 @@ export async function loadModels() {
 		Store.planet.scale.set(Store.saturnConfig.scale, Store.saturnConfig.scale, Store.saturnConfig.scale);
 		Store.scene.add(Store.planet);
 
-		// Configurer SN13
 		Store.model = gltfSN13.scene;
 		Store.model.position.set(3.5, -17, -1);
 		Store.model.rotation.set(0, 0, 0);

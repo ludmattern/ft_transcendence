@@ -115,7 +115,7 @@ function attachProfilePicUpload() {
 					}
 				}
 			} catch (error) {
-				console.error("Erreur lors de l'upload de l'image:", error);
+				console.error("error uploading img", error);
 			}
 		});
 	}

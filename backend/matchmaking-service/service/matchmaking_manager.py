@@ -46,6 +46,7 @@ class MatchmakingManager:
             return None
         
     def remove_from_queue(self, user_id):
+        """Remove a user from the queue."""
         logger.info(f"📥 remove queue called by {user_id}")
         logger.info(f"🔎 type de user_id = {type(user_id)}")
         if user_id in self.waiting_players:

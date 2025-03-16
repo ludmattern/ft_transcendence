@@ -183,7 +183,7 @@ function createFormGroup(id, type, label) {
 	return `
 	<div class="form-group">
 	<label class="mb-3" for="${id}">${label}</label>
-	<input type="${type}" id="${id}" name="${id}" class="form-control" required />
+	<input type="${type}" id="${id}" name="${id}" class="form-control"/>
 	${id === 'new-username' ? '<div id="error-message-id" class="text-danger mt-2" style="display: none;">Id already taken</div>' : ''}
 	${id === 'new-username' ? '<div id="bad-id" class="text-danger mt-2" style="display: none;">Id must contain between 6 and 20 char</div>' : ''}
 	${id === 'old-password' ? '<div id="current-pass-empty" class="text-danger mt-2" style="display: none;">Please enter current password</div>' : ''}

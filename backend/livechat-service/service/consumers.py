@@ -676,7 +676,6 @@ async def private_game_invite(self, event):
     inviter_id = event.get("author")
     invitee_id = event.get("recipient")
 
-    # Empêcher l'auto-invitation
     if str(inviter_id) == str(invitee_id):
         await self.channel_layer.group_send(
             f"user_{inviter_id}",
@@ -684,7 +683,6 @@ async def private_game_invite(self, event):
         )
         return
 
-    # Vérifier si l'un des utilisateurs est bloqué
     if await is_blocked(inviter_id, invitee_id):
         await self.channel_layer.group_send(
             f"user_{inviter_id}",
@@ -692,7 +690,6 @@ async def private_game_invite(self, event):
         )
         return
 
-    # Récupérer les objets utilisateurs
     try:
         inviter = await database_sync_to_async(ManualUser.objects.get)(id=inviter_id)
     except ManualUser.DoesNotExist:

@@ -3,7 +3,6 @@ import logging
 from django.http import JsonResponse  # type: ignore
 
 # Need to get rid of this
-from django.views.decorators.csrf import csrf_exempt  # type: ignore
 
 
 from django.db.models import Q  # type: ignore
@@ -12,7 +11,6 @@ from service.views import jwt_required
 
 logger = logging.getLogger(__name__)
 
-@csrf_exempt
 @jwt_required
 def get_friends(request):
     """Retrieve all accepted friends for the authenticated user."""
@@ -38,9 +36,9 @@ def get_friends(request):
         return JsonResponse({"error": "An internal error has occurred"}, status=500)
 
 
-@csrf_exempt
 @jwt_required
 def get_relationship_status(request):
+    """Check the relationship status between two users."""
     logger.info("Checking relationship status between two users")
     if request.method != "POST":
         return JsonResponse({"success": False, "error": "Invalid request method"}, status=405)

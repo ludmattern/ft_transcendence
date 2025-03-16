@@ -8,6 +8,7 @@ class PrivateManager:
         self.match_found = {}
 
     def join_room(self, room_code, user_id):
+        """Join a room with the given room_code and user_id."""
         logging.info(f"User {user_id} joined room {room_code}")
         if room_code not in self.waiting_rooms:
             self.waiting_rooms[room_code] = []

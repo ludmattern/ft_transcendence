@@ -15,8 +15,6 @@ from cryptography.fernet import Fernet
 from django.http import JsonResponse, HttpResponse  # type: ignore
 from django.views.decorators.http import require_POST, require_GET
 
-# Need to get rid of this
-from django.views.decorators.csrf import csrf_exempt  # type: ignore
 
 
 from django.db.models import Q  # type: ignore
@@ -25,16 +23,11 @@ from django.conf import settings  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
 from .models import ManualUser, ManualGameHistory, ManualBlockedRelations
 
-# Initialisation de Fernet pour le chiffrement/déchiffrement
 cipher = Fernet(settings.FERNET_KEY)
 
 
-# --- Fonctions utilitaires ---
 def is_expired(expiry):
-    """
-    Vérifie si une datetime d'expiration est dépassée.
-    Si la datetime n'est pas aware, elle est rendue aware via make_aware.
-    """
+
     if expiry is None:
         return True
     if not is_aware(expiry):
@@ -43,16 +36,13 @@ def is_expired(expiry):
 
 
 def decrypt_thing(encrypted_args):
-    """Déchiffre la chaîne passée en argument."""
     return cipher.decrypt(encrypted_args.encode("utf-8")).decode("utf-8")
 
 
 def encrypt_thing(text):
-    """Chiffre la chaîne passée en argument."""
     return cipher.encrypt(text.encode("utf-8")).decode("utf-8")
 
 
-# --- Décorateurs d'authentification ---
 def jwt_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
@@ -88,11 +78,7 @@ def jwt_required(view_func):
     return wrapper
 
 
-# --- Vues d'authentification et d'utilitaires ---
 def generate_qr_code(request, username):
-    """
-    Génère un QR code pour l'authentification 2FA via une application d'authentification.
-    """
     try:
         user = ManualUser.objects.get(username=username)
         totp = pyotp.TOTP(user.totp_secret)
@@ -431,7 +417,6 @@ def get_leaderboard(request):
     return JsonResponse({"success": True, "players": results})
 
 
-@csrf_exempt
 @jwt_required
 def check_oauth_id(request):
     try:

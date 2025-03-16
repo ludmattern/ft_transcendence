@@ -118,7 +118,7 @@ class BasePongGame:
         return self.solo_mode
 
     def move_paddle(self, player_num: int, direction: str) -> None:
-        """Déplace la paddle, empêche de sortir du tunnel."""
+        """move paddle"""
         if player_num not in self.state.players:
             return
 
@@ -135,6 +135,7 @@ class BasePongGame:
             pos.z = min(self.TUNNEL_DEPTH / 2 - self.PADDLE_DEPTH / 2, pos.z + self.STEP)
 
     def update(self) -> None:
+        """update game state"""
         if self.game_over:
             return
         self.ball_hit_paddle = False
@@ -163,7 +164,7 @@ class BasePongGame:
             self.game_over = True
 
     def _update_ball_waiting(self, now: float) -> None:
-        """Gère l'animation de la balle collée au paddle après un point."""
+        """update ball waiting"""
         if now - self.ball_reset_time < self.BALL_RESET_DELAY:
             if self.state.ball_following_paddle:
                 paddle = self.state.players[self.scoring_player]
@@ -196,14 +197,14 @@ class BasePongGame:
             ball.velocity.x = self.BALL_INITIAL_SPEED * speed_factor * direction
 
     def _update_ball_position(self, dt: float) -> None:
-        """Fait avancer la balle en fonction de sa vélocité et du dt."""
+        """update ball position"""
         ball = self.state.ball
         ball.position.x += ball.velocity.x * dt
         ball.position.y += ball.velocity.y * dt
         ball.position.z += ball.velocity.z * dt
 
     def _limit_ball_speed(self) -> None:
-        """Limite la vitesse de la balle à [MIN_SPEED, VMAX]."""
+        """limit ball speed"""
         ball = self.state.ball
         speed = ball.velocity.magnitude()
         if speed > self.VMAX:
@@ -217,7 +218,7 @@ class BasePongGame:
             ball.velocity.x = self.MIN_SPEED if ball.velocity.x >= 0 else -self.MIN_SPEED
 
     def _handle_wall_collisions(self) -> None:
-        """Détecte les collisions balle / murs (y et z)."""
+        """handle wall collisions"""
         ball = self.state.ball
         radius = ball.size / 2
 
@@ -240,7 +241,7 @@ class BasePongGame:
             self.ball_hit_wall = True
 
     def _handle_paddle_collisions_and_scoring(self) -> None:
-        """Gère les collisions balle / paddle et l'attribution de points."""
+        """handle paddle collisions and scoring"""
         ball = self.state.ball
         radius = ball.size / 2 
         p1 = self.state.players[1]
@@ -293,6 +294,7 @@ class BasePongGame:
 
 
     def _reset_ball(self, direction: str = "right") -> None:
+        """reset ball"""
         self.scoring_player = 1 if direction == "right" else 2
         self.state.ball_waiting = True
         self.state.ball_following_paddle = True
@@ -301,6 +303,7 @@ class BasePongGame:
         self.state.ball.velocity = Vector3D(0, 0, 0)
 
     def to_dict(self) -> dict:
+        """convert game state to dictionary for front"""
         return {
             "ball": {
                 "x": self.state.ball.position.x,

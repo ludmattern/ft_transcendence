@@ -26,6 +26,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard("pong_service", self.channel_name)
 
     async def game_event(self, event):
+        """Handle game events."""
         logger.info(f"[PongGroupConsumer] Reçu un game_event: {event}")
 
         game_id = event.get("game_id")
@@ -99,6 +100,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     game_manager.cleanup_game(game_id)
 
     async def game_loop(self, game_id):
+        """Main game loop."""
         game = game_manager.get_game(game_id)
         try:
             ai_paddle = AIPaddle(2, game, difficulty="difficult")
@@ -138,9 +140,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 del self.running_games[game_id]
             game_manager.cleanup_game(game_id)
 
-    # --- Fonctions de finalisation et traitement des parties ---
 
     async def determine_winner(self, game):
+        """Determine the winner of the game."""
         if game.quitter_id:
             game.user_scores[game.quitter_id] = -1
             if game.quitter_id == game.player1_id:
@@ -153,10 +155,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             return game.player2_id, game.player1_id
 
     async def process_tournament(self, game_id, game, winner_id, loser_id):
-        """
-        Traite la finalisation spécifique aux tournois en ligne.
-        Met à jour les statuts, le score et prépare le prochain match.
-        """
+        """finalize tournament game."""
         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
         loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
         match = await sync_to_async(TournamentMatch.objects.filter(match_key=game_id).first)()
@@ -227,9 +226,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(f"user_{0}", payload)
 
     async def process_matchmaking(self, game_id, game, winner_id, loser_id):
-        """
-        Traite la finalisation spécifique au matchmaking : met à jour les ELOs.
-        """
+        """finalize matchmaking game."""
         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
         loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
         logger.info(f"winner elo: {winner.id}")
@@ -251,10 +248,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         await sync_to_async(update_elo)()
 
     async def finalize_game(self, game_id, game):
-        """
-        Finalisation de la partie : calcul du vainqueur, mise à jour des scores,
-        ELO et historique de partie (et autres cas spécifiques comme tournoi).
-        """
+        """Finalize ongoing game."""
         winner_id, loser_id = await self.determine_winner(game)
         logger.info(f"winner_id: {winner_id}")
         logger.info(f"loser_id: {loser_id}")
@@ -265,7 +259,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         elif str(game_id).startswith("matchmaking_"):
             await self.process_matchmaking(game_id, game, winner_id, loser_id)
 
-        # Envoi de l'événement de fin de partie à tous les clients concernés
         await self.channel_layer.group_send(
             f"game_{game_id}",
             {
@@ -295,7 +288,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             logger.info("table game history non maj")
 
     async def game_over(self, event):
-        """Gère la fin de partie."""
         logger.info(f"[PongGroupConsumer] game_over reçu: {event}")
 
     async def leave_game(self, event):

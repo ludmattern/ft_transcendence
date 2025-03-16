@@ -6,8 +6,6 @@ import jwt
 import pyotp  # type: ignore
 from functools import wraps
 
-# Need to get rid of this
-from django.views.decorators.csrf import csrf_exempt  # type: ignore
 
 from cryptography.fernet import Fernet
 from django.views.decorators.http import require_POST, require_GET
@@ -32,29 +30,21 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Initialisation de Fernet
 cipher = Fernet(settings.FERNET_KEY)
 
 
-# Fonctions d'encryptage/décryptage
 def encrypt_thing(text):
-    """Chiffre la chaîne passée en argument."""
     return cipher.encrypt(text.encode("utf-8")).decode("utf-8")
 
 
 def decrypt_thing(encrypted_text):
-    """Déchiffre la chaîne passée en argument."""
     return cipher.decrypt(encrypted_text.encode("utf-8")).decode("utf-8")
 
 
-# --- Fonctions utilitaires pour JWT ---
 
 
 def generate_session_token(user):
-    """
-    Génère un token JWT pour l'utilisateur avec une durée définie dans settings.JWT_EXP_DELTA_SECONDS.
-    Renvoie le token (str) et la date d'expiration (datetime).
-    """
+    """ganerate a JWT token for the user."""
     current_time = datetime.datetime.utcnow()
     expiry = current_time + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
     token = jwt.encode(
@@ -71,7 +61,6 @@ def generate_session_token(user):
 
 
 def set_access_token_cookie(response, token_str):
-    """Ajoute le cookie d'authentification à la réponse."""
     response.set_cookie(
         key="access_token",
         value=token_str,
@@ -87,6 +76,7 @@ def set_access_token_cookie(response, token_str):
 
 @require_GET
 def check_auth_view(request):
+    """verify the validity of the access token."""
     token = request.COOKIES.get("access_token")
     if not token:
         return JsonResponse({"success": False, "message": "Cookie missing"}, status=200)
@@ -145,6 +135,7 @@ def check_auth_view(request):
 
 
 def jwt_required(view_func):
+    """Decorator to require a valid JWT token."""
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         token = request.COOKIES.get("access_token")
@@ -182,7 +173,6 @@ def jwt_required(view_func):
     return wrapper
 
 
-# --- Fonctions 2FA ---
 
 
 def generate_2fa_code(length=6):
@@ -209,11 +199,11 @@ def send_2fa_sms(phone_number, code):
         logger.error("Error sending SMS: %s", e)
 
 
-# --- Vues de connexion/déconnexion ---
 
 
 @require_POST
 def login_view(request):
+    """POST /login/"""
     body = json.loads(request.body.decode("utf-8"))
     username = body.get("username")
     password = body.get("password")
@@ -306,8 +296,8 @@ def login_view(request):
     return response
 
 
-@csrf_exempt
 def logout_view(request):
+    """POST /logout/"""
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)
 
@@ -333,8 +323,8 @@ def logout_view(request):
         return JsonResponse({"success": False, "message": str(e)}, status=401)
 
 
-@csrf_exempt
 def verify_2fa_view(request):
+    """POST /verify-2fa/"""
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)
 
@@ -393,9 +383,8 @@ def verify_2fa_view(request):
     else:
         return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
 
-
-@csrf_exempt
 def get_user_id_from_cookie(request):
+    """GET /get-user-id/"""
     token = request.COOKIES.get("access_token")
     if not token:
         return JsonResponse({"error": "access_token cookie not found"}, status=400)
@@ -427,8 +416,8 @@ def get_42_auth_url(request):
     return JsonResponse({"url": auth_url})
 
 
-@csrf_exempt
 def oauth_callback(request):
+    """GET /oauth/callback/"""
     error = request.GET.get("error")
     if error:
         return redirect(f"https://{SERVER_IP}:8443/login")
@@ -494,10 +483,9 @@ def oauth_callback(request):
         logger.exception("OAuth callback error")
         return JsonResponse({"success": False, "message": "Internal Server Error"}, status=500)
 
-# --- Vues de réinitialisation du mot de passe ---
 
-@csrf_exempt
 def request_password_reset(request):
+    """POST /request-password-reset/"""
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)
     try:
@@ -543,7 +531,6 @@ def request_password_reset(request):
         return JsonResponse({"success": False, "message": str(e)}, status=500)
 
 
-@csrf_exempt
 def verify_reset_code(request):
     logger.info("Verifying reset code")
     if request.method != "POST":
@@ -604,7 +591,6 @@ def verify_reset_code(request):
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
 
-@csrf_exempt
 def change_password(request):
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)

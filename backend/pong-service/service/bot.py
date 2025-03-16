@@ -21,6 +21,7 @@ class AIPaddle:
         
 
     def update(self):
+        """Update the AI paddle's position."""
         now = time.time()
 
         if now - self.start_time < 3:
@@ -35,6 +36,7 @@ class AIPaddle:
             self.move_towards_target()
 
     def observe(self):
+        """Observe the ball and decide where to move the paddle."""
         ball = self.game.state.ball
         paddle = self.game.state.players[self.player_num]
 
@@ -109,6 +111,7 @@ class AIPaddle:
         self.target_z = max(-self.game.TUNNEL_DEPTH / 2, min(self.target_z, self.game.TUNNEL_DEPTH / 2))
 
     def move_towards_target(self):
+        """Move the paddle towards the target position."""
         
         paddle = self.game.state.players[self.player_num]
         threshold = 0.03

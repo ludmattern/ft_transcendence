@@ -60,6 +60,13 @@ const Store = {
 		rotationZ: -79,
 		scale: 5,
 	},
+
+
+	starCount: null,
+	starDistance: null,
+	starSpeed : null,
+	starGeometry : null,
+	stars: null,
 };
 
 export default Store;

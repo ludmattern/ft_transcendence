@@ -49,8 +49,9 @@ export async function buildScene() {
 
 	animate();
 }
-
+  
 let lastGameUpdateTime = 0;
+
 
 function animate() {
 	requestAnimationFrame(animate);

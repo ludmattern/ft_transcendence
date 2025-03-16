@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 @jwt_required
 def info_getter(request):
+    """GET /info/get/"""
     if request.method != "GET":
         return JsonResponse({"success": False, "error": "Invalid request method"}, status=405)
 
@@ -45,7 +46,6 @@ def info_getter(request):
 
     logger.info(f"Friend request data: {friend_request_data}")
 
-    # Récupération des invitations de tournoi en attente
     pending_invites = ManualTournamentParticipants.objects.filter(user=user, status="pending").select_related(
         "tournament__organizer"
     )

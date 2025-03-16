@@ -1,7 +1,5 @@
 from django.http import JsonResponse  # type: ignore
 
-# Need to get rid of this
-from django.views.decorators.csrf import csrf_exempt  # type: ignore
 
 import math
 import random
@@ -25,6 +23,7 @@ cipher = Fernet(settings.FERNET_KEY)
 
 
 def jwt_required(view_func):
+    """Decorator to check for a valid JWT token in the request."""
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         token = request.COOKIES.get("access_token")
@@ -65,6 +64,7 @@ def jwt_required(view_func):
 
 
 def getTournamentParticipants(request, tournament_id):
+    """Retrieve the participants of a tournament."""
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
 
@@ -94,11 +94,9 @@ def getTournamentParticipants(request, tournament_id):
     return JsonResponse(data)
 
 
-# TODO ici pas de changement avec le online
-
-
 @jwt_required
 def get_current_tournament(request):
+    """Retrieve the current tournament for the authenticated user."""
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
 
@@ -148,6 +146,7 @@ def get_current_tournament(request):
 
 
 def getTournamentSerialKey(request, user_id):
+    """Retrieve the serial key of the latest tournament for a user."""
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
     if not user_id:
@@ -165,7 +164,6 @@ def getTournamentSerialKey(request, user_id):
     return JsonResponse(data)
 
 
-@csrf_exempt
 @jwt_required
 def getParticipantStatusInTournament(request):
     """Retrieve the tournament status of the authenticated user."""
@@ -190,6 +188,7 @@ def getParticipantStatusInTournament(request):
 
 
 def getTournamentIdFromSerialKey(request, serial_key):
+    """Retrieve the tournament ID from a serial key."""
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
     if not serial_key:
@@ -205,6 +204,7 @@ def getTournamentIdFromSerialKey(request, serial_key):
 
 
 def isUserTournamentOrganizer(request, user_id, tournament_serial_key):
+    """Check if a user is the organizer of a tournament."""
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
     if not user_id or not tournament_serial_key:
@@ -223,6 +223,7 @@ def isUserTournamentOrganizer(request, user_id, tournament_serial_key):
 
 
 def getStatusOfCurrentTournament(request, user_id):
+    """Retrieve the status of the current tournament for a user."""
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
     if not user_id:
@@ -244,6 +245,7 @@ def getStatusOfCurrentTournament(request, user_id):
 
 @jwt_required
 def getCurrentTournamentInformation(request):
+    """Retrieve the information of the current tournament for the authenticated user."""
     if request.method != "GET":
         return JsonResponse({"error": "GET method required"}, status=405)
 
@@ -299,8 +301,8 @@ def getCurrentTournamentInformation(request):
     return JsonResponse(data)
 
 
-@csrf_exempt
 def update_match_result(request):
+    """Update the result of a match in a tournament."""
     if request.method != "POST":
         return JsonResponse({"error": "POST method required"}, status=405)
     try:
@@ -368,9 +370,9 @@ def update_match_result(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 
-@csrf_exempt
 @jwt_required
 def abandon_local_tournament(request):
+    """Abandon a local tournament and remove all participants except the organizer."""
     if request.method != "POST":
         return JsonResponse({"error": "POST method required"}, status=405)
     try:
@@ -412,9 +414,9 @@ def encrypt_thing(args):
     return cipher.encrypt(args.encode("utf-8")).decode("utf-8")
 
 
-@csrf_exempt
 @jwt_required
 def create_local_tournament_view(request):
+    """Create a local tournament with the provided players."""
     if request.method != "POST":
         return JsonResponse({"error": "POST method required"}, status=405)
 
@@ -525,9 +527,9 @@ def create_local_tournament_view(request):
         return JsonResponse("Internal Error", status=500)
 
 
-@csrf_exempt
 @jwt_required
 def try_join_random_tournament(request):
+    """Join a random tournament."""
     if request.method != "POST":
         return JsonResponse({"message": "POST method required"}, status=405)
 
@@ -560,7 +562,6 @@ def try_join_random_tournament(request):
         if participant_count >= tournament_size:
             return JsonResponse({"message": "Tournament is full"}, status=400)
 
-        # Add user to the tournament
         ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
 
         logger.info(f"User {user.id} found {tournament.id} tournament to join")
@@ -580,9 +581,9 @@ def try_join_random_tournament(request):
         return JsonResponse({"message": str(e)}, status=500)
 
 
-@csrf_exempt
 @jwt_required
 def try_join_tournament_with_room_code(request):
+    """Join a tournament with a room code."""
     if request.method != "POST":
         return JsonResponse({"message": "POST method required"}, status=405)
 
@@ -613,7 +614,6 @@ def try_join_tournament_with_room_code(request):
         if participant_count >= tournament.size:
             return JsonResponse({"message": "Tournament is full"}, status=400)
 
-        # Add user to the tournament
         ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
 
         logger.info(f"User {user.id} joined tournament {tournament.id}")
