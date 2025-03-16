@@ -27,14 +27,6 @@ export const soloContent = createComponent({
                 </select>
                 <small id="difficultyHelp" class="text-secondary">Seriously? You're making it worse for yourself.</small>
               </div>
-
-              <div class="mb-3 form-check">
-                <input class="form-check-input" type="checkbox" id="liabilityCheckbox">
-                <label class="form-check-label" for="liabilityCheckbox">
-                  I fully acknowledge my inevitable defeat and accept total humiliation.
-                </label>
-              </div>
-
               <div class="text-center">
                 <button class="mt-3 btn btn-pong" id="launch">Proceed to Your Doom</button>
               </div>
@@ -45,27 +37,18 @@ export const soloContent = createComponent({
     </section>
   `,
 
-	// Ajouter les événements pour gérer 
 	attachEvents: async () => {
     const difficulty = document.getElementById('difficulty');
-    const liabilityCheckbox = document.getElementById('liabilityCheckbox');
     
-    // Charger les valeurs sauvegardées
     const savedDifficulty = (await getInfo('difficulty')).success ? (await getInfo('difficulty')).value : null;
-    const savedLiability = (await getInfo('liabilityCheckbox')).success ? (await getInfo('liabilityCheckbox')).value : null;
     
-
 		if (savedDifficulty) difficulty.value = savedDifficulty;
-		if (savedLiability) liabilityCheckbox.checked = savedLiability === 'true';
 
     difficulty.addEventListener('change', () => {
       pushInfo('difficulty', difficulty.value);
   });
   
-  liabilityCheckbox.addEventListener('change', () => {
-      pushInfo('liabilityCheckbox', liabilityCheckbox.checked);
-  });
-  
+
 		const launchButton = document.getElementById('launch');
 
 		launchButton.addEventListener('click', () => {

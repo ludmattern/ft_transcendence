@@ -153,6 +153,7 @@ class GameManager {
 			player1 = gameConfig.player1;
 			player2 = gameConfig.player2;
 		}
+		console.log("difficulity:", gameConfig.difficulty);
 		console.log(` Sending start_game event: player1=${player1}, player2=${player2}, with game_id=${this.gameId}`);	
 		ws.send(
 			JSON.stringify({
@@ -162,6 +163,7 @@ class GameManager {
 				mode: gameConfig.mode,
 				player1: player1,
 				player2: player2,
+				difficulty: gameConfig.difficulty,
 			})
 		);
 

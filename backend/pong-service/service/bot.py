@@ -12,12 +12,15 @@ class AIPaddle:
         self.target_z = 0
         self.last_move_time = 0
         self.start_time = time.time()
-        if difficulty == "difficult":
+        if difficulty == "hard":
             self.allowed_to_observe = 1.0
-        elif difficulty == "medium":
-            self.allowed_to_observe = 1.5
+            self.move_delay = 0.04
+        elif difficulty == "very-hard":
+            self.allowed_to_observe = 0.5
+            self.move_delay = 0.02
         else:
-            self.allowed_to_observe = 2.0
+            self.allowed_to_observe = 0.1
+            self.move_delay = 0.002
         
 
     def update(self):
@@ -31,7 +34,7 @@ class AIPaddle:
             self.observe()
             self.last_observation_time = now
 
-        if now - self.last_move_time >= 0.04:
+        if now - self.last_move_time >= self.move_delay:
             self.last_move_time = now
             self.move_towards_target()
 

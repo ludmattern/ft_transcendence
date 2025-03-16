@@ -14,6 +14,7 @@ from .bot import AIPaddle
 logger = logging.getLogger(__name__)
 
 
+
 class PongGroupConsumer(AsyncWebsocketConsumer):
     running_games = {}
 
@@ -34,12 +35,12 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         player1_id = event.get("player1", "Player 1")
         player2_id = event.get("player2", "Player 2")
         user_id = event.get("user_id")
-
+        difficulty = event.get("difficulty")
         game = game_manager.get_or_create_game(game_id, player1_id, player2_id)
         if action == "start_game":
             if game_id not in self.running_games:
                 logger.info(f"🎮 Démarrage de la partie {game_id}")
-                self.running_games[game_id] = {"task": asyncio.create_task(self.game_loop(game_id))}
+                self.running_games[game_id] = {"task": asyncio.create_task(self.game_loop(game_id, difficulty))}
             payload = game.to_dict()
             await self.channel_layer.group_send(
                 f"game_{game_id}",
@@ -99,12 +100,13 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     del self.running_games[game_id]
                     game_manager.cleanup_game(game_id)
 
-    async def game_loop(self, game_id):
+    async def game_loop(self, game_id, difficulty="hard"):
         """Main game loop."""
         game = game_manager.get_game(game_id)
         try:
-            ai_paddle = AIPaddle(2, game, difficulty="difficult")
-
+            logger.info(f"difficulty: {difficulty}")
+            if game.is_solo_mode():
+                ai_paddle = AIPaddle(2, game, difficulty=difficulty)
             while True:
                 game = game_manager.get_game(game_id)
                 if not game:
