@@ -1,6 +1,8 @@
 import json
 import redis
 from django.http import JsonResponse  # type: ignore
+from django.views.decorators.http import require_POST, require_GET
+from functools import wraps
 
 
 
@@ -9,13 +11,9 @@ from service.views import jwt_required
 r = redis.Redis(host="redis", port=6379, db=0)
 
 
+@require_POST
 @jwt_required
 def push_info_storage(request):
-    if request.method != "POST":
-        return JsonResponse(
-            {"success": False, "error": "Method not allowed"}, status=405
-        )
-
     try:
         data = json.loads(request.body.decode("utf-8"))
     except (json.JSONDecodeError, UnicodeDecodeError):
@@ -42,18 +40,13 @@ def push_info_storage(request):
         }
     )
 
-
+@require_GET
 @jwt_required
 def get_info_storage(request):
     """
     GET /storage/get/?key=roomCode
     Récupère la valeur dans Redis.
     """
-    if request.method != "GET":
-        return JsonResponse(
-            {"success": False, "error": "Method not allowed"}, status=405
-        )
-
     user = request.user
     key = request.GET.get("key")
 
@@ -70,18 +63,23 @@ def get_info_storage(request):
         {"success": True, "key": key, "value": stored_value.decode("utf-8")}
     )
 
+# This is a custom decorator that checks if the request method is DELETE
+def require_DELETE(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if request.method != 'DELETE':
+            return JsonResponse({"success": False, "error": "Method not allowed"}, status=405)
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
 
+
+@require_DELETE
 @jwt_required
 def delete_info_storage(request):
     """
     DELETE /storage/delete/?key=roomCode
     Supprime la valeur dans Redis.
     """
-    if request.method != "DELETE":
-        return JsonResponse(
-            {"success": False, "error": "Method not allowed"}, status=405
-        )
-
     user = request.user
     key = request.GET.get("key")
 

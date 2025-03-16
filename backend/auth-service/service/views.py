@@ -29,19 +29,10 @@ from asgiref.sync import async_to_sync
 import logging
 
 logger = logging.getLogger(__name__)
-
 cipher = Fernet(settings.FERNET_KEY)
-
-
-def encrypt_thing(text):
-    return cipher.encrypt(text.encode("utf-8")).decode("utf-8")
-
 
 def decrypt_thing(encrypted_text):
     return cipher.decrypt(encrypted_text.encode("utf-8")).decode("utf-8")
-
-
-
 
 def generate_session_token(user):
     """ganerate a JWT token for the user."""
@@ -129,9 +120,11 @@ def check_auth_view(request):
     except jwt.ExpiredSignatureError:
         return JsonResponse({"success": False, "message": "Token expired"}, status=401)
     except jwt.InvalidTokenError as e:
-        return JsonResponse({"success": False, "message": f"Invalid token: {e}"}, status=200)
+        logging.error("Invalid token: %s", e)
+        return JsonResponse({"success": False, "message": "Token error"}, status=200)
     except Exception as e:
-        return JsonResponse({"success": False, "message": f"Unexpected error: {e}"}, status=500)
+        logging.error("Unexpected error: %s", e)
+        return JsonResponse({"success": False, "message": "Unexpected error"}, status=500)
 
 
 def jwt_required(view_func):
@@ -166,7 +159,8 @@ def jwt_required(view_func):
         except jwt.ExpiredSignatureError:
             return JsonResponse({"success": False, "message": "Token expired"}, status=401)
         except jwt.InvalidTokenError as e:
-            return JsonResponse({"success": False, "message": str(e)}, status=401)
+            logging.error("Invalid token: %s", e)
+            return JsonResponse({"success": False, "message":"Token error"}, status=401)
 
         return view_func(request, *args, **kwargs)
 
@@ -295,12 +289,10 @@ def login_view(request):
     set_access_token_cookie(response, token_str)
     return response
 
+@require_POST
 @jwt_required
 def logout_view(request):
     """POST /logout/"""
-    if request.method != "POST":
-        return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)
-
     token = request.COOKIES.get("access_token")
     if not token:
         return JsonResponse({"success": False, "message": "No token provided"}, status=400)
@@ -320,14 +312,12 @@ def logout_view(request):
     except jwt.ExpiredSignatureError:
         return JsonResponse({"success": False, "message": "Token already expired"}, status=401)
     except (jwt.InvalidTokenError, ManualUser.DoesNotExist) as e:
-        return JsonResponse({"success": False, "message": str(e)}, status=401)
+        logging.error("Error during logout: %s", e)
+        return JsonResponse({"success": False, "message": "Unexpected error"}, status=401)
 
-
+@require_POST
 def verify_2fa_view(request):
     """POST /verify-2fa/"""
-    if request.method != "POST":
-        return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)
-
     body = json.loads(request.body.decode("utf-8"))
     username = body.get("username")
     code = body.get("twofa_code")
@@ -383,6 +373,7 @@ def verify_2fa_view(request):
     else:
         return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
 
+@require_GET
 def get_user_id_from_cookie(request):
     """GET /get-user-id/"""
     token = request.COOKIES.get("access_token")
@@ -415,7 +406,7 @@ def get_42_auth_url(request):
     )
     return JsonResponse({"url": auth_url})
 
-
+@require_GET
 def oauth_callback(request):
     """GET /oauth/callback/"""
     error = request.GET.get("error")
@@ -483,11 +474,9 @@ def oauth_callback(request):
         logger.exception("OAuth callback error")
         return JsonResponse({"success": False, "message": "Internal Server Error"}, status=500)
 
-
+@require_POST
 def request_password_reset(request):
     """POST /request-password-reset/"""
-    if request.method != "POST":
-        return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)
     try:
         body = json.loads(request.body.decode("utf-8"))
         email = body.get("email")
@@ -528,13 +517,12 @@ def request_password_reset(request):
 
         return JsonResponse({"success": True, "message": "Reset code sent"})
     except Exception as e:
-        return JsonResponse({"success": False, "message": str(e)}, status=500)
+        logging.error("An error occurred while requesting a password reset: %s", str(e))
+        return JsonResponse({"success": False, "message": "Internal Server Error"}, status=500)
 
-
+@require_POST
 def verify_reset_code(request):
     logger.info("Verifying reset code")
-    if request.method != "POST":
-        return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)
     try:
         body = json.loads(request.body.decode("utf-8"))
         email = body.get("email")
@@ -590,10 +578,8 @@ def verify_reset_code(request):
         logger.error("An error occurred while verifying the reset code: %s", str(e))
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
-
+@require_POST
 def change_password(request):
-    if request.method != "POST":
-        return JsonResponse({"success": False, "message": "Only POST allowed"}, status=405)
     try:
         body = json.loads(request.body.decode("utf-8"))
         new_password = body.get("new_password")
@@ -613,7 +599,8 @@ def change_password(request):
         except jwt.ExpiredSignatureError:
             return JsonResponse({"success": False, "message": "Reset token expired"}, status=401)
         except jwt.InvalidTokenError as e:
-            return JsonResponse({"success": False, "message": str(e)}, status=401)
+            logging.error("Invalid reset token: %s", e)
+            return JsonResponse({"success": False, "message": "Token error"}, status=401)
 
         if payload.get("type") != "password_reset":
             return JsonResponse({"success": False, "message": "Invalid token type"}, status=401)

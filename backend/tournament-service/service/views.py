@@ -12,11 +12,13 @@ from .models import (
 )
 import logging
 import json
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet  # type: ignore
 from django.conf import settings  # type: ignore
-import jwt
+import jwt # type: ignore
 from functools import wraps
 import datetime
+from django.views.decorators.http import require_POST, require_GET # type: ignore
+
 
 logger = logging.getLogger(__name__)
 cipher = Fernet(settings.FERNET_KEY)
@@ -63,43 +65,10 @@ def jwt_required(view_func):
     return wrapper
 
 
-def getTournamentParticipants(request, tournament_id):
-    """Retrieve the participants of a tournament."""
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
-
-    if not tournament_id:
-        return JsonResponse({"error": "tournament_id parameter is required"}, status=400)
-
-    try:
-        tournament = ManualTournament.objects.get(id=tournament_id)
-    except ManualTournament.DoesNotExist:
-        return JsonResponse({"error": "Tournament not found"}, status=404)
-
-    participants = ManualTournamentParticipants.objects.filter(tournament=tournament).filter(status__in=["accepted", "pending"])
-
-    data = {
-        "tournament_id": tournament.id,
-        "tournament_name": tournament.name,
-        "participants": [
-            {
-                "id": participant.user.id,
-                "username": participant.user.username,
-                "status": participant.status,
-            }
-            for participant in participants
-        ],
-    }
-
-    return JsonResponse(data)
-
-
+@require_GET
 @jwt_required
 def get_current_tournament(request):
     """Retrieve the current tournament for the authenticated user."""
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
-
     user = request.user
     if not user:
         return JsonResponse({"error": "Unauthorized"}, status=401)
@@ -144,111 +113,10 @@ def get_current_tournament(request):
 
     return JsonResponse(data)
 
-
-def getTournamentSerialKey(request, user_id):
-    """Retrieve the serial key of the latest tournament for a user."""
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
-    if not user_id:
-        return JsonResponse({"error": "user_id parameter is required"}, status=400)
-
-    try:
-        tournament = ManualTournament.objects.filter(status="upcoming" or "ongoing", participants__user__id=user_id).latest(
-            "created_at"
-        )
-        serial_key = tournament.serial_key
-    except ManualTournament.DoesNotExist:
-        serial_key = ""
-
-    data = {"serial_key": serial_key}
-    return JsonResponse(data)
-
-
-@jwt_required
-def getParticipantStatusInTournament(request):
-    """Retrieve the tournament status of the authenticated user."""
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
-    try:
-        user = request.user
-
-        participant = (
-            ManualTournamentParticipants.objects.filter(user=user, status__in=["accepted", "pending"])
-            .order_by("-created_at")
-            .first()
-        )
-
-        status = participant.status if participant else "none"
-
-        return JsonResponse({"status": status}, status=200)
-
-    except Exception as e:
-        logger.exception("Error retrieving participant status in tournament:")
-        return JsonResponse({"error": str(e)}, status=500)
-
-
-def getTournamentIdFromSerialKey(request, serial_key):
-    """Retrieve the tournament ID from a serial key."""
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
-    if not serial_key:
-        return JsonResponse({"error": "serial_key parameter is required"}, status=400)
-
-    try:
-        tournament = ManualTournament.objects.get(serial_key=serial_key)
-    except ManualTournament.DoesNotExist:
-        return JsonResponse({"error": "Tournament not found"}, status=404)
-
-    data = {"tournament_id": tournament.id}
-    return JsonResponse(data)
-
-
-def isUserTournamentOrganizer(request, user_id, tournament_serial_key):
-    """Check if a user is the organizer of a tournament."""
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
-    if not user_id or not tournament_serial_key:
-        return JsonResponse(
-            {"error": "user_id and tournament_serial_key parameters are required"},
-            status=400,
-        )
-
-    try:
-        tournament = ManualTournament.objects.get(serial_key=tournament_serial_key)
-    except ManualTournament.DoesNotExist:
-        return JsonResponse({"error": "Tournament not found"}, status=404)
-
-    data = {"is_organizer": str(tournament.organizer_id) == user_id}
-    return JsonResponse(data)
-
-
-def getStatusOfCurrentTournament(request, user_id):
-    """Retrieve the status of the current tournament for a user."""
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
-    if not user_id:
-        return JsonResponse({"error": "user_id parameter is required"}, status=400)
-
-    try:
-        tournament = ManualTournament.objects.filter(participants__user__id=user_id).latest("created_at")
-    except ManualTournament.DoesNotExist:
-        data = {"status": "none"}
-        return JsonResponse(data)
-
-    data = {
-        "status": tournament.status,
-        "mode": tournament.mode,
-    }
-
-    return JsonResponse(data)
-
-
+@require_GET
 @jwt_required
 def getCurrentTournamentInformation(request):
     """Retrieve the information of the current tournament for the authenticated user."""
-    if request.method != "GET":
-        return JsonResponse({"error": "GET method required"}, status=405)
-
     try:
         user = request.user
     except ManualUser.DoesNotExist:
@@ -300,11 +168,10 @@ def getCurrentTournamentInformation(request):
     }
     return JsonResponse(data)
 
+@require_POST
 @jwt_required
 def update_match_result(request):
     """Update the result of a match in a tournament."""
-    if request.method != "POST":
-        return JsonResponse({"error": "POST method required"}, status=405)
     try:
         body = json.loads(request.body.decode("utf-8"))
         tournament_id = body.get("tournament_id")
@@ -369,12 +236,10 @@ def update_match_result(request):
         logger.exception("Error updating match result:")
         return JsonResponse({"error": str(e)}, status=500)
 
-
+@require_POST
 @jwt_required
 def abandon_local_tournament(request):
     """Abandon a local tournament and remove all participants except the organizer."""
-    if request.method != "POST":
-        return JsonResponse({"error": "POST method required"}, status=405)
     try:
         organizer = request.user
         body = json.loads(request.body.decode("utf-8"))
@@ -413,13 +278,10 @@ def encrypt_thing(args):
     """Encrypts the args."""
     return cipher.encrypt(args.encode("utf-8")).decode("utf-8")
 
-
+@require_POST
 @jwt_required
 def create_local_tournament_view(request):
     """Create a local tournament with the provided players."""
-    if request.method != "POST":
-        return JsonResponse({"error": "POST method required"}, status=405)
-
     user = request.user
     body = json.loads(request.body.decode("utf-8"))
     players = body.get("players", [])
@@ -526,13 +388,10 @@ def create_local_tournament_view(request):
         logger.error(f"Exception error in create local tournament view : {str(e)}")
         return JsonResponse("Internal Error", status=500)
 
-
+@require_POST
 @jwt_required
 def try_join_random_tournament(request):
     """Join a random tournament."""
-    if request.method != "POST":
-        return JsonResponse({"message": "POST method required"}, status=405)
-
     try:
         body = json.loads(request.body.decode("utf-8"))
         logger.info(f"Body: {body}")
@@ -580,13 +439,10 @@ def try_join_random_tournament(request):
         logger.exception("Error joining random tournament:")
         return JsonResponse({"message": str(e)}, status=500)
 
-
+@require_POST
 @jwt_required
 def try_join_tournament_with_room_code(request):
     """Join a tournament with a room code."""
-    if request.method != "POST":
-        return JsonResponse({"message": "POST method required"}, status=405)
-
     try:
         body = json.loads(request.body.decode("utf-8"))
         logger.info(f"Body: {body}")

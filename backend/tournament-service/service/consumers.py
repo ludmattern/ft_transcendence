@@ -116,11 +116,6 @@ def create_matches_for_tournament(tournament_id, usernames):
     return tournament
 
 
-def encrypt_thing(args):
-    """Encrypts the args."""
-    return cipher.encrypt(args.encode("utf-8")).decode("utf-8")
-
-
 class TournamentConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_group_name = "tournament_service"
