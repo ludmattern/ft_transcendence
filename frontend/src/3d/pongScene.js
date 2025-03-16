@@ -307,7 +307,7 @@ const meshBallGeometry = new THREE.SphereGeometry(0.05, 30, 15);
 
 }
 
-const lerpFactor = 0.3;
+const lerpFactor = 0.5;
 const lerpFactorCam = 0.15;
 
 function updatePaddleAndFocus(paddle, target, focus) {
@@ -403,9 +403,6 @@ export function animatePong(renderer) {
         renderNetworkMode(renderer);
     }
 }
-
-
-
 
 
 
