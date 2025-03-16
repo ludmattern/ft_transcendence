@@ -14,6 +14,7 @@ from .bot import AIPaddle
 logger = logging.getLogger(__name__)
 
 
+import time
 
 class PongGroupConsumer(AsyncWebsocketConsumer):
     running_games = {}
@@ -100,6 +101,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     del self.running_games[game_id]
                     game_manager.cleanup_game(game_id)
 
+
     async def game_loop(self, game_id, difficulty="hard"):
         """Main game loop."""
         game = game_manager.get_game(game_id)
@@ -107,30 +109,40 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             logger.info(f"difficulty: {difficulty}")
             if game.is_solo_mode():
                 ai_paddle = AIPaddle(2, game, difficulty=difficulty)
+            tick_time = 0.0167  
+            next_tick = time.time() + tick_time
+            previous_time = time.time()
+            
             while True:
                 game = game_manager.get_game(game_id)
                 if not game:
                     break
 
-                game.update()
+                current_time = time.time()
+                if current_time >= next_tick:
+                    delta_time = current_time - previous_time
+                    previous_time = current_time
+                    next_tick += tick_time
 
-                if game.game_over:
-                    try:
-                        await self.finalize_game(game_id, game)
-                    except asyncio.CancelledError:
-                        await self.finalize_game(game_id, game)
-                    break
-                
+                    game.update(delta_time)
 
-                if game.is_solo_mode():
-                    ai_paddle.update()  
+                    if game.game_over:
+                        try:
+                            await self.finalize_game(game_id, game)
+                        except asyncio.CancelledError:
+                            await self.finalize_game(game_id, game)
+                        break
 
-                payload = game.to_dict()
-                await self.channel_layer.group_send(
-                    f"game_{game_id}",
-                    {"type": "game_state", "game_id": game_id, "payload": payload},
-                )
-                await asyncio.sleep(0.0167)
+                    if game.is_solo_mode():
+                        ai_paddle.update()
+
+                    payload = game.to_dict()
+                    await self.channel_layer.group_send(
+                        f"game_{game_id}",
+                        {"type": "game_state", "game_id": game_id, "payload": payload},
+                    )
+                else:
+                    await asyncio.sleep(next_tick - current_time)
 
         except asyncio.CancelledError:
             if game and game.game_over:
@@ -141,6 +153,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             if game_id in self.running_games:
                 del self.running_games[game_id]
             game_manager.cleanup_game(game_id)
+
+
+
 
 
     async def determine_winner(self, game):

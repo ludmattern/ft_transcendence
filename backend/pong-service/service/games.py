@@ -134,24 +134,23 @@ class BasePongGame:
         elif direction == "right":
             pos.z = min(self.TUNNEL_DEPTH / 2 - self.PADDLE_DEPTH / 2, pos.z + self.STEP)
 
-    def update(self) -> None:
-        """update game state"""
+    def update(self, dt: float) -> None:
+        """Met à jour l'état du jeu en utilisant le delta_time fourni."""
         if self.game_over:
             return
+
         self.ball_hit_paddle = False
         self.ball_hit_wall = False
-        now = time.time()
-        dt = now - self.last_update
-        self.last_update = now
 
-        if now - self.start_time < self.START_DELAY:
+        elapsed_since_start = time.time() - self.start_time
+        if elapsed_since_start < self.START_DELAY:
             self.state.waiting_for_start = True
             return
         else:
             self.state.waiting_for_start = False
 
         if self.state.ball_waiting:
-            self._update_ball_waiting(now)
+            self._update_ball_waiting(time.time())
             return
 
         self._update_ball_position(dt)
@@ -162,6 +161,7 @@ class BasePongGame:
         if (self.user_scores[self.player1_id] >= self.MAX_SCORE or
             self.user_scores[self.player2_id] >= self.MAX_SCORE):
             self.game_over = True
+
 
     def _update_ball_waiting(self, now: float) -> None:
         """update ball waiting"""
