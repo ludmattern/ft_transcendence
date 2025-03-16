@@ -107,7 +107,9 @@ export const leaderboard = createComponent({
 
 async function fetchLeaderboard() {
 	try {
-		const response = await fetch('/api/user-service/leaderboard/');
+		const response = await fetch('/api/user-service/leaderboard/', {
+			credentials: 'include'
+		  });
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}

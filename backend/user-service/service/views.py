@@ -260,7 +260,7 @@ def update_info(request):
         logging.error("Error in update_info: %s", str(e))
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
-
+@jwt_required
 @require_POST
 def getUsername(request):
     try:
@@ -276,7 +276,7 @@ def getUsername(request):
         logging.error("Error in getUsername: %s", str(e))
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
-
+@jwt_required
 @require_GET
 def get_user_id(request, username):
     try:
@@ -285,7 +285,7 @@ def get_user_id(request, username):
     except ManualUser.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
 
-
+@jwt_required
 @require_GET
 def get_game_history(request):
     user_id = request.GET.get("user_id")
@@ -326,7 +326,7 @@ def get_game_history(request):
         logging.error("An error occurred in get_game_history: %s", str(e))
         return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
-
+@jwt_required
 @require_GET
 def get_profile(request):
     user_id = request.GET.get("user_id")
@@ -409,7 +409,7 @@ def search_pilots(request):
         logging.error("An error occurred in search_pilots: %s", str(e))
         return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
-
+@jwt_required
 @require_GET
 def get_leaderboard(request):
     players = ManualUser.objects.filter(elo__gt=0).order_by("-elo")[:500]

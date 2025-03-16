@@ -6,7 +6,6 @@ from django.http import JsonResponse  # type: ignore
 from .models import ManualUser, ManualBlockedRelations
 from django.views.decorators.http import require_POST
 
-
 @require_POST
 def is_blocked(request):
     """Check if a user is blocked."""

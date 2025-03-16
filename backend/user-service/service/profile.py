@@ -1,8 +1,9 @@
 import json
 from django.http import JsonResponse  # type: ignore
 from .models import ManualUser, ManualGameHistory
+from service.views import jwt_required
 
-
+@jwt_required
 def profile_info(request):
     if request.method == "GET":
         try:

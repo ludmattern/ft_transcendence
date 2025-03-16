@@ -154,7 +154,9 @@ export const otherProfileForm = createComponent({
 
 export async function fetchUserId(username) {
 	try {
-		const response = await fetch(`/api/user-service/get_user_id/${username}/`);
+		const response = await fetch(`/api/user-service/get_user_id/${username}/`, {
+			credentials: 'include'
+		  });
 		if (!response.ok) throw new Error(`HTTP error ${response.status}`);
 		const data = await response.json();
 		return data.user_id;

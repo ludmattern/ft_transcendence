@@ -300,7 +300,7 @@ def getCurrentTournamentInformation(request):
     }
     return JsonResponse(data)
 
-
+@jwt_required
 def update_match_result(request):
     """Update the result of a match in a tournament."""
     if request.method != "POST":

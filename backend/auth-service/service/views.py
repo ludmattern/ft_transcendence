@@ -295,7 +295,7 @@ def login_view(request):
     set_access_token_cookie(response, token_str)
     return response
 
-
+@jwt_required
 def logout_view(request):
     """POST /logout/"""
     if request.method != "POST":

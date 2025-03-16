@@ -32,6 +32,7 @@ export function handleLocalTournamentGameEnding(data) {
 			headers: {
 				'Content-Type': 'application/json',
 			},
+			credentials: 'include',
 			body: JSON.stringify(payload),
 		})
 			.then((res) => res.json())

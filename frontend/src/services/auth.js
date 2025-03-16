@@ -152,6 +152,7 @@ export async function getUsername(playerId) {
 		const response = await fetch('/api/user-service/getUsername/', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
+			credentials: 'include',
 			body: JSON.stringify({ id: playerId }),
 		});
 

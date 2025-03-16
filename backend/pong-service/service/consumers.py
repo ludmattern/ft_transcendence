@@ -156,8 +156,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
 
 
-
-
     async def determine_winner(self, game):
         """Determine the winner of the game."""
         if game.quitter_id:

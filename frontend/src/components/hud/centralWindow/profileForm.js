@@ -123,8 +123,10 @@ function attachProfilePicUpload() {
 
 export async function loadMatchHistory(userId) {
 	try {
-		const response = await fetch(`/api/user-service/get_game_history/?user_id=${userId}`);
-		if (!response.ok) {
+		const response = await fetch(`/api/user-service/get_game_history/?user_id=${userId}`, {
+			credentials: 'include'
+		  });
+			if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
 		const data = await response.json();
@@ -186,7 +188,10 @@ function createMatchItem(outcome, date, opponents, outcomeClass, score) {
 
 export async function loadUserProfile(userId) {
 	try {
-		const response = await fetch(`/api/user-service/get_profile/?user_id=${userId}`);
+		const response = await fetch(`/api/user-service/get_profile/?user_id=${userId}`, {
+			credentials: 'include'
+		  });
+		  
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
