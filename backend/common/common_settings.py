@@ -10,7 +10,6 @@ USE_I18N = True
 USE_TZ = True
 STATIC_URL = "/static/"
 
-SECRET_KEY = secrets.token_urlsafe(64)
 
 DATABASES = {
     "default": {

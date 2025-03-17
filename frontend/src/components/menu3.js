@@ -23,6 +23,7 @@ function initM3() {
 		return;
 	}
 	Store.menuObject3 = new CSS3DObject(Store.menuElement3);
+	Store.menuObject3.visible = false;
 	Store.menuElement3.style.pointerEvents = 'auto';
 	Store.menuObject3.position.set(3.1, 4.5, -1.85);
 	Store.menuObject3.rotation.set(-5.2, -0.6, -0.2);

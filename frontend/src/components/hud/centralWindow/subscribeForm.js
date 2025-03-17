@@ -131,9 +131,7 @@ export const subscribeForm = createComponent({
 	},
 });
 
-/**
- * Récupère les valeurs du formulaire
- */
+
 function getFormValues(el) {
 	return {
 		id: el.querySelector('#new-pilot-id').value,
@@ -158,27 +156,34 @@ function resetErrorMessages() {
 }
 
 /**
- * Vérifie la validité de l'ID
- * @returns {boolean} true si valide, false sinon
+ * @returns {boolean} 
  */
 
 export function validateId(id) {
 	if (id.length < 6 || id.length > 20) {
-		document.getElementById('bad-id').style.display = 'block';
+		const badId = document.getElementById('bad-id');
+		if (badId) {
+			badId.textContent = 'Id must contain between 6 and 20 characters';
+			badId.style.display = 'block';
+		}
 		return false;
 	}
-	const regex = /^[a-zA-Z0-9]+$/;
+	const regex = /^[a-zA-Z0-9_]+$/;
 	if (!regex.test(id)) 
 	{
-		// Need to add the error message for the id having alphanumeric characters only
+		const badId = document.getElementById('bad-id');
+		if (badId) {
+			badId.textContent = 'Id must contain only letters, numbers and underscores';
+			badId.style.display = 'block';
+		}
+
 		return false;
 	}
 	return true;
 }
 
 /**
- * Vérifie la validité du mot de passe et affiche les erreurs correspondantes
- * @returns {boolean} true si valide, false sinon
+ * @returns {boolean}
  */
 export function validatePassword(password) {
 	let isValid = true;

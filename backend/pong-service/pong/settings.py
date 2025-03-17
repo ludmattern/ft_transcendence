@@ -17,3 +17,12 @@ MIGRATION_MODULES = {
 
 ROOT_URLCONF = "pong.urls"
 ASGI_APPLICATION = "pong.asgi.application"
+
+try:
+    with open("/run/secrets/django_secret", "r", encoding="utf-8") as f:
+        DJANGO_SECRET = f.read().strip()
+except Exception:
+    print("Error reading Fernet key from file")
+    
+    
+SECRET_KEY = DJANGO_SECRET
