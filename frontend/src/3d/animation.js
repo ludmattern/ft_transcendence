@@ -28,6 +28,16 @@ const CAMERA_TARGETS = {
 
 // =============== WINDOW SWITCHER ===============
 
+
+const loader = new THREE.TextureLoader();
+const texture = loader.load('/src/assets/img/bluescreen.jpg', () => {
+	texture.flipY = false;
+});
+
+const newMaterialBlue = new THREE.MeshStandardMaterial({
+	map: texture,
+});
+
 const video = document.createElement('video');
 video.src = '/src/assets/video/screensaver98.mp4';
 video.loop = true;
@@ -100,25 +110,21 @@ export function animateCameraToTarget(endPosition, endRotation, nb) {
 			Store.currentTween = null;
 			if (nb == 1) {
 				Store.screenObject1.material = screenMaterial;
-				Store.screenObject2.material = Store.material;
-				Store.menuObject3.visible = true;
+				Store.screenObject2.material = newMaterial;
 			}
 			if (nb == 0) {
+				Store.screenObject2.material = newMaterial;
 				Store.menuElement.querySelector('.mid-screensaver').display = 'block';
 				Store.menuElement.classList.add('active');
-				Store.screenObject2.material = Store.material;
-				Store.menuObject3.visible = true;
 				Store.screenObject1.material = Store.material;
 			}
 			if (nb == 2) {
-				Store.screenObject1.material = Store.material;
-				Store.screenObject2.material = Store.material;
-				Store.menuObject3.visible = true;
-			}
-			if (nb == 3) {
 				Store.screenObject2.material = newMaterial;
 				Store.screenObject1.material = Store.material;
-				Store.menuObject3.visible = false;
+			}
+			if (nb == 3) {
+				Store.screenObject2.material = newMaterialBlue;
+				Store.screenObject1.material = Store.material;
 			}
 
 			Store.initialCameraRotation.x = Store.camera.rotation.x;
