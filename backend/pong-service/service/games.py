@@ -113,7 +113,10 @@ class BasePongGame:
         self.state = GameState(ball=ball, players=players, scores=scores)
         self.ball_hit_paddle = False
         self.ball_hit_wall = False
-        self.solo_mode = game_id.startswith("solo_")
+        if game_id is not None:
+            self.solo_mode = game_id.startswith("solo_")
+        else:
+            self.solo_mode = False
         self.scoring_player: int = 0
         self.ball_reset_time: float = 0.0
 

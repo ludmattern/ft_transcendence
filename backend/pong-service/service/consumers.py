@@ -204,6 +204,8 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             else:
                 match.score = f"{game.user_scores[loser_id]}-{game.user_scores[winner_id]}"
 
+            logger.info(f"Match {match.id} completed with winner {winner.username} and score {match.score}")
+        
             match.status = "completed"
             await sync_to_async(match.save)()
 

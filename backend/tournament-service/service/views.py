@@ -108,14 +108,36 @@ def get_current_tournament(request):
             except ManualUser.DoesNotExist:
                 pass
 
-        if tournament.mode == "local":
-            p1_display = player1_obj.username if player1_obj else "TBD"
-            p2_display = player2_obj.username if player2_obj else "TBD"
-            w_display = winner_obj.username if winner_obj else "TBD"
-        else:
-            p1_display = player1_obj.username if player1_obj else "TBD"
-            p2_display = player2_obj.username if player2_obj else "TBD"
-            w_display = winner_obj.username if winner_obj else "TBD"
+
+        if match.status in ["pending", "ready"] and not match.winner_id:
+            p1_participant = None
+            p2_participant = None
+            if player1_obj:
+                p1_participant = ManualTournamentParticipants.objects.filter(
+                    tournament=tournament, user=player1_obj
+                ).first()
+            if player2_obj:
+                p2_participant = ManualTournamentParticipants.objects.filter(
+                    tournament=tournament, user=player2_obj
+                ).first()
+
+            if p1_participant and p1_participant.status == "left" and (not p2_participant or p2_participant.status != "left"):
+                match.winner_id = match.player2_id
+                match.score = "Forfeit"
+                match.status = "completed"
+                match.save()
+                winner_obj = player2_obj
+
+            elif p2_participant and p2_participant.status == "left" and (not p1_participant or p1_participant.status != "left"):
+                match.winner_id = match.player1_id
+                match.score = "Forfeit"
+                match.status = "completed"
+                match.save()
+                winner_obj = player1_obj
+
+        p1_display = player1_obj.username if player1_obj else "TBD"
+        p2_display = player2_obj.username if player2_obj else "TBD"
+        w_display = winner_obj.username if winner_obj else "TBD"
 
         if user.id in [match.player1_id, match.player2_id]:
             match_key = match.match_key
@@ -206,47 +228,47 @@ def getCurrentTournamentInformation(request):
     }
     return JsonResponse(data)
 
+
 @require_POST
 @jwt_required
 def update_match_result(request):
+    """Update the result of a match in a tournament (LOCAL version, using usernames)."""
     try:
         body = json.loads(request.body.decode("utf-8"))
         tournament_id = body.get("tournament_id")
-        winner_id_raw = body.get("winner_id")
-        loser_id_raw = body.get("loser_id")
+        winner_username = body.get("winner_id")
+        loser_username = body.get("loser_id")
         final_scores = body.get("final_scores")
-        payload_player1_raw = body.get("player1")
-        payload_player2_raw = body.get("player2")
+        p1_username = body.get("player1")
+        p2_username = body.get("player2")
 
-        if not all([tournament_id, winner_id_raw, loser_id_raw, final_scores, payload_player1_raw, payload_player2_raw]):
+        logger.info(
+            f"Updating LOCAL match result for tournament {tournament_id}: "
+            f"{p1_username} vs {p2_username}, final_scores: {final_scores}"
+        )
+
+        if not (tournament_id and winner_username and loser_username and final_scores and p1_username and p2_username):
             return JsonResponse({"error": "Missing required fields"}, status=400)
 
-        tournament_id = int(tournament_id)
+        try:
+            tournament_id = int(tournament_id)
+        except ValueError:
+            return JsonResponse({"error": "Invalid tournament_id"}, status=400)
 
-        tournament = ManualTournament.objects.get(id=tournament_id)
-
-        if tournament.mode == "local":
-            winner_user = ManualUser.objects.get(username=winner_id_raw)
-            loser_user = ManualUser.objects.get(username=loser_id_raw)
-
-            player1_user = ManualUser.objects.get(username=payload_player1_raw)
-            player2_user = ManualUser.objects.get(username=payload_player2_raw)
-
-            winner_id = winner_user.id
-            loser_id = loser_user.id
-            player1_id = player1_user.id
-            player2_id = player2_user.id
-        else:
-            winner_id = int(winner_id_raw)
-            loser_id = int(loser_id_raw)
-            player1_id = int(payload_player1_raw)
-            player2_id = int(payload_player2_raw)
+       
+        try:
+            winner_user = ManualUser.objects.get(username=winner_username)
+            loser_user = ManualUser.objects.get(username=loser_username)
+            p1_user = ManualUser.objects.get(username=p1_username)
+            p2_user = ManualUser.objects.get(username=p2_username)
+        except ManualUser.DoesNotExist as e:
+            return JsonResponse({"error": f"One of the users does not exist: {str(e)}"}, status=404)
 
         match = (
             TournamentMatch.objects.filter(
                 tournament_id=tournament_id,
-                player1_id=player1_id,
-                player2_id=player2_id,
+                player1_id=p1_user.id,
+                player2_id=p2_user.id,
                 status="pending",
             )
             .order_by("round_number")
@@ -256,22 +278,24 @@ def update_match_result(request):
         if not match:
             return JsonResponse({"error": "Match not found"}, status=404)
 
-        match.winner_id = winner_id
-        score1 = final_scores.get(str(player1_id), 0)
-        score2 = final_scores.get(str(player2_id), 0)
+        match.winner_id = winner_user.id
+
+        score1 = final_scores.get(p1_username, 0)
+        score2 = final_scores.get(p2_username, 0)
+
         match.score = f"{score1}-{score2}"
         match.status = "completed"
         match.save()
 
         logger.info(
-            f"Match updated for tournament {tournament_id}: {player1_id} vs {player2_id} - "
-            f"winner: {winner_id}, score: {match.score}"
+            f"Match updated for tournament {tournament_id}: {p1_username} vs {p2_username} - "
+            f"winner: {winner_username}, score: {match.score}"
         )
 
         current_round = match.round_number
         current_match_order = match.match_order
-        next_match_order = (current_match_order + 1) // 2
         next_round = current_round + 1
+        next_match_order = (current_match_order + 1) // 2
 
         try:
             next_match = TournamentMatch.objects.get(
@@ -280,21 +304,20 @@ def update_match_result(request):
                 match_order=next_match_order,
             )
             if current_match_order % 2 == 1:
-                next_match.player1_id = winner_id
+                next_match.player1_id = winner_user.id
             else:
-                next_match.player2_id = winner_id
+                next_match.player2_id = winner_user.id
 
             next_match.save()
             logger.info(
-                f"Prochain match (round {next_round}, match {next_match_order}) mis à jour avec le gagnant {winner_id}"
+                f"Next match (round {next_round}, match {next_match_order}) updated with winner {winner_username}"
             )
         except TournamentMatch.DoesNotExist:
-            logger.info("Final match reached: no next match found, finishing tournament logic if needed.")
+            logger.info("Final match reached: no next match found.")
 
         return JsonResponse({"success": True, "message": "Match updated"})
-
     except Exception as e:
-        logger.exception("Error updating match result:")
+        logger.exception("Error updating local match result:")
         return JsonResponse({"error": str(e)}, status=500)
 
 

@@ -435,7 +435,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             if not participant:
                 await self.send(json.dumps({"error": "User not found in tournament"}))
                 return
-
+            
             participant.status = "left"
             await sync_to_async(participant.save)()
 
@@ -478,6 +478,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 if next_match and opponent_id is not None:
                     if match.match_order % 2 == 1:
                         next_match.player1_id = opponent_id
+                        match.score = "Forfeit"
                     else:
                         next_match.player2_id = opponent_id
 
