@@ -106,21 +106,25 @@ CREATE TABLE
 		UNIQUE (user_id, recipient_id) -- Ensures no duplicate friendships
 	);
 
-CREATE TABLE
+CREATE TABLE 
 	IF NOT EXISTS service_tournamentmatch (
 		id SERIAL PRIMARY KEY,
 		tournament_id INT NOT NULL,
 		round_number INT NOT NULL,
 		match_order INT NOT NULL,
-		player1 VARCHAR(50),
-		player2 VARCHAR(50),
+
+		player1_id INT DEFAULT NULL,
+		player2_id INT DEFAULT NULL,
+		winner_id INT DEFAULT NULL,
+
 		status VARCHAR(20) DEFAULT 'pending',
-		winner VARCHAR(50),
 		score VARCHAR(20),
 		match_key VARCHAR(100),
-		created_at TIMESTAMP NOT NULL DEFAULT NOW (),
+		created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+		
 		FOREIGN KEY (tournament_id) REFERENCES tournaments (id) ON DELETE CASCADE
-	);
+);
+
 
 INSERT INTO
 	users (username, email, password, is_dummy, alias)

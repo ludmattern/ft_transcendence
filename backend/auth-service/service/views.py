@@ -103,6 +103,7 @@ def check_auth_view(request):
                     "success": True,
                     "id": user.id,
                     "username": user.username,
+                    "alias": user.alias,
                     "message": "Cookie renewed",
                 }
             )
@@ -112,6 +113,7 @@ def check_auth_view(request):
         return JsonResponse(
             {
                 "success": True,
+                "alias": user.alias,
                 "id": user.id,
                 "username": user.username,
                 "message": "Cookie still valid",
