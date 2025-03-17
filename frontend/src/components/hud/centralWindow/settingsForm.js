@@ -17,20 +17,28 @@ export const settingsForm = createComponent({
 		  <h5>SETTINGS</h5>
 		  <span class="background-central-span">
 			<form action="#" method="post" class="w-100">
-			  <!-- New Username -->
-			  ${createFormGroup('new-username', 'username', 'New username')}
-			  <!-- Old Password -->
-			  ${createFormGroup('old-password', 'password', 'Current password')}
-			  <!-- New Password -->
-			  ${createFormGroup('new-password', 'password', 'New Password')}
-			  <!-- Confirm New Password -->
-			  ${createFormGroup('confirm-new-password', 'password', 'Confirm new password')}
-			  <!-- New Email -->
-			  ${createFormGroup('new-email', 'email', 'New Email')}
-			  <!-- Confirm New Email -->
-			  ${createFormGroup('confirm-new-email', 'email', 'Confirm new Email')}
-			  <!-- Update Button -->
-			  <button class="btn bi bi-arrow-repeat" id="update-button">Update</button>
+			  <!-- Hidden username field for accessibility in password forms -->
+			  <input type="text" name="username" id="username" autocomplete="username" style="display: none;" />
+			  
+			  <fieldset>
+				<legend class="d-none">Update Username</legend>
+				${createFormGroup('new-username', 'text', 'New username')}
+			  </fieldset>
+			  
+			  <fieldset>
+				<legend class="d-none">Update Password</legend>
+				${createFormGroup('old-password', 'password', 'Current password')}
+				${createFormGroup('new-password', 'password', 'New Password')}
+				${createFormGroup('confirm-new-password', 'password', 'Confirm new password')}
+			  </fieldset>
+			  
+			  <fieldset>
+				<legend class="d-none">Update Email</legend>
+				${createFormGroup('new-email', 'email', 'New Email')}
+				${createFormGroup('confirm-new-email', 'email', 'Confirm new Email')}
+			  </fieldset>
+			  
+			  <button class="btn bi bi-arrow-repeat" id="update-button" name="update-button">Update</button>
 			</form>
 			<!-- Delete Account -->
 			<div>
@@ -181,21 +189,20 @@ function emptyFields() {
 function createFormGroup(id, type, label) {
 	return `
 	<div class="form-group">
-	<label class="mb-3" for="${id}">${label}</label>
-	<input type="${type}" id="${id}" name="${id}" class="form-control" autocomplete="${getAutocompleteValue(id)}"/>
-	${id === 'new-username' ? '<div id="error-message-id" class="text-danger mt-2" style="display: none;">Id already taken</div>' : ''}
-	${id === 'new-username' ? '<div id="bad-id" class="text-danger mt-2" style="display: none;">Id must contain between 6 and 20 char</div>' : ''}
-	${id === 'old-password' ? '<div id="current-pass-empty" class="text-danger mt-2" style="display: none;">Please enter current password</div>' : ''}
-	${id === 'old-password' ? '<div id="bad-current-pass" class="text-danger mt-2" style="display: none;">Current password is incorrect</div>' : ''}
-	${id === 'new-password' ? '<div id="bad-pass-size" class="text-danger mt-2" style="display: none;">Password must contain between 6 and 20 char</div>' : ''}
-	${id === 'new-password' ? '<div id="bad-pass-upper" class="text-danger mt-2" style="display: none;">Password must have at least one uppercase char</div>' : ''}
-	${id === 'new-password' ? '<div id="bad-pass-lower" class="text-danger mt-2" style="display: none;">Password must have at least one lowercase char</div>' : ''}
-	${id === 'new-password' ? '<div id="bad-pass-special" class="text-danger mt-2" style="display: none;">Password must have at least one special char</div>' : ''}
-	${id === 'confirm-new-password' ? '<div id="error-message-pass" class="text-danger mt-2" style="display: none;">Password does not match</div>' : ''}
-	${id === 'new-email' ? '<div id="error-message-mail" class="text-danger mt-2" style="display: none;">E-mail already taken</div>' : ''}
-	${id === 'new-email' ? '<div id="error-message-mail-size" class="text-danger mt-2" style="display: none;">E-mail too long</div>' : ''}
-	${id === 'confirm-new-email' ? '<div id="error-message-mail2" class="text-danger mt-2" style="display: none;">E-mail does not match</div>' : ''}
-	${id === 'old-password' ? '<input type="text" id="hidden-username" name="hidden-username" class="form-control" autocomplete="username" style="display: none;"/>' : ''}
+	  <label class="mb-3" for="${id}">${label}</label>
+	  <input type="${type}" id="${id}" name="${id}" class="form-control" autocomplete="${getAutocompleteValue(id)}"/>
+	  ${id === 'new-username' ? '<div id="error-message-id" class="text-danger mt-2" style="display: none;">Id already taken</div>' : ''}
+	  ${id === 'new-username' ? '<div id="bad-id" class="text-danger mt-2" style="display: none;">Id must contain between 6 and 20 char</div>' : ''}
+	  ${id === 'old-password' ? '<div id="current-pass-empty" class="text-danger mt-2" style="display: none;">Please enter current password</div>' : ''}
+	  ${id === 'old-password' ? '<div id="bad-current-pass" class="text-danger mt-2" style="display: none;">Current password is incorrect</div>' : ''}
+	  ${id === 'new-password' ? '<div id="bad-pass-size" class="text-danger mt-2" style="display: none;">Password must contain between 6 and 20 char</div>' : ''}
+	  ${id === 'new-password' ? '<div id="bad-pass-upper" class="text-danger mt-2" style="display: none;">Password must have at least one uppercase char</div>' : ''}
+	  ${id === 'new-password' ? '<div id="bad-pass-lower" class="text-danger mt-2" style="display: none;">Password must have at least one lowercase char</div>' : ''}
+	  ${id === 'new-password' ? '<div id="bad-pass-special" class="text-danger mt-2" style="display: none;">Password must have at least one special char</div>' : ''}
+	  ${id === 'confirm-new-password' ? '<div id="error-message-pass" class="text-danger mt-2" style="display: none;">Password does not match</div>' : ''}
+	  ${id === 'new-email' ? '<div id="error-message-mail" class="text-danger mt-2" style="display: none;">E-mail already taken</div>' : ''}
+	  ${id === 'new-email' ? '<div id="error-message-mail-size" class="text-danger mt-2" style="display: none;">E-mail too long</div>' : ''}
+	  ${id === 'confirm-new-email' ? '<div id="error-message-mail2" class="text-danger mt-2" style="display: none;">E-mail does not match</div>' : ''}
 	</div>
 `;
 }

@@ -20,6 +20,7 @@ import {
 } from '/src/services/navigation.js';
 import { emit } from '/src/services/eventEmitter.js';
 import { pushInfo } from '/src/services/infoStorage.js';
+import Store from '/src/3d/store.js';
 
 let previousRoute = null;
 let previousPongSubRoute = null;
@@ -151,6 +152,10 @@ export function getPreviousPongPlaySubRoute() {
 }
 
 window.addEventListener('popstate', () => {
+	if (Store.isCameraMoving) {
+		console.log('Camera is moving, cannot change route');
+		return;
+	}
 	handleRoute(window.location.pathname, false);
 });
 
@@ -208,7 +213,7 @@ export async function getCurrentTournamentInformation() {
 	try {
 		const response = await fetch('/api/tournament-service/getCurrentTournamentInformation/', {
 			method: 'GET',
-			credentials: 'include', 
+			credentials: 'include',
 		});
 		if (!response.ok) {
 			throw new Error('Impossible de récupérer le statut du tournoi.');

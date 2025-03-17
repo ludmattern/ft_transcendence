@@ -1,4 +1,4 @@
-import Store from './store.js';
+import Store from '/src/3d/store.js';
 import * as THREE from 'https://esm.sh/three';
 import { onBaseMouseMove, setCameraRotation } from '/src/3d/freeViewHandler.js';
 import { screenMaterial } from '/src/3d/pongScene.js';
