@@ -28,13 +28,20 @@ const CAMERA_TARGETS = {
 
 // =============== WINDOW SWITCHER ===============
 
-const loader = new THREE.TextureLoader();
-const texture = loader.load('/src/assets/img/bluescreen.jpg', () => {
-	texture.flipY = false;
-});
+const video = document.createElement('video');
+video.src = '/src/assets/video/screensaver98.mp4';
+video.loop = true;
+video.muted = true;
+video.playsInline = true;
+video.play();
+
+const videoTexture = new THREE.VideoTexture(video);
+videoTexture.minFilter = THREE.LinearFilter;
+videoTexture.magFilter = THREE.LinearFilter;
+videoTexture.format = THREE.RGBFormat;
 
 const newMaterial = new THREE.MeshStandardMaterial({
-	map: texture,
+	map: videoTexture,
 });
 
 export function switchwindow(screen) {
@@ -111,7 +118,6 @@ export function animateCameraToTarget(endPosition, endRotation, nb) {
 			if (nb == 3) {
 				Store.screenObject2.material = newMaterial;
 				Store.screenObject1.material = Store.material;
-
 				Store.menuObject3.visible = false;
 			}
 
