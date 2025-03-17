@@ -26,7 +26,6 @@ class ManualUser(models.Model):
     token_expiry = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    alias = models.CharField(max_length=255, null=True, blank=True, default=None)
 
     class Meta:
         db_table = "users"

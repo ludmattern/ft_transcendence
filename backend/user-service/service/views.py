@@ -169,7 +169,6 @@ def register_user(request):
         encrypted_phone = encrypt_thing(phone_number) if phone_number else None
 
         user = ManualUser.objects.create(
-            alias=username,
             username=username,
             email=encrypted_email,
             password=hashed_password,
@@ -342,7 +341,6 @@ def get_profile(request):
             "profile_picture": profile_picture,
             "is_connected": user.is_connected,
             "elo": user.elo,
-            "alias": user.alias,
         }
         return JsonResponse({"success": True, "profile": data})
     except ManualUser.DoesNotExist:
@@ -429,23 +427,3 @@ def check_oauth_id(request):
         logging.error("An error occurred in check_oauth_id: %s", str(e))
         return JsonResponse({"success": False, "error": "An internal error has occurred!"}, status=500)
 
-@jwt_required
-def update_alias(request):
-    try:
-        data = json.loads(request.body.decode("utf-8"))
-        new_alias = data.get("alias", "").strip()
-        user = request.user
-        
-        if not user:
-            return JsonResponse({"success": False, "message": "Missing user"}, status=400)
-        
-        if len(new_alias) < 1 or len(new_alias) > 20:
-            return JsonResponse({"success": False, "message": "Alias must be between 1 and 50 characters."}, status=400)
-
-        user.alias = new_alias
-        user.save()
-
-        return JsonResponse({"success": True, "message": "Alias updated successfully", "alias": new_alias}, status=200)
-    except Exception as e:
-        logging.error("Error in update_alias: %s", str(e))
-        return JsonResponse({"success": False, "message": "An internal error has occurred"}, status=500)

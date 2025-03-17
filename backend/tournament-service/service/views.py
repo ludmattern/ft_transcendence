@@ -113,9 +113,9 @@ def get_current_tournament(request):
             p2_display = player2_obj.username if player2_obj else "TBD"
             w_display = winner_obj.username if winner_obj else "TBD"
         else:
-            p1_display = player1_obj.alias if player1_obj else "TBD"
-            p2_display = player2_obj.alias if player2_obj else "TBD"
-            w_display = winner_obj.alias if winner_obj else "TBD"
+            p1_display = player1_obj.username if player1_obj else "TBD"
+            p2_display = player2_obj.username if player2_obj else "TBD"
+            w_display = winner_obj.username if winner_obj else "TBD"
 
         if user.id in [match.player1_id, match.player2_id]:
             match_key = match.match_key

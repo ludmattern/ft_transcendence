@@ -20,7 +20,6 @@ class ManualUser(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     session_token = models.CharField(max_length=255, null=True, default=None)
-    alias = models.CharField(max_length=255, null=True, blank=True, default=None)
     class Meta:
         db_table = "users"
         managed = True

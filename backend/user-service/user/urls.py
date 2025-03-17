@@ -12,7 +12,6 @@ from service.views import (
     update_info,
     delete_account,
     check_oauth_id,
-    update_alias,
 )
 from service.friends import get_relationship_status, get_friends
 from service.profile import profile_info
@@ -43,5 +42,4 @@ urlpatterns = [
     path("storage/get/", get_info_storage, name="get_info_storage"),
     path("storage/delete/", delete_info_storage, name="delete_info_storage"),
     path("check_oauth_id/", check_oauth_id, name="check_oauth_id"),
-    path("update_alias/", update_alias, name="update_alias"),
 ]

@@ -25,10 +25,6 @@ export const profileForm = createComponent({
                 <div class="d-inline-block" id="pseudo" style="color:var(--content-color); font-weight: bold;"></div>
               </div>
             </div>
-			<div class="alias-status mt-2">
-              <label for="alias-input" class="form-label">Alias :</label>
-              <input type="text" id="alias-input" class="form-control" />
-            </div>
             <!-- Profile Statistics -->
             <div class="profile-stats">
               <div class="stat-item d-flex align-items-center mb-1">
@@ -69,8 +65,6 @@ export const profileForm = createComponent({
 		loadMatchHistory(userId);
 		loadUserProfile(userId);
 		attachProfilePicUpload();
-		attachAliasUpdate();
-
 	},
 });
 
@@ -231,55 +225,9 @@ export async function loadUserProfile(userId) {
 					statusIndicator.classList.add('text-danger');
 				}
 			}
-			const aliasInput = document.getElementById('alias-input');
-			if (aliasInput) {
-				aliasInput.value = data.profile.alias;
-			}
+
 		}
 	} catch (error) {
 		console.error('Error loading user profile:', error);
 	}
 }
-
-
-function attachAliasUpdate() {
-	const aliasInput = document.getElementById('alias-input');
-	if (!aliasInput) return;
-  
-	aliasInput.addEventListener('keydown', async (e) => {
-	  if (e.key === 'Enter') {
-		e.preventDefault();
-		
-		const newAlias = aliasInput.value.trim();
-		if (!newAlias) {
-		  console.warn('Alias vide, aucune mise à jour effectuée');
-		  return;
-		}
-  
-		try {
-		  const response = await fetch('/api/user-service/update_alias/', {
-			method: 'POST',
-			credentials: 'include',
-			headers: {
-			  'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ alias: newAlias })
-		  });
-  
-		  if (!response.ok) {
-			throw new Error(`HTTP error ${response.status}`);
-		  }
-  
-		  const data = await response.json();
-		  if (data.success) {
-			console.log('Alias updated successfully:', data.alias);
-		  } else {
-			console.error('Error updating alias:', data.message);
-		  }
-		} catch (error) {
-		  console.error('Error during alias update request:', error);
-		}
-	  }
-	});
-  }
-  

@@ -103,7 +103,6 @@ def check_auth_view(request):
                     "success": True,
                     "id": user.id,
                     "username": user.username,
-                    "alias": user.alias,
                     "message": "Cookie renewed",
                 }
             )
@@ -113,7 +112,6 @@ def check_auth_view(request):
         return JsonResponse(
             {
                 "success": True,
-                "alias": user.alias,
                 "id": user.id,
                 "username": user.username,
                 "message": "Cookie still valid",
@@ -454,7 +452,6 @@ def oauth_callback(request):
                 counter += 1
             user = ManualUser.objects.create(
                 username=username,
-                alias=username,
                 oauth_id=oauth_id,
                 password=None,
                 is_2fa_enabled=False,

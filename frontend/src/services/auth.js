@@ -22,7 +22,6 @@ export async function isClientAuthenticated() {
 
 		await pushInfo('userId', data.id);
 		await pushInfo('username', data.username);
-		await pushInfo('alias', data.alias);
 
 		initializeWebSocket(data.id);
 		return true;
@@ -33,7 +32,6 @@ export async function isClientAuthenticated() {
 
 export async function logoutUser() {
 	try {
-		await deleteInfo('alias');
 		await deleteInfo('userId');
 		await deleteInfo('username');
 		await deleteInfo('tournamentMode');
