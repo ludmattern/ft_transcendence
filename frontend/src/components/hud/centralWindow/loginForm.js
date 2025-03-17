@@ -11,12 +11,12 @@ export const loginForm = createComponent({
         <form action="#" method="post" class="w-100">
           <div class="form-group">
             <label class="mb-3" for="pilot-id">ID</label>
-            <input type="text" id="pilot-id" name="pilot-id" class="form-control" required />
+            <input type="text" id="pilot-id" name="pilot-id" class="form-control" autocomplete="username" required />
           </div>
           <div class="form-group">
             <label class="mb-3" for="password">Password</label>
-            <input type="password" id="password" name="password" class="form-control" required />
-            <div id="error-message-co" class="text-danger mt-2 d-none">User already connected</div>
+            <input type="password" id="password" name="password" class="form-control" autocomplete="current-password" required />
+			<div id="error-message-co" class="text-danger mt-2 d-none">User already connected</div>
             <div id="error-message" class="text-danger mt-2 d-none">Invalid credentials</div>
             <p class="text-end"><a href="#" id="forgot-password-link" class="text-info">Forgot password?</a></p>
           </div>

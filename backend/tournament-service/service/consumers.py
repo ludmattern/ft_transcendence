@@ -55,7 +55,7 @@ def get_accepted_participants_id(tournament_id):
     participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related(
         "user"
     )
-
+    logger.info("participants_qs: %s", participants_qs)
     return [p.user.id for p in participants_qs]
 
 
@@ -512,7 +512,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 lambda: list(
                     ManualTournamentParticipants.objects.filter(tournament_id=tournament_id)
                     .exclude(Q(status="rejected") | Q(status="left"))
-                    .values_list("id", flat=True)
+                    .values_list("user_id", flat=True)
                 )
             )()
 

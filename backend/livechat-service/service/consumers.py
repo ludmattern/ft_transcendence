@@ -647,7 +647,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "User not found."})
 
         # Gestionnaire principal d'actions
-        if str(action) == "private_game_invite":
+        elif str(action) == "private_game_invite":
             await private_game_invite(self, event)
 
         elif str(action) in ["accept_private_game_invite", "refuse_private_game_invite"]:

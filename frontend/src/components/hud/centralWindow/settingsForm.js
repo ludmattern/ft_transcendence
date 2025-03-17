@@ -43,7 +43,6 @@ export const settingsForm = createComponent({
 	  `,
 
 	attachEvents: async (el) => {
-
 		const oauth_null = await checkOAuthStatus();
 		if (oauth_null === false) {
 			handleRoute('/settings/delete-account');
@@ -183,7 +182,7 @@ function createFormGroup(id, type, label) {
 	return `
 	<div class="form-group">
 	<label class="mb-3" for="${id}">${label}</label>
-	<input type="${type}" id="${id}" name="${id}" class="form-control"/>
+	<input type="${type}" id="${id}" name="${id}" class="form-control" autocomplete="${getAutocompleteValue(id)}"/>
 	${id === 'new-username' ? '<div id="error-message-id" class="text-danger mt-2" style="display: none;">Id already taken</div>' : ''}
 	${id === 'new-username' ? '<div id="bad-id" class="text-danger mt-2" style="display: none;">Id must contain between 6 and 20 char</div>' : ''}
 	${id === 'old-password' ? '<div id="current-pass-empty" class="text-danger mt-2" style="display: none;">Please enter current password</div>' : ''}
@@ -196,8 +195,28 @@ function createFormGroup(id, type, label) {
 	${id === 'new-email' ? '<div id="error-message-mail" class="text-danger mt-2" style="display: none;">E-mail already taken</div>' : ''}
 	${id === 'new-email' ? '<div id="error-message-mail-size" class="text-danger mt-2" style="display: none;">E-mail too long</div>' : ''}
 	${id === 'confirm-new-email' ? '<div id="error-message-mail2" class="text-danger mt-2" style="display: none;">E-mail does not match</div>' : ''}
+	${id === 'old-password' ? '<input type="text" id="hidden-username" name="hidden-username" class="form-control" autocomplete="username" style="display: none;"/>' : ''}
 	</div>
 `;
+}
+
+function getAutocompleteValue(id) {
+	switch (id) {
+		case 'new-username':
+			return 'username';
+		case 'old-password':
+			return 'current-password';
+		case 'new-password':
+			return 'new-password';
+		case 'confirm-new-password':
+			return 'new-password';
+		case 'new-email':
+			return 'email';
+		case 'confirm-new-email':
+			return 'email';
+		default:
+			return 'off';
+	}
 }
 
 /**

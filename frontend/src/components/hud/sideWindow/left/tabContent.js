@@ -5,7 +5,6 @@ import { infoPanelItem } from '/src/components/hud/sideWindow/left/infoPanelItem
 import { setupChatInput, removeChatInput } from '/src/components/hud/sideWindow/left/chat.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
 import { escapeHtml } from '/src/components/hud/sideWindow/left/commMessage.js';
 
 /**
@@ -18,27 +17,11 @@ export async function loadTabContent(tabName, container) {
 	container.innerHTML = '';
 
 	if (tabName === 'info') {
-		let infoTabData = sessionStorage.getItem('infoTabData');
-
-		if (infoTabData && infoTabData !== '[]') {
-			try {
-				const parsedData = JSON.parse(infoTabData);
-				if (!parsedData) {
-					throw new Error('Données corrompues ou incomplètes !');
-				}
-				renderInfoTab(parsedData, container);
-			} catch (err) {
-				fetchAndStoreInfoData(container);
-			}
-		} else {
-			fetchAndStoreInfoData(container);
-		}
-
+		fetchAndStoreInfoData(container);
 		removeChatInput();
 	} else if (tabName === 'comm') {
 		let tabItems = [];
 		const storedHistory = sessionStorage.getItem('chatHistory');
-
 
 		if (storedHistory) {
 			try {
@@ -63,16 +46,16 @@ export async function loadTabContent(tabName, container) {
 export async function fetchAndStoreInfoData(container) {
 	try {
 		const response = await fetch(`/api/user-service/info-getter/`, {
-			method: "GET",
-			credentials: "include",
+			method: 'GET',
+			credentials: 'include',
 		});
 		const data = await response.json();
 		if (data.info) {
-			sessionStorage.setItem("infoTabData", JSON.stringify(data.info));
+			sessionStorage.setItem('infoTabData', JSON.stringify(data.info));
 			renderInfoTab(data.info, container);
 		}
 	} catch (error) {
-		console.error("Error fetching information:", error);
+		console.error('Error fetching information:', error);
 	}
 }
 

@@ -495,7 +495,7 @@ def request_password_reset(request):
             except Exception:
                 continue
         if not user:
-            return JsonResponse({"success": False, "message": "User not found"}, status=404)
+            return JsonResponse({"success": False, "message": "User not found"})
 
         current_time = now()
         if user.reset_code_expiry and user.reset_code_expiry > current_time:

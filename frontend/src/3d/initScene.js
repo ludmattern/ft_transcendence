@@ -4,7 +4,6 @@ import Store from './store.js';
 
 // =============== INIT SCENE ENVIREMENT ===============
 
-
 export function initScene() {
 	Store.scene = new THREE.Scene();
 }
