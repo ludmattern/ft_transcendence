@@ -11,3 +11,12 @@ WSGI_APPLICATION = "livechat.wsgi.application"
 ASGI_APPLICATION = "livechat.asgi.application"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+try:
+    with open("/run/secrets/django_secret", "r", encoding="utf-8") as f:
+        DJANGO_SECRET = f.read().strip()
+except Exception:
+    print("Error reading Fernet key from file")
+    
+    
+SECRET_KEY = DJANGO_SECRET

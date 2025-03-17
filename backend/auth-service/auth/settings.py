@@ -61,7 +61,13 @@ try:
         HOSTNAME = f.read().strip()
     with open("/run/secrets/jwt_secret", "r", encoding="utf-8") as f:
         JWT_SECRET_KEY = f.read().strip()
+    with open("/run/secrets/django_secret", "r", encoding="utf-8") as f:
+        DJANGO_SECRET = f.read().strip()
 except Exception:
     print("Error reading Fernet key from file")
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+    
+    
+SECRET_KEY = DJANGO_SECRET

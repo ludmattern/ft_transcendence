@@ -51,6 +51,8 @@ services:
     image: myapp-base
     networks:
       - backend_network
+    secrets:
+      - django_secret
     depends_on:
       certif-issuer:
         condition: service_started
@@ -93,6 +95,8 @@ services:
     container_name: gateway_service
     ports:
       - "3006:3006"
+    secrets:
+      - django_secret
 
   auth-service:
     <<: *service_defaults
@@ -111,6 +115,7 @@ services:
       - 42_secret
       - hostname
       - jwt_secret
+      - django_secret
     ports:
       - "3001:3001"
 
@@ -123,6 +128,7 @@ services:
     secrets:
       - fernet_key
       - jwt_secret
+      - django_secret
     ports:
       - "3002:3002"
     volumes:
@@ -141,6 +147,8 @@ services:
       <<: [ *redis_env ]
     ports:
       - "3003:3003"
+    secrets:
+      - django_secret
 
   pong-service:
     <<: *service_defaults
@@ -152,6 +160,8 @@ services:
       <<: [ *redis_env ]
     ports:
       - "3004:3004"
+    secrets:
+      - django_secret
 
   matchmaking-service:
     <<: *service_defaults
@@ -161,6 +171,8 @@ services:
     container_name: matchmaking_service
     ports:
       - "3005:3005"
+    secrets:
+      - django_secret
 
   tournament-service:
     <<: *service_defaults
@@ -171,6 +183,7 @@ services:
     secrets:
       - fernet_key
       - jwt_secret
+      - django_secret
     ports:
       - "3007:3007"
 
@@ -226,6 +239,8 @@ volumes:
     driver: local
 
 secrets:
+  django_secret:
+    file: ./secret/django_secret.txt
   fernet_key:
     file: ./secret/fernet_key.txt
   smtp_host_user:
