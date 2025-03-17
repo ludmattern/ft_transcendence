@@ -89,19 +89,22 @@ def info_getter(request):
         return JsonResponse({"success": True, "info": friend_request_data + tournament_invite_data + private_game_invite_data})
 
     next_ready_matches = TournamentMatch.objects.filter(
-        Q(player1=user.username) | Q(player2=user.username), status="ready", tournament_id=user.current_tournament_id
+        Q(player1_id=user.id) | Q(player2_id=user.id),
+        status="ready",
+        tournament_id=user.current_tournament_id
     )
+
 
     logger.info(f"Pending matches: {next_ready_matches}")
 
     next_match_data = []
 
     for match in next_ready_matches:
-        player1User = ManualUser.objects.get(username=match.player1)
-        player2User = ManualUser.objects.get(username=match.player2)
-
-        inviter = match.player1 if match.player2 == user.username else match.player2
-        inviter_id = player1User.id if match.player2 == user.username else player2User.id
+        player1User = ManualUser.objects.get(id=match.player1_id) if match.player1_id else None
+        player2User = ManualUser.objects.get(id=match.player2_id) if match.player2_id else None
+        
+        inviter_id = player1User.id if match.player1_id == user.id else player2User.id
+        inviter = player1User.username if match.player1_id == user.id else player2User.username
 
         next_match_data.append(
             {"type": "tournament_next_game", "inviter": inviter, "inviter_id": inviter_id, "actions": "acknowledge"}

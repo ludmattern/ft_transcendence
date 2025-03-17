@@ -173,25 +173,37 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             return game.player2_id, game.player1_id
 
     async def process_tournament(self, game_id, game, winner_id, loser_id):
-        """finalize tournament game."""
-        winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
-        loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
-        match = await sync_to_async(TournamentMatch.objects.filter(match_key=game_id).first)()
-        tournament_id = match.tournament_id
+        """Finalize a tournament game."""
+        try:
+            winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
+            loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
 
-        participant = await sync_to_async(
-            ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, user=loser, status="accepted").first
-        )()
-        if participant:
-            participant.status = "eliminated"
-            await sync_to_async(participant.save)()
+            match = await sync_to_async(
+                TournamentMatch.objects.filter(match_key=game_id).first
+            )()
+            if not match:
+                logger.warning(f"No match found with match_key={game_id}")
+                return
 
-        if match:
-            match.winner = str(winner_id)
-            if match.player1 == winner.username:
+            tournament_id = match.tournament_id
+
+            participant = await sync_to_async(
+                ManualTournamentParticipants.objects.filter(
+                    tournament_id=tournament_id, user=loser, status="accepted"
+                ).first
+            )()
+            if participant:
+                participant.status = "eliminated"
+                await sync_to_async(participant.save)()
+
+            match.winner_id = winner.id
+
+            
+            if match.player1_id == winner.id:
                 match.score = f"{game.user_scores[winner_id]}-{game.user_scores[loser_id]}"
             else:
                 match.score = f"{game.user_scores[loser_id]}-{game.user_scores[winner_id]}"
+
             match.status = "completed"
             await sync_to_async(match.save)()
 
@@ -199,49 +211,52 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             next_match_order = (match.match_order + 1) // 2
             next_match = await sync_to_async(
                 TournamentMatch.objects.filter(
-                    tournament_id=tournament_id, round_number=next_round, match_order=next_match_order
+                    tournament_id=tournament_id,
+                    round_number=next_round,
+                    match_order=next_match_order
                 ).first
             )()
-        else:
-            next_match = None
 
-        if next_match:
-            winner_username = await sync_to_async(lambda: ManualUser.objects.get(id=int(winner_id)).username)()
-            if match.match_order % 2 == 1:
-                next_match.player1 = winner_username
+            if next_match:
+                if match.match_order % 2 == 1:
+                    next_match.player1_id = winner.id
+                else:
+                    next_match.player2_id = winner.id
+                await sync_to_async(next_match.save)()
+
+                if next_match.player1_id is not None and next_match.player2_id is not None:
+                    next_match.status = "ready"
+                    await sync_to_async(next_match.save)()
+
+                    next_match_player_ids = [next_match.player1_id, next_match.player2_id]
+                else:
+                    next_match_player_ids = []
             else:
-                next_match.player2 = winner_username
-            await sync_to_async(next_match.save)()
+                logger.info("No next match found (this might be the final).")
+                next_match_player_ids = []
 
-        next_match_player_ids = []
-        if next_match and next_match.player1 != "TBD" and next_match.player2 != "TBD":
-            next_match_player_ids = await sync_to_async(
-                lambda: [
-                    ManualUser.objects.get(username=next_match.player1).id,
-                    ManualUser.objects.get(username=next_match.player2).id,
-                ]
+            participant_list = await sync_to_async(
+                lambda: list(
+                    ManualTournamentParticipants.objects.filter(tournament_id=tournament_id)
+                    .exclude(Q(status="rejected") | Q(status="left"))
+                    .values_list("id", flat=True)
+                )
             )()
-            next_match.status = "ready"
-            await sync_to_async(next_match.save)()
 
-        participant_list = await sync_to_async(
-            lambda: list(
-                ManualTournamentParticipants.objects.filter(tournament_id=tournament_id)
-                .exclude(Q(status="rejected") | Q(status="left"))
-                .values_list("id", flat=True)
-            )
-        )()
+            payload = {
+                "type": "info_message",
+                "action": "back_tournament_game_over",
+                "tournament_id": tournament_id,
+                "participant_list": participant_list,
+                "next_match_player_ids": next_match_player_ids,
+                "current_match_player_ids": [int(winner_id), int(loser_id)],
+            }
+            logger.info(f"back_tournament_game_over sent to gateway: {payload}")
+            await self.channel_layer.group_send(f"user_{0}", payload)
 
-        payload = {
-            "type": "info_message",
-            "action": "back_tournament_game_over",
-            "tournament_id": tournament_id,
-            "participant_list": participant_list,
-            "next_match_player_ids": next_match_player_ids,
-            "current_match_player_ids": [int(winner_id), int(loser_id)],
-        }
-        logger.info(f"back_tournament_game_over sent to gateway: {payload}")
-        await self.channel_layer.group_send(f"user_{0}", payload)
+        except Exception as e:
+            logger.exception("Error in process_tournament:")
+
 
     async def process_matchmaking(self, game_id, game, winner_id, loser_id):
         """finalize matchmaking game."""
