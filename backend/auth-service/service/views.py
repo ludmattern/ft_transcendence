@@ -391,7 +391,7 @@ def get_user_id_from_cookie(request):
         return JsonResponse({"error": str(e)}, status=400)
 
 
-# --- Vues OAuth (42) ---
+# --- Views OAuth (42) ---
 
 SERVER_IP = settings.HOSTNAME
 REDIRECT_URI = f"https://{SERVER_IP}:8443/api/auth-service/oauth/callback/"
@@ -452,6 +452,7 @@ def oauth_callback(request):
                 counter += 1
             user = ManualUser.objects.create(
                 username=username,
+                alias=username,
                 oauth_id=oauth_id,
                 password=None,
                 is_2fa_enabled=False,

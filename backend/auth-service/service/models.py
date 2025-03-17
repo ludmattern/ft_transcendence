@@ -19,6 +19,7 @@ class ManualUser(models.Model):
     session_token = models.CharField(max_length=255, null=True, default=None)
     is_dummy = models.BooleanField(default=False)
     oauth_id = models.CharField(max_length=255, null=True, blank=True, unique=True)
+    alias = models.CharField(max_length=255, null=True, blank=True, default=None)
 
     class Meta:
         db_table = "users"
