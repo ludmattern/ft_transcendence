@@ -8,38 +8,14 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
 		<link href="/src/styles/pages/hud_style.css" rel="stylesheet" />
 		<link href="/src/styles/pages/pongMenu_style.css" rel="stylesheet" />
-		<script type="text/javascript">
-			window.onload = function () {
-				if (window.opener) {
-					window.opener.postMessage({ authenticated: true, token: '{token_str}' }, '*');
-					window.close();
-				} else {
-					window.location.href = '/';
-				}
-			};
-		</script>
+		<script src="/src/services/token.js"></script>
 	</head>
 	<body style="background-color: #000000">
-		<style>
-			.loader-comm {
-				width: 120px;
-				height: 60px;
-				border-radius: 200px 200px 0 0;
-				-webkit-mask: repeating-radial-gradient(farthest-side at bottom, #0000 0, #111111 1px 12%, #0000 calc(12% + 1px) 20%);
-				background: radial-gradient(farthest-side at bottom, #417db5c9 0 95%, #0000 0) bottom / 0% 0% no-repeat #0c4b4d;
-				animation: l10 2s infinite steps(6);
-			}
-			@keyframes l10 {
-				100% {
-					background-size: 120% 120%;
-				}
-			}
-		</style>
 		<main class="row d-flex flex-column flex-grow-1 p-5" id="pong-menu-container" style="display: flex !important; height: 100vh; width: 100vw">
 			<header id="pong-header-container" class="text-white d-flex align-items-center p-3 justify-content-around border" style="background-color: #113630">
 				<div data-component="header" style="display: flex; align-items: center; flex-grow: 1">
 					<div class="col-3 text-center">
-						<h1 class="bi bi-rocket fs-5 m-0" style="!important;">TRANSCENDENCE</h1>
+						<h1 class="bi bi-rocket fs-5 m-0">TRANSCENDENCE</h1>
 					</div>
 
 					<!-- Bloc droit -->

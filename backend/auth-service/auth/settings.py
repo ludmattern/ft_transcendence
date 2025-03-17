@@ -24,7 +24,6 @@ TEMPLATES = [
     },
 ]
 
-
 ROOT_URLCONF = "auth.urls"
 
 WSGI_APPLICATION = "auth.wsgi.application"
