@@ -9,7 +9,7 @@ from .models import (
 )
 import logging
 from channels.db import database_sync_to_async  # type: ignore
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet #type: ignore
 from django.conf import settings  # type: ignore
 import secrets
 import random

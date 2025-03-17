@@ -11,16 +11,15 @@ from .models import (
     ManualPrivateGames,
 )
 from service.views import jwt_required
+from django.views.decorators.http import require_GET
+
 
 logger = logging.getLogger(__name__)
 
-
+@require_GET
 @jwt_required
 def info_getter(request):
     """GET /info/get/"""
-    if request.method != "GET":
-        return JsonResponse({"success": False, "error": "Invalid request method"}, status=405)
-
     user = request.user
     logger.info(f"Current user: {user.id} - {user.username}")
 

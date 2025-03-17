@@ -38,24 +38,10 @@ def get_users_id():
 
 
 @database_sync_to_async
-def get_participants(tournament):
-    return list(tournament.participants.values_list("username", flat=True))
-
-
-@database_sync_to_async
 def get_accepted_participants(tournament_id):
     participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related(
         "user"
     )
-
-    return [p.user.id for p in participants_qs]
-
-
-@database_sync_to_async
-def get_accepted_and_pending_participants(tournament_id):
-    participants_qs = ManualTournamentParticipants.objects.filter(
-        tournament_id=tournament_id, status="accepted" or "pending"
-    ).select_related("user")
 
     return [p.user.id for p in participants_qs]
 

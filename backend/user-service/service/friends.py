@@ -2,21 +2,18 @@ import json
 import logging
 from django.http import JsonResponse  # type: ignore
 
-# Need to get rid of this
-
 
 from django.db.models import Q  # type: ignore
 from .models import ManualUser, ManualFriendsRelations, ManualBlockedRelations
 from service.views import jwt_required
+from django.views.decorators.http import require_POST, require_GET
 
 logger = logging.getLogger(__name__)
 
+@require_GET
 @jwt_required
 def get_friends(request):
     """Retrieve all accepted friends for the authenticated user."""
-    if request.method != "GET":
-        return JsonResponse({"error": "Invalid request method"}, status=405)
-
     try:
         user = request.user
 
@@ -35,13 +32,11 @@ def get_friends(request):
         logger.error("An error occurred while retrieving friends", exc_info=True)
         return JsonResponse({"error": "An internal error has occurred"}, status=500)
 
-
+@require_POST
 @jwt_required
 def get_relationship_status(request):
     """Check the relationship status between two users."""
     logger.info("Checking relationship status between two users")
-    if request.method != "POST":
-        return JsonResponse({"success": False, "error": "Invalid request method"}, status=405)
     try:
         body = json.loads(request.body)
         other_user_id = body.get("otherUserId")
