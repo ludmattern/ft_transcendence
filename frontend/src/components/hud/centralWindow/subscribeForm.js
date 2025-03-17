@@ -19,7 +19,7 @@ export const subscribeForm = createComponent({
           </div>
           <div class="form-group">
             <label class="mb-3" for="new-password">Password</label>
-            <input type="password" id="new-password" name="new-password" class="form-control" required />
+            <input type="password" id="new-password" name="new-password" autocomplete="new-password" class="form-control" required />
             <div id="bad-pass-size" class="text-danger mt-2" style="display: none;">Password must contain between 6 and 20 char</div>
             <div id="bad-pass-upper" class="text-danger mt-2" style="display: none;">Password must have at least one uppercase char</div>
             <div id="bad-pass-lower" class="text-danger mt-2" style="display: none;">Password must have at least one lowercase char</div>
@@ -27,12 +27,12 @@ export const subscribeForm = createComponent({
           </div>
           <div class="form-group">
             <label class="mb-3" for="confirm-password">Confirm Password</label>
-            <input type="password" id="confirm-password" name="confirm-password" class="form-control" required />
+            <input type="password" id="confirm-password" name="confirm-password" autocomplete="new-password" class="form-control" required />
             <div id="error-message-pass" class="text-danger mt-2" style="display: none;">Password does not match</div>
           </div>
           <div class="form-group">
             <label class="mb-3" for="email">Email</label>
-            <input type="email" id="email" name="email" class="form-control" required />
+            <input type="email" id="email" name="email" autocomplete="email" class="form-control" required />
             <div id="error-message-mail" class="text-danger mt-2" style="display: none;">E-mail already taken</div>
             <div id="error-message-mail-size" class="text-danger mt-2" style="display: none;">E-mail too long</div>
           </div>

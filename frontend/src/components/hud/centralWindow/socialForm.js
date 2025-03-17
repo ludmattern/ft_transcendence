@@ -131,6 +131,9 @@ export const socialForm = createComponent({
 				if (e.key === 'Enter') {
 					e.preventDefault();
 					const query = searchBar.value.trim();
+					if (!query) {
+						return;
+					}
 					const pilotListContainer = el.querySelector('.pilot-list-container');
 					fetchPilot(query, pilotListContainer);
 				}
