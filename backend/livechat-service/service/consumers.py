@@ -38,24 +38,10 @@ def get_users_id():
 
 
 @database_sync_to_async
-def get_participants(tournament):
-    return list(tournament.participants.values_list("username", flat=True))
-
-
-@database_sync_to_async
 def get_accepted_participants(tournament_id):
     participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related(
         "user"
     )
-
-    return [p.user.id for p in participants_qs]
-
-
-@database_sync_to_async
-def get_accepted_and_pending_participants(tournament_id):
-    participants_qs = ManualTournamentParticipants.objects.filter(
-        tournament_id=tournament_id, status="accepted" or "pending"
-    ).select_related("user")
 
     return [p.user.id for p in participants_qs]
 
@@ -661,7 +647,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "User not found."})
 
         # Gestionnaire principal d'actions
-        if str(action) == "private_game_invite":
+        elif str(action) == "private_game_invite":
             await private_game_invite(self, event)
 
         elif str(action) in ["accept_private_game_invite", "refuse_private_game_invite"]:

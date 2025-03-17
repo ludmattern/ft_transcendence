@@ -30,6 +30,9 @@ export const twoFAForm = createComponent({
 			const code = el.querySelector('#twofa-code').value;
 
 			try {
+				if (!username || !code) {
+					throw new Error('Missing username or code');
+				}
 				const data = await verifyTwoFACode(username, code);
 
 				if (data.success) {
@@ -37,7 +40,10 @@ export const twoFAForm = createComponent({
 					sessionStorage.removeItem('pending2FA_method');
 					handleRoute('/');
 				} else {
-					document.getElementById('twofa-error').style.display = 'block';
+					const twofaError = el.querySelector('#twofa-error');
+					if (twofaError) {
+						twofaError.style.display = 'block';
+					}
 				}
 			} catch (err) {
 				console.error('2FA request error:', err.message);

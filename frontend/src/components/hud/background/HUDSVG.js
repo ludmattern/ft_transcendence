@@ -17,8 +17,9 @@ export const hudSVG = createComponent({
 
 	attachEvents: (el) => {
 		const svgElements = el.querySelectorAll('.svg-element');
-
-		startAnimation(svgElements, 'flicker-animation');
+		if (svgElements.length > 0) {
+			startAnimation(svgElements, 'flicker-animation');
+		}
 	},
 });
 
