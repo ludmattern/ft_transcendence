@@ -11,8 +11,10 @@ export const hudScreenEffect = createComponent({
 `,
 
 	attachEvents: (el) => {
-		const element = el.querySelectorAll('.hud_screen-effect');
+		const elements = el.querySelectorAll('.hud_screen-effect');
 
-		startAnimation(element, 'light-animation');
+		if (elements.length > 0) {
+			startAnimation(elements, 'light-animation');
+		}
 	},
 });

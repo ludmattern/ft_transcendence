@@ -23,7 +23,6 @@ export async function loadTabContent(tabName, container) {
 		let tabItems = [];
 		const storedHistory = sessionStorage.getItem('chatHistory');
 
-
 		if (storedHistory) {
 			try {
 				tabItems = JSON.parse(storedHistory);
@@ -47,16 +46,16 @@ export async function loadTabContent(tabName, container) {
 export async function fetchAndStoreInfoData(container) {
 	try {
 		const response = await fetch(`/api/user-service/info-getter/`, {
-			method: "GET",
-			credentials: "include",
+			method: 'GET',
+			credentials: 'include',
 		});
 		const data = await response.json();
 		if (data.info) {
-			sessionStorage.setItem("infoTabData", JSON.stringify(data.info));
+			sessionStorage.setItem('infoTabData', JSON.stringify(data.info));
 			renderInfoTab(data.info, container);
 		}
 	} catch (error) {
-		console.error("Error fetching information:", error);
+		console.error('Error fetching information:', error);
 	}
 }
 

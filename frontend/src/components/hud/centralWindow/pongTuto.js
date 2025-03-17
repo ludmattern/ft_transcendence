@@ -31,7 +31,7 @@ export const pongTuto = (config) =>
 				: ''
 		}
         
-        <label class="form-label">
+        <label class="form-label" for="ready">
           <p class="ready-question">Click "Ready" when you're set to play!</p>
           <p class="d-none waiting-msg">Waiting for your opponent...</p>
         </label>

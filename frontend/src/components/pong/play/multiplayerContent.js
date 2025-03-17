@@ -23,7 +23,7 @@ export const multiplayerContent = createComponent({
         <p class="text-secondary">
           Gather your pals for a head-to-head battle where defeat is guaranteed.
         </p>
-        <label for="localDifficulty" class="form-label">How Fast Will You Crash?</label>
+        <label for="launchLocal" class="form-label">How Fast Will You Crash?</label>
         <button class="btn btn-pong mx-3" id="launchLocal">
           Challenge Your Friends to a Losing Streak
         </button>
@@ -37,7 +37,7 @@ export const multiplayerContent = createComponent({
         <p class="text-secondary">
           Step into the arena and get queued up for instant regret.
         </p>
-        <label for="matchmakingDifficulty" class="form-label">Select Your Level of Despair</label>
+        <label for="launchMatch" class="form-label">Select Your Level of Despair</label>
         <button class="btn btn-pong mx-3" id="launchMatch">
           Join the Queue for Instant Humiliation
         </button>
