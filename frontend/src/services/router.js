@@ -128,7 +128,6 @@ function processRoute(route, shouldPushState) {
 	if (routeMappings[finalRoute]) {
 		routeMappings[finalRoute]();
 	} else if (finalRoute.startsWith('/social/pilot=')) {
-		const pilot = finalRoute.split('=')[1];
 		navigateToOtherProfile();
 	} else if (finalRoute.startsWith('/pong')) {
 		navigateToPong(finalRoute.substring(6));
@@ -137,16 +136,12 @@ function processRoute(route, shouldPushState) {
 	}
 }
 
-/**
- * Retourne la dernière route visitée.
- */
+
 export function getPreviousRoute() {
 	return previousRoute || '/';
 }
 
-/**
- * Retourne la dernière sous-route visitée dans /pong/play.
- */
+
 export function getPreviousPongPlaySubRoute() {
 	return previousPongPlaySubRoute || '/pong/play';
 }

@@ -103,8 +103,11 @@ def info_getter(request):
         player1User = ManualUser.objects.get(id=match.player1_id) if match.player1_id else None
         player2User = ManualUser.objects.get(id=match.player2_id) if match.player2_id else None
         
-        inviter_id = player1User.id if match.player1_id == user.id else player2User.id
-        inviter = player1User.username if match.player1_id == user.id else player2User.username
+        inviter_user = player1User if match.player2_id == user.id else player2User
+        inviter = inviter_user.username if inviter_user else "TBD"
+        inviter_id = inviter_user.id if inviter_user else None
+
+        
 
         next_match_data.append(
             {"type": "tournament_next_game", "inviter": inviter, "inviter_id": inviter_id, "actions": "acknowledge"}
