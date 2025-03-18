@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Faux Windows 98 - Menu Démarrer</title>
+		<style>
+			.win98-container {
+				width: 800px;
+				height: 600px;
+				position: relative;
+				background-color: #008080;
+				overflow: hidden;
+			}
+
+			.win98-container * {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: 'MS Sans Serif', Arial, sans-serif;
+			}
+
+			.win98-taskbar {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				height: 40px;
+				background-color: #c0c0c0;
+				border-top: 2px solid #fff;
+				box-shadow: inset 1px 1px 0 #808080;
+				display: flex;
+				align-items: center;
+				z-index: 10;
+			}
+			.win98-start-button {
+				display: flex;
+				align-items: center;
+				background-color: #c0c0c0;
+				border: 2px outset #c0c0c0;
+				font-size: 14px;
+				font-weight: bold;
+				padding: 0 8px;
+				margin-left: 4px;
+				height: 28px;
+				cursor: pointer;
+				user-select: none;
+			}
+			.win98-start-button img {
+				width: 16px;
+				height: 16px;
+				margin-right: 4px;
+			}
+			.win98-taskbar-space {
+				flex: 1;
+			}
+			.win98-system-tray {
+				display: flex;
+				align-items: center;
+				margin-right: 8px;
+			}
+			.win98-system-tray img {
+				width: 16px;
+				height: 16px;
+				margin: 0 4px;
+			}
+			.win98-system-clock {
+				font-size: 12px;
+				padding: 0 6px;
+				background-color: #c0c0c0;
+				border: 2px inset #c0c0c0;
+				line-height: 16px;
+			}
+
+			.win98-start-menu {
+				position: absolute;
+				bottom: 40px;
+				left: 0;
+				width: 280px;
+				background-color: #c0c0c0;
+				border: 2px solid #000;
+				box-shadow: 4px 4px #808080;
+				display: none;
+				z-index: 50;
+			}
+			.win98-start-menu-content {
+				display: flex;
+				flex-direction: row;
+			}
+			.win98-start-menu-left {
+				background-color: #000080;
+				color: #fff;
+				width: 60px;
+				padding: 8px 4px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+			}
+			.win98-start-menu-left img {
+				margin-bottom: 8px;
+			}
+			.win98-start-menu-left span {
+				writing-mode: vertical-rl;
+				transform: rotate(180deg);
+				font-size: 14px;
+				font-weight: bold;
+				text-align: center;
+			}
+
+			.win98-start-menu-right {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+			}
+			.win98-menu-list {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			.win98-menu-item {
+				position: relative;
+				padding: 4px 8px;
+				border-bottom: 1px solid #808080;
+				font-size: 13px;
+				cursor: default;
+				user-select: none;
+				display: flex;
+				align-items: center;
+			}
+			.win98-menu-item:hover {
+				background-color: #000080;
+				color: #fff;
+			}
+			.win98-menu-item:last-child {
+				border-bottom: none;
+			}
+			.win98-menu-item img {
+				width: 16px;
+				height: 16px;
+				margin-right: 6px;
+			}
+
+			.win98-has-submenu:hover > .win98-submenu {
+				display: block;
+			}
+			.win98-submenu {
+				display: none;
+				position: absolute;
+				top: 0;
+				left: 100%;
+				min-width: 200px;
+				background-color: #c0c0c0;
+				border: 2px solid #000;
+				box-shadow: 4px 4px #808080;
+				z-index: 60;
+			}
+			.win98-submenu .win98-menu-item {
+				white-space: nowrap;
+			}
+
+			.win98-window98 {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 400px;
+				border: 2px solid #000;
+				background-color: #c0c0c0;
+				box-shadow: 4px 4px #808080;
+				z-index: 20;
+			}
+			.win98-title-bar {
+				background: linear-gradient(to right, #000080, #0000cd);
+				color: #fff;
+				padding: 2px 6px;
+				font-weight: bold;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				height: 20px;
+			}
+			.win98-title-bar .win98-title {
+				font-size: 12px;
+			}
+			.win98-title-bar .win98-buttons {
+				display: flex;
+			}
+			.win98-title-bar .win98-button {
+				width: 16px;
+				height: 16px;
+				margin-left: 2px;
+				border: 2px outset #c0c0c0;
+				background-color: #c0c0c0;
+				cursor: default;
+			}
+			.win98-window-content {
+				padding: 10px;
+				background-color: #efefef;
+			}
+			.win98-window-content h1 {
+				font-size: 16px;
+				margin-top: 0;
+			}
+			.win98-window-content p {
+				font-size: 14px;
+				margin: 0.5em 0;
+			}
+			.win98-btn-ok {
+				margin-top: 10px;
+				padding: 2px 8px;
+				border: 2px outset #c0c0c0;
+				background-color: #c0c0c0;
+				font-size: 12px;
+				cursor: default;
+			}
+
+			.win98-desktop-icon {
+				position: absolute;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				width: 60px;
+				text-align: center;
+				color: #fff;
+				text-shadow: 1px 1px #000;
+				font-size: 12px;
+				cursor: default;
+			}
+			.win98-desktop-icon img {
+				width: 32px;
+				height: 32px;
+				margin-bottom: 4px;
+			}
+			.win98-icon-mycomputer {
+				top: 20px;
+				left: 20px;
+			}
+			.win98-icon-mydocuments {
+				top: 100px;
+				left: 20px;
+			}
+			.win98-icon-network {
+				top: 180px;
+				left: 20px;
+			}
+			.win98-icon-recycle {
+				top: 260px;
+				left: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="win98-container">
+			<!-- Barre des tâches -->
+			<div class="win98-taskbar">
+				<!-- Bouton Démarrer -->
+				<div class="win98-start-button" id="startButton">
+					<img src="win98-logo.png" alt="Logo Win98" />
+					<span>Démarrer</span>
+				</div>
+
+				<!-- Espace pour la barre des tâches -->
+				<div class="win98-taskbar-space"></div>
+
+				<!-- Zone de notification -->
+				<div class="win98-system-tray">
+					<img src="speaker.png" alt="Speaker" />
+					<img src="network-tray.png" alt="Network" />
+					<div class="win98-system-clock">4:20 PM</div>
+				</div>
+			</div>
+
+			<!-- Menu Démarrer (caché par défaut) -->
+			<div class="win98-start-menu" id="startMenu">
+				<div class="win98-start-menu-content">
+					<!-- Colonne bleue à gauche -->
+					<div class="win98-start-menu-left">
+						<img src="win98-logo.png" alt="Win98" />
+						<span>Windows 98</span>
+					</div>
+					<!-- Liste d'items à droite -->
+					<div class="win98-start-menu-right">
+						<ul class="win98-menu-list">
+							<!-- Ex. "Programs" avec sous-menu -->
+							<li class="win98-menu-item win98-has-submenu">
+								<img src="folder.png" alt="Programs" />
+								<span>Programs</span>
+								<!-- Sous-menu -->
+								<ul class="win98-submenu">
+									<li class="win98-menu-item">
+										<img src="folder.png" alt="Startup" />
+										<span>Startup</span>
+									</li>
+									<li class="win98-menu-item">
+										<img src="ie.png" alt="IE" />
+										<span>Internet Explorer</span>
+									</li>
+									<li class="win98-menu-item">
+										<img src="excel.png" alt="Excel" />
+										<span>Microsoft Excel</span>
+									</li>
+									<li class="win98-menu-item">
+										<img src="word.png" alt="Word" />
+										<span>Microsoft Word</span>
+									</li>
+									<li class="win98-menu-item">
+										<img src="dos.png" alt="DOS Prompt" />
+										<span>MS-DOS Prompt</span>
+									</li>
+								</ul>
+							</li>
+
+							<!-- Autres entrées simples -->
+							<li class="win98-menu-item">
+								<img src="folder.png" alt="Favorites" />
+								<span>Favorites</span>
+							</li>
+							<li class="win98-menu-item">
+								<img src="folder.png" alt="Documents" />
+								<span>Documents</span>
+							</li>
+							<li class="win98-menu-item">
+								<img src="settings.png" alt="Settings" />
+								<span>Settings</span>
+							</li>
+							<li class="win98-menu-item">
+								<img src="search.png" alt="Find" />
+								<span>Find</span>
+							</li>
+							<li class="win98-menu-item">
+								<img src="help.png" alt="Help" />
+								<span>Help</span>
+							</li>
+							<li class="win98-menu-item">
+								<img src="run.png" alt="Run" />
+								<span>Run...</span>
+							</li>
+							<li class="win98-menu-item">
+								<img src="shutdown.png" alt="Shut Down" />
+								<span>Shut Down...</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<!-- Exemple de fenêtre "Welcome" au milieu de l'écran -->
+			<div class="win98-window98">
+				<div class="win98-title-bar">
+					<div class="win98-title">Welcome to Windows 98</div>
+					<div class="win98-buttons">
+						<div class="win98-button"></div>
+						<div class="win98-button"></div>
+						<div class="win98-button"></div>
+					</div>
+				</div>
+				<div class="win98-window-content">
+					<h1>Welcome</h1>
+					<p>Welcome to the exciting new world of Windows 98, where your computer desktop meets the Internet!</p>
+					<p>Be sure to take a look at a tutorial of the options available on this screen.</p>
+					<button class="win98-btn-ok">OK</button>
+				</div>
+			</div>
+
+			<!-- Icônes sur le bureau (exemples) -->
+			<div class="win98-desktop-icon win98-icon-mycomputer">
+				<img src="mycomputer.png" alt="My Computer" />
+				<span>My Computer</span>
+			</div>
+			<div class="win98-desktop-icon win98-icon-mydocuments">
+				<img src="mydocs.png" alt="My Documents" />
+				<span>My Documents</span>
+			</div>
+			<div class="win98-desktop-icon win98-icon-network">
+				<img src="network.png" alt="Network Neighborhood" />
+				<span>Network</span>
+			</div>
+			<div class="win98-desktop-icon win98-icon-recycle">
+				<img src="recycle.png" alt="Recycle Bin" />
+				<span>Recycle Bin</span>
+			</div>
+
+			<!-- Script pour ouvrir/fermer le menu Démarrer au clic -->
+			<script>
+				const startButton = document.getElementById('startButton');
+				const startMenu = document.getElementById('startMenu');
+
+				// Ferme le menu si on clique n'importe où ailleurs
+				document.addEventListener('click', (e) => {
+					// Vérifie si le clic est en dehors du bouton ou du menu
+					if (!startButton.contains(e.target) && !startMenu.contains(e.target)) {
+						startMenu.style.display = 'none';
+					}
+				});
+
+				// Ouvre / Ferme le menu au clic sur le bouton Démarrer
+				startButton.addEventListener('click', (e) => {
+					e.stopPropagation(); // Empêche de fermer immédiatement le menu
+					if (startMenu.style.display === 'none' || startMenu.style.display === '') {
+						startMenu.style.display = 'block';
+					} else {
+						startMenu.style.display = 'none';
+					}
+				});
+			</script>
+		</div>
+	</body>
+</html>

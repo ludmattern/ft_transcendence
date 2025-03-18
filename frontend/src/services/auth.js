@@ -167,8 +167,3 @@ export async function getUsername(playerId) {
 		return `${playerId}`;
 	}
 }
-
-
-
-
-

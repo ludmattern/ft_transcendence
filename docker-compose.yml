@@ -40,6 +40,8 @@ services:
     container_name: certif_issuer
     networks:
       - backend_network
+    secrets:
+      - hostname
     volumes:
       - certif_data:/data/certs
 
@@ -52,6 +54,7 @@ services:
     networks:
       - backend_network
     secrets:
+      - hostname
       - django_secret
     depends_on:
       certif-issuer:
@@ -96,6 +99,7 @@ services:
     ports:
       - "3006:3006"
     secrets:
+      - hostname
       - django_secret
 
   auth-service:
@@ -105,6 +109,7 @@ services:
       dockerfile: backend/auth-service/Dockerfile
     container_name: auth_service
     secrets:
+      - oauth_hostname
       - fernet_key
       - smtp_host_user
       - smtp_host_password
@@ -126,6 +131,7 @@ services:
       dockerfile: backend/user-service/Dockerfile
     container_name: user_service
     secrets:
+      - hostname
       - fernet_key
       - jwt_secret
       - django_secret
@@ -148,6 +154,7 @@ services:
     ports:
       - "3003:3003"
     secrets:
+      - hostname
       - django_secret
 
   pong-service:
@@ -161,6 +168,7 @@ services:
     ports:
       - "3004:3004"
     secrets:
+      - hostname
       - django_secret
 
   matchmaking-service:
@@ -172,6 +180,7 @@ services:
     ports:
       - "3005:3005"
     secrets:
+      - hostname
       - django_secret
 
   tournament-service:
@@ -181,6 +190,7 @@ services:
       dockerfile: backend/tournament-service/Dockerfile
     container_name: tournament_service
     secrets:
+      - hostname
       - fernet_key
       - jwt_secret
       - django_secret
@@ -261,3 +271,5 @@ secrets:
     file: ./secret/hostname.txt
   jwt_secret:
     file: ./secret/jwt_secret.txt
+  oauth_hostname:
+    file: ./secret/oauth_hostname.txt

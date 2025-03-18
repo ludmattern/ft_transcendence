@@ -248,3 +248,17 @@ body {
 	height: 100%;
 	overflow: hidden;
 }
+
+.loader-comm {
+	width: 120px;
+	height: 60px;
+	border-radius: 200px 200px 0 0;
+	-webkit-mask: repeating-radial-gradient(farthest-side at bottom, #0000 0, #111111 1px 12%, #0000 calc(12% + 1px) 20%);
+	background: radial-gradient(farthest-side at bottom, #417db5c9 0 95%, #0000 0) bottom / 0% 0% no-repeat #0c4b4d;
+	animation: l10 2s infinite steps(6);
+}
+@keyframes l10 {
+	100% {
+		background-size: 120% 120%;
+	}
+}

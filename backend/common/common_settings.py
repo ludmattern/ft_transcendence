@@ -1,16 +1,21 @@
 # common_settings.py
 import os
-import secrets
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEBUG = True
-ALLOWED_HOSTS = []
+DEBUG = False
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 STATIC_URL = "/static/"
 
+try:
+    with open("/run/secrets/hostname", "r", encoding="utf-8") as f:
+        HOSTNAME = f.read().strip()
+except Exception:
+    print("Error reading hostname from file")
+
+ALLOWED_HOSTS = [HOSTNAME]
 
 DATABASES = {
     "default": {
