@@ -82,14 +82,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         await self.channel_layer.group_add("chat_service", self.channel_name)
-        logger.info(f"🔗 Connecté au groupe chat_service sur livechat-service (channel: {self.channel_name})")
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard("chat_service", self.channel_name)
-        logger.info("Déconnecté du groupe chat_service")
 
     async def chat_message(self, event):
-        logger.info(f"ChatConsumer.chat_message received event: {event}")
         message = event.get("message")
         if len(message) > 150:
             message = message[:150] + "..."
@@ -103,10 +100,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         for userid in non_blocked_users:
             await self.channel_layer.group_send(f"user_{userid}", event)
-        logger.info(f"Message transmis aux active users depuis chat_service (General): {event}")
 
     async def private_message(self, event):
-        logger.info(f"ChatConsumer.private_message received event: {event}")
 
         author_id = event.get("author")
         username = await get_username(author_id)
@@ -116,7 +111,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         event["profilePicture"] = profile_picture
 
         if recipient_id is None:
-            logger.info(f"No valid recipient id for recipient: {recipient}")
             event["type"] = "error_message"
             event["message"] = "Recipient does not exist"
             event["username"] = username
@@ -144,11 +138,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_send(f"user_{recipient_id}", event)
         await self.channel_layer.group_send(f"user_{author_id}", event)
-        logger.info(f"Message transmitted to groups user_{recipient_id} and user_{author_id}: {event}")
 
     async def info_message(self, event):
         """Send a friend request or accept an existing one if initiated by the other user."""
-        logger.info(f"ChatConsumer info message received event: {event}")
 
         action = event.get("action")
         author_id = event.get("author")
@@ -202,7 +194,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         )
                         await self.channel_layer.group_send(f"user_{recipient_id}", event)
                         await self.channel_layer.group_send(f"user_{author_id}", event)
-                        logger.info(f"Friend request accepted between {author_id} and {recipient_id} : {event}")
                     else:
                         await self.channel_layer.group_send(
                             f"user_{author_id}", {"type": "error_message", "error": "Friend request already sent"}
@@ -225,7 +216,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
             await self.channel_layer.group_send(f"user_{recipient_id}", event)
             await self.channel_layer.group_send(f"user_{author_id}", event)
-            logger.info(f"Friend request sent from {author_id} to {recipient_id} : {event}")
 
         elif str(action) in ["reject_friend_request", "remove_friend"]:
             initiator = await database_sync_to_async(ManualUser.objects.get)(id=author_id)
@@ -361,7 +351,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
         elif str(action) == "back_reject_tournament":
-            logger.info("Rejecting tournament invite")
             recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
             recipient_username = await get_username(recipient_id)
             tournament_id = event.get("tournament_id")
@@ -373,7 +362,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
             for participant_id in participants:
                 if participant_id != int(recipient_id):
-                    logger.info(f"Sending reject message to {participant_id}")
                     await self.channel_layer.group_send(
                         f"user_{participant_id}",
                         {
@@ -490,14 +478,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             current_match_player_ids = event.get("current_match_player_ids")
 
             for participant in participant_list:
-                logger.info(f"Sending refresh brackets to participant {participant}")
                 await self.channel_layer.group_send(
                     f"user_{participant}",
                     {"type": "info_message", "action": "refresh_brackets", "tournament_id": tournament_id},
                 )
 
             for next_match_player_id in next_match_player_ids:
-                logger.info(f"Sending next match ready to {next_match_player_id}")
                 await self.channel_layer.group_send(
                     f"user_{next_match_player_id}", {"type": "info_message", "action": "next_match_ready"}
                 )
@@ -506,7 +492,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 )
 
             for current_match_player_id in current_match_player_ids:
-                logger.info(f"gameover ready to {current_match_player_id}")
                 await self.channel_layer.group_send(
                     f"user_{current_match_player_id}", {"type": "info_message", "action": "gameover"}
                 )
@@ -658,7 +643,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
 async def private_game_invite(self, event):
-    logger.info(f"Private game invite received: {event}")
     inviter_id = event.get("author")
     invitee_id = event.get("recipient")
 
@@ -692,15 +676,12 @@ async def private_game_invite(self, event):
         )
         return
 
-    # Normalisation de l'ordre pour l'unicité : 
-    # l'utilisateur avec le plus petit id sera stocké dans le champ "user" et l'autre dans "recipient"
     sorted_users = sorted([inviter, invitee], key=lambda u: u.id)
     user, recipient = sorted_users[0], sorted_users[1]
 
     qs = ManualPrivateGames.objects.filter(user=user, recipient=recipient)
     if await database_sync_to_async(qs.exists)():
         existing_relation = await database_sync_to_async(qs.first)()
-        # On détermine l'autre utilisateur par rapport à l'inviteur
         if inviter.id == user.id:
             other_user = recipient
         else:
@@ -733,15 +714,10 @@ async def private_game_invite(self, event):
         f"user_{invitee_id}",
         {"type": "info_message", "info": f"Game invite received from {inviter.username}"}
     )
-    logger.info(f"Private game invite sent to user_{invitee_id}")
 
 
 
 async def private_game_invite_action(self, event, action):
-    logger.info(f"{action.capitalize()} private game invite: {event}")
-    # Dans ce contexte :
-    # - actor_id correspond à l'utilisateur qui clique sur "accepter" ou "refuser"
-    # - inviter_id correspond à l'utilisateur qui a envoyé l'invitation initiale
     actor_id = event.get("author")
     inviter_id = event.get("recipient")
     user_action = str(action)

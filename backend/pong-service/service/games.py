@@ -70,7 +70,6 @@ class BasePongGame:
 
     def __init__(self, game_id: str, player1_id: str = None, player2_id: str = None):
         self.game_id = game_id
-        logger.info(f"Game ID: {self.game_id}")
         self.start_time = time.time()
         self.last_update = self.start_time
         self.game_over = False
@@ -78,8 +77,6 @@ class BasePongGame:
 
         self.player1_id = player1_id if player1_id else "unknown1"
         self.player2_id = player2_id if player2_id else "unknown2"
-        logger.info(f"Player 1 ID: {self.player1_id}")
-        logger.info(f"Player 2 ID: {self.player2_id}")
 
         self.user_scores = {self.player1_id: 0, self.player2_id: 0}
         self.player_mapping = {self.player1_id: 1, self.player2_id: 2}
@@ -135,7 +132,6 @@ class BasePongGame:
         """move paddle"""
         if player_num not in self.state.players:
             return
-        #logger.info(f"Player {player_num} moving paddle {direction}")
         player = self.state.players[player_num]
         pos = player.paddle_position
 

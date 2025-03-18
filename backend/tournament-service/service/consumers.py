@@ -194,8 +194,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         if new_status == "accepted":
             invited_user.current_tournament_id = invited_tournament
         await sync_to_async(invited_user.save)()
-        logger.info(f"Participant {invited_user.username} status updated to {new_status}")
-        logger.info(f"Parameters: {invited_id}, {callback_action}, {invited_tournament}, {invited_id}")
         await self.send_info(invited_id, callback_action, tournament_id=invited_tournament, recipient=invited_id)
 
     async def handle_tournament_invite(self, event):
@@ -213,14 +211,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         event["recipient_username"] = (await get_username(recipient_id))
 
         tournament = await self.get_initiator_tournament(initiator)
-        logger.info("Tournament	: %s", tournament)
         if not tournament:
-            logger.warning(f"No active tournament found for initiator {initiator.username}")
             return
 
         await self.invite_participant(tournament, recipient_user)
         await self.send_info(author_id, "back_tournament_invite", author=author_id, recipient=recipient_id)
-        logger.info("Tournament invite sent to %s", event["recipient_username"])
 
     async def handle_kick_tournament(self, event):
         author_id = event.get("author")
@@ -230,7 +225,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
         event["author_username"] = await get_username(author_id)
         event["recipient_username"] = await get_username(recipient_id)
-        logger.info("Author: %s, Recipient: %s", event["author_username"], event["recipient_username"])
 
         tournament = await self.get_initiator_tournament(initiator)
         if not tournament:
@@ -243,7 +237,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         await self.send_info(
             author_id, "back_kick_tournament", author=author_id, recipient=recipient_id, tournament_id=tournament.id
         )
-        logger.info("%s is kicked from tournament.", event["recipient_username"])
 
     async def handle_cancel_tournament(self, event):
         logger.info("Cancel tournament event received: %s", event)
@@ -299,10 +292,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             author=author_id,
             tournament_id=tournament.id,
         )
-        logger.info("%s has left the tournament.", initiator.username)
 
     async def send_info(self, user_id, action, **kwargs):
-        logger.info(f"paremeters recieved: {user_id}, {action}, {kwargs}")
         payload = {"type": "info_message", "action": action, **kwargs}
         await self.channel_layer.group_send(f"user_{0}", payload)
 
@@ -504,7 +495,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             )
 
             if active_players_count > 0 and active_players_count == left_players_count:
-                logger.info(f"Deleting tournament {tournament_id} since all players have left.")
                 await sync_to_async(lambda: ManualTournament.objects.filter(id=tournament_id).delete())()
 
             participant_list = await sync_to_async(
@@ -523,7 +513,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 "next_match_player_ids": next_match_player_ids,
                 "current_match_player_ids": current_match_player_ids,
             }
-            logger.info(f"back_tournament_game_over sent to gateway: {payload}")
             await self.channel_layer.group_send(f"user_{0}", payload)
 
         except Exception as e:

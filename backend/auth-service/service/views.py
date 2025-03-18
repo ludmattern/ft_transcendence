@@ -13,7 +13,7 @@ from django.http import JsonResponse, HttpResponse  # type: ignore
 from django.conf import settings  # type: ignore
 from django.core.mail import send_mail  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
-from django.shortcuts import redirect, render # type: ignore
+from django.shortcuts import redirect, render  # type: ignore
 
 
 import requests
@@ -31,19 +31,17 @@ import logging
 logger = logging.getLogger(__name__)
 cipher = Fernet(settings.FERNET_KEY)
 
+
 def decrypt_thing(encrypted_text):
     return cipher.decrypt(encrypted_text.encode("utf-8")).decode("utf-8")
+
 
 def generate_session_token(user):
     """ganerate a JWT token for the user."""
     current_time = datetime.datetime.utcnow()
     expiry = current_time + datetime.timedelta(seconds=settings.JWT_EXP_DELTA_SECONDS)
     token = jwt.encode(
-        {
-            "sub": str(user.id),
-            "iat": current_time,
-            "exp": expiry.timestamp(),
-        },
+        {"sub": str(user.id), "iat": current_time, "exp": expiry.timestamp()},
         settings.JWT_SECRET_KEY,
         algorithm=settings.JWT_ALGORITHM,
     )
@@ -53,12 +51,7 @@ def generate_session_token(user):
 
 def set_access_token_cookie(response, token_str):
     response.set_cookie(
-        key="access_token",
-        value=token_str,
-        httponly=True,
-        secure=True,
-        samesite="Strict",
-        max_age=settings.JWT_EXP_DELTA_SECONDS,
+        key="access_token", value=token_str, httponly=True, secure=True, samesite="Strict", max_age=settings.JWT_EXP_DELTA_SECONDS
     )
 
 
@@ -83,10 +76,7 @@ def check_auth_view(request):
             return JsonResponse({"success": False, "message": "User not found"}, status=200)
 
         if user.session_token != token:
-            return JsonResponse(
-                {"success": False, "message": "Token does not match active session"},
-                status=200,
-            )
+            return JsonResponse({"success": False, "message": "Token does not match active session"}, status=200)
 
         if not user.token_expiry or user.token_expiry.timestamp() < current_timestamp:
             return JsonResponse({"success": False, "message": "Token expired (DB)"}, status=200)
@@ -98,25 +88,11 @@ def check_auth_view(request):
             user.session_token = new_token
             user.save()
 
-            response = JsonResponse(
-                {
-                    "success": True,
-                    "id": user.id,
-                    "username": user.username,
-                    "message": "Cookie renewed",
-                }
-            )
+            response = JsonResponse({"success": True, "id": user.id, "username": user.username, "message": "Cookie renewed"})
             set_access_token_cookie(response, new_token)
             return response
 
-        return JsonResponse(
-            {
-                "success": True,
-                "id": user.id,
-                "username": user.username,
-                "message": "Cookie still valid",
-            }
-        )
+        return JsonResponse({"success": True, "id": user.id, "username": user.username, "message": "Cookie still valid"})
     except jwt.ExpiredSignatureError:
         return JsonResponse({"success": False, "message": "Token expired"}, status=401)
     except jwt.InvalidTokenError as e:
@@ -129,6 +105,7 @@ def check_auth_view(request):
 
 def jwt_required(view_func):
     """Decorator to require a valid JWT token."""
+
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         token = request.COOKIES.get("access_token")
@@ -147,10 +124,7 @@ def jwt_required(view_func):
                 return JsonResponse({"success": False, "message": "User not found"}, status=200)
 
             if user.session_token != token:
-                return JsonResponse(
-                    {"success": False, "message": "Invalid or outdated token"},
-                    status=401,
-                )
+                return JsonResponse({"success": False, "message": "Invalid or outdated token"}, status=401)
 
             if not user.token_expiry or user.token_expiry < datetime.datetime.utcnow():
                 return JsonResponse({"success": False, "message": "Token expired in DB"}, status=401)
@@ -160,13 +134,11 @@ def jwt_required(view_func):
             return JsonResponse({"success": False, "message": "Token expired"}, status=401)
         except jwt.InvalidTokenError as e:
             logging.error("Invalid token: %s", e)
-            return JsonResponse({"success": False, "message":"Token error"}, status=401)
+            return JsonResponse({"success": False, "message": "Token error"}, status=401)
 
         return view_func(request, *args, **kwargs)
 
     return wrapper
-
-
 
 
 def generate_2fa_code(length=6):
@@ -184,15 +156,11 @@ def send_2fa_sms(phone_number, code):
     client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     try:
         message = client.messages.create(
-            body=f"Your 2FA code is: {code}",
-            from_=settings.TWILIO_PHONE_NUMBER,
-            to=decrypt_thing(phone_number),
+            body=f"Your 2FA code is: {code}", from_=settings.TWILIO_PHONE_NUMBER, to=decrypt_thing(phone_number)
         )
         logger.info("SMS sent, SID: %s", message.sid)
     except Exception as e:
         logger.error("Error sending SMS: %s", e)
-
-
 
 
 @require_POST
@@ -216,14 +184,7 @@ def login_view(request):
         user.session_token = token_str
         user.status = "online"
         user.save()
-        response = JsonResponse(
-            {
-                "success": True,
-                "message": "Logged in (dummy)",
-                "id": user.id,
-                "username": user.username,
-            }
-        )
+        response = JsonResponse({"success": True, "message": "Logged in (dummy)", "id": user.id, "username": user.username})
         set_access_token_cookie(response, token_str)
         return response
 
@@ -239,36 +200,17 @@ def login_view(request):
             send_2fa_email(user.email, code)
         elif user.twofa_method == "sms":
             send_2fa_sms(user.phone_number, code)
-        return JsonResponse(
-            {
-                "success": True,
-                "message": "2FA required",
-                "twofa_method": user.twofa_method,
-            },
-            status=200,
-        )
+        return JsonResponse({"success": True, "message": "2FA required", "twofa_method": user.twofa_method}, status=200)
     cookie_token = request.COOKIES.get("access_token")
-    logger.info(
-        f"User {user.id}: token_expiry={user.token_expiry}, now_utc={now_utc}, cookie_token={cookie_token}, session_token={user.session_token}"
-    )
 
     if user.token_expiry and user.token_expiry > now_utc:
-        logger.info(f"User {user.id}: session is still valid")
         if not cookie_token or cookie_token != user.session_token:
-            logger.info(f"User {user.id}: session token mismatch, invalidating session")
             user.token_expiry = None
             user.session_token = None
             user.save()
             channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                f"user_{user.id}",
-                {
-                    "type": "logout",
-                    "message": "session replaced",
-                },
-            )
+            async_to_sync(channel_layer.group_send)(f"user_{user.id}", {"type": "logout", "message": "session replaced"})
         else:
-            logger.info(f"User {user.id}: already connected")
             return JsonResponse({"success": False, "message": "User is already connected"}, status=403)
     else:
         logger.info(f"User {user.id}: no active session or token expired")
@@ -278,16 +220,10 @@ def login_view(request):
     user.session_token = token_str
     user.status = "online"
     user.save()
-    response = JsonResponse(
-        {
-            "success": True,
-            "message": "Logged in",
-            "id": user.id,
-            "username": user.username,
-        }
-    )
+    response = JsonResponse({"success": True, "message": "Logged in", "id": user.id, "username": user.username})
     set_access_token_cookie(response, token_str)
     return response
+
 
 @require_POST
 @jwt_required
@@ -315,6 +251,7 @@ def logout_view(request):
         logging.error("Error during logout: %s", e)
         return JsonResponse({"success": False, "message": "Unexpected error"}, status=401)
 
+
 @require_POST
 def verify_2fa_view(request):
     """POST /verify-2fa/"""
@@ -326,27 +263,18 @@ def verify_2fa_view(request):
         user = ManualUser.objects.get(username=username)
     except ManualUser.DoesNotExist:
         return JsonResponse({"success": False, "message": "User not found"}, status=404)
-    
+
     cookie_token = request.COOKIES.get("access_token")
     now_utc = datetime.datetime.utcnow()
     if user.token_expiry and user.token_expiry > now_utc:
-            logger.info(f"User {user.id}: session is still valid")
-            if not cookie_token or cookie_token != user.session_token:
-                logger.info(f"User {user.id}: session token mismatch, invalidating session")
-                user.token_expiry = None
-                user.session_token = None
-                user.save()
-                channel_layer = get_channel_layer()
-                async_to_sync(channel_layer.group_send)(
-                    f"user_{user.id}",
-                    {
-                        "type": "logout",
-                        "message": "session replaced",
-                    },
-                )
-            else:
-                logger.info(f"User {user.id}: already connected")
-                return JsonResponse({"success": False, "message": "User is already connected"}, status=403)
+        if not cookie_token or cookie_token != user.session_token:
+            user.token_expiry = None
+            user.session_token = None
+            user.save()
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(f"user_{user.id}", {"type": "logout", "message": "session replaced"})
+        else:
+            return JsonResponse({"success": False, "message": "User is already connected"}, status=403)
 
     if user.twofa_method == "authenticator-app":
         totp = pyotp.TOTP(user.totp_secret)
@@ -372,6 +300,7 @@ def verify_2fa_view(request):
         return response
     else:
         return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
+
 
 @require_GET
 def get_user_id_from_cookie(request):
@@ -406,6 +335,7 @@ def get_42_auth_url(request):
         f"client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=public"
     )
     return JsonResponse({"url": auth_url})
+
 
 @require_GET
 def oauth_callback(request):
@@ -467,13 +397,14 @@ def oauth_callback(request):
         user.status = "online"
         user.save()
 
-        response = render(request, 'authenticating.html', {'token_str': token_str})
+        response = render(request, "authenticating.html", {"token_str": token_str})
         set_access_token_cookie(response, token_str)
         return response
 
     except Exception:
         logger.exception("OAuth callback error")
         return JsonResponse({"success": False, "message": "Internal Server Error"}, status=500)
+
 
 @require_POST
 def request_password_reset(request):
@@ -499,11 +430,7 @@ def request_password_reset(request):
         if user.reset_code_expiry and user.reset_code_expiry > current_time:
             remaining = (user.reset_code_expiry - current_time).total_seconds()
             return JsonResponse(
-                {
-                    "success": False,
-                    "message": f"Please wait {int(remaining)} seconds before requesting a new code",
-                },
-                status=429,
+                {"success": False, "message": f"Please wait {int(remaining)} seconds before requesting a new code"}, status=429
             )
 
         code = generate_2fa_code()
@@ -520,6 +447,7 @@ def request_password_reset(request):
     except Exception as e:
         logging.error("An error occurred while requesting a password reset: %s", str(e))
         return JsonResponse({"success": False, "message": "Internal Server Error"}, status=500)
+
 
 @require_POST
 def verify_reset_code(request):
@@ -543,8 +471,6 @@ def verify_reset_code(request):
             return JsonResponse({"success": False, "message": "User not found"}, status=404)
 
         current_time = now()
-        logger.info(f"Current time: {current_time}")
-        logger.info(f"Reset code expiry: {user.reset_code_expiry}")
         reset_expiry = (
             make_aware(user.reset_code_expiry)
             if user.reset_code_expiry and not is_aware(user.reset_code_expiry)
@@ -568,16 +494,11 @@ def verify_reset_code(request):
             algorithm=settings.JWT_ALGORITHM,
         )
         reset_token_str = reset_token if isinstance(reset_token, str) else reset_token.decode("utf-8")
-        return JsonResponse(
-            {
-                "success": True,
-                "message": "Code verified",
-                "reset_token": reset_token_str,
-            }
-        )
+        return JsonResponse({"success": True, "message": "Code verified", "reset_token": reset_token_str})
     except Exception as e:
         logger.error("An error occurred while verifying the reset code: %s", str(e))
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
+
 
 @require_POST
 def change_password(request):
@@ -586,17 +507,10 @@ def change_password(request):
         new_password = body.get("new_password")
         reset_token = body.get("reset_token")
         if not new_password or not reset_token:
-            return JsonResponse(
-                {"success": False, "message": "Missing new_password or reset_token"},
-                status=400,
-            )
+            return JsonResponse({"success": False, "message": "Missing new_password or reset_token"}, status=400)
 
         try:
-            payload = jwt.decode(
-                reset_token,
-                settings.JWT_SECRET_KEY,
-                algorithms=[settings.JWT_ALGORITHM],
-            )
+            payload = jwt.decode(reset_token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         except jwt.ExpiredSignatureError:
             return JsonResponse({"success": False, "message": "Reset token expired"}, status=401)
         except jwt.InvalidTokenError as e:
