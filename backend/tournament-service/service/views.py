@@ -541,7 +541,7 @@ def try_join_random_tournament(request):
 
     except Exception as e:
         logger.exception("Error joining random tournament:")
-        return JsonResponse({"message": str(e)}, status=500)
+        return JsonResponse({"message": "Internal server server"}, status=500)
 
 @require_POST
 @jwt_required
@@ -587,5 +587,5 @@ def try_join_tournament_with_room_code(request):
         )
 
     except Exception as e:
-        logger.exception("Error joining tournament with room code:")
-        return JsonResponse({"message": str(e)}, status=500)
+        logger.exception(f"Error joining tournament with room code: {str(e)}")
+        return JsonResponse({"message": "Internal server error"}, status=500)
