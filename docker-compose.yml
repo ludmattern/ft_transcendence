@@ -40,6 +40,8 @@ services:
     container_name: certif_issuer
     networks:
       - backend_network
+    secrets:
+      - hostname
     volumes:
       - certif_data:/data/certs
 

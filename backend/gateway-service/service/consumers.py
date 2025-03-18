@@ -244,10 +244,15 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         logger.info(f"Déconnexion envoyée à l'utilisateur {self.user_id}")
         await self.close()
 
+ca_cert_path = "/data/certs/selfsigned.crt"
 
 async def fetch_user_id(cookies):
-    async with httpx.AsyncClient(base_url="https://auth_service:3001", verify=False) as client:
+    async with httpx.AsyncClient(
+        base_url="https://auth-service:3001",
+        verify=ca_cert_path
+    ) as client:
         response = await client.get("/get_user_id_from_cookie/", cookies=cookies)
+
         if response.status_code == 200:
             data = response.json()
             return data.get("user_id")

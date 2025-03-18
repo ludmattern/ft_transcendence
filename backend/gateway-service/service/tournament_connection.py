@@ -13,8 +13,6 @@ async def connect_dummy_tournament():
         try:
             ssl_context = ssl.create_default_context()
             ssl_context.load_verify_locations("/data/certs/selfsigned.crt")
-            ssl_context.check_hostname = False
-            ssl_context.verify_mode = ssl.CERT_NONE
 
             logger.info("Tentative de connexion au tournamentConsumer via %s", ws_url)
             async with websockets.connect(ws_url, ssl=ssl_context) as websocket:
