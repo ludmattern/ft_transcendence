@@ -38,16 +38,6 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
       # Pas obligatoire si JS vanilla mais tu peux l'ajouter si nécessaire
       # - name: Install JS dependencies
       #   run: |
