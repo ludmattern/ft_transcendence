@@ -79,12 +79,10 @@ export const loginForm = createComponent({
 
 		window.addEventListener('message', (event) => {
 			if (event.origin !== ALLOWED_ORIGIN) {
-				console.log('Origin not allowed:', event.origin, 'expected:', ALLOWED_ORIGIN);
 				return;
 			}
 			const data = event.data;
 			if (data.authenticated) {
-				console.log('Origin allowed:', event.origin, 'expected:', ALLOWED_ORIGIN);
 				handleRoute('/');
 			}
 		});
