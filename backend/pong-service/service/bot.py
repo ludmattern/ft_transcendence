@@ -17,7 +17,7 @@ class AIPaddle:
             self.allowed_to_observe = 0.5
         else:
             self.allowed_to_observe = 0.1
-        
+        self.random_check = 0
 
     def update(self):
         """Update the AI paddle's position."""
@@ -73,8 +73,8 @@ class AIPaddle:
                 elif ball_z - self.game.BALL_SIZE <= -self.game.TUNNEL_DEPTH / 2:
                     ball_z = -self.game.TUNNEL_DEPTH / 2 + self.game.BALL_SIZE
                     vel_z *= -1
-
-            random_check = random.uniform(0, 1)
+            if not ball_coming_towards_ia:
+                self.random_check = random.uniform(0, 1)
             opponent_score = self.game.state.scores[opponent_num]
             max_score = self.game.MAX_SCORE
             
@@ -84,12 +84,12 @@ class AIPaddle:
             min_risk = 0.8 * risk_factor
             angle_factor = random.uniform(min_risk, max_risk)
 
-            if random_check < 0.5:
+            if self.random_check < 0.5:
                 target_y = ball_y - angle_factor * (self.game.PADDLE_HEIGHT / 2)
             else:
                 target_y = ball_y + angle_factor * (self.game.PADDLE_HEIGHT / 2)
 
-            if random_check < 0.5:
+            if self.random_check < 0.5:
                 target_z = ball_z + angle_factor * (self.game.PADDLE_DEPTH / 2)
             else:
                 target_z = ball_z - angle_factor * (self.game.PADDLE_DEPTH / 2)
