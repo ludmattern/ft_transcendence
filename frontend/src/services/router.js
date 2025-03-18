@@ -136,16 +136,12 @@ function processRoute(route, shouldPushState) {
 	}
 }
 
-/**
- * Retourne la dernière route visitée.
- */
+
 export function getPreviousRoute() {
 	return previousRoute || '/';
 }
 
-/**
- * Retourne la dernière sous-route visitée dans /pong/play.
- */
+
 export function getPreviousPongPlaySubRoute() {
 	return previousPongPlaySubRoute || '/pong/play';
 }

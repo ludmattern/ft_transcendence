@@ -424,7 +424,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             if not participant:
                 await self.send(json.dumps({"error": "User not found in tournament"}))
                 return
-            
+
             participant.status = "left"
             await sync_to_async(participant.save)()
 

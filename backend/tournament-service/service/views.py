@@ -94,13 +94,15 @@ def get_current_tournament(request):
             try:
                 player1_obj = ManualUser.objects.get(id=match.player1_id)
             except ManualUser.DoesNotExist:
-                pass
+                logger.exception("Player 1 not found for match")
+                return JsonResponse({"error": "Internal server error"}, status=500)
 
         if match.player2_id:
             try:
                 player2_obj = ManualUser.objects.get(id=match.player2_id)
             except ManualUser.DoesNotExist:
-                pass
+                logger.exception("Player 2 not found for match")
+                return JsonResponse({"error": "Internal server error"}, status=500)
 
         if match.winner_id:
             try:

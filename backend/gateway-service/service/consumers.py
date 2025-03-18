@@ -18,6 +18,7 @@ def update_user_status(user_id, is_connected):
         user.is_connected = is_connected
         user.save()
     except ManualUser.DoesNotExist:
+        logger.error("Impossible to update user")
         pass
 
 
