@@ -67,7 +67,7 @@ export const settingsForm = createComponent({
 
 			let canUpdate = true;
 
-			if (canUpdate && formData.newEmail) {
+			if (formData.newEmail) {
 				if (!validateMail(formData.newEmail)) canUpdate = false;
 			}
 			if (canUpdate && formData.newPassword && !validatePassword(formData.newPassword)) {
