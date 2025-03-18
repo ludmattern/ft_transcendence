@@ -1,6 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { CSS3DObject } from 'https://esm.sh/three/examples/jsm/renderers/CSS3DRenderer.js';
 import Store from '/src/3d/store.js';
+import * as THREE from 'https://esm.sh/three';
 
 export const menu3 = createComponent({
 	tag: 'menu3',
@@ -31,4 +32,23 @@ function initM3() {
 	Store.menuElement3.style.display = 'none';
 	Store.menuElement3.classList.add('active');
 	if (Store.menuObject3) Store.scene.add(Store.menuObject3);
+
+
+	const video = document.createElement('video');
+	video.src = '/src/assets/video/screensaver98.mp4';
+	video.loop = true;
+	video.muted = true;
+	video.playsInline = true;
+	video.play();
+	
+	const videoTexture = new THREE.VideoTexture(video);
+	videoTexture.minFilter = THREE.LinearFilter;
+	videoTexture.magFilter = THREE.LinearFilter;
+	videoTexture.format = THREE.RGBFormat;
+	
+	const newMaterial = new THREE.MeshStandardMaterial({
+		map: videoTexture,
+	});
+	
+	Store.screenObject2.material = newMaterial;
 }
