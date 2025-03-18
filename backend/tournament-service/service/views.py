@@ -354,7 +354,6 @@ def abandon_local_tournament(request):
         organizer.current_tournament_id = 0
         organizer.save()
 
-        logger.info(f"Tournament {tournament_id} abandoned. All players removed except organizer {organizer.id}.")
         return JsonResponse({"success": True, "message": "Tournament abandoned and players removed except organizer"})
 
     except json.JSONDecodeError:
@@ -387,7 +386,6 @@ def create_local_tournament_view(request):
             return JsonResponse({"error": error_msg}, status=400)
 
         serial_key = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
-        logger.info(f"🔑 Génération de serial_key: {serial_key}")
 
         tournament = ManualTournament.objects.create(
             serial_key=serial_key,
@@ -397,7 +395,6 @@ def create_local_tournament_view(request):
             status="ongoing",
             mode="local",
         )
-        logger.info(f"🏆 Tournament créé: ID={tournament.id}, serial_key={serial_key}, organizer_id={user.id}")
 
         users_list = []
 
@@ -448,7 +445,6 @@ def create_local_tournament_view(request):
                 player2_id=p2_user.id,
                 status="pending",
             )
-            logger.info(f"🏅 Round 1, Match {match_order} créé: {p1_user.username} vs {p2_user.username}")
 
         previous_matches = n // 2
         for round_number in range(2, size_count + 1):
@@ -462,7 +458,6 @@ def create_local_tournament_view(request):
                     player2_id=None,
                     status="pending",
                 )
-                logger.info(f"🏅 Round {round_number}, Match {match_order} créé: TBD vs TBD")
             previous_matches = num_matches
 
         response_data = {
@@ -498,7 +493,6 @@ def try_join_random_tournament(request):
     """Join a random tournament."""
     try:
         body = json.loads(request.body.decode("utf-8"))
-        logger.info(f"Body: {body}")
 
         user = request.user
         if not user:
@@ -527,7 +521,6 @@ def try_join_random_tournament(request):
 
         ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
 
-        logger.info(f"User {user.id} found {tournament.id} tournament to join")
         return JsonResponse(
             {
                 "success": True,
@@ -549,8 +542,6 @@ def try_join_tournament_with_room_code(request):
     """Join a tournament with a room code."""
     try:
         body = json.loads(request.body.decode("utf-8"))
-        sanitized_body = json.dumps(body).replace('\r\n', '').replace('\n', '')
-        logger.info(f"Body: {sanitized_body}")
 
         user = request.user
         if not user:
@@ -577,7 +568,6 @@ def try_join_tournament_with_room_code(request):
 
         ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
 
-        logger.info(f"User {user.id} joined tournament {tournament.id}")
         return JsonResponse(
             {
                 "success": True,

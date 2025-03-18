@@ -9,9 +9,6 @@ class MatchmakingManager:
         self.match_found = {}
 
     def join_queue(self, user_id):
-        logger.info(f"📥 join_queue called by {user_id}")
-        # type de user_id
-        logger.info(f"🔎 type de user_id = {type(user_id)}")
         if user_id in self.match_found:
             return self.match_found[user_id]
 
@@ -37,9 +34,6 @@ class MatchmakingManager:
             }
             self.match_found[p1] = match_info_p1
             self.match_found[p2] = match_info_p2
-            result = self.match_found[user_id]
-            logger.info(f"🎯 p1={p1}, p2={p2}, user_id={user_id}, returning side=...")
-            logger.info(f"🔎 match_info return for user={user_id} = {result}")
 
             return self.match_found[user_id]
         else:
@@ -47,17 +41,13 @@ class MatchmakingManager:
         
     def remove_from_queue(self, user_id):
         """Remove a user from the queue."""
-        logger.info(f"📥 remove queue called by {user_id}")
-        logger.info(f"🔎 type de user_id = {type(user_id)}")
         if user_id in self.waiting_players:
-            logger.info(f"🔎 user_id={user_id} est dans la queue")
-            logger.info(f"🔎 self.waiting_players = {self.waiting_players}")
             self.waiting_players.remove(user_id)
         else:
-            logger.info(f"user_id={user_id} not in queu queue")
+            logger.info(f"user_id={user_id} not in queue")
         if user_id in self.match_found:
             del self.match_found[user_id]
         else:
-            logger.info(f"user_id={user_id} not in que queue")
+            logger.info(f"user_id={user_id} not in queue")
 
 matchmaking_manager = MatchmakingManager()

@@ -38,7 +38,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 return await self.close()
 
         await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
-        logger.info(f"User {self.user_id} connecté via WebSocket Gateway")
         await update_user_status(self.user_id, True)
         await self.channel_layer.group_add("gateway", self.channel_name)
 
@@ -49,8 +48,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             serial_key = serial_keys[0]
             group_name = f"tournament_{serial_key}"
             await self.channel_layer.group_add(group_name, self.channel_name)
-            logger.info(f"Client ajouté au groupe {group_name}")
-        logger.info("🔗 Client connecté au WebSocket Gateway")
+        logger.info("Client connecté au WebSocket Gateway")
 
     async def disconnect(self, close_code):
         if self.user_id:
@@ -59,10 +57,8 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 "pong_service", {"type": "game_event", "action": "game_giveup", "user_id": self.user_id, "game_id": self.game_id}
             )
             await self.channel_layer.group_discard(f"user_{self.user_id}", self.channel_name)
-            logger.info(f"Utilisateur {self.user_id} est maintenant hors ligne.")
 
         await self.channel_layer.group_discard("gateway", self.channel_name)
-        logger.info(f"Client {self.user_id} déconnecté du Gateway")
 
     async def receive(self, text_data):
         try:
@@ -73,7 +69,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             if message_type == "chat_message":
                 data["author"] = author
                 await self.channel_layer.group_send("chat_service", data)
-                logger.info(f"Message général relayé à 'chat_service' depuis {author}")
 
             elif message_type == "private_message":
                 recipient = data.get("recipient")
@@ -91,15 +86,12 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                     "timestamp": data.get("timestamp"),
                 }
                 await self.channel_layer.group_send("chat_service", event)
-                logger.info(f"Message privé envoyé à user_{recipient} depuis {author}")
 
             elif message_type == "info_message":
-                logger.info(f"Message d'information reçu: {data}")
                 recipient = data.get("recipient")
                 if not recipient:
                     await self.send(json.dumps({"error": "Recipient is required for friend requests"}))
                     return
-                logger.info(f"data: {data}")
                 event = {
                     "type": "info_message",
                     "action": data.get("action"),
@@ -112,7 +104,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 logger.info("New notification send")
 
             elif message_type == "tournament_message":
-                logger.info(f"Message de tournoi reçu: {data}")
                 if data.get("action") == "leave_online_tournament":
                     data["user_id"] = self.user_id
                 elif data.get("action") == "join_tournament" or data.get("action") == "reject_tournament":
@@ -120,7 +111,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 elif data.get("action") == "create_online_tournament":
                     data["organizer_id"] = self.user_id
                 await self.channel_layer.group_send("tournament_service", data)
-                logger.info("Message général relayé à 'tournament_service")
 
             elif data.get("type") == "game_event":
                 player1_id = data.get("player1", "Player 1")
@@ -130,12 +120,8 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                     game_id = data.get("game_id", "unknown_game")
                     self.game_id = game_id
                     await self.channel_layer.group_add(f"game_{self.game_id}", self.channel_name)
-                    logger.info(f"Client rejoint le groupe game_{self.game_id}")
-                    logger.info(f"Envoi à pong_service: self.game_id={self.game_id}, player1={player1_id}, player2={player2_id}")
                 if data.get("action") == "give_up":
                     await self.channel_layer.group_discard(f"game_{self.game_id}", self.channel_name)
-                    logger.info(f"Client quitte le groupe game_{self.game_id}")
-                    logger.info(f"Envoi à pong_service: game_id={self.game_id}, player1={player1_id}, player2={player2_id}")
 
                 await self.channel_layer.group_send(
                     "pong_service",
@@ -156,14 +142,12 @@ class GatewayConsumer(AsyncWebsocketConsumer):
 
             elif data.get("type") in ["matchmaking", "private_event"]:
                 action = data.get("action")
-                logger.info(f"matchmaking_event/private_event => service : {action} {self.user_id}")
                 room_code = data.get("room_code")
 
                 await self.channel_layer.group_send(
                     "matchmaking_service",
                     {"type": "matchmaking_event", "action": action, "user_id": str(self.user_id), "room_code": str(room_code)},
                 )
-                logger.info(f"matchmaking_event/private_event => service : {action} {self.user_id}, room={room_code}")
 
         except json.JSONDecodeError:
             await self.send(json.dumps({"error": "Format JSON invalide"}))
@@ -171,12 +155,10 @@ class GatewayConsumer(AsyncWebsocketConsumer):
     async def chat_message(self, event):
         """Reçoit un message (provenant du chat-service) et le renvoie au client."""
         await self.send(json.dumps(event))
-        logger.info(f"Message transmis au client WebSocket (General): {event}")
 
     async def private_message(self, event):
         """This method handles private_message events delivered to this consumer."""
         await self.send(json.dumps(event))
-        logger.info(f"Message transmis au client WebSocket (Private): {event}")
 
     async def info_message(self, event):
         """This method handles friend request sending events delivered to this consumer."""
@@ -193,19 +175,15 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             or action == "back_create_online_tournament"
         ):
             await self.channel_layer.group_send("chat_service", event)
-            logger.info(f"Message transmis au chat_service (back_tournament): {event}")
         else:
             await self.send(json.dumps(event))
-            logger.info(f"Message transmis au client WebSocket (info_message): {event}")
 
     async def tournament_message(self, event):
         await self.send(json.dumps(event))
-        logger.info(f"Message transmis au client WebSocket (Tournament Request): {event}")
 
     async def error_message(self, event):
         """This method handles error_message events delivered to this consumer."""
         await self.send(json.dumps(event))
-        logger.info(f"Message d'erreur transmis au client WebSocket (Private): {event}")
 
     async def game_state(self, event):
         await self.send(json.dumps(event))
@@ -213,24 +191,18 @@ class GatewayConsumer(AsyncWebsocketConsumer):
     async def game_over(self, event):
         """Gère la fin du jeu et envoie le message au client."""
         await self.send(json.dumps(event))
-        logger.info(f"🚨 Game over transmis au client WebSocket : {event}")
 
     async def leave_game(self, event):
         logger.info("leave_game tst")
 
     async def match_found(self, event):
         await self.send(json.dumps(event))
-        logger.info(f"🎯 Match trouvé! Envoyé au client {event['user_id']}")
 
     async def private_match_found(self, event):
         await self.send(json.dumps(event))
-        logger.info(
-            f"🔔 Private match_found envoyé au client {event['user_id']} : self.game_id={event['game_id']}, side={event['side']}"
-        )
 
     async def tournament_creation(self, event):
         await self.send(json.dumps(event))
-        logger.info("tournament_creation")
 
     async def logout(self, event):
         await self.send(
@@ -241,7 +213,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 }
             )
         )
-        logger.info(f"Déconnexion envoyée à l'utilisateur {self.user_id}")
         await self.close()
 
 ca_cert_path = "/data/certs/selfsigned.crt"

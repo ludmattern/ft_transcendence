@@ -26,8 +26,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
     async def matchmaking_event(self, event):
         try:
-            logger.info(f"[MatchmakingConsumer]  matchmaking_event receive: {event}")
-
             action = event.get("action")
             user_id = event.get("user_id")
             room_code = str(event.get("room_code"))
@@ -112,8 +110,6 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                                 "opponent_id": match_info_p1["opponent_id"],
                             },
                         )
-                        logger.info(f"📡 Match trouvé! Notif envoyée à user_{p1}")
-
                         await self.channel_layer.group_send(
                             f"user_{p2}",
                             {
@@ -124,11 +120,9 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                                 "opponent_id": match_info_p2["opponent_id"],
                             },
                         )
-                        logger.info(f"📡 Match found! Notif send to user_{p2}")
                     else:
-                        logger.info(f"🔎 no match found for user_id={user_id}")
+                        logger.info(f"no match found for user_id={user_id}")
                 elif action == "leave":
-                    logger.info(f"🔴 user_id={user_id} leave queue")
                     matchmaking_manager.remove_from_queue(user_id)
         except Exception as e:
             logger.exception("Exception in matchmaking_event: %s", e)

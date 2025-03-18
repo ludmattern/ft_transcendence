@@ -22,15 +22,12 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         await self.channel_layer.group_add("pong_service", self.channel_name)
-        logger.info(f"🔗 Connecté au groupe 'pong_service' (channel={self.channel_name})")
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard("pong_service", self.channel_name)
 
     async def game_event(self, event):
         """Handle game events."""
-        #logger.info(f"[PongGroupConsumer] Reçu un game_event: {event}")
-
         game_id = event.get("game_id")
         action = event.get("action", "")
         player1_id = event.get("player1", "Player 1")
@@ -40,7 +37,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         game = game_manager.get_or_create_game(game_id, player1_id, player2_id)
         if action == "start_game":
             if game_id not in self.running_games:
-                logger.info(f"🎮 Démarrage de la partie {game_id}")
                 self.running_games[game_id] = {"task": asyncio.create_task(self.game_loop(game_id, difficulty))}
             payload = game.to_dict()
             await self.channel_layer.group_send(
@@ -50,9 +46,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
         elif action in ["start_move", "stop_move"]:
             if game.game_over:
-                logger.info(f"Déplacement ignoré : la partie {game_id} est terminée.")
                 return
-            logger.info(f"🎮 Déplacement du joueur {user_id} ({action})")
             direction = event.get("direction")
             moving = (action == "start_move")
 
@@ -67,9 +61,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 return
 
             else:
-                logger.info(f"🎮 Déplacement du joueur {user_id} ({direction})")
                 paddle_number = game.player_mapping.get(str(user_id))
-                logger.info(f"player_mapping: {game.player_mapping}")
                 if paddle_number is None:
                     logger.error("Le champ indiquant le joueur (local_player ou user_id) ne correspond à aucun paddle dans la partie.")
                     return
@@ -96,10 +88,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         elif action == "leave_game":
             current_game = game_manager.get_game(game_id)
             if current_game and current_game.game_over:
-                logger.info(f"Partie {game_id} déjà terminée, leave_game ignoré.")
+                return
             else:
                 if game_id in self.running_games:
-                    logger.info(f"Annulation de game_loop pour {game_id} suite à leave_game")
                     self.running_games[game_id]["task"].cancel()
                     del self.running_games[game_id]
                     game_manager.cleanup_game(game_id)
@@ -109,7 +100,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         """Main game loop."""
         game = game_manager.get_game(game_id)
         try:
-            logger.info(f"difficulty: {difficulty}")
             if game.is_solo_mode():
                 ai_paddle = AIPaddle(2, game, difficulty=difficulty)
             tick_time = 0.0167  
@@ -204,8 +194,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             else:
                 match.score = f"{game.user_scores[loser_id]}-{game.user_scores[winner_id]}"
 
-            logger.info(f"Match {match.id} completed with winner {winner.username} and score {match.score}")
-        
             match.status = "completed"
             await sync_to_async(match.save)()
 
@@ -234,7 +222,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 else:
                     next_match_player_ids = []
             else:
-                logger.info("No next match found (this might be the final).")
                 next_match_player_ids = []
 
             participant_list = await sync_to_async(
@@ -253,7 +240,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 "next_match_player_ids": next_match_player_ids,
                 "current_match_player_ids": [int(winner_id), int(loser_id)],
             }
-            logger.info(f"back_tournament_game_over sent to gateway: {payload}")
             await self.channel_layer.group_send(f"user_{0}", payload)
 
         except Exception as e:
@@ -264,7 +250,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         """finalize matchmaking game."""
         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
         loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
-        logger.info(f"winner elo: {winner.id}")
         if winner.elo == 0:
             winner.elo = 1000
             await sync_to_async(winner.save)()
@@ -285,8 +270,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
     async def finalize_game(self, game_id, game):
         """Finalize ongoing game."""
         winner_id, loser_id = await self.determine_winner(game)
-        logger.info(f"winner_id: {winner_id}")
-        logger.info(f"loser_id: {loser_id}")
 
         if game_id.startswith("tournOnline_"):
             await self.process_tournament(game_id, game, winner_id, loser_id)
