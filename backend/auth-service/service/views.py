@@ -388,7 +388,7 @@ def get_user_id_from_cookie(request):
 
         return JsonResponse({"success": True, "user_id": user_id})
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=400)
+        return JsonResponse({"Internal server error"}, status=400)
 
 
 # --- Views OAuth (42) ---

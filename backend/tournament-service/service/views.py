@@ -258,11 +258,11 @@ def update_match_result(request):
        
         try:
             winner_user = ManualUser.objects.get(username=winner_username)
-            loser_user = ManualUser.objects.get(username=loser_username)
             p1_user = ManualUser.objects.get(username=p1_username)
             p2_user = ManualUser.objects.get(username=p2_username)
         except ManualUser.DoesNotExist as e:
-            return JsonResponse({"error": f"One of the users does not exist: {str(e)}"}, status=404)
+            logger.exception(f"User not found: {str(e)}")
+            return JsonResponse({"error": "Internal server error"}, status=404)
 
         match = (
             TournamentMatch.objects.filter(
@@ -317,8 +317,8 @@ def update_match_result(request):
 
         return JsonResponse({"success": True, "message": "Match updated"})
     except Exception as e:
-        logger.exception("Error updating local match result:")
-        return JsonResponse({"error": str(e)}, status=500)
+        logger.exception(f"Error updating local match result: {str(e)}")
+        return JsonResponse({"Internal server error"}, status=500)
 
 
 
@@ -360,8 +360,8 @@ def abandon_local_tournament(request):
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
     except Exception as e:
-        logger.exception("Error abandoning tournament:")
-        return JsonResponse({"error": str(e)}, status=500)
+        logger.exception(f"Error abandoning tournament: {str(e)}")
+        return JsonResponse({"Internal server error"}, status=500)
 
 
 

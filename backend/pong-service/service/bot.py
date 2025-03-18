@@ -1,6 +1,5 @@
 import time
 import random
-from .games import BasePongGame
 
 class AIPaddle:
     def __init__(self, player_num, game, difficulty):
@@ -82,7 +81,7 @@ class AIPaddle:
             risk_factor = 1 - (opponent_score / max_score)
 
             max_risk = 0.99 * risk_factor
-            min_risk = 0.2
+            min_risk = 0.8 * risk_factor
             angle_factor = random.uniform(min_risk, max_risk)
 
             target_y = ball_y
