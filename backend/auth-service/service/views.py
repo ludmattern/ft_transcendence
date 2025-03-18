@@ -418,7 +418,7 @@ def oauth_callback(request):
     if not code:
         return JsonResponse({"success": False, "message": "No code provided"}, status=400)
 
-    token_url = "https://{OAUTH_HOSTNAME}/oauth/token"
+    token_url = f"https://{OAUTH_HOSTNAME}/oauth/token"
     token_data = {
         "grant_type": "authorization_code",
         "client_id": CLIENT_ID,
@@ -436,7 +436,7 @@ def oauth_callback(request):
 
         access_token = token_response_data["access_token"]
 
-        user_info_url = "https://{OAUTH_HOSTNAME}/v2/me"
+        user_info_url = f"https://{OAUTH_HOSTNAME}/v2/me"
         user_response = requests.get(user_info_url, headers={"Authorization": f"Bearer {access_token}"})
         user_data = user_response.json()
         username = user_data.get("login")

@@ -213,7 +213,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         event["recipient_username"] = (await get_username(recipient_id))
 
         tournament = await self.get_initiator_tournament(initiator)
-        logger.info("Tournament: %s", tournament)
+        logger.info("Tournament	: %s", tournament)
         if not tournament:
             logger.warning(f"No active tournament found for initiator {initiator.username}")
             return
