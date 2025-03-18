@@ -86,7 +86,7 @@ def info_getter(request):
     for match in next_ready_matches:
         player1User = ManualUser.objects.get(id=match.player1_id) if match.player1_id else None
         player2User = ManualUser.objects.get(id=match.player2_id) if match.player2_id else None
-        
+
         inviter_user = player1User if match.player2_id == user.id else player2User
         inviter = inviter_user.username if inviter_user else "TBD"
         inviter_id = inviter_user.id if inviter_user else None

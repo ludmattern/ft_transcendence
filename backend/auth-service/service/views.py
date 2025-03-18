@@ -55,7 +55,6 @@ def set_access_token_cookie(response, token_str):
     )
 
 
-# --- Vues d'authentification ---
 
 
 @require_GET
