@@ -157,8 +157,8 @@ class GameManager {
 		if (gameConfig.mode === 'local') {
 			document.addEventListener('keydown', this.localKeydownHandler);
 			document.addEventListener('keyup', this.localKeyupHandler);
-			this.username1 = 'Player Right';
-			this.username2 = ' Player Left';
+			this.username1 = 'Player Left';
+			this.username2 = ' Player Right';
 			if (gameConfig.subMode === 'local-tournament') {
 				this.username1 = gameConfig.player1;
 				this.username2 = gameConfig.player2;
