@@ -108,7 +108,7 @@ def get_current_tournament(request):
             try:
                 winner_obj = ManualUser.objects.get(id=match.winner_id)
             except ManualUser.DoesNotExist:
-                pass
+                return JsonResponse({"error": "Internal server error"}, status=500)
 
 
         if match.status in ["pending", "ready"] and not match.winner_id:
