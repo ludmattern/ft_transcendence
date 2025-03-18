@@ -107,6 +107,7 @@ services:
       dockerfile: backend/auth-service/Dockerfile
     container_name: auth_service
     secrets:
+      - oauth_hostname
       - fernet_key
       - smtp_host_user
       - smtp_host_password
@@ -268,3 +269,5 @@ secrets:
     file: ./secret/hostname.txt
   jwt_secret:
     file: ./secret/jwt_secret.txt
+  oauth_hostname:
+    file: ./secret/oauth_hostname.txt

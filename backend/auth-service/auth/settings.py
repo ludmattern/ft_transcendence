@@ -62,6 +62,8 @@ try:
         JWT_SECRET_KEY = f.read().strip()
     with open("/run/secrets/django_secret", "r", encoding="utf-8") as f:
         DJANGO_SECRET = f.read().strip()
+    with open("/run/secrets/oauth_hostname", "r", encoding="utf-8") as f:
+        OAUTH_HOSTNAME = f.read().strip()
 except Exception:
     print("Error reading Fernet key from file")
 

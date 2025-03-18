@@ -397,11 +397,12 @@ SERVER_IP = settings.HOSTNAME
 REDIRECT_URI = f"https://{SERVER_IP}:8443/api/auth-service/oauth/callback/"
 CLIENT_ID = settings.UID_42
 CLIENT_SECRET = settings.SECRET_42
+OAUTH_HOSTNAME = settings.OAUTH_HOSTNAME
 
 
 def get_42_auth_url(request):
     auth_url = (
-        f"https://api.intra.42.fr/oauth/authorize?"
+        f"https://{OAUTH_HOSTNAME}/oauth/authorize?"
         f"client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=public"
     )
     return JsonResponse({"url": auth_url})
@@ -417,7 +418,7 @@ def oauth_callback(request):
     if not code:
         return JsonResponse({"success": False, "message": "No code provided"}, status=400)
 
-    token_url = "https://api.intra.42.fr/oauth/token"
+    token_url = "https://{OAUTH_HOSTNAME}/oauth/token"
     token_data = {
         "grant_type": "authorization_code",
         "client_id": CLIENT_ID,
@@ -435,7 +436,7 @@ def oauth_callback(request):
 
         access_token = token_response_data["access_token"]
 
-        user_info_url = "https://api.intra.42.fr/v2/me"
+        user_info_url = "https://{OAUTH_HOSTNAME}/v2/me"
         user_response = requests.get(user_info_url, headers={"Authorization": f"Bearer {access_token}"})
         user_data = user_response.json()
         username = user_data.get("login")
