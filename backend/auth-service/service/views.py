@@ -244,7 +244,6 @@ def logout_view(request):
 
         response = JsonResponse({"success": True, "message": "Logged out"})
         response.delete_cookie("access_token")
-        response.delete_cookie("refresh_token")
         return response
 
     except jwt.ExpiredSignatureError:
@@ -342,7 +341,8 @@ def get_42_auth_url(request):
         f"&response_type=code&scope=public&state={state}"
     )
     response = JsonResponse({"url": auth_url})
-    response.set_cookie('oauth_state', signed_state, httponly=True, secure=True)
+    response.set_cookie('oauth_state', signed_state, httponly=True, secure=True, samesite="Strict")
+
     return response
 
 @require_GET
@@ -419,6 +419,7 @@ def oauth_callback(request):
         
         response = render(request, "authenticating.html", {"token_str": token_str})
         set_access_token_cookie(response, token_str)
+        response.delete_cookie("oauth_state")
         return response
     except Exception:
         logger.exception("OAuth callback error")
