@@ -410,7 +410,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         except Exception:
             logger.exception("Error while creating online tournament bracket:")
 
-
     async def handle_leave_online_tournament(self, event):
         try:
             user_id = event.get("user_id")
