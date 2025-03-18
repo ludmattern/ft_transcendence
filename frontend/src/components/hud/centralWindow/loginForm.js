@@ -74,12 +74,12 @@ export const loginForm = createComponent({
 				console.error("Erreur lors de l'appel API :", error);
 			}
 		});
-	},
-});
 
-window.addEventListener('message', (event) => {
-	const data = event.data;
-	if (data.authenticated) {
-		handleRoute('/');
-	}
+		el.addEventListener('message', (event) => {
+			const data = event.data;
+			if (data.authenticated) {
+				handleRoute('/');
+			}
+		});
+	},
 });

@@ -49,6 +49,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             group_name = f"tournament_{serial_key}"
             await self.channel_layer.group_add(group_name, self.channel_name)
         logger.info("Client connecté au WebSocket Gateway")
+        return None
 
     async def disconnect(self, close_code):
         if self.user_id:
