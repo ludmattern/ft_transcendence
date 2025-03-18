@@ -148,7 +148,6 @@ export function getPreviousPongPlaySubRoute() {
 
 window.addEventListener('popstate', () => {
 	if (Store.isCameraMoving) {
-		console.log('Camera is moving, cannot change route');
 		return;
 	}
 	handleRoute(window.location.pathname, false);
