@@ -84,9 +84,6 @@ class AIPaddle:
             min_risk = 0.8 * risk_factor
             angle_factor = random.uniform(min_risk, max_risk)
 
-            target_y = ball_y
-            target_z = ball_z
-
             if random_check < 0.5:
                 target_y = ball_y - angle_factor * (self.game.PADDLE_HEIGHT / 2)
             else:

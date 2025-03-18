@@ -1,6 +1,4 @@
 from django.db import models  # type: ignore
-import pyotp  # type: ignore
-
 
 class ManualGameHistory(models.Model):
     id = models.AutoField(primary_key=True)
