@@ -89,12 +89,12 @@ class AIPaddle:
 
             if random_check < 0.5:
                 target_y = ball_y - angle_factor * (self.game.PADDLE_HEIGHT / 2)
-            elif random_check >= 0.5:
+            else:
                 target_y = ball_y + angle_factor * (self.game.PADDLE_HEIGHT / 2)
 
             if random_check < 0.5:
                 target_z = ball_z + angle_factor * (self.game.PADDLE_DEPTH / 2)
-            elif random_check >= 0.5:
+            else:
                 target_z = ball_z - angle_factor * (self.game.PADDLE_DEPTH / 2)
 
             self.target_y = target_y
