@@ -38,21 +38,6 @@ const newMaterialBlue = new THREE.MeshStandardMaterial({
 	map: texture,
 });
 
-const video = document.createElement('video');
-video.src = '/src/assets/video/screensaver98.mp4';
-video.loop = true;
-video.muted = true;
-video.playsInline = true;
-video.play();
-
-const videoTexture = new THREE.VideoTexture(video);
-videoTexture.minFilter = THREE.LinearFilter;
-videoTexture.magFilter = THREE.LinearFilter;
-videoTexture.format = THREE.RGBFormat;
-
-const newMaterial = new THREE.MeshStandardMaterial({
-	map: videoTexture,
-});
 
 export function switchwindow(screen) {
 	if (screen === currentWindow) return;
@@ -110,16 +95,13 @@ export function animateCameraToTarget(endPosition, endRotation, nb) {
 			Store.currentTween = null;
 			if (nb == 1) {
 				Store.screenObject1.material = screenMaterial;
-				Store.screenObject2.material = newMaterial;
 			}
 			if (nb == 0) {
-				Store.screenObject2.material = newMaterial;
 				Store.menuElement.querySelector('.mid-screensaver').display = 'block';
 				Store.menuElement.classList.add('active');
 				Store.screenObject1.material = Store.material;
 			}
 			if (nb == 2) {
-				Store.screenObject2.material = newMaterial;
 				Store.screenObject1.material = Store.material;
 			}
 			if (nb == 3) {
