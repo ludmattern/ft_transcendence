@@ -211,14 +211,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         event["recipient_username"] = (await get_username(recipient_id))
 
         tournament = await self.get_initiator_tournament(initiator)
-        logger.info("Tournament	: %s", tournament)
         if not tournament:
-            logger.warning(f"No active tournament found for initiator {initiator.username}")
             return
 
         await self.invite_participant(tournament, recipient_user)
         await self.send_info(author_id, "back_tournament_invite", author=author_id, recipient=recipient_id)
-        logger.info("Tournament invite sent to %s", event["recipient_username"])
 
     async def handle_kick_tournament(self, event):
         author_id = event.get("author")
@@ -228,7 +225,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
         event["author_username"] = await get_username(author_id)
         event["recipient_username"] = await get_username(recipient_id)
-        logger.info("Author: %s, Recipient: %s", event["author_username"], event["recipient_username"])
 
         tournament = await self.get_initiator_tournament(initiator)
         if not tournament:
@@ -241,7 +237,6 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         await self.send_info(
             author_id, "back_kick_tournament", author=author_id, recipient=recipient_id, tournament_id=tournament.id
         )
-        logger.info("%s is kicked from tournament.", event["recipient_username"])
 
     async def handle_cancel_tournament(self, event):
         logger.info("Cancel tournament event received: %s", event)

@@ -242,11 +242,6 @@ def update_match_result(request):
         p1_username = body.get("player1")
         p2_username = body.get("player2")
 
-        logger.info(
-            f"Updating LOCAL match result for tournament {tournament_id}: "
-            f"{p1_username} vs {p2_username}, final_scores: {final_scores}"
-        )
-
         if not (tournament_id and winner_username and loser_username and final_scores and p1_username and p2_username):
             return JsonResponse({"error": "Missing required fields"}, status=400)
 
@@ -287,11 +282,6 @@ def update_match_result(request):
         match.status = "completed"
         match.save()
 
-        logger.info(
-            f"Match updated for tournament {tournament_id}: {p1_username} vs {p2_username} - "
-            f"winner: {winner_username}, score: {match.score}"
-        )
-
         current_round = match.round_number
         current_match_order = match.match_order
         next_round = current_round + 1
@@ -309,9 +299,6 @@ def update_match_result(request):
                 next_match.player2_id = winner_user.id
 
             next_match.save()
-            logger.info(
-                f"Next match (round {next_round}, match {next_match_order}) updated with winner {winner_username}"
-            )
         except TournamentMatch.DoesNotExist:
             logger.info("Final match reached: no next match found.")
 

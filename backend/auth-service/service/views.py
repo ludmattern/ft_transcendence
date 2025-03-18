@@ -202,9 +202,6 @@ def login_view(request):
             send_2fa_sms(user.phone_number, code)
         return JsonResponse({"success": True, "message": "2FA required", "twofa_method": user.twofa_method}, status=200)
     cookie_token = request.COOKIES.get("access_token")
-    logger.info(
-        f"User {user.id}: token_expiry={user.token_expiry}, now_utc={now_utc}, cookie_token={cookie_token}, session_token={user.session_token}"
-    )
 
     if user.token_expiry and user.token_expiry > now_utc:
         if not cookie_token or cookie_token != user.session_token:
