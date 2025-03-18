@@ -162,7 +162,7 @@ def register_user(request):
 
         password_error = validate_password(password)
         if password_error:
-            logging.error("Password error: %s", password_error)
+            logging.error("Password validation failed")
             return JsonResponse({"success": False, "message": password_error}, status=400)
 
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
