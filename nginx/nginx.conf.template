@@ -5,6 +5,8 @@ events {
 }
 
 http {
+    gunzip on;
+
     resolver 127.0.0.11 valid=5s;
 
     include       mime.types;
@@ -70,6 +72,13 @@ http {
 
         location /src/ {
             root /usr/share/nginx/html/frontend;
+        }
+
+        location ~* \.js$ {
+            root /usr/share/nginx/html/frontend;
+            sub_filter '__CONFIG__ALLOWED_ORIGIN' 'https://$HOSTNAME_SECRET:8443';
+            sub_filter_once on;
+            sub_filter_types application/javascript text/javascript application/x-javascript;
         }
 
         location / {

@@ -2,6 +2,8 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { loginUser } from '/src/services/auth.js';
 
+const ALLOWED_ORIGIN = '__CONFIG__ALLOWED_ORIGIN';
+
 export const loginForm = createComponent({
 	tag: 'loginForm',
 	render: () => `
@@ -68,16 +70,21 @@ export const loginForm = createComponent({
 				const response = await fetch('/api/auth-service/get-42-url/');
 				const data = await response.json();
 				if (data.url) {
-					window.open(data.url, 'oauthPopup', 'width=600,height=600');
+					window.open(data.url, 'oauthPopup', 'width=800,height=600');
 				}
 			} catch (error) {
 				console.error("Erreur lors de l'appel API :", error);
 			}
 		});
 
-		el.addEventListener('message', (event) => {
+		window.addEventListener('message', (event) => {
+			if (event.origin !== ALLOWED_ORIGIN) {
+				console.log('Origin not allowed:', event.origin, 'expected:', ALLOWED_ORIGIN);
+				return;
+			}
 			const data = event.data;
 			if (data.authenticated) {
+				console.log('Origin allowed:', event.origin, 'expected:', ALLOWED_ORIGIN);
 				handleRoute('/');
 			}
 		});

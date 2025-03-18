@@ -204,7 +204,7 @@ services:
     restart: always
     volumes:
       - certif_data:/etc/nginx/certs:rw
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template:ro
       - ./frontend:/usr/share/nginx/html/frontend:ro
       - media_volume:/app/media:rw
     depends_on:
@@ -227,6 +227,8 @@ services:
     networks:
       - frontend_network
       - backend_network
+    secrets:
+      - hostname
 
 ##################################################################
 #                 Réseaux et volumes et secrets                  #

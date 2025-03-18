@@ -1,6 +1,6 @@
 FROM nginx:1.27-alpine
 
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf.template /etc/nginx/nginx.conf.template
 COPY wait-for-certs.sh /wait-for-certs.sh
 RUN chmod +x /wait-for-certs.sh
 

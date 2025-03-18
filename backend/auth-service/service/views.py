@@ -4,6 +4,8 @@ import datetime
 import random
 import jwt
 import pyotp  # type: ignore
+import os
+import base64
 from functools import wraps
 
 
@@ -14,6 +16,7 @@ from django.conf import settings  # type: ignore
 from django.core.mail import send_mail  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
 from django.shortcuts import redirect, render  # type: ignore
+from django.core.signing import Signer
 
 
 import requests
@@ -319,8 +322,8 @@ def get_user_id_from_cookie(request):
     except Exception as e:
         return JsonResponse({"Internal server error"}, status=400)
 
-
-# --- Views OAuth (42) ---
+def generate_state():
+    return base64.urlsafe_b64encode(os.urandom(16)).decode()
 
 SERVER_IP = settings.HOSTNAME
 REDIRECT_URI = f"https://{SERVER_IP}:8443/api/auth-service/oauth/callback/"
@@ -328,26 +331,45 @@ CLIENT_ID = settings.UID_42
 CLIENT_SECRET = settings.SECRET_42
 OAUTH_HOSTNAME = settings.OAUTH_HOSTNAME
 
-
+@require_GET
 def get_42_auth_url(request):
+    state = generate_state()
+    signer = Signer()
+    signed_state = signer.sign(state)
+    
     auth_url = (
         f"https://{OAUTH_HOSTNAME}/oauth/authorize?"
-        f"client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=public"
+        f"client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}"
+        f"&response_type=code&scope=public&state={state}"
     )
-    return JsonResponse({"url": auth_url})
-
+    response = JsonResponse({"url": auth_url})
+    response.set_cookie('oauth_state', signed_state, httponly=True, secure=True)
+    return response
 
 @require_GET
 def oauth_callback(request):
-    """GET /oauth/callback/"""
     error = request.GET.get("error")
     if error:
         return redirect(f"https://{SERVER_IP}:8443/login")
-
+    
+    state_returned = request.GET.get('state')
+    signed_state = request.COOKIES.get('oauth_state')
+    if not signed_state:
+        return JsonResponse({"success": False, "message": "Missing state cookie"}, status=400)
+    
+    signer = Signer()
+    try:
+        unsigned_state = signer.unsign(signed_state)
+    except Exception:
+        return JsonResponse({"success": False, "message": "Invalid state cookie"}, status=400)
+    
+    if not state_returned or state_returned != unsigned_state:
+        return JsonResponse({"success": False, "message": "Invalid state parameter"}, status=400)
+    
     code = request.GET.get("code")
     if not code:
         return JsonResponse({"success": False, "message": "No code provided"}, status=400)
-
+    
     token_url = f"https://{OAUTH_HOSTNAME}/oauth/token"
     token_data = {
         "grant_type": "authorization_code",
@@ -357,15 +379,14 @@ def oauth_callback(request):
         "redirect_uri": REDIRECT_URI,
     }
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
-
+    
     try:
         token_response = requests.post(token_url, data=urlencode(token_data), headers=headers)
         token_response_data = token_response.json()
         if "access_token" not in token_response_data:
             return JsonResponse({"success": False, "message": "Failed to get access token"}, status=400)
-
+        
         access_token = token_response_data["access_token"]
-
         user_info_url = f"https://{OAUTH_HOSTNAME}/v2/me"
         user_response = requests.get(user_info_url, headers={"Authorization": f"Bearer {access_token}"})
         user_data = user_response.json()
@@ -373,7 +394,7 @@ def oauth_callback(request):
         oauth_id = user_data.get("id")
         if not username or not oauth_id:
             return JsonResponse({"success": False, "message": "Invalid user data from 42"}, status=400)
-
+        
         user = ManualUser.objects.filter(oauth_id=oauth_id).first()
         if not user:
             original_username = username
@@ -390,20 +411,20 @@ def oauth_callback(request):
                 phone_number=None,
                 is_dummy=False,
             )
-
+        
         token_str, expiry = generate_session_token(user)
         user.token_expiry = expiry
         user.session_token = token_str
         user.status = "online"
         user.save()
-
+        
         response = render(request, "authenticating.html", {"token_str": token_str})
         set_access_token_cookie(response, token_str)
         return response
-
     except Exception:
         logger.exception("OAuth callback error")
         return JsonResponse({"success": False, "message": "Internal Server Error"}, status=500)
+
 
 
 @require_POST
