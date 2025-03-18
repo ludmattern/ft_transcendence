@@ -209,8 +209,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": "You can't invite yourself to a tournamnet."})
             return
 
-        event["author_username"] = await get_username(author_id)
-        event["recipient_username"] = await get_username(recipient_id)
+        event["author_username"] = (await get_username(author_id)).replace('\r\n', '').replace('\n', '')
+        event["recipient_username"] = (await get_username(recipient_id)).replace('\r\n', '').replace('\n', '')
         logger.info("Author: %s, Recipient: %s", event["author_username"], event["recipient_username"])
 
         tournament = await self.get_initiator_tournament(initiator)
