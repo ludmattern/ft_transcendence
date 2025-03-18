@@ -117,6 +117,7 @@ def info_getter(request):
         "info": friend_request_data + tournament_invite_data + next_match_data + private_game_invite_data,
     }
 
-    logger.info(f"Response data: {json.dumps(response_data, indent=4)}")
+    sanitized_response_data = json.dumps(response_data, indent=4).replace('\r\n', '').replace('\n', '')
+    logger.info(f"Response data: {sanitized_response_data}")
 
     return JsonResponse(response_data, safe=False, json_dumps_params={"indent": 4})
