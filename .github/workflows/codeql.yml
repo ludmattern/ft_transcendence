@@ -25,7 +25,7 @@ jobs:
           - language: javascript-typescript
             build-mode: none
           - language: python
-            build-mode: manual
+            build-mode: none
           - language: actions
             build-mode: none
 
