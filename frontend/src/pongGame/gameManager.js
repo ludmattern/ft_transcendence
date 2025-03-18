@@ -170,7 +170,7 @@ class GameManager {
 					this.username2 = player2Name;
 				})
 				.catch((error) => {
-					console.error('Error retrieving usernames:', error);
+					console.log('Error retrieving usernames:', error);
 					this.username1 = player1;
 					this.username2 = player2;
 				});
@@ -179,7 +179,6 @@ class GameManager {
 			player1 = gameConfig.player1;
 			player2 = gameConfig.player2;
 		}
-		console.log('difficulity:', gameConfig.difficulty);
 		console.log(` Sending start_game event: player1=${player1}, player2=${player2}, with game_id=${this.gameId}`);
 		ws.send(
 			JSON.stringify({

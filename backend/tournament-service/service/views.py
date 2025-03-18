@@ -325,7 +325,7 @@ def abandon_local_tournament(request):
 
         tournament = ManualTournament.objects.filter(id=tournament_id, organizer=organizer).first()
         if not tournament:
-            return JsonResponse({"error": "Tournament not found or unauthorized"}, status=404)
+            return None
 
         TournamentMatch.objects.filter(tournament=tournament).delete()
         participants = ManualTournamentParticipants.objects.filter(

@@ -58,7 +58,6 @@ def set_access_token_cookie(response, token_str):
     )
 
 
-# --- Vues d'authentification ---
 
 
 @require_GET
@@ -461,7 +460,7 @@ def request_password_reset(request):
         user.save()
 
         subject = "Réinitialisation de votre mot de passe"
-        message = f"Bonjour,\n\nVoici votre code de réinitialisation : {code}\n\nCordialement."
+        message = f"Hi,\n\nHere is your reset code : {code}\n\nHave a good day."
         send_mail(subject, message, None, [email], fail_silently=False)
 
         return JsonResponse({"success": True, "message": "Reset code sent"})
