@@ -549,7 +549,8 @@ def try_join_tournament_with_room_code(request):
     """Join a tournament with a room code."""
     try:
         body = json.loads(request.body.decode("utf-8"))
-        logger.info(f"Body: {body}")
+        sanitized_body = json.dumps(body).replace('\r\n', '').replace('\n', '')
+        logger.info(f"Body: {sanitized_body}")
 
         user = request.user
         if not user:
