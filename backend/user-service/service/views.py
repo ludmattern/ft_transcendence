@@ -71,7 +71,7 @@ def jwt_required(view_func):
         except jwt.ExpiredSignatureError:
             return JsonResponse({"success": False, "message": "Token expired"}, status=401)
         except jwt.InvalidTokenError as e:
-            return JsonResponse({"success": False, "message": str(e)}, status=401)
+            return JsonResponse({"success": False, "message": "Internal server error"}, status=401)
 
         return view_func(request, *args, **kwargs)
 
