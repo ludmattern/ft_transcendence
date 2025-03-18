@@ -1,4 +1,3 @@
-import json
 import logging
 from django.http import JsonResponse  # type: ignore
 from django.core.exceptions import ObjectDoesNotExist  # type: ignore # noqa

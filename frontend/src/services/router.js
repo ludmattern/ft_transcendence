@@ -128,7 +128,6 @@ function processRoute(route, shouldPushState) {
 	if (routeMappings[finalRoute]) {
 		routeMappings[finalRoute]();
 	} else if (finalRoute.startsWith('/social/pilot=')) {
-		const pilot = finalRoute.split('=')[1];
 		navigateToOtherProfile();
 	} else if (finalRoute.startsWith('/pong')) {
 		navigateToPong(finalRoute.substring(6));

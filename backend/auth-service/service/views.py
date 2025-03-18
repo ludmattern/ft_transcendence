@@ -9,7 +9,7 @@ from functools import wraps
 
 from cryptography.fernet import Fernet
 from django.views.decorators.http import require_POST, require_GET
-from django.http import JsonResponse, HttpResponse  # type: ignore
+from django.http import JsonResponse  # type: ignore
 from django.conf import settings  # type: ignore
 from django.core.mail import send_mail  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore

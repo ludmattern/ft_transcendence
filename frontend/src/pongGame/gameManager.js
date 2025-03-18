@@ -7,11 +7,8 @@ import componentManagers from '/src/index.js';
 import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { emit } from '/src/services/eventEmitter.js';
-import { triggerBallColorChange, triggerPaddleColorChange} from '/src/3d/pongScene.js';
+import { triggerBallColorChange, triggerPaddleColorChange } from '/src/3d/pongScene.js';
 import { getUsername } from '/src/services/auth.js';
-
-
-
 
 class GameManager {
 	constructor() {
@@ -22,16 +19,16 @@ class GameManager {
 		this.username2 = null;
 		this.clientId = null;
 		this.clientName = null;
-		
+
 		this.movementMapping = {
-			'w': { direction: 'down', player: 1 },
-			's': { direction: 'up', player: 1 },
-			'a': { direction: 'left', player: 1 },
-			'd': { direction: 'right', player: 1 },
-			'ArrowUp': { direction: 'down', player: 2 },
-			'ArrowDown': { direction: 'up', player: 2 },
-			'ArrowLeft': { direction: 'right', player: 2 },
-			'ArrowRight': { direction: 'left', player: 2 },
+			w: { direction: 'down', player: 1 },
+			s: { direction: 'up', player: 1 },
+			a: { direction: 'left', player: 1 },
+			d: { direction: 'right', player: 1 },
+			ArrowUp: { direction: 'down', player: 2 },
+			ArrowDown: { direction: 'up', player: 2 },
+			ArrowLeft: { direction: 'right', player: 2 },
+			ArrowRight: { direction: 'left', player: 2 },
 		};
 
 		this.localKeydownHandler = (e) => {
@@ -126,24 +123,22 @@ class GameManager {
 		this.clientName = await getUsername(this.clientId);
 	}
 
-
 	isGameActive() {
 		return this.activeGame !== null;
 	}
 
 	startGame(gameConfig) {
-		this.initClientData() 
-		
+		this.initClientData();
+
 		console.log('Starting game with config:', gameConfig);
 		componentManagers['HUD'].unloadComponent('pongTuto');
 		this.gameMode = gameConfig.mode;
 		console.log('gameMode:', this.gameMode);
-		if (this.activeGame) 
-			this.endGame();
-		
+		if (this.activeGame) this.endGame();
+
 		this.activeGame = gameConfig;
 		this.gameId = this.generateGameId(gameConfig);
-		
+
 		buildGameScene(gameConfig);
 		emit('gameStarted', gameConfig);
 		showCountdown();
@@ -163,12 +158,10 @@ class GameManager {
 				this.username1 = gameConfig.player1;
 				this.username2 = gameConfig.player2;
 			}
-		} 
-		else if (gameConfig.mode === 'solo') {
+		} else if (gameConfig.mode === 'solo') {
 			document.addEventListener('keydown', this.matchMakingKeydownHandler);
 			document.addEventListener('keyup', this.matchMakingKeyupHandler);
-		}
-		else {
+		} else {
 			document.addEventListener('keydown', this.matchMakingKeydownHandler);
 			document.addEventListener('keyup', this.matchMakingKeyupHandler);
 			Promise.all([getUsername(player1), getUsername(player2)])
@@ -186,8 +179,8 @@ class GameManager {
 			player1 = gameConfig.player1;
 			player2 = gameConfig.player2;
 		}
-		console.log("difficulity:", gameConfig.difficulty);
-		console.log(` Sending start_game event: player1=${player1}, player2=${player2}, with game_id=${this.gameId}`);	
+		console.log('difficulity:', gameConfig.difficulty);
+		console.log(` Sending start_game event: player1=${player1}, player2=${player2}, with game_id=${this.gameId}`);
 		ws.send(
 			JSON.stringify({
 				type: 'game_event',
@@ -199,7 +192,6 @@ class GameManager {
 				difficulty: gameConfig.difficulty,
 			})
 		);
-
 	}
 
 	endGame() {
@@ -231,9 +223,8 @@ class GameManager {
 
 	updateGameState(gameState) {
 		if (gameState.ball) {
-			const { x, y, z, vx } = gameState.ball;
-			if (Store.meshBall)
-			{
+			const { x, y, z } = gameState.ball;
+			if (Store.meshBall) {
 				Store.meshBall.position.set(x, y, z);
 				Store.plaqueTop.position.set(x, 1.5 / 2 - 0.01, z);
 				Store.plaqueBottom.position.set(x, -1.5 / 2 + 0.01, z);
@@ -242,13 +233,10 @@ class GameManager {
 			}
 		}
 		if (gameState.ball_hit_paddle) {
-			if (gameState.ball.vx < 0)
-				triggerPaddleColorChange(Store.player2Paddle, new THREE.Color(0xff007f));
-			else 
-				triggerPaddleColorChange(Store.player1Paddle, new THREE.Color(0x7f00ff));
+			if (gameState.ball.vx < 0) triggerPaddleColorChange(Store.player2Paddle, new THREE.Color(0xff007f));
+			else triggerPaddleColorChange(Store.player1Paddle, new THREE.Color(0x7f00ff));
 		}
-		if (gameState.ball_hit_wall)
-			triggerBallColorChange();
+		if (gameState.ball_hit_wall) triggerBallColorChange();
 
 		if (gameState.players) {
 			const p1 = gameState.players['1'];
@@ -265,32 +253,25 @@ class GameManager {
 		}
 		if (!gameState || !gameState.user_scores) return;
 
-		if (this.gameMode === 'local' || this.gameMode === 'solo'){
+		if (this.gameMode === 'local' || this.gameMode === 'solo') {
 			const scores = Object.values(gameState.user_scores);
 			const score1 = scores[0];
 			const score2 = scores[1];
 			const scoreTextEl = document.getElementById('scoreText');
-			if (scoreTextEl && this.gameMode === 'local') 
-				scoreTextEl.innerHTML = `${this.username1} ${score1}  -  ${score2} ${this.username2}`;
-			else if (scoreTextEl && this.gameMode === 'solo')
-				scoreTextEl.innerHTML = `<strong>You</strong> ${score1}  -  ${score2} Terminator`;
-
+			if (scoreTextEl && this.gameMode === 'local') scoreTextEl.innerHTML = `${this.username1} ${score1}  -  ${score2} ${this.username2}`;
+			else if (scoreTextEl && this.gameMode === 'solo') scoreTextEl.innerHTML = `<strong>You</strong> ${score1}  -  ${score2} Terminator`;
 		} else {
 			let oppennentName = null;
 			const scores = gameState.user_scores;
 			const clientScore = scores[this.clientId] ?? 0;
-			const opponentId = Object.keys(scores).find(id => id !== this.clientId);
+			const opponentId = Object.keys(scores).find((id) => id !== this.clientId);
 			const opponentScore = opponentId ? scores[opponentId] : 0;
 			const scoreTextEl = document.getElementById('scoreText');
-			
-			if (this.username1 === this.clientName)
-			{
+
+			if (this.username1 === this.clientName) {
 				oppennentName = this.username2;
-			}
-			else
-				oppennentName = this.username1;
-			if (scoreTextEl) 
-				scoreTextEl.innerHTML = `<strong>You</strong> ${clientScore}  -  ${opponentScore} ${oppennentName}`;
+			} else oppennentName = this.username1;
+			if (scoreTextEl) scoreTextEl.innerHTML = `<strong>You</strong> ${clientScore}  -  ${opponentScore} ${oppennentName}`;
 		}
 	}
 
@@ -312,14 +293,10 @@ class GameManager {
 	generateGameId(gameConfig) {
 		console.log('Generating game in:', gameConfig.mode);
 		if (!gameConfig.gameId) {
-			if (gameConfig.mode === 'private')
-				return gameConfig.matchkey;
-			if (gameConfig.mode === 'matchmaking')
-				return `matchmaking_${Date.now()}`;
-			if (gameConfig.mode === 'solo') 
-				return `solo_${Date.now()}`;
-			if (gameConfig.subMode === 'local-tournament') 
-				return `tournLocal_${gameConfig.player1}_vs_tournLocal_${gameConfig.player2}_id_${gameConfig.tournament_id}`;	
+			if (gameConfig.mode === 'private') return gameConfig.matchkey;
+			if (gameConfig.mode === 'matchmaking') return `matchmaking_${Date.now()}`;
+			if (gameConfig.mode === 'solo') return `solo_${Date.now()}`;
+			if (gameConfig.subMode === 'local-tournament') return `tournLocal_${gameConfig.player1}_vs_tournLocal_${gameConfig.player2}_id_${gameConfig.tournament_id}`;
 			return `game_${Date.now()}`;
 		}
 		return gameConfig.gameId;
@@ -327,9 +304,3 @@ class GameManager {
 }
 
 export const gameManager = new GameManager();
-
-
-
-
-
-

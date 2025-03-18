@@ -219,7 +219,6 @@ export function updateOnlinePlayersUI(data) {
 				createTournamentButton.className = 'btn btn-pong';
 				createTournamentButton.textContent = 'Create Tournament';
 				createTournamentButton.addEventListener('click', async () => {
-					const roomCode = roomCodeElement.textContent;
 					await pushInfo('TournamentCreationNeeded', true);
 					handleRoute('/pong/play/current-tournament');
 				});

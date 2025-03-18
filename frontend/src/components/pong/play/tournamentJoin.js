@@ -1,14 +1,12 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
-import { pushInfo,getInfo, deleteInfo} from '/src/services/infoStorage.js';
+import { getInfo } from '/src/services/infoStorage.js';
 
 export const tournamentJoin = createComponent({
 	tag: 'tournamentJoin',
 	render: async () => {
 		const roomCode = (await getInfo('roomCode')).success ? (await getInfo('roomCode')).value : 'UNKNOWN';
 		const tournamentSize = parseInt((await getInfo('tournamentSize')).success ? (await getInfo('tournamentSize')).value : 16, 10);
-		const username = (await getInfo('username')).success ? (await getInfo('username')).value : 'You';
-		
 
 		return `
       <section class="col-12 d-flex flex-column align-items-center text-center p-5"
@@ -44,7 +42,6 @@ export const tournamentJoin = createComponent({
 		const onlinePlayersList = el.querySelector('#online-players-list');
 		const onlinePlayersCountSpan = el.querySelector('#online-players-count');
 
-		const tournamentSize = parseInt((await getInfo('tournamentSize')).success ? (await getInfo('tournamentSize')).value : 16, 10);
 		const username = (await getInfo('username')).success ? (await getInfo('username')).value : 'You';
 		
 

@@ -4,7 +4,7 @@ import { loadTabContent } from '/src/components/hud/sideWindow/left/tabContent.j
 import { createNotificationMessage, removePrivateNotifications } from '/src/components/hud/sideWindow/left/notifications.js';
 import { createNavItem } from '/src/components/hud/sideWindow/left/navigation.js';
 import { subscribe } from '/src/services/eventEmitter.js';
-import { pushInfo, getInfo, deleteInfo } from '/src/services/infoStorage.js';
+import { getInfo } from '/src/services/infoStorage.js';
 import { startAnimation } from '/src/components/hud/utils/utils.js';
 import { infoPanelItem } from '/src/components/hud/sideWindow/left/infoPanelItem.js';
 

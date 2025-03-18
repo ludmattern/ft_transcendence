@@ -1,4 +1,3 @@
-import { switchwindow } from '/src/3d/animation.js';
 import componentManagers from '/src/index.js';
 import { pongTuto } from '/src/components/hud/index.js';
 import { navigateInGame } from '/src/services/navigation.js';

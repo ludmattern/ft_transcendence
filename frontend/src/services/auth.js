@@ -2,7 +2,7 @@ import { initializeWebSocket, closeWebSocket } from '/src/services/websocket.js'
 import { handleRoute, resetPreviousRoutes } from '/src/services/router.js';
 import componentManagers from '/src/index.js';
 import { switchwindow } from '/src/3d/animation.js';
-import { pushInfo, getInfo, deleteInfo } from '/src/services/infoStorage.js';
+import { pushInfo, deleteInfo } from '/src/services/infoStorage.js';
 
 export async function isClientAuthenticated() {
 	try {

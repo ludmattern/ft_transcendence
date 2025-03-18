@@ -1,5 +1,5 @@
 import { buildScene } from '/src/3d/main.js';
-import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.js';
+import { handleRoute } from '/src/services/router.js';
 import ComponentManager from '/src/utils/component.js';
 import { CacheDB } from '/src/utils/IndexedDBCache.js';
 import { onWindowResize } from '/src/3d/main.js';

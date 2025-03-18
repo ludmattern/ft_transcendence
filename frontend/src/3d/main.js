@@ -6,7 +6,7 @@ import { animatePong } from '/src/3d/pongScene.js';
 import Store from './store.js';
 import { loadModels } from '/src/3d/loader.js';
 import { initCSSRenderer } from '/src/3d/CSS3DRender.js';
-import { initLights, initSkybox, initRenderer, initCamera, initScene, initControls } from '/src/3d/initScene.js';
+import { initLights, initSkybox, initRenderer, initCamera, initScene } from '/src/3d/initScene.js';
 
 // =============== RESIZE ===============
 

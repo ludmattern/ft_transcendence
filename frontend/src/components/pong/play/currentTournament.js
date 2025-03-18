@@ -1,11 +1,10 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { playGame } from '/src/components/pong/play/utils.js';
-import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { ws } from '/src/services/websocket.js';
 import { subscribe } from '/src/services/eventEmitter.js';
 import { handleTournamentRedirection } from '/src/services/router.js';
-import { pushInfo, getInfo, deleteInfo } from '/src/services/infoStorage.js';
+import { getInfo, deleteInfo } from '/src/services/infoStorage.js';
 
 export const currentTournament = createComponent({
 	tag: 'currentTournament',

@@ -23,7 +23,6 @@ function formatTimestamp(timestamp) {
 		dateObj = new Date(fallbackString);
 	}
 
-	const diffMs = Date.now() - dateObj.getTime();
 	return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 

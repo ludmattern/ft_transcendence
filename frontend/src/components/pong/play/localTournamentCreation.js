@@ -190,14 +190,3 @@ export const localTournamentCreation = createComponent({
       });
   },
 });
-
-// Fonction de validation externe
-function validateUsername(name) {
-  if (name.length < 6 || name.length > 20) {
-    return { success: false, message: 'Username must be between 6 and 20 characters.' };
-  }
-  if (!/^[a-zA-Z0-9_]+$/.test(name)) {
-    return { success: false, message: 'Username can only contain letters, numbers, and underscores.' };
-  }
-  return { success: true };
-}

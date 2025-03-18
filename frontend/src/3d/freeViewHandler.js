@@ -7,7 +7,6 @@ import { emit } from '/src/services/eventEmitter.js';
 export let cameraRotationEvent = 0;
 export let listeners = [];
 let lastRotation = 0;
-let count = 0;
 
 export function setCameraRotation(value) {
 	cameraRotationEvent = value;
