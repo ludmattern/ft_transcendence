@@ -45,6 +45,8 @@ class AIPaddle:
         vel_x, vel_y, vel_z = ball.velocity.x, ball.velocity.y, ball.velocity.z
 
         ball_coming_towards_ia = (self.player_num == 1 and vel_x < 0) or (self.player_num == 2 and vel_x > 0)
+        
+
 
         if ball_coming_towards_ia:
             if vel_x == 0:
@@ -73,8 +75,7 @@ class AIPaddle:
                 elif ball_z - self.game.BALL_SIZE <= -self.game.TUNNEL_DEPTH / 2:
                     ball_z = -self.game.TUNNEL_DEPTH / 2 + self.game.BALL_SIZE
                     vel_z *= -1
-            if not ball_coming_towards_ia:
-                self.random_check = random.uniform(0, 1)
+            
             opponent_score = self.game.state.scores[opponent_num]
             max_score = self.game.MAX_SCORE
             
@@ -96,8 +97,8 @@ class AIPaddle:
 
             self.target_y = target_y
             self.target_z = target_z
-
         else:
+            self.random_check = random.uniform(0, 1)
             self.target_y = opponent_paddle.paddle_position.y
             self.target_z = opponent_paddle.paddle_position.z
 

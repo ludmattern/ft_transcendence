@@ -35,7 +35,7 @@ class IndexedDBCache {
 			const db = await this.dbPromise;
 			await db.put(storeName, data, key);
 		} catch (error) {
-			console.error(`Erreur lors de la sauvegarde de "${key}" dans "${storeName}"`, error);
+			return null;
 		}
 	}
 
@@ -45,28 +45,26 @@ class IndexedDBCache {
 			const db = await this.dbPromise;
 			return await db.get(storeName, key);
 		} catch (error) {
-			console.error(`Erreur lors de la récupération de "${key}" dans "${storeName}" :`, error);
 			return null;
 		}
 	}
-
 	async removeFile(storeName, key) {
 		if (!this.dbPromise) return;
 		try {
 			const db = await this.dbPromise;
 			await db.delete(storeName, key);
 		} catch (error) {
-			console.error(`Erreur lors de la suppression de "${key}" dans "${storeName}" :`, error);
+			return null;
 		}
 	}
-
 	async clearCache(storeName) {
 		if (!this.dbPromise) return;
 		try {
 			const db = await this.dbPromise;
 			await db.clear(storeName);
 		} catch (error) {
-			console.error(`Erreur lors du vidage du cache "${storeName}" :`, error);
+			return null;
+
 		}
 	}
 }
