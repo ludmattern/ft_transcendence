@@ -119,13 +119,14 @@ export const hudPages = {
 /**
  * Factory function pour créer une page Pong.
  * @param {Array} centralComponents - Composants spécifiques à ajouter dans le container principal
+ * @param {boolean} [includeNavBar=true] - Indique s'il faut inclure la navbar ou non
  * @returns {Object} Configuration de la page Pong
  */
-const createPongPage = (centralComponents = []) => ({
+const createPongPage = (centralComponents = [], includeNavBar = true) => ({
 	components: [
 		{ selector: '#pong-skeleton-container', component: pongPageSkeleton },
 		{ selector: '#pong-header-container', component: pongHeader },
-		{ selector: '#content-window-container', component: navBar },
+		...(includeNavBar ? [{ selector: '#content-window-container', component: navBar }] : []),
 		...centralComponents,
 	],
 });
@@ -136,8 +137,8 @@ export const pongPages = {
 	'play/solo': createPongPage([{ selector: '#content-window-container', component: soloContent }]),
 	'play/multiplayer': createPongPage([{ selector: '#content-window-container', component: multiplayerContent }]),
 	'play/tournament': createPongPage([{ selector: '#content-window-container', component: tournamentContent }]),
-	'play/tournament-creation': createPongPage([{ selector: '#content-window-container', component: tournamentCreation }]),
-	'play/current-tournament': createPongPage([{ selector: '#content-window-container', component: currentTournament }]),
+	'play/tournament-creation': createPongPage([{ selector: '#content-window-container', component: tournamentCreation }], false),
+	'play/current-tournament': createPongPage([{ selector: '#content-window-container', component: currentTournament }], false),
 	leaderboard: createPongPage([{ selector: '#content-window-container', component: leaderboard }]),
 	lost: createPongPage([{ selector: '#content-window-container', component: lost }]),
 };

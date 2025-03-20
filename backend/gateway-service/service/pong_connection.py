@@ -15,12 +15,9 @@ async def connect_dummy_pong():
             ssl_context = ssl.create_default_context()
             ssl_context.load_verify_locations("/data/certs/selfsigned.crt")
 
-            logger.info("Tentative de connexion au PongGroupConsumer via %s", ws_url)
             async with websockets.connect(ws_url, ssl=ssl_context) as websocket:
-                logger.info("Connexion dummy établie au PongGroupConsumer.")
                 while True:
-                    message = await websocket.recv()
-                    logger.info("Dummy Pong a reçu : %s", message)
+                    await websocket.recv()
         except Exception as e:
             logger.error("Erreur de connexion dummy au PongGroupConsumer : %s", e)
             await asyncio.sleep(5)

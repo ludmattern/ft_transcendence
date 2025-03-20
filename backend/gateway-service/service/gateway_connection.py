@@ -16,9 +16,7 @@ async def connect_dummy_gateway():
             ssl_context = ssl.create_default_context()
             ssl_context.load_verify_locations("/data/certs/selfsigned.crt")
 
-            logger.info("Tentative de connexion au Gateway Consumer via %s", ws_url)
             async with websockets.connect(ws_url, ssl=ssl_context) as websocket:
-                logger.info("Connexion dummy établie au Gateway Consumer.")
                 init_payload = {
                     "type": "init",
                     "userId": 0,
@@ -27,8 +25,7 @@ async def connect_dummy_gateway():
                 }
                 await websocket.send(json.dumps(init_payload))
                 while True:
-                    message = await websocket.recv()
-                    logger.info("Dummy gateway a reçu : %s", message)
+                    await websocket.recv()
         except Exception as e:
             logger.error("Erreur de connexion dummy au Gateway Consumer : %s", e)
             await asyncio.sleep(5)

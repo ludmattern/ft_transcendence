@@ -76,7 +76,7 @@ def check_auth_view(request):
         try:
             user = ManualUser.objects.get(id=int(payload["sub"]))
         except ManualUser.DoesNotExist:
-            return JsonResponse({"success": False, "message": "User not found"}, status=200)
+            return JsonResponse({"success": False, "message": "Invalid credentials"}, status=200)
 
         if user.session_token != token:
             return JsonResponse({"success": False, "message": "Token does not match active session"}, status=200)
@@ -464,7 +464,7 @@ def request_password_reset(request):
         user.reset_code_expiry = current_time + datetime.timedelta(minutes=1)
         user.save()
 
-        subject = "Réinitialisation de votre mot de passe"
+        subject = "Password Reset Code"
         message = f"Hi,\n\nHere is your reset code : {code}\n\nHave a good day."
         send_mail(subject, message, None, [email], fail_silently=False)
 

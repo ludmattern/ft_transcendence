@@ -3,16 +3,16 @@
 CERT_DIR=/data/certs
 
 if [ -f "/run/secrets/hostname" ]; then
-    HOSTNAME=$(cat /run/secrets/hostname | tr -d '\n')
+	HOSTNAME=$(cat /run/secrets/hostname | tr -d '\n')
 else
-    HOSTNAME="default.internal"
+	HOSTNAME="default.internal"
 fi
 
 if [ ! -f "${CERT_DIR}/selfsigned.crt" ]; then
-    echo "Génération du certificat auto-signé pour $HOSTNAME..."
-    mkdir -p "${CERT_DIR}"
-    
-    cat <<EOF > /tmp/cert.conf
+	echo "Génération du certificat auto-signé pour $HOSTNAME..."
+	mkdir -p "${CERT_DIR}"
+
+	cat <<EOF >/tmp/cert.conf
 [req]
 default_bits       = 2048
 prompt             = no
@@ -42,13 +42,13 @@ DNS.8 = matchmaking-service
 DNS.9 = tournament-service
 EOF
 
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-        -keyout "${CERT_DIR}/selfsigned.key" \
-        -out "${CERT_DIR}/selfsigned.crt" \
-        -config /tmp/cert.conf \
-        -extensions req_ext
-    chmod 644 "${CERT_DIR}/selfsigned.key"
-    chmod 644 "${CERT_DIR}/selfsigned.crt"
+	openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+		-keyout "${CERT_DIR}/selfsigned.key" \
+		-out "${CERT_DIR}/selfsigned.crt" \
+		-config /tmp/cert.conf \
+		-extensions req_ext
+	chmod 644 "${CERT_DIR}/selfsigned.key"
+	chmod 644 "${CERT_DIR}/selfsigned.crt"
 fi
 
 exec "$@"
