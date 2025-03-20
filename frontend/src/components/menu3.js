@@ -33,22 +33,21 @@ function initM3() {
 	Store.menuElement3.classList.add('active');
 	if (Store.menuObject3) Store.scene.add(Store.menuObject3);
 
-
 	const video = document.createElement('video');
 	video.src = '/src/assets/video/screensaver98.mp4';
 	video.loop = true;
 	video.muted = true;
 	video.playsInline = true;
 	video.play();
-	
+
 	const videoTexture = new THREE.VideoTexture(video);
 	videoTexture.minFilter = THREE.LinearFilter;
 	videoTexture.magFilter = THREE.LinearFilter;
 	videoTexture.format = THREE.RGBFormat;
-	
+
 	const newMaterial = new THREE.MeshStandardMaterial({
 		map: videoTexture,
 	});
-	
+
 	Store.screenObject2.material = newMaterial;
 }

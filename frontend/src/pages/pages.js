@@ -29,7 +29,6 @@ import {
 	pongPageSkeleton,
 	soloContent,
 	tournamentCreation,
-	tournamentJoin,
 	multiplayerContent,
 	tournamentContent,
 	currentTournament,
@@ -40,10 +39,6 @@ import {
 import { midScreen } from '/src/components/midScreen.js';
 import { menu3 } from '/src/components/menu3.js';
 import { pongMenu } from '/src/components/pong/index.js';
-
-/**
- * Composants persistants (toujours chargés)
- */
 
 export const backgroundComponents = [
 	{ selector: '#hud-svg-container', component: hudSVG },
@@ -57,9 +52,6 @@ export const persistentComponents = [
 	{ selector: '#menu3-container', component: menu3 },
 ];
 
-/**
- * Composants globaux (communs à toutes les pages HUD)
- */
 export const globalComponents = [
 	{ selector: '#header-container', component: header },
 	{ selector: '#left-window-container', component: leftSideWindow },
@@ -68,27 +60,34 @@ export const globalComponents = [
 ];
 
 /**
- * Définition des pages HUD
+ * Factory function pour créer une page HUD.
+ * @param {any} centralComponent - Composant à placer dans le container central (facultatif)
+ * @param {Object} options - Options supplémentaires
+ * @param {boolean} options.includeGlobal - Indique si les composants globaux doivent être inclus (défaut: false)
+ * @param {Array} options.extras - Composants supplémentaires à ajouter
+ * @returns {Object} Configuration de la page HUD
  */
+const createHudPage = (centralComponent = null, { includeGlobal = false, extras = [] } = {}) => {
+	let components = [...backgroundComponents, ...persistentComponents];
+	if (includeGlobal) {
+		components = [...components, ...globalComponents];
+	}
+	if (centralComponent) {
+		components.push({ selector: '#central-window', component: centralComponent });
+	}
+	if (extras.length) {
+		components = [...components, ...extras];
+	}
+	return { components };
+};
+
 export const hudPages = {
-	login: {
-		components: [...backgroundComponents, ...persistentComponents, { selector: '#central-window', component: loginForm }],
-	},
-	forgotPassword: {
-		components: [...backgroundComponents, ...persistentComponents, { selector: '#central-window', component: forgotPassword }],
-	},
-	twoFAForm: {
-		components: [...backgroundComponents, ...persistentComponents, { selector: '#central-window', component: twoFAForm }],
-	},
-	qrcode: {
-		components: [...backgroundComponents, ...persistentComponents, { selector: '#central-window', component: qrcode }],
-	},
-	subscribe: {
-		components: [...backgroundComponents, ...persistentComponents, { selector: '#central-window', component: subscribeForm }],
-	},
-	lostForm: {
-		components: [...backgroundComponents, ...persistentComponents, { selector: '#central-window', component: lostForm }],
-	},
+	login: createHudPage(loginForm),
+	forgotPassword: createHudPage(forgotPassword),
+	twoFAForm: createHudPage(twoFAForm),
+	qrcode: createHudPage(qrcode),
+	subscribe: createHudPage(subscribeForm),
+	lostForm: createHudPage(lostForm),
 	loading: {
 		components: [
 			{ selector: '#hud-screen-container', component: hudScreenEffect },
@@ -96,116 +95,49 @@ export const hudPages = {
 			{ selector: '#central-window', component: loadingScreen },
 		],
 	},
-	profile: {
-		components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: '#central-window', component: profileForm }],
-	},
-	social: {
-		components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: '#central-window', component: socialForm }],
-	},
-	otherprofile: {
-		components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: '#central-window', component: otherProfileForm }],
-	},
-	settings: {
-		components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: '#central-window', component: settingsForm }],
-	},
-	deleteAccount: {
-		components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: '#central-window', component: deleteAccountForm }],
-	},
-	logout: {
-		components: [...backgroundComponents, ...persistentComponents, ...globalComponents, { selector: '#central-window', component: logoutForm }],
-	},
+	profile: createHudPage(profileForm, { includeGlobal: true }),
+	social: createHudPage(socialForm, { includeGlobal: true }),
+	otherprofile: createHudPage(otherProfileForm, { includeGlobal: true }),
+	settings: createHudPage(settingsForm, { includeGlobal: true }),
+	deleteAccount: createHudPage(deleteAccountForm, { includeGlobal: true }),
+	logout: createHudPage(logoutForm, { includeGlobal: true }),
 	inGame: {
 		components: [
 			...backgroundComponents,
-			...persistentComponents, 
+			...persistentComponents,
 			{ selector: '#header-container', component: headerIngame },
 			{ selector: '#left-window-container', component: leftSideWindow },
 			{ selector: '#right-window-container', component: rightSideWindow },
 			{ selector: '#footer-container', component: footer },
 		],
 	},
-	home: {
-		components: [...backgroundComponents, ...persistentComponents, ...globalComponents],
-	},
-	race: {
-		components: [...backgroundComponents, ...persistentComponents, ...globalComponents],
-	},
-	pong: {
-		components: [...backgroundComponents, ...persistentComponents, ...globalComponents],
-	},
+	home: createHudPage(null, { includeGlobal: true }),
+	race: createHudPage(null, { includeGlobal: true }),
+	pong: createHudPage(null, { includeGlobal: true }),
 };
 
 /**
- * Définition des pages Pong
+ * Factory function pour créer une page Pong.
+ * @param {Array} centralComponents - Composants spécifiques à ajouter dans le container principal
+ * @returns {Object} Configuration de la page Pong
  */
+const createPongPage = (centralComponents = []) => ({
+	components: [
+		{ selector: '#pong-skeleton-container', component: pongPageSkeleton },
+		{ selector: '#pong-header-container', component: pongHeader },
+		{ selector: '#content-window-container', component: navBar },
+		...centralComponents,
+	],
+});
+
 export const pongPages = {
 	home: {},
-	play: {
-		components: [
-			{ selector: '#pong-skeleton-container', component: pongPageSkeleton },
-			{ selector: '#pong-header-container', component: pongHeader },
-			{ selector: '#content-window-container', component: navBar },
-			{ selector: '#content-window-container', component: homeContent },
-		],
-	},
-	'play/solo': {
-		components: [
-			{ selector: '#pong-skeleton-container', component: pongPageSkeleton },
-			{ selector: '#pong-header-container', component: pongHeader },
-			{ selector: '#content-window-container', component: navBar },
-			{ selector: '#content-window-container', component: soloContent },
-		],
-	},
-	'play/multiplayer': {
-		components: [
-			{ selector: '#pong-skeleton-container', component: pongPageSkeleton },
-			{ selector: '#pong-header-container', component: pongHeader },
-			{ selector: '#content-window-container', component: navBar },
-			{ selector: '#content-window-container', component: multiplayerContent },
-		],
-	},
-	'play/tournament': {
-		components: [
-			{ selector: '#pong-skeleton-container', component: pongPageSkeleton },
-			{ selector: '#pong-header-container', component: pongHeader },
-			{ selector: '#content-window-container', component: navBar },
-			{ selector: '#content-window-container', component: tournamentContent },
-		],
-	},
-	'play/tournament-creation': {
-		components: [
-			{ selector: '#pong-skeleton-container', component: pongPageSkeleton },
-			{ selector: '#pong-header-container', component: pongHeader },
-			{ selector: '#content-window-container', component: tournamentCreation },
-		],
-	},
-	'play/tournament-join': {
-		components: [
-			{ selector: '#pong-skeleton-container', component: pongPageSkeleton },
-			{ selector: '#pong-header-container', component: pongHeader },
-			{ selector: '#content-window-container', component: tournamentJoin },
-		],
-	},
-	'play/current-tournament': {
-		components: [
-			{ selector: '#pong-skeleton-container', component: pongPageSkeleton },
-			{ selector: '#pong-header-container', component: pongHeader },
-			{ selector: '#content-window-container', component: currentTournament },
-		],
-	},
-
-	leaderboard: {
-		components: [
-			{ selector: '#pong-skeleton-container', component: pongPageSkeleton },
-			{ selector: '#pong-header-container', component: pongHeader },
-			{ selector: '#content-window-container', component: leaderboard },
-		],
-	},
-	lost: {
-		components: [
-			{ selector: '#pong-skeleton-container', component: pongPageSkeleton },
-			{ selector: '#pong-header-container', component: pongHeader },
-			{ selector: '#content-window-container', component: lost },
-		],
-	},
+	play: createPongPage([{ selector: '#content-window-container', component: homeContent }]),
+	'play/solo': createPongPage([{ selector: '#content-window-container', component: soloContent }]),
+	'play/multiplayer': createPongPage([{ selector: '#content-window-container', component: multiplayerContent }]),
+	'play/tournament': createPongPage([{ selector: '#content-window-container', component: tournamentContent }]),
+	'play/tournament-creation': createPongPage([{ selector: '#content-window-container', component: tournamentCreation }]),
+	'play/current-tournament': createPongPage([{ selector: '#content-window-container', component: currentTournament }]),
+	leaderboard: createPongPage([{ selector: '#content-window-container', component: leaderboard }]),
+	lost: createPongPage([{ selector: '#content-window-container', component: lost }]),
 };

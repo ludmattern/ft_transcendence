@@ -26,9 +26,6 @@ const CAMERA_TARGETS = {
 	home: 0,
 };
 
-// =============== WINDOW SWITCHER ===============
-
-
 const loader = new THREE.TextureLoader();
 const texture = loader.load('/src/assets/img/bluescreen.jpg', () => {
 	texture.flipY = false;
@@ -37,7 +34,6 @@ const texture = loader.load('/src/assets/img/bluescreen.jpg', () => {
 const newMaterialBlue = new THREE.MeshStandardMaterial({
 	map: texture,
 });
-
 
 export function switchwindow(screen) {
 	if (screen === currentWindow) return;
@@ -54,7 +50,6 @@ export function switchwindow(screen) {
 	}
 }
 
-// =============== GSAP ANIMATION ===============
 export function animateCameraToTarget(endPosition, endRotation, nb) {
 	if (Store.currentTween) {
 		Store.currentTween.kill();

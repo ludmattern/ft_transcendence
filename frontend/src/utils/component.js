@@ -1,16 +1,16 @@
 export function createComponent({ tag, render, attachEvents, children = [] }) {
 	return {
-		tag, // Nom unique du composant
-		render, // Fonction pour générer le HTML
-		attachEvents, // Fonction pour ajouter les événements
-		children, // Enfants imbriqués (optionnels)
+		tag,
+		render,
+		attachEvents,
+		children,
 	};
 }
 
 export default class ComponentManager {
 	constructor(name) {
 		this.name = name;
-		this.mountedComponents = {}; // Suivi des composants montés
+		this.mountedComponents = {};
 	}
 
 	loadComponent(target, component) {
@@ -22,8 +22,8 @@ export default class ComponentManager {
 		}
 
 		const el = document.createElement('div');
-		el.dataset.component = component.tag; // Identifiant unique
-		el.innerHTML = component.render(); // Générer le contenu HTML
+		el.dataset.component = component.tag;
+		el.innerHTML = component.render();
 		document.querySelector(target).appendChild(el);
 
 		if (component.attachEvents) {
@@ -34,7 +34,7 @@ export default class ComponentManager {
 			component.children.forEach((child) => {
 				const childTarget = el.querySelector(`[data-slot="${child.slot}"]`);
 				if (childTarget) {
-					this.loadComponent(childTarget, child.component); // Charger chaque enfant
+					this.loadComponent(childTarget, child.component);
 				}
 			});
 		}
@@ -54,8 +54,8 @@ export default class ComponentManager {
 	}
 
 	replaceComponent(target, component) {
-		this.unloadComponent(component.tag); // Décharger l'ancien
-		this.loadComponent(target, component); // Charger le nouveau
+		this.unloadComponent(component.tag);
+		this.loadComponent(target, component);
 	}
 
 	cleanupComponents(requiredComponents) {

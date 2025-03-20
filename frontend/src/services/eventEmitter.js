@@ -1,5 +1,3 @@
-//evenEmitter.js
-
 const eventListeners = {};
 
 export function subscribe(event, callback) {
