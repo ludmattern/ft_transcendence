@@ -96,7 +96,7 @@ export const settingsForm = createComponent({
 							await pushInfo('registered_user', formData.newUsername);
 							await pushInfo('username', formData.newUsername);
 						}
-						createNotificationMessage('Information updated successfully.', 2500, false);
+						createNotificationMessage('Information updated successfully', 2500, false);
 						resetErrorMessages();
 						emptyFields();
 					} else {

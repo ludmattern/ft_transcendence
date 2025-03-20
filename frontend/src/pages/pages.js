@@ -140,5 +140,5 @@ export const pongPages = {
 	'play/tournament-creation': createPongPage([{ selector: '#content-window-container', component: tournamentCreation }], false),
 	'play/current-tournament': createPongPage([{ selector: '#content-window-container', component: currentTournament }], false),
 	leaderboard: createPongPage([{ selector: '#content-window-container', component: leaderboard }]),
-	lost: createPongPage([{ selector: '#content-window-container', component: lost }]),
+	lost: createPongPage([{ selector: '#content-window-container', component: lost }], false),
 };

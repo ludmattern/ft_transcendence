@@ -111,18 +111,18 @@ export const multiplayerContent = createComponent({
 			}
 			const opponentUsername = privateGameInput.value.trim();
 			if (!opponentUsername) {
-				createNotificationMessage('Please enter a username code.', 2500, false);
+				createNotificationMessage('Please enter a username code', 2500, false);
 				return;
 			}
 			if (notAuthenticatedThenRedirect()) return;
 			const opponentId = await fetchUserId(opponentUsername);
 			if (!opponentId) {
-				createNotificationMessage('Opponent not found.', 2500, true);
+				createNotificationMessage('Opponent not found', 2500, true);
 				return;
 			} else {
 				const userId = await getUserIdFromCookieAPI();
 				if (opponentId === userId) {
-					createNotificationMessage('You cannot invite yourself.', 2500, true);
+					createNotificationMessage('You cannot invite yourself', 2500, true);
 					return;
 				}
 				sendWsInfoMessage('private_game_invite', opponentId);

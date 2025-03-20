@@ -174,17 +174,6 @@ def login_view(request):
 
     now_utc = datetime.datetime.utcnow()
 
-    # Bypass pour les comptes dummy
-    if user.is_dummy:
-        token_str, expiry = generate_session_token(user)
-        user.token_expiry = expiry
-        user.session_token = token_str
-        user.status = "online"
-        user.save()
-        response = JsonResponse({"success": True, "message": "Logged in (dummy)", "id": user.id, "username": user.username})
-        set_access_token_cookie(response, token_str)
-        return response
-
     if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
         return JsonResponse({"success": False, "message": "Invalid credentials"}, status=401)
 

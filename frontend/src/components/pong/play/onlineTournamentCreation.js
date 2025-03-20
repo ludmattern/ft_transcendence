@@ -64,8 +64,8 @@ export const onlineTournamentCreation = createComponent({
 			const roomCode = roomCodeElement.textContent;
 			navigator.clipboard
 				.writeText(roomCode)
-				.then(() => alert('Room code copied to clipboard!'))
-				.catch(() => alert('Failed to copy room code.'));
+				.then(() => createNotificationMessage('Tournament code copied', 2500, false))
+				.catch(() => createNotificationMessage('Failed to copy tournament code', 2500, true));
 		});
 
 		// Si le tournoi n'existe pas, on ne fait rien d'autre

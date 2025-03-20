@@ -56,7 +56,6 @@ export async function renderBracket() {
 		return;
 	}
 
-	// Mise à jour du message d'état du tournoi
 	const tournamentStateElement = el.querySelector('#tournament-state p');
 	if (data.isOver) {
 		tournamentStateElement.textContent = 'The tournament has been won by ' + data.winner;
@@ -263,7 +262,6 @@ function createCompletedMatchHtml(match, displayHtml) {
 }
 
 function getCompletedMatchHtml(match) {
-	console.log(match);
 	if (!match.score) {
 		return `${match.player1} vs ${match.player2}`;
 	}
