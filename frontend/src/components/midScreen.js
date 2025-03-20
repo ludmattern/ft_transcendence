@@ -49,7 +49,7 @@ export const GiveUpButtons = createComponent({
 					ws.send(JSON.stringify(payload));
 				},
 				'btn-giveup-player-right': () => {
-					const payload = { type: 'game_event', action: 'game_giveup', local_leave: 2};
+					const payload = { type: 'game_event', action: 'game_giveup', local_leave: 2 };
 					ws.send(JSON.stringify(payload));
 				},
 			},

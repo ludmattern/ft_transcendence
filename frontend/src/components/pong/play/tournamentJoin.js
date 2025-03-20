@@ -43,7 +43,6 @@ export const tournamentJoin = createComponent({
 		const onlinePlayersCountSpan = el.querySelector('#online-players-count');
 
 		const username = (await getInfo('username')).success ? (await getInfo('username')).value : 'You';
-		
 
 		// Dans un vrai environnement, cette liste serait gérée en temps réel via Redis ou WebSocket.
 		// Ici, on simule avec une liste locale qui inclut d'office l'utilisateur.

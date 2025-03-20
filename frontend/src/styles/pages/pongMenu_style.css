@@ -135,13 +135,12 @@
 #pong-screen-container header .wrapper button .icon-border .corner-bottom-left {
 	content: '';
 	position: absolute;
-	width: 7px; /* Longueur des coins horizontaux */
-	height: 7px; /* Longueur des coins verticaux */
+	width: 7px;
+	height: 7px;
 	border: 2px solid #78b1ac;
 	transition: all 0.15s;
 }
 
-/* Coin en haut à gauche */
 #pong-screen-container header .wrapper button .icon-border::before {
 	top: 0;
 	left: 0;
@@ -150,7 +149,6 @@
 	transition: all 0.15s;
 }
 
-/* Coin en bas à droite */
 #pong-screen-container header .wrapper button .icon-border::after {
 	bottom: 0;
 	right: 0;
@@ -159,7 +157,6 @@
 	transition: all 0.15s;
 }
 
-/* Coin en haut à droite */
 #pong-screen-container header .wrapper button .icon-border .corner-top-right {
 	top: 0;
 	right: 0;
@@ -168,7 +165,6 @@
 	transition: all 0.15s;
 }
 
-/* Coin en bas à gauche */
 #pong-screen-container header .wrapper button .icon-border .corner-bottom-left {
 	bottom: 0;
 	left: 0;
@@ -201,7 +197,7 @@
 }
 
 #pong-screen-container .separator {
-	position: relative; /* Nécessaire pour que le pseudo-élément soit positionné par rapport à l'élément parent */
+	position: relative;
 }
 
 #pong-screen-container .separator::after {
