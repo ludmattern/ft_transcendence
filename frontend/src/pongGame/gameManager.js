@@ -129,7 +129,6 @@ class GameManager {
 
 	startGame(gameConfig) {
 		this.initClientData();
-		console.log('gameConfig', gameConfig);
 		componentManagers['HUD'].unloadComponent('pongTuto');
 		this.gameMode = gameConfig.mode;
 		if (this.activeGame) this.endGame();
@@ -176,8 +175,6 @@ class GameManager {
 			player1 = gameConfig.player1;
 			player2 = gameConfig.player2;
 		}
-		console.log('player1', player1);
-		console.log('player2', player2);
 		ws.send(
 			JSON.stringify({
 				type: 'game_event',
