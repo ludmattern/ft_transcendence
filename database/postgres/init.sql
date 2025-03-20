@@ -72,7 +72,7 @@ CREATE TABLE
 	IF NOT EXISTS tournaments (
 		id SERIAL PRIMARY KEY,
 		serial_key VARCHAR(255) NOT NULL UNIQUE, -- Unique identifier for the tournament
-		size INT DEFAULT 0 CHECK (size = 4 OR size = 8 OR size = 16),
+		size INT DEFAULT 0 CHECK (size = 2 OR size = 4 OR size = 8 OR size = 16),
 		name VARCHAR(255) DEFAULT 'TOURNAMENT_DEFAULT_NAME',
 		organizer_id INT DEFAULT NULL,
 		status VARCHAR(50) DEFAULT 'upcoming', -- 'upcoming', 'ongoing', 'completed'

@@ -56,6 +56,15 @@ export async function renderBracket() {
 		return;
 	}
 
+	// Mise à jour du message d'état du tournoi
+	const tournamentStateElement = el.querySelector('#tournament-state p');
+	if (data.isOver) {
+		tournamentStateElement.textContent = 'The tournament has been won by ' + data.winner;
+		tournamentStateElement.classList.add('text-warning', 'fw-bold', 'h5');
+	} else {
+		tournamentStateElement.textContent = 'The tournament is in progress.';
+	}
+
 	const mode = data.mode;
 	const bracketData = data.size;
 	const tournament_id = data.tournament_id;
@@ -78,7 +87,7 @@ export async function renderBracket() {
 
 					if ((match.status === 'pending' || match.status === 'ready') && match.player1 !== 'TBD' && match.player2 !== 'TBD') {
 						if ((match.player1 === username || match.player2 === username) && hasUserCompletedInPreviousRound(bracketData, roundIndex, username)) {
-							joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2"data-match-key="${matchKey}">
+							joinButton = `<button class="btn btn-pong-blue btn-sm join-match ms-2" data-match-key="${matchKey}">
 											Join Game
 										</button>`;
 						}
@@ -244,15 +253,14 @@ function hasUserCompletedInPreviousRound(bracketData, roundIndex, username) {
 function createCompletedMatchHtml(match, displayHtml) {
 	// On compte le nombre de tirets dans match.score
 	const dashCount = (match.score.match(/-/g) || []).length;
-	const scoreText = dashCount === 2 ? "forfeit" : match.score;
-	
+	const scoreText = dashCount === 2 ? 'forfeit' : match.score;
+
 	return `<div class="match p-2 bg-dark rounded" data-match-id="${match.id}" 
 			  data-player1="${match.player1}" data-player2="${match.player2}">
 				<span class="text-white">${displayHtml}</span>
 				<span class="badge ms-2">${scoreText}</span>
 			</div>`;
-  }
-  
+}
 
 function getCompletedMatchHtml(match) {
 	console.log(match);
@@ -264,17 +272,15 @@ function getCompletedMatchHtml(match) {
 		return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
 	}
 
-	if (match.score.split("-").length - 1 >= 2) 
-	{
-		if(match.score.endsWith("-1")) {
+	if (match.score.split('-').length - 1 >= 2) {
+		if (match.score.endsWith('-1')) {
 			return `<span class="text-success fw-bold">${match.player1}</span> vs <span class="text-danger">${match.player2}</span>`;
 		} else {
 			return `<span class="text-danger">${match.player1}</span> vs <span class="text-success fw-bold">${match.player2}</span>`;
 		}
 	}
 
-	if (match.score === 'Forfeit') 
-	{
+	if (match.score === 'Forfeit') {
 		const winner = match.winner;
 
 		if (winner === match.player1) {
