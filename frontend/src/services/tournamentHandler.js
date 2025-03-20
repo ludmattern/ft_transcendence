@@ -37,7 +37,6 @@ export async function handleLocalTournamentGameEnding(data) {
 		})
 			.then((res) => res.json())
 			.then((result) => {
-				console.log('Match result updated:', result);
 			})
 			.catch((err) => {
 				console.error('Error updating match result:', err);

@@ -46,7 +46,6 @@ const handlePrivateMatchFound = (data) => {
 
 const handleMatchFound = (data) => {
 	startMatchmakingGame(data.game_id, data.side, data);
-	console.log('Match found:', data);
 };
 
 const handleInfoMessage = async (data) => {
