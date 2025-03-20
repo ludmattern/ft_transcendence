@@ -212,7 +212,7 @@ export function validatePassword(password) {
 		isValid = false;
 	}
 
-	const regexSpecial = /[@$!%*?+-&#^]/;
+	const regexSpecial = /[@$!%*?+\-&#^]/;
 	if (!regexSpecial.test(password)) {
 		document.getElementById('bad-pass-special').style.display = 'block';
 		isValid = false;

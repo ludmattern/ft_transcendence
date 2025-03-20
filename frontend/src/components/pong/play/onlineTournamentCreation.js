@@ -6,7 +6,6 @@ import { createNotificationMessage } from '/src/components/hud/sideWindow/left/n
 import { handleRoute } from '/src/services/router.js';
 import { getCurrentTournamentInformation } from '/src/services/router.js';
 import { pushInfo,getInfo } from '/src/services/infoStorage.js';
-import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 
 export const onlineTournamentCreation = createComponent({
 	tag: 'onlineTournamentCreation',
