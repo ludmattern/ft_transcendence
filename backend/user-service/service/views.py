@@ -95,8 +95,8 @@ def generate_qr_code(request, username):
 def validate_username(username):
     if len(username) < 6 or len(username) > 20:
         return "Username must be between 6 and 20 characters"
-    if not re.match(r"^[a-zA-Z0-9_]+$", username):
-        return "Username can only contain alphanumeric characters and underscores"
+    if not re.match(r'^[a-zA-Z0-9_\-]+$', username):
+        return "Username can only contain alphanumeric characters, underscores and hyphens"
     if ManualUser.objects.filter(username=username).exists():
         return "Username already taken"
     return None

@@ -169,7 +169,7 @@ export function validateId(id) {
 		}
 		return false;
 	}
-	const regex = /^[a-zA-Z0-9_]+$/;
+	const regex = /^[a-zA-Z0-9_\-]+$/;
 	if (!regex.test(id)) 
 	{
 		const badId = document.getElementById('bad-id');
