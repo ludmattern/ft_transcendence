@@ -351,7 +351,7 @@ def get_profile(request):
 
 
 ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
-MAX_FILE_SIZE = 5 * 1024 * 1024
+MAX_FILE_SIZE = 2 * 1024 * 1024
 
 
 @require_POST
@@ -360,20 +360,20 @@ def upload_profile_picture(request):
     try:
         user = request.user
         if not user:
-            return JsonResponse({"success": False, "error": "Unauthorized"}, status=401)
+            return JsonResponse({"success": False, "error": "Unauthorized"}, status=200)
         if "profile_picture" not in request.FILES:
-            return JsonResponse({"success": False, "error": "No file uploaded"}, status=400)
+            return JsonResponse({"success": False, "error": "No file uploaded"}, status=200)
         file = request.FILES["profile_picture"]
         if file.size > MAX_FILE_SIZE:
-            return JsonResponse({"success": False, "error": "File too large"}, status=400)
+            return JsonResponse({"success": False, "error": "File too large"}, status=200)
         ext = os.path.splitext(file.name)[1].lower().strip(".")
         if ext not in ALLOWED_EXTENSIONS:
-            return JsonResponse({"success": False, "error": "Invalid file format"}, status=400)
+            return JsonResponse({"success": False, "error": "Invalid file format"}, status=200)
         try:
             image = Image.open(file)
             image.verify()
         except Exception:
-            return JsonResponse({"success": False, "error": "Uploaded file is not a valid image"}, status=400)
+            return JsonResponse({"success": False, "error": "Uploaded file is not a valid image"}, status=200)
         old_image_path = user.profile_picture.path if user.profile_picture else None
         user.profile_picture = file
         user.save()
