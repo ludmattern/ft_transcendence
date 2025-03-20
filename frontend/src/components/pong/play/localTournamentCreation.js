@@ -127,7 +127,7 @@ export const localTournamentCreation = createComponent({
           if (name.length < 6 || name.length > 20) {
             return { success: false, message: 'Username must be between 6 and 20 characters.' };
           }
-          if (!/^[a-zA-Z0-9_]+$/.test(name)) {
+          if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
             return { success: false, message: 'Username can only contain letters, numbers, and underscores.' };
           }
           return { success: true };
@@ -149,7 +149,7 @@ export const localTournamentCreation = createComponent({
             return;
           }
           if (players.length >= tournamentSize) {
-            createNotificationMessage(`You can only add up to ${tournamentSize} players.`, 2500, true);
+            createNotificationMessage(`You can only add up to ${tournamentSize} players`, 2500, true);
             playerNameInput.value = '';
             return;
           }

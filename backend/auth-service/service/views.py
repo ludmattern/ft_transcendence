@@ -54,11 +54,7 @@ def generate_session_token(user):
 
 
 def set_access_token_cookie(response, token_str):
-    response.set_cookie(
-        key="access_token", value=token_str, httponly=True, secure=True, samesite="Strict", max_age=settings.JWT_EXP_DELTA_SECONDS
-    )
-
-
+    response.set_cookie(key="access_token", value=token_str, httponly=True, secure=True, samesite="Strict", max_age=settings.JWT_EXP_DELTA_SECONDS)
 
 
 @require_GET
@@ -158,9 +154,7 @@ def send_2fa_email(recipient, code):
 def send_2fa_sms(phone_number, code):
     client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
     try:
-        message = client.messages.create(
-            body=f"Your 2FA code is: {code}", from_=settings.TWILIO_PHONE_NUMBER, to=decrypt_thing(phone_number)
-        )
+        message = client.messages.create(body=f"Your 2FA code is: {code}", from_=settings.TWILIO_PHONE_NUMBER, to=decrypt_thing(phone_number))
         logger.info("SMS sent, SID: %s", message.sid)
     except Exception as e:
         logger.error("Error sending SMS: %s", e)
@@ -313,14 +307,17 @@ def get_user_id_from_cookie(request):
     except Exception as e:
         return JsonResponse({"Internal server error"}, status=400)
 
+
 def generate_state():
     return base64.urlsafe_b64encode(os.urandom(16)).decode()
+
 
 SERVER_IP = settings.HOSTNAME
 REDIRECT_URI = f"https://{SERVER_IP}:8443/api/auth-service/oauth/callback/"
 CLIENT_ID = settings.UID_42
 CLIENT_SECRET = settings.SECRET_42
 OAUTH_HOSTNAME = settings.OAUTH_HOSTNAME
+
 
 @require_GET
 def get_42_auth_url(request):
@@ -329,45 +326,41 @@ def get_42_auth_url(request):
     signer = Signer()
     signed_state = signer.sign(state)
     logger.info(f"Signed state: {signed_state}")
-    
-    auth_url = (
-        f"https://{OAUTH_HOSTNAME}/oauth/authorize?"
-        f"client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}"
-        f"&response_type=code&scope=public&state={state}"
-    )
-    
+
+    auth_url = f"https://{OAUTH_HOSTNAME}/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=public&state={state}"
+
     logger.info(f"Redirecting to: {auth_url}")
     response = JsonResponse({"url": auth_url})
     logger.info(f"Setting state cookie: {signed_state}")
-    response.set_cookie('oauth_state', signed_state, httponly=True, secure=True, samesite="Lax")
+    response.set_cookie("oauth_state", signed_state, httponly=True, secure=True, samesite="Lax")
 
     return response
 
+
 @require_GET
 def oauth_callback(request):
-    logger.info("OAuth callback : request.GET = %s", request.GET)
     error = request.GET.get("error")
     if error:
         return redirect(f"https://{SERVER_IP}:8443/login")
-    
-    state_returned = request.GET.get('state')
-    signed_state = request.COOKIES.get('oauth_state')
+
+    state_returned = request.GET.get("state")
+    signed_state = request.COOKIES.get("oauth_state")
     if not signed_state:
         return JsonResponse({"success": False, "message": "Missing state cookie"}, status=400)
-    
+
     signer = Signer()
     try:
         unsigned_state = signer.unsign(signed_state)
     except Exception:
         return JsonResponse({"success": False, "message": "Invalid state cookie"}, status=400)
-    
+
     if not state_returned or state_returned != unsigned_state:
         return JsonResponse({"success": False, "message": "Invalid state parameter"}, status=400)
-    
+
     code = request.GET.get("code")
     if not code:
         return JsonResponse({"success": False, "message": "No code provided"}, status=400)
-    
+
     token_url = f"https://{OAUTH_HOSTNAME}/oauth/token"
     token_data = {
         "grant_type": "authorization_code",
@@ -377,13 +370,13 @@ def oauth_callback(request):
         "redirect_uri": REDIRECT_URI,
     }
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    
+
     try:
         token_response = requests.post(token_url, data=urlencode(token_data), headers=headers)
         token_response_data = token_response.json()
         if "access_token" not in token_response_data:
             return JsonResponse({"success": False, "message": "Failed to get access token"}, status=400)
-        
+
         access_token = token_response_data["access_token"]
         user_info_url = f"https://{OAUTH_HOSTNAME}/v2/me"
         user_response = requests.get(user_info_url, headers={"Authorization": f"Bearer {access_token}"})
@@ -392,7 +385,7 @@ def oauth_callback(request):
         oauth_id = user_data.get("id")
         if not username or not oauth_id:
             return JsonResponse({"success": False, "message": "Invalid user data from 42"}, status=400)
-        
+
         user = ManualUser.objects.filter(oauth_id=oauth_id).first()
         if not user:
             original_username = username
@@ -409,13 +402,13 @@ def oauth_callback(request):
                 phone_number=None,
                 is_dummy=False,
             )
-        
+
         token_str, expiry = generate_session_token(user)
         user.token_expiry = expiry
         user.session_token = token_str
         user.status = "online"
         user.save()
-        
+
         response = render(request, "authenticating.html", {"token_str": token_str})
         set_access_token_cookie(response, token_str)
         response.delete_cookie("oauth_state")
@@ -423,7 +416,6 @@ def oauth_callback(request):
     except Exception:
         logger.exception("OAuth callback error")
         return JsonResponse({"success": False, "message": "Internal Server Error"}, status=500)
-
 
 
 @require_POST
@@ -449,9 +441,7 @@ def request_password_reset(request):
         current_time = now()
         if user.reset_code_expiry and user.reset_code_expiry > current_time:
             remaining = (user.reset_code_expiry - current_time).total_seconds()
-            return JsonResponse(
-                {"success": False, "message": f"Please wait {int(remaining)} seconds before requesting a new code"}, status=429
-            )
+            return JsonResponse({"success": False, "message": f"Please wait {int(remaining)} seconds before requesting a new code"}, status=429)
 
         code = generate_2fa_code()
         hashed_code = bcrypt.hashpw(code.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
@@ -491,11 +481,7 @@ def verify_reset_code(request):
             return JsonResponse({"success": False, "message": "User not found"}, status=404)
 
         current_time = now()
-        reset_expiry = (
-            make_aware(user.reset_code_expiry)
-            if user.reset_code_expiry and not is_aware(user.reset_code_expiry)
-            else user.reset_code_expiry
-        )
+        reset_expiry = make_aware(user.reset_code_expiry) if user.reset_code_expiry and not is_aware(user.reset_code_expiry) else user.reset_code_expiry
 
         if not reset_expiry or reset_expiry < current_time:
             return JsonResponse({"success": False, "message": "Reset code expired"}, status=400)

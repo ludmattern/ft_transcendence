@@ -66,7 +66,7 @@ export async function createTournament(players) {
 		if (data.success) {
 			handleRoute('/pong/play/current-tournament');
 		} else {
-			alert('Erreur: ' + data.error);
+			console.error('Error creating tournament:', data.error);
 		}
 
 		return data;

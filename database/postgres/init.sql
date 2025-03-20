@@ -1,7 +1,7 @@
 CREATE TABLE
 	IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
-		username VARCHAR(50) NOT NULL UNIQUE CHECK (LENGTH(username) >=6 AND LENGTH(username) <= 20 AND username ~ '^[a-zA-Z0-9_]+$'),
+		username VARCHAR(50) NOT NULL UNIQUE CHECK (LENGTH(username) >=6 AND LENGTH(username) <= 20 AND username ~ '^[a-zA-Z0-9_-]+$'),
         email VARCHAR(255) DEFAULT NULL ,
 		password VARCHAR(255) ,
 		rank INT DEFAULT 0,

@@ -135,7 +135,7 @@ export const tournamentContent = createComponent({
             tournamentSize = parseInt(tournamentSize, 10);
             if (isNaN(tournamentSize) || tournamentSize <= 0) {
                 console.error('Invalid tournament size:', tournamentSize);
-                createNotificationMessage('Please enter a valid tournament size.', 2500, false);
+                createNotificationMessage('Please enter a valid tournament size', 2500, false);
                 return;
             }
             try {

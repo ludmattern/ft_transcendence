@@ -128,7 +128,7 @@ def validate_password(password):
         return "Password must contain at least one uppercase letter"
     if not re.search(r"[0-9]", password):
         return "Password must contain at least one digit"
-    if not re.search(r"[@$!%*?&#^]", password):
+    if not re.search(r"[@$+!%*-.?&#^]", password):
         return "Password must contain at least one special character"
     return None
 
@@ -241,7 +241,7 @@ def update_info(request):
             decrypted_email = decrypt_thing(user.email)
             if new_email == decrypted_email:
                 return JsonResponse({"success": False, "message": "You're already using this email"}, status=400)
-            if new_email != decrypted_email:
+            else:
                 if ManualUser.objects.exclude(id=user.id).filter(email=encrypt_thing(new_email)).exists():
                     return JsonResponse({"success": False, "message": "Email already in use"}, status=409)
                 new_email_error_or_encrypted = validate_email(new_email)
