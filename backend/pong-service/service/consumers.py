@@ -32,9 +32,13 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         action = event.get("action", "")
         player1_id = event.get("player1", "Player 1")
         player2_id = event.get("player2", "Player 2")
+        logger.info(f"player1_id: {player1_id}, player2_id: {player2_id} for game_id: {game_id} for action: {action}")
         user_id = event.get("user_id")
         difficulty = event.get("difficulty")
-        game = game_manager.get_or_create_game(game_id, player1_id, player2_id)
+        if action == "leave_game":
+            game = game_manager.get_game(game_id)
+        else:
+            game = game_manager.get_or_create_game(game_id, player1_id, player2_id)
         if action == "start_game":
             if game_id not in self.running_games:
                 self.running_games[game_id] = {"task": asyncio.create_task(self.game_loop(game_id, difficulty))}
@@ -63,7 +67,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             else:
                 paddle_number = game.player_mapping.get(str(user_id))
                 if paddle_number is None:
-                    logger.error("Le champ indiquant le joueur (local_player ou user_id) ne correspond à aucun paddle dans la partie.")
                     return
                 game.set_movement(paddle_number, direction, moving)
 

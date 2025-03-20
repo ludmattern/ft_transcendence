@@ -29,12 +29,10 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         self.game_id = None
         if query_params.get("dummy", [None])[0] == "true":
             self.user_id = 0
-            logger.info("Connexion dummy détectée, bypass cookie auth.")
         else:
             cookies = self.scope.get("cookies", {})
             self.user_id = await fetch_user_id(cookies)
             if not self.user_id:
-                logger.error("Impossible de récupérer l'ID utilisateur depuis l'auth-service")
                 return await self.close()
 
         await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
@@ -48,7 +46,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             serial_key = serial_keys[0]
             group_name = f"tournament_{serial_key}"
             await self.channel_layer.group_add(group_name, self.channel_name)
-        logger.info("Client connecté au WebSocket Gateway")
         return None
 
     async def disconnect(self, close_code):
