@@ -115,7 +115,7 @@ function attachProfilePicUpload() {
 					}
 				}
 			} catch (error) {
-				console.error("error uploading img", error);
+				console.log("Image not valid");
 			}
 		});
 	}

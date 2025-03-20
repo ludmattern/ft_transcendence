@@ -106,6 +106,3 @@
 - S'assurer que les vues ne puissent pas être appelées simultanément par deux joueurs  
   *(les bufferiser pour les avoir dans l'ordre)*.
 
-#### Timeout
-- **Pas de timeout :**  
-  Si trop long → Ragequit et le tournoi continue.
