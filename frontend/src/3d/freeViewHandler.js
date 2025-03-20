@@ -3,7 +3,6 @@ import Store from './store.js';
 import { animateCameraBackToInitialPosition } from '/src/3d/animation.js';
 import { emit } from '/src/services/eventEmitter.js';
 
-// =============== ROTATE LISTENER HANDLER ===============
 export let cameraRotationEvent = 0;
 export let listeners = [];
 let lastRotation = 0;
@@ -20,7 +19,6 @@ export function addCameraRotationListener(listener) {
 	listeners.push(listener);
 }
 
-// =============== FREE VIEW HANDLER ===============
 export function toggleFreeView() {
 	Store.freeViewEnabled = !Store.freeViewEnabled;
 	if (Store.freeViewEnabled) {
@@ -33,7 +31,6 @@ export function toggleFreeView() {
 	}
 }
 
-// =============== OARALAX HANDLER ===============
 export function onBaseMouseMove(event = { movementX: 0.1, movementY: 0.1 }) {
 	if (Store.isCameraMoving) return;
 
@@ -63,8 +60,6 @@ document.addEventListener('pointerlockchange', () => {
 		animateCameraBackToInitialPosition();
 	}
 });
-
-// =============== FREE VIEW HANDLER ===============
 
 export function enableFreeView() {
 	document.removeEventListener('mousemove', onBaseMouseMove, false);

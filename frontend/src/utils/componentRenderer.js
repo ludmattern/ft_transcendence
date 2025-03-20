@@ -1,8 +1,5 @@
 import componentManagers from '/src/index.js';
 
-/**
- * Récupère les composants à charger pour une page donnée
- */
 function getComponentsForPage(pages, pageKey) {
 	return pages[pageKey]?.components || [];
 }

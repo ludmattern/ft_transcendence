@@ -16,26 +16,22 @@
 	--info-hud-elements-color: #ffffcc;
 }
 
-/* Cible la scrollbar entière */
 ::-webkit-scrollbar {
-	width: 0.2rem; /* Largeur de la scrollbar */
-	height: 0.2rem; /* Hauteur pour les scrollbars horizontales */
-	background-color: #f0f0f000; /* Couleur de fond */
+	width: 0.2rem;
+	height: 0.2rem;
+	background-color: #f0f0f000;
 }
 
-/* Cible la poignée (thumb) */
 ::-webkit-scrollbar-thumb {
 	background-color: var(--active-menu-color);
 	border-radius: 5px;
 }
 
-/* Cible la piste (track) */
 ::-webkit-scrollbar-track {
-	background-color: #e0e0e000; /* Couleur de fond de la piste */
+	background-color: #e0e0e000;
 	box-shadow: none;
 }
 
-/* Partie où les barres horizontale et verticale se croisent */
 ::-webkit-scrollbar-corner {
 	background-color: var(--secondary-hud-elements-color);
 	box-shadow: none;
@@ -88,7 +84,6 @@ body {
 	display: flex;
 	width: 100%;
 }
-
 
 #hud-body .status-indicator,
 #hud-body .own-status-indicator {
@@ -374,7 +369,6 @@ body {
 	width: 63.54vw;
 	min-height: 130px;
 	padding: 0.75rem;
-	/* min-width: 1220px; */
 	transform: scale(0.9) translate(-55.5%, 0);
 }
 
@@ -385,7 +379,6 @@ body {
 	width: 63.54vw;
 	min-height: 124px;
 	padding: 0.75rem;
-	/* min-width: 1381px; */
 	transform: scale(0.9) translate(-55.5%, 0);
 }
 
@@ -502,13 +495,11 @@ body {
 	}
 }
 
-/* Container Styling */
 #hud-body .left-side-window {
 	border-top: var(--secondary-hud-elements-color) 2px solid;
 	transform: rotateX(345deg) rotateY(25deg) rotateZ(14deg) translate3d(-25px, -35px, 0px);
 }
 
-/* kkkkkkkkkkkkkkkkkkkkk */
 #hud-body .left-side-window:has(.overflow) {
 	border-bottom: 2px solid var(--secondary-hud-elements-color);
 }
@@ -542,7 +533,6 @@ body {
 	transform: rotateX(-345deg) rotateY(25deg) rotateZ(-14deg) translate3d(45px, -35px, 0px);
 }
 
-/* Nav Tabs Styling */
 #hud-body .nav-tabs {
 	display: flex;
 	gap: 10px;
@@ -615,7 +605,6 @@ body {
 	transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
-/* Tab Content */
 #hud-body .r-tab-content {
 	overflow: auto;
 	height: 20vh;
@@ -872,7 +861,6 @@ body {
 	color: var(--alert-color);
 }
 
-/* Classe ajoutée pour lancer le fade-out */
 #hud-body #left-window-container #bottom-notification-container .notification-message.visible {
 	opacity: 1;
 	height: clamp(2rem, calc(2.2rem + ((100vw - 1920px) * 0.0083333)), 5rem);
@@ -927,24 +915,6 @@ body {
 	background: transparent;
 }
 
-/*
-  --content-font-weight: 100;
-
-  --font-family: 'Stellar', Arial, sans-serif;
-  --menu-color: #999999;
-  --hover-menu-color: #99ffff;
-  --active-menu-color: #99ffff;
-
-  --content-color: #66ffff;
-  --info-color: #ccffcc;
-  --alert-color: #ff6666;
-
-  --primary-hud-elements-color: #66ccff;
-  --secondary-hud-elements-color: #006666;
-  --info-hud-elements-color: #ffffcc;
-
-  */
-
 .background-central-span {
 	background: #ffffff07;
 	display: flex;
@@ -972,28 +942,28 @@ p {
 }
 
 #hud-body .transparent-table {
-	background-color: transparent; /* Supprime le fond général */
+	background-color: transparent;
 	color: var(--content-color);
 }
 
 #hud-body .transparent-table thead th {
-	background-color: rgba(255, 255, 255, 0) !important; /* Header semi-transparent */
+	background-color: rgba(255, 255, 255, 0) !important;
 	color: var(--content-color);
 }
 
 #hud-body .transparent-table tbody tr {
-	background-color: rgba(255, 255, 255, 0.1) !important; /* Lignes semi-transparentes */
+	background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 #hud-body .transparent-table tbody tr:nth-child(even) {
-	background-color: rgba(255, 255, 255, 0) !important; /* Alternance des lignes */
+	background-color: rgba(255, 255, 255, 0) !important;
 	color: var(--content-color);
 }
 
 #hud-body .transparent-table > :not(caption) > * > * {
-	background-color: transparent !important; /* Neutralise le fond */
+	background-color: transparent !important;
 	color: var(--content-color);
-	box-shadow: none !important; /* Supprime l'ombre interne */
+	box-shadow: none !important;
 	border: none;
 }
 
@@ -1197,7 +1167,6 @@ p {
 	}
 }
 
-/* Styles de base pour le menu contextuel */
 .context-menu {
 	position: absolute;
 	display: none;
@@ -1286,45 +1255,47 @@ p {
 	margin-top: 3rem;
 	height: 50vh;
 	margin-bottom: 3rem;
-  }
-  #loading-screen .loader:before,
-  #loading-screen .loader:after {
-	content: "";
+}
+#loading-screen .loader:before,
+#loading-screen .loader:after {
+	content: '';
 	position: absolute;
 	border-radius: 50%;
 	animation: pulsOut 1.8s ease-in-out infinite;
 	filter: drop-shadow(0 0 0.5rem rgba(255, 255, 255, 0.75));
-  }
-  #loading-screen .loader:before {
+}
+#loading-screen .loader:before {
 	width: 100%;
 	padding-bottom: 100%;
 	box-shadow: inset 0 0 0 0.5rem var(--primary-hud-elements-color);
 	animation-name: pulsIn;
-  }
-  #loading-screen .loader:after {
+}
+#loading-screen .loader:after {
 	width: calc(100% - 1rem);
 	padding-bottom: calc(100% - 1rem);
 	box-shadow: 0 0 0 0 var(--primary-hud-elements-color);
-  }
+}
 
-  @keyframes pulsIn {
+@keyframes pulsIn {
 	0% {
-	  box-shadow: inset 0 0 0 0.5rem var(--primary-hud-elements-color);
-	  opacity: 1;
+		box-shadow: inset 0 0 0 0.5rem var(--primary-hud-elements-color);
+		opacity: 1;
 	}
-	50%, 100% {
-	  box-shadow: inset 0 0 0 0 var(--primary-hud-elements-color);
-	  opacity: 0;
+	50%,
+	100% {
+		box-shadow: inset 0 0 0 0 var(--primary-hud-elements-color);
+		opacity: 0;
 	}
-  }
+}
 
-  @keyframes pulsOut {
-	0%, 50% {
-	  box-shadow: 0 0 0 0 var(--primary-hud-elements-color);
-	  opacity: 0;
+@keyframes pulsOut {
+	0%,
+	50% {
+		box-shadow: 0 0 0 0 var(--primary-hud-elements-color);
+		opacity: 0;
 	}
 	100% {
-	  box-shadow: 0 0 0 0.5rem var(--primary-hud-elements-color);
-	  opacity: 1;
+		box-shadow: 0 0 0 0.5rem var(--primary-hud-elements-color);
+		opacity: 1;
 	}
-  }
+}

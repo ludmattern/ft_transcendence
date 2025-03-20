@@ -136,11 +136,9 @@ function processRoute(route, shouldPushState) {
 	}
 }
 
-
 export function getPreviousRoute() {
 	return previousRoute || '/';
 }
-
 
 export function getPreviousPongPlaySubRoute() {
 	return previousPongPlaySubRoute || '/pong/play';

@@ -39,7 +39,7 @@ async function initializeApp() {
 
 	await buildScene();
 	handleRoute(targetRoute);
-    onWindowResize();
+	onWindowResize();
 	const blurScreenEffect = document.querySelector('#blur-screen-effect');
 	blurScreenEffect.addEventListener('click', () => {
 		closeCentralWindow();

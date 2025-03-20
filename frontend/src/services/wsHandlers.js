@@ -18,7 +18,7 @@ const handleGameState = (data) => {
 	gameManager.handleGameUpdate(data);
 };
 
-const handleGameOver = async (data) =>  {
+const handleGameOver = async (data) => {
 	emit('gameOver');
 	if (data.game_id.startsWith('tournLocal_')) {
 		await handleLocalTournamentGameEnding(data);

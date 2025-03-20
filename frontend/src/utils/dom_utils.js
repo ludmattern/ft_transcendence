@@ -1,12 +1,6 @@
-// modules.js
-
-/**
- * Mapping of module names to their respective file paths for dynamic import.
- * This allows for centralized management of module paths.
- */
 export const modules = {
-	leftsidewindow: '/src/pages/hud/leftsidewindow.js', // Path to the sidewindow module
-	rightsidewindow: '/src/pages/hud/rightsidewindow.js', // Path to the sidewindow module
+	leftsidewindow: '/src/pages/hud/leftsidewindow.js',
+	rightsidewindow: '/src/pages/hud/rightsidewindow.js',
 	pongmenu: '/src/pages/pong/pongmenu.js',
 	subscribeForm: '/src/pages/hud/subscribeForm.js',
 	loginForm: '/src/pages/hud/loginForm.js',
@@ -23,11 +17,8 @@ export const modules = {
  * @param {Function} callback - A callback function to execute once the module has been successfully loaded.
  */
 export function loadComponent(target, component, moduleName, callback) {
-	// Replace the target content or the placeholder with the provided component
 	replacePlaceholderOrContent(target, component, () => {
-		// Dynamically load the associated JavaScript module
 		loadComponentScript(moduleName, () => {
-			// Call the callback function if provided
 			if (callback) callback();
 		});
 	});
@@ -42,32 +33,26 @@ export function loadComponent(target, component, moduleName, callback) {
 export function replacePlaceholderOrContent(target, component, callback) {
 	const targetElement = document.querySelector(target);
 
-	// Check if the target element exists
 	if (targetElement) {
-		// If component is null, clear the content and exit
 		if (!component) {
-			targetElement.innerHTML = ''; // Clear the existing content
+			targetElement.innerHTML = '';
 			if (callback && typeof callback === 'function') {
 				callback();
 			}
 			return;
 		}
 
-		// Check if the target is a placeholder (custom tag without children)
 		const isPlaceholder = targetElement.tagName.includes('-');
 
 		if (isPlaceholder) {
-			// Completely replace the placeholder
 			const newElement = component();
 			targetElement.replaceWith(newElement);
 		} else {
-			// Update the content of the target element
-			targetElement.innerHTML = ''; // Clear the existing content
+			targetElement.innerHTML = '';
 			const newElement = component();
 			targetElement.appendChild(newElement);
 		}
 
-		// If a callback is provided, execute it
 		if (callback && typeof callback === 'function') {
 			callback();
 		}
@@ -80,21 +65,17 @@ export function replacePlaceholderOrContent(target, component, callback) {
  * @param {Function} callback - A callback function to execute once the module has been successfully loaded.
  */
 export function loadComponentScript(moduleName, callback) {
-	// Get the file path of the module from the modules object
 	if (moduleName === '') {
 		return;
 	}
 	const modulePath = modules[moduleName];
 
-	// If the module is not found, log an error and return
 	if (!modulePath) {
 		return;
 	}
 
-	// Dynamically import the module
 	import(modulePath)
 		.then((module) => {
-			// Execute the callback function if provided
 			if (callback) callback(module);
 		})
 		.catch((error) => {

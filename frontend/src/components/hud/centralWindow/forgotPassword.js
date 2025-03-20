@@ -9,12 +9,10 @@ export const forgotPassword = (() => {
 	};
 	const state = { ...initialState };
 
-	// Fonction pour réinitialiser l'état
 	const resetState = () => {
 		Object.assign(state, initialState);
 	};
 
-	// Vues pour chaque étape avec le bouton Cancel
 	const emailView = () => `
     <div id="forgot-password-form" class="form-container flex-column justify-content-around text-center active">
       <h5>PASSWORD RECOVERY</h5>
@@ -70,7 +68,6 @@ export const forgotPassword = (() => {
     </div>
   `;
 
-	// Fonction de rendu principal qui choisit la vue selon l'état
 	const renderView = () => {
 		switch (state.step) {
 			case 'email':
@@ -188,7 +185,7 @@ export const forgotPassword = (() => {
 					});
 					const data = await response.json();
 					if (data && data.success) {
-						resetState(); // Réinitialisation de l'état avant de rediriger
+						resetState();
 						handleRoute('/login');
 					}
 				} catch (error) {
@@ -198,7 +195,6 @@ export const forgotPassword = (() => {
 		});
 	};
 
-	// Fonction centralisée pour attacher les événements spécifiques à l'étape et le bouton Cancel
 	const attachEvents = (container) => {
 		switch (state.step) {
 			case 'email':
@@ -213,12 +209,11 @@ export const forgotPassword = (() => {
 			default:
 				console.error('Invalid state step');
 		}
-		// Ajout de l'événement pour le bouton Cancel sur toutes les vues
 		const cancelButton = container.querySelector('#cancel');
 		if (cancelButton) {
 			cancelButton.addEventListener('click', (e) => {
 				e.preventDefault();
-				resetState(); // Réinitialise l'état avant de quitter
+				resetState();
 				handleRoute('/login');
 			});
 		}

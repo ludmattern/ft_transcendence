@@ -64,7 +64,6 @@ class IndexedDBCache {
 			await db.clear(storeName);
 		} catch (error) {
 			return null;
-
 		}
 	}
 }

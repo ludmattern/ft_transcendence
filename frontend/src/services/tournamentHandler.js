@@ -47,7 +47,6 @@ export async function handleLocalTournamentGameEnding(data) {
 	}
 }
 
-
 export async function createTournament(players) {
 	try {
 		const payload = {
@@ -67,7 +66,7 @@ export async function createTournament(players) {
 		if (data.success) {
 			handleRoute('/pong/play/current-tournament');
 		} else {
-			alert("Erreur: " + data.error);
+			alert('Erreur: ' + data.error);
 		}
 
 		return data;

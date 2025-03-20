@@ -8,18 +8,15 @@ class ModelCacheClass {
 	}
 
 	async loadModel(url) {
-		// Vérifie si le modèle est en mémoire vive
 		if (this.models.has(url)) {
 			return this.models.get(url).clone();
 		}
 
-		// Vérifie si le modèle est en IndexedDB
 		const cachedData = await CacheDB.getFile('models', url);
 		if (cachedData) {
 			return this.loadModelFromBuffer(cachedData, url);
 		}
 
-		// Télécharge le modèle si non trouvé
 		return this.loadModelFromNetwork(url);
 	}
 

@@ -2,8 +2,6 @@ import * as THREE from 'https://esm.sh/three';
 import { FlyControls } from 'https://esm.sh/three/examples/jsm/controls/FlyControls.js';
 import Store from './store.js';
 
-// =============== INIT SCENE ENVIREMENT ===============
-
 export function initScene() {
 	Store.scene = new THREE.Scene();
 }
