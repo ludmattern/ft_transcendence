@@ -13,7 +13,7 @@ function parseGameId(gameId) {
 	}
 }
 
-export function handleLocalTournamentGameEnding(data) {
+export async function handleLocalTournamentGameEnding(data) {
 	try {
 		const { player1, player2, tournamentId } = parseGameId(data.game_id);
 		const payload = {

@@ -64,7 +64,7 @@ export const profileForm = createComponent({
 		const userId = await getUserIdFromCookieAPI();
 		loadMatchHistory(userId);
 		loadUserProfile(userId);
-		attachProfilePicUpload();
+		attachProfilePicUploa6d();
 	},
 });
 
