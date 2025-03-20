@@ -2,6 +2,8 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute, handleTournamentRedirection } from '/src/services/router.js';
 import { ws } from '/src/services/websocket.js';
 import { pushInfo,getInfo } from '/src/services/infoStorage.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
+
 
 export const tournamentContent = createComponent({
     tag: 'tournamentContent',
@@ -119,7 +121,7 @@ export const tournamentContent = createComponent({
                     ws.send(JSON.stringify(payload));
                     handleRoute('/pong/play/tournament-creation');
                 } else {
-                    alert(data.message);
+                    createNotificationMessage(data.message, 2500, true);
                 }
             } catch (error) {
                 console.error('Error joining tournament:', error);
@@ -133,7 +135,7 @@ export const tournamentContent = createComponent({
             tournamentSize = parseInt(tournamentSize, 10);
             if (isNaN(tournamentSize) || tournamentSize <= 0) {
                 console.error('Invalid tournament size:', tournamentSize);
-                alert('Please enter a valid tournament size.');
+                createNotificationMessage('Please enter a valid tournament size.', 2500, false);
                 return;
             }
             try {
@@ -154,7 +156,7 @@ export const tournamentContent = createComponent({
                     ws.send(JSON.stringify(payload));
                     handleRoute('/pong/play/tournament-creation');
                 } else {
-                    alert(data.message);
+                    createNotificationMessage(data.message, 2500, true);
                 }
             } catch (error) {
                 console.error('Error joining tournament:', error);

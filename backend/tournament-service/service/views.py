@@ -489,7 +489,7 @@ def try_join_random_tournament(request):
         tournament = ManualTournament.objects.filter(status="upcoming", mode="online", size=tournament_size).order_by("created_at").first()
 
         if not tournament:
-            return JsonResponse({"error": "No upcoming tournament found"}, status=404)
+            return JsonResponse({"message": "No upcoming tournament found"}, status=404)
 
         participant_count = ManualTournamentParticipants.objects.filter(tournament=tournament, status__in=["accepted", "pending"]).count()
 
@@ -511,7 +511,7 @@ def try_join_random_tournament(request):
 
     except Exception as e:
         logger.exception("Error joining random tournament:")
-        return JsonResponse({"message": "Internal server server"}, status=500)
+        return JsonResponse({"message": "Internal server error"}, status=500)
 
 
 @require_POST

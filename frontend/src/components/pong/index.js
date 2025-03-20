@@ -19,4 +19,3 @@ export { leaderboard } from '/src/components/pong/leaderboard/leaderboard.js';
 
 //tournament components
 export { tournamentCreation } from '/src/components/pong/play/tournamentCreation.js';
-export { tournamentJoin } from '/src/components/pong/play/tournamentJoin.js';
