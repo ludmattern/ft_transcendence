@@ -336,21 +336,27 @@ OAUTH_HOSTNAME = settings.OAUTH_HOSTNAME
 @require_GET
 def get_42_auth_url(request):
     state = generate_state()
+    logger.info(f"Generated state: {state}")
     signer = Signer()
     signed_state = signer.sign(state)
+    logger.info(f"Signed state: {signed_state}")
     
     auth_url = (
         f"https://{OAUTH_HOSTNAME}/oauth/authorize?"
         f"client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}"
         f"&response_type=code&scope=public&state={state}"
     )
+    
+    logger.info(f"Redirecting to: {auth_url}")
     response = JsonResponse({"url": auth_url})
-    response.set_cookie('oauth_state', signed_state, httponly=True, secure=True, samesite="Strict")
+    logger.info(f"Setting state cookie: {signed_state}")
+    response.set_cookie('oauth_state', signed_state, httponly=True, secure=True, samesite="Lax")
 
     return response
 
 @require_GET
 def oauth_callback(request):
+    logger.info("OAuth callback : request.GET = %s", request.GET)
     error = request.GET.get("error")
     if error:
         return redirect(f"https://{SERVER_IP}:8443/login")

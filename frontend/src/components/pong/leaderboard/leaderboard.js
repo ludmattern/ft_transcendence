@@ -3,6 +3,7 @@ import { handleRoute } from '/src/services/router.js';
 import { updateActiveLink } from '/src/components/hud/general/header.js';
 import { getUsername } from '/src/services/auth.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 
 // Variables globales
 let leaderboardData = [];
@@ -68,7 +69,7 @@ export const leaderboard = createComponent({
 			const username = await getUsername(await getUserIdFromCookieAPI());
 			const startIndex = currentPage * playersPerPage;
 			const endIndex = startIndex + playersPerPage;
-			leaderboardBody.innerHTML = generateLeaderboardRows(leaderboardData.slice(startIndex, endIndex) ,username);
+			leaderboardBody.innerHTML = generateLeaderboardRows(leaderboardData.slice(startIndex, endIndex), username);
 
 			prevPageButton.disabled = currentPage === 0;
 			nextPageButton.disabled = endIndex >= leaderboardData.length;
@@ -88,7 +89,6 @@ export const leaderboard = createComponent({
 		findMeButton.addEventListener('click', () => {
 			findUserInLeaderboard(el);
 			updateLeaderboard();
-
 		});
 
 		backToListButton.addEventListener('click', () => {
@@ -104,12 +104,11 @@ export const leaderboard = createComponent({
 	},
 });
 
-
 async function fetchLeaderboard() {
 	try {
 		const response = await fetch('/api/user-service/leaderboard/', {
-			credentials: 'include'
-		  });
+			credentials: 'include',
+		});
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
@@ -125,7 +124,6 @@ async function fetchLeaderboard() {
 	}
 }
 
-
 function generateLeaderboardRows(players, username) {
 	return players
 		.map(
@@ -133,7 +131,7 @@ function generateLeaderboardRows(players, username) {
 	  <tr class="${player.username === username ? 'table-warning' : ''}">
 		  <td>${player.rank}</td>
 		  <td>
-			<span class="player-link text-light text-decoration-none" data-username="${player.username}" style="cursor: pointer;">
+			<span class="player-link ${player.username === username ? 'text-black' : 'text-white'} text-decoration-none" data-username="${player.username}" style="cursor: pointer;">
 			  ${player.username}
 			</span>
 		  </td>
@@ -144,13 +142,12 @@ function generateLeaderboardRows(players, username) {
 		.join('');
 }
 
-
 async function findUserInLeaderboard(el) {
 	const username = await getUsername(await getUserIdFromCookieAPI());
 	const user = leaderboardData.find((p) => p.username === username);
 
 	if (!user) {
-		alert('You\'re not even ranked... Get better.');
+		createNotificationMessage("You're not even ranked... Get better.", 2500, true);
 		return;
 	}
 

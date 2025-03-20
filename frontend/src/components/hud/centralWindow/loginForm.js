@@ -68,8 +68,11 @@ export const loginForm = createComponent({
 		el.querySelector('#login-42').addEventListener('click', async () => {
 			try {
 				const response = await fetch('/api/auth-service/get-42-url/');
+				console.log(response);
 				const data = await response.json();
+				console.log(data);
 				if (data.url) {
+					console.log('Opening popup');
 					window.open(data.url, 'oauthPopup', 'width=800,height=600');
 				}
 			} catch (error) {
