@@ -19,6 +19,7 @@ CREATE TABLE
 		twofa_method VARCHAR(50) DEFAULT NULL,
 		phone_number VARCHAR(255) DEFAULT NULL,
 		temp_2fa_code VARCHAR(255) DEFAULT NULL,
+		reset_2fa_expiry TIMESTAMP DEFAULT NULL,
 		temp_reset_code VARCHAR(255) DEFAULT NULL,
 		reset_code_expiry TIMESTAMP DEFAULT NULL,
 		totp_secret VARCHAR(200) DEFAULT NULL,
