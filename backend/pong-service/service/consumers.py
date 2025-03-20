@@ -228,9 +228,10 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 lambda: list(
                     ManualTournamentParticipants.objects.filter(tournament_id=tournament_id)
                     .exclude(Q(status="rejected") | Q(status="left"))
-                    .values_list("id", flat=True)
+                    .values_list("user_id", flat=True) 
                 )
             )()
+
 
             payload = {
                 "type": "info_message",

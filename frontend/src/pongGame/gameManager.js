@@ -130,10 +130,8 @@ class GameManager {
 	startGame(gameConfig) {
 		this.initClientData();
 
-		console.log('Starting game with config:', gameConfig);
 		componentManagers['HUD'].unloadComponent('pongTuto');
 		this.gameMode = gameConfig.mode;
-		console.log('gameMode:', this.gameMode);
 		if (this.activeGame) this.endGame();
 
 		this.activeGame = gameConfig;
@@ -147,7 +145,6 @@ class GameManager {
 
 		let player1 = gameConfig.side === 'left' ? gameConfig.user_id : gameConfig.opponent_id;
 		let player2 = gameConfig.side === 'right' ? gameConfig.user_id : gameConfig.opponent_id;
-		console.log('player1:', player1, 'player2:', player2);
 
 		if (gameConfig.mode === 'local') {
 			document.addEventListener('keydown', this.localKeydownHandler);
@@ -179,7 +176,6 @@ class GameManager {
 			player1 = gameConfig.player1;
 			player2 = gameConfig.player2;
 		}
-		console.log(` Sending start_game event: player1=${player1}, player2=${player2}, with game_id=${this.gameId}`);
 		ws.send(
 			JSON.stringify({
 				type: 'game_event',
@@ -194,7 +190,6 @@ class GameManager {
 	}
 
 	endGame() {
-		console.log('Ending current game...');
 		endGameScreen();
 		if (!this.activeGame) {
 			return;
@@ -209,7 +204,6 @@ class GameManager {
 			document.removeEventListener('keydown', this.matchMakingKeydownHandler);
 			document.removeEventListener('keyup', this.matchMakingKeyupHandler);
 		}
-		console.log('gameId on endin:', this.gameId);
 		ws.send(
 			JSON.stringify({
 				type: 'game_event',
@@ -278,19 +272,15 @@ class GameManager {
 		if (data.type === 'game_state') {
 			this.updateGameState(data.payload);
 		} else if (data.type === 'game_over') {
-			console.log('Game over! Winner is player:', data.winner);
-			console.log('Final scores:', data.final_scores);
 			this.endGame();
 			if (Store.pongScene) Store.pongScene.clear();
 			const previousPongPlaySubRoute = getPreviousPongPlaySubRoute();
-			console.log(previousPongPlaySubRoute);
 			emit('updateBracket');
 			handleRoute(previousPongPlaySubRoute);
 		}
 	}
 
 	generateGameId(gameConfig) {
-		console.log('Generating game in:', gameConfig.mode);
 		if (!gameConfig.gameId) {
 			if (gameConfig.mode === 'private') return gameConfig.matchkey;
 			if (gameConfig.mode === 'matchmaking') return `matchmaking_${Date.now()}`;

@@ -476,10 +476,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             next_match_player_ids = event.get("next_match_player_ids")
             current_match_player_ids = event.get("current_match_player_ids")
 
-            for participant in participant_list:
+            for user_id in participant_list:
                 await self.channel_layer.group_send(
-                    f"user_{participant}",
-                    {"type": "info_message", "action": "refresh_brackets", "tournament_id": tournament_id},
+                    f"user_{user_id}",
+                    {
+                        "type": "info_message",
+                        "action": "refresh_brackets",
+                        "tournament_id": tournament_id,
+                    },
                 )
 
             for next_match_player_id in next_match_player_ids:

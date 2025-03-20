@@ -262,7 +262,6 @@ function createCompletedMatchHtml(match, displayHtml) {
 }
 
 function getCompletedMatchHtml(match) {
-	console.log(match);
 	if (!match.score) {
 		return `${match.player1} vs ${match.player2}`;
 	}
