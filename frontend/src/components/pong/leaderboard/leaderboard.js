@@ -147,7 +147,7 @@ async function findUserInLeaderboard(el) {
 	const user = leaderboardData.find((p) => p.username === username);
 
 	if (!user) {
-		createNotificationMessage("You're not even ranked... Get better.", 2500, true);
+		createNotificationMessage("You're not even ranked... Get better", 2500, true);
 		return;
 	}
 

@@ -89,7 +89,7 @@ export async function setupChatInput() {
 						historyIndex = messageHistory.length; // Reset index
 						inputField.value = '';
 					} else if (trimmedMessage.length > 150) {
-						createNotificationMessage('Message is too long, 150 chars. max.', 2500, true);
+						createNotificationMessage('Message is too long, 150 chars max', 2500, true);
 					}
 					break;
 				default:
@@ -106,7 +106,7 @@ export async function setupChatInput() {
 				historyIndex = messageHistory.length; // Reset index
 				inputField.value = '';
 			} else if (trimmedMessage.length > 150) {
-				createNotificationMessage('Message is too long, 150 chars. max.', 2500, true);
+				createNotificationMessage('Message is too long, 150 chars max', 2500, true);
 			}
 		});
 	}

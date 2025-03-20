@@ -149,7 +149,7 @@ export const localTournamentCreation = createComponent({
             return;
           }
           if (players.length >= tournamentSize) {
-            createNotificationMessage(`You can only add up to ${tournamentSize} players.`, 2500, true);
+            createNotificationMessage(`You can only add up to ${tournamentSize} players`, 2500, true);
             playerNameInput.value = '';
             return;
           }
