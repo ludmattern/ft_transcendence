@@ -126,6 +126,8 @@ def validate_password(password):
         return "Password must contain at least one lowercase letter"
     if not re.search(r"[A-Z]", password):
         return "Password must contain at least one uppercase letter"
+    if not re.search(r"[0-9]", password):
+        return "Password must contain at least one digit"
     if not re.search(r"[@$!%*?&#^]", password):
         return "Password must contain at least one special character"
     return None
@@ -237,6 +239,8 @@ def update_info(request):
             if new_email != confirm_email:
                 return JsonResponse({"success": False, "message": "Emails do not match"}, status=400)
             decrypted_email = decrypt_thing(user.email)
+            if new_email == decrypted_email:
+                return JsonResponse({"success": False, "message": "You're already using this email"}, status=400)
             if new_email != decrypted_email:
                 if ManualUser.objects.exclude(id=user.id).filter(email=encrypt_thing(new_email)).exists():
                     return JsonResponse({"success": False, "message": "Email already in use"}, status=409)
@@ -244,7 +248,11 @@ def update_info(request):
                 if new_email_error_or_encrypted == "Email decryption failed" or  new_email_error_or_encrypted == "Email already in use" or new_email_error_or_encrypted == "Email must be less than 50 characters" or new_email_error_or_encrypted == "Invalid email format":
                     logging.error("Email error: %s", new_email_error_or_encrypted)
                     return JsonResponse({"success": False, "message": new_email_error_or_encrypted}, status=400)
+                
             user.email = encrypt_thing(new_email)
+
+        if new_password == old_password:
+            return JsonResponse({"success": False, "message": "New password cannot be the same as old password"}, status=400)
 
         if new_password:
             if new_password != confirm_password:

@@ -6,6 +6,8 @@ import { checkPasswordConfirmation } from '/src/components/hud/centralWindow/sub
 import { checkEmailConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { getInfo, pushInfo } from '/src/services/infoStorage.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
+
 
 export const settingsForm = createComponent({
 	tag: 'settingsForm',
@@ -94,7 +96,7 @@ export const settingsForm = createComponent({
 							await pushInfo('registered_user', formData.newUsername);
 							await pushInfo('username', formData.newUsername);
 						}
-						alert('Information updated successfully.');
+						createNotificationMessage('Information updated successfully.', 2500, false);
 						resetErrorMessages();
 						emptyFields();
 					} else {
@@ -118,7 +120,7 @@ export const settingsForm = createComponent({
 
 function emptyFormError(data) {
 	if (data.message.includes('No changes to update')) {
-		alert('No changes to update');
+		createNotificationMessage('No changes to update', 2500, false);
 	}
 }
 
@@ -127,6 +129,12 @@ function passwordError(data) {
 		document.getElementById('current-pass-empty').style.display = 'block';
 	} else {
 		document.getElementById('current-pass-empty').style.display = 'none';
+	}
+
+	if (data.message.includes('New password cannot be the same as old password')) {
+		document.getElementById('error-same-as-old-pass').style.display = 'block';
+	} else {
+		document.getElementById('error-same-as-old-pass').style.display = 'none';
 	}
 
 	if (data.message.includes('Current password is incorrect')) {
@@ -162,6 +170,13 @@ function emailError(data) {
 	} else {
 		document.getElementById('error-message-mail-size').style.display = 'none';
 	}
+
+	if (data.message.includes('You\'re already using this email')) {
+		document.getElementById('error-same-as-old-email').style.display = 'block';
+	} else {
+		document.getElementById('error-same-as-old-email').style.display = 'none';
+	}
+
 	if (data.message.includes('Emails do not match')) {
 		document.getElementById('error-message-mail2').style.display = 'block';
 	} else {
@@ -199,9 +214,12 @@ function createFormGroup(id, type, label) {
 	  ${id === 'new-password' ? '<div id="bad-pass-upper" class="text-danger mt-2" style="display: none;">Password must have at least one uppercase char</div>' : ''}
 	  ${id === 'new-password' ? '<div id="bad-pass-lower" class="text-danger mt-2" style="display: none;">Password must have at least one lowercase char</div>' : ''}
 	  ${id === 'new-password' ? '<div id="bad-pass-special" class="text-danger mt-2" style="display: none;">Password must have at least one special char</div>' : ''}
+	  ${id === 'new-password' ? '<div id="bad-pass-number" class="text-danger mt-2" style="display: none;">Password must have at least one digit</div>' : ''}
+	  ${id === 'new-password' ? '<div id="error-same-as-old-pass" class="text-danger mt-2" style="display: none;">New password cannot be the same as old password</div>' : ''}
 	  ${id === 'confirm-new-password' ? '<div id="error-message-pass" class="text-danger mt-2" style="display: none;">Password does not match</div>' : ''}
 	  ${id === 'new-email' ? '<div id="error-message-mail" class="text-danger mt-2" style="display: none;">E-mail already taken</div>' : ''}
 	  ${id === 'new-email' ? '<div id="error-message-mail-size" class="text-danger mt-2" style="display: none;">E-mail too long</div>' : ''}
+	  ${id === 'new-email' ? '<div id="error-same-as-old-email" class="text-danger mt-2" style="display: none;">You\'re already using this email</div>' : ''}
 	  ${id === 'confirm-new-email' ? '<div id="error-message-mail2" class="text-danger mt-2" style="display: none;">E-mail does not match</div>' : ''}
 	</div>
 `;
@@ -253,11 +271,14 @@ function resetErrorMessages() {
 		'bad-pass-size',
 		'bad-pass-upper',
 		'bad-pass-lower',
+		'bad-pass-number',
 		'bad-pass-special',
+		'error-same-as-old-pass',
 		'error-message-pass',
 		'error-message-mail-size',
 		'error-message-mail',
 		'error-message-mail2',
+		'error-same-as-old-email',
 	];
 
 	errorIds.forEach((errId) => {

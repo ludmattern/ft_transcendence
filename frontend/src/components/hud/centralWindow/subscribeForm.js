@@ -23,6 +23,7 @@ export const subscribeForm = createComponent({
             <div id="bad-pass-size" class="text-danger mt-2" style="display: none;">Password must contain between 6 and 20 char</div>
             <div id="bad-pass-upper" class="text-danger mt-2" style="display: none;">Password must have at least one uppercase char</div>
             <div id="bad-pass-lower" class="text-danger mt-2" style="display: none;">Password must have at least one lowercase char</div>
+			<div id="bad-pass-number" class="text-danger mt-2" style="display: none;">Password must have at least one digit</div>
             <div id="bad-pass-special" class="text-danger mt-2" style="display: none;">Password must have at least one special char</div>
           </div>
           <div class="form-group">
@@ -147,7 +148,7 @@ function getFormValues(el) {
  * Cache tous les messages d'erreur liés au formulaire
  */
 function resetErrorMessages() {
-	const errorIds = ['bad-id', 'bad-pass-size', 'bad-pass-upper', 'bad-pass-lower', 'bad-pass-special', 'error-message-mail-size', 'error-message-mail', 'error-message-mail2', 'error-message-pass'];
+	const errorIds = ['bad-id', 'bad-pass-size', 'bad-pass-upper', 'bad-pass-number', 'bad-pass-lower', 'bad-pass-special', 'error-message-mail-size', 'error-message-mail', 'error-message-mail2', 'error-message-pass'];
 
 	errorIds.forEach((errId) => {
 		const el = document.getElementById(errId);
@@ -202,6 +203,12 @@ export function validatePassword(password) {
 	const regexUpper = /[A-Z]/;
 	if (!regexUpper.test(password)) {
 		document.getElementById('bad-pass-upper').style.display = 'block';
+		isValid = false;
+	}
+
+	const regexNumber = /[0-9]/;
+	if (!regexNumber.test(password)) {
+		document.getElementById('bad-pass-number').style.display = 'block';
 		isValid = false;
 	}
 
