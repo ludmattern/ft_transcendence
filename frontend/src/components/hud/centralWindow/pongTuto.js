@@ -7,7 +7,6 @@ export const pongTuto = (config) =>
 	createComponent({
 		tag: 'pongTuto',
 
-		// Générer le HTML
 		render: () => `
     <div id="logout-form" class="form-container">
       <h5>Get Ready for the Match!</h5>
@@ -24,7 +23,7 @@ export const pongTuto = (config) =>
 			config.type !== 'fullScreen'
 				? `
         <div class="mb-3">
-          <h6>Player 2: <strong>Guest</strong></h6>
+          <h6 id="p2">Player 2: <strong>Guest</strong></h6>
           <p><strong class="border p-2">↑</strong> up</p>
           <p><strong class="border p-2">←</strong> left <strong class="border p-2">↓</strong> down <strong class="border p-2">→</strong> right</p>
         </div>`
@@ -50,8 +49,16 @@ export const pongTuto = (config) =>
 			const usernameData = await getInfo('username');
 			const username = usernameData.success ? usernameData.value : 'Guest';
 			const usernamePlaceholder = el.querySelector('#username-placeholder');
-			if (usernamePlaceholder) {
-				usernamePlaceholder.textContent = username;
+			const player2Element = el.querySelector('#p2 strong');
+			if (config.gameMode && config.gameMode === 'local-tournament') {
+				if (usernamePlaceholder) 
+				  usernamePlaceholder.textContent = config.player1;
+				if (player2Element) 
+				  player2Element.textContent = config.player2;
+			} 
+			else {
+				if (usernamePlaceholder) 
+				  usernamePlaceholder.textContent = username;
 			}
 
 			const readyButton = el.querySelector('#ready');
