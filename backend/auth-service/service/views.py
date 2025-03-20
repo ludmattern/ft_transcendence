@@ -1,6 +1,7 @@
 import json
 import bcrypt
 import datetime
+from datetime import timedelta
 import random
 import jwt
 import pyotp  # type: ignore
@@ -197,6 +198,7 @@ def login_view(request):
         code = generate_2fa_code()
         hashed_code = bcrypt.hashpw(code.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
         user.temp_2fa_code = hashed_code
+        user.reset_2fa_expiry = datetime.datetime.utcnow() + timedelta(minutes=2)
         user.save()
         if user.twofa_method == "email":
             send_2fa_email(user.email, code)
@@ -291,6 +293,8 @@ def verify_2fa_view(request):
         else:
             return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
     elif bcrypt.checkpw(code.encode("utf-8"), user.temp_2fa_code.encode("utf-8")):
+        if datetime.datetime.utcnow() > user.reset_2fa_expiry:
+            return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
         token_str, expiry = generate_session_token(user)
         user.token_expiry = expiry
         user.session_token = token_str
