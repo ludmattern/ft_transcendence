@@ -7,7 +7,6 @@ let lastOffset = 198;
 export const footer = createComponent({
 	tag: 'footer',
 
-	// Générer le HTML
 	render: () => `
 	<div class="row">
 	<div class="col-12">
@@ -21,9 +20,7 @@ export const footer = createComponent({
 	</div>
 `,
 
-	// Ajouter les événements après le chargement
 	attachEvents: (el) => {
-		// Gestion de la boussole
 		initializeCompass(el);
 
 		const points = el.querySelectorAll('.points');

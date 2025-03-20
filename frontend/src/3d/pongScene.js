@@ -18,44 +18,44 @@ export let cameraPlayer1, cameraPlayer2, screenMesh;
 const shaders = {
 	local: {
 		vertex: `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
+			varying vec2 vUv;
+			void main() {
+				vUv = uv;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+			}
+		`,
 		fragment: `
-      uniform sampler2D textureP1;
-      uniform sampler2D textureP2;
-      varying vec2 vUv;
+			uniform sampler2D textureP1;
+			uniform sampler2D textureP2;
+			varying vec2 vUv;
 
-      void main() {
-        vec4 color;
-        if (vUv.x < 0.5) {
-          color = texture2D(textureP1, vec2(vUv.x * 2.0, vUv.y));
-        } else {
-          color = texture2D(textureP2, vec2((vUv.x - 0.5) * 2.0, vUv.y));
-        }
-        gl_FragColor = color;
-      }
-    `,
+			void main() {
+				vec4 color;
+				if (vUv.x < 0.5) {
+				color = texture2D(textureP1, vec2(vUv.x * 2.0, vUv.y));
+				} else {
+				color = texture2D(textureP2, vec2((vUv.x - 0.5) * 2.0, vUv.y));
+				}
+				gl_FragColor = color;
+			}
+		`,
 	},
 	matchmaking: {
 		vertex: `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
+			varying vec2 vUv;
+			void main() {
+				vUv = uv;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+			}
+		`,
 		fragment: `
-      uniform sampler2D textureP1;
-      varying vec2 vUv;
+			uniform sampler2D textureP1;
+			varying vec2 vUv;
 
-      void main() {
-        gl_FragColor = texture2D(textureP1, vUv);
-      }
-    `,
+			void main() {
+				gl_FragColor = texture2D(textureP1, vUv);
+			}
+		`,
 	},
 };
 
@@ -120,45 +120,45 @@ export function buildGameScene(gameConfig) {
 	cameraCube.position.z = 7;
 
 	const vertexShader = `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-`;
+		varying vec2 vUv;
+		void main() {
+			vUv = uv;
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+		}
+	`;
 
 	const fragmentShader = `
-  uniform float uCellSize;      // Taille manuelle de la cellule (hauteur)
-  uniform float uNumCells;      // Nombre de cellules par axe (pour le mode nombre de cellules)
-  uniform float uUseNumCells;   // Mode : 1.0 = utiliser le nombre de cellules, 0.0 = utiliser uCellSize
-  uniform float uCellAspect;    // Facteur pour la largeur de la cellule (1.0 = carré, < 1.0 = cellule plus étroite)
-  uniform float uThickness;
-  uniform float uModOffset;
-  uniform float uGridCenter;
-  uniform float uLineMultiplier;
-  uniform vec3 uBackgroundColor;
-  uniform vec3 uNeonColor;
-  varying vec2 vUv;
-  
-  void main() {
-    // Calcul de la taille effective (hauteur) de la cellule selon le mode choisi
-    float effectiveCellSize = mix(uCellSize, 1.0 / uNumCells, uUseNumCells);
-    // La largeur effective est réduite par le facteur uCellAspect
-    float effectiveCellSizeX = effectiveCellSize * uCellAspect;
-    
-    // Calcul des coordonnées locales dans chaque cellule
-    float gridX = mod(vUv.x / effectiveCellSizeX + uModOffset, 1.0);
-    float gridY = mod(vUv.y / effectiveCellSize + uModOffset, 1.0);
+		uniform float uCellSize;      // Taille manuelle de la cellule (hauteur)
+		uniform float uNumCells;      // Nombre de cellules par axe (pour le mode nombre de cellules)
+		uniform float uUseNumCells;   // Mode : 1.0 = utiliser le nombre de cellules, 0.0 = utiliser uCellSize
+		uniform float uCellAspect;    // Facteur pour la largeur de la cellule (1.0 = carré, < 1.0 = cellule plus étroite)
+		uniform float uThickness;
+		uniform float uModOffset;
+		uniform float uGridCenter;
+		uniform float uLineMultiplier;
+		uniform vec3 uBackgroundColor;
+		uniform vec3 uNeonColor;
+		varying vec2 vUv;
+		
+		void main() {
+			// Calcul de la taille effective (hauteur) de la cellule selon le mode choisi
+			float effectiveCellSize = mix(uCellSize, 1.0 / uNumCells, uUseNumCells);
+			// La largeur effective est réduite par le facteur uCellAspect
+			float effectiveCellSizeX = effectiveCellSize * uCellAspect;
+			
+			// Calcul des coordonnées locales dans chaque cellule
+			float gridX = mod(vUv.x / effectiveCellSizeX + uModOffset, 1.0);
+			float gridY = mod(vUv.y / effectiveCellSize + uModOffset, 1.0);
 
-    float lineX = smoothstep(uThickness, uThickness * uLineMultiplier, abs(gridX - uGridCenter));
-    float lineY = smoothstep(uThickness, uThickness * uLineMultiplier, abs(gridY - uGridCenter));
+			float lineX = smoothstep(uThickness, uThickness * uLineMultiplier, abs(gridX - uGridCenter));
+			float lineY = smoothstep(uThickness, uThickness * uLineMultiplier, abs(gridY - uGridCenter));
 
-    float gridLines = 1.0 - min(lineX, lineY);
-    vec3 color = mix(uBackgroundColor, uNeonColor, gridLines);
+			float gridLines = 1.0 - min(lineX, lineY);
+			vec3 color = mix(uBackgroundColor, uNeonColor, gridLines);
 
-    gl_FragColor = vec4(color, 1.0);
-  }
-`;
+			gl_FragColor = vec4(color, 1.0);
+		}
+	`;
 
 	const neonMaterial = new THREE.ShaderMaterial({
 		vertexShader,
