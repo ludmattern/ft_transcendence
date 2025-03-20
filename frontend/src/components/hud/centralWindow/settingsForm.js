@@ -156,6 +156,18 @@ function usernameError(data) {
 	} else {
 		document.getElementById('error-message-id').style.display = 'none';
 	}
+
+	if (data.message.includes('Username must be between 6 and 20 characters')) {
+		document.getElementById('bad-length').style.display = 'block';
+	} else {
+		document.getElementById('bad-length').style.display = 'none';
+	}
+
+	if (data.message.includes('Username can only contain alphanumeric characters and underscores')) {
+		document.getElementById('bad-user-rule').style.display = 'block';
+	} else {
+		document.getElementById('bad-user-rule').style.display = 'none';
+	}
 }
 
 function emailError(data) {
@@ -207,7 +219,8 @@ function createFormGroup(id, type, label) {
 	  <label class="mb-3" for="${id}">${label}</label>
 	  <input type="${type}" id="${id}" name="${id}" class="form-control" autocomplete="${getAutocompleteValue(id)}"/>
 	  ${id === 'new-username' ? '<div id="error-message-id" class="text-danger mt-2" style="display: none;">Id already taken</div>' : ''}
-	  ${id === 'new-username' ? '<div id="bad-id" class="text-danger mt-2" style="display: none;">Id must contain between 6 and 20 char</div>' : ''}
+	  ${id === 'new-username' ? '<div id="bad-length" class="text-danger mt-2" style="display: none;">Id must contain between 6 and 20 char</div>' : ''}
+	  ${id === 'new-username' ? '<div id="bad-user-rule" class="text-danger mt-2" style="display: none;">Id can only contain alphanumeric characters and underscores</div>' : ''}
 	  ${id === 'old-password' ? '<div id="current-pass-empty" class="text-danger mt-2" style="display: none;">Please enter current password</div>' : ''}
 	  ${id === 'old-password' ? '<div id="bad-current-pass" class="text-danger mt-2" style="display: none;">Current password is incorrect</div>' : ''}
 	  ${id === 'new-password' ? '<div id="bad-pass-size" class="text-danger mt-2" style="display: none;">Password must contain between 6 and 20 char</div>' : ''}
@@ -265,7 +278,8 @@ async function collectFormData(el) {
 function resetErrorMessages() {
 	const errorIds = [
 		'error-message-id',
-		'bad-id',
+		'bad-length',
+		'bad-user-rule',
 		'current-pass-empty',
 		'bad-current-pass',
 		'bad-pass-size',
