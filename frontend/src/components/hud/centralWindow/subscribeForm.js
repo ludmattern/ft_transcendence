@@ -125,7 +125,7 @@ export const subscribeForm = createComponent({
 						handleRoute('/login');
 					}
 				} catch (err) {
-					console.error('register failed:', err.message);
+					console.error('Register failed: ', err.message);
 				}
 			}
 		});

@@ -108,11 +108,11 @@ export const forgotPassword = (() => {
 							errorMessageElement.classList.remove('d-none');
 						}
 					} else {
-						console.error('Error requesting password reset:', data.message);
+						console.error('Error requesting password reset: ', data.message);
 					}
 				}
 			} catch (error) {
-				console.error('Error:', error);
+				console.error('Error: ', error);
 			}
 		});
 	};
@@ -140,7 +140,7 @@ export const forgotPassword = (() => {
 					attachEvents(container);
 				}
 			} catch (error) {
-				console.error('Error:', error);
+				console.error('Error: ', error);
 			}
 		});
 		if (resendButton) {
@@ -154,10 +154,10 @@ export const forgotPassword = (() => {
 					});
 					const data = await response.json();
 					if (!data.success) {
-						console.error('Error resending code:', data.message);
+						console.error('Error resending code: ', data.message);
 					}
 				} catch (error) {
-					console.error('Error:', error);
+					console.error('Error: ', error);
 				}
 			});
 		}
@@ -189,7 +189,7 @@ export const forgotPassword = (() => {
 						handleRoute('/login');
 					}
 				} catch (error) {
-					console.error('Error:', error);
+					console.error('Error: ', error);
 				}
 			}
 		});

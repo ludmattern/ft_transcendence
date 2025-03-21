@@ -71,6 +71,6 @@ export async function loadModels() {
 		Store.screenObject2.material = Store.material;
 		Store.screenObject3.material = Store.material;
 	} catch (error) {
-		console.error('Erreur lors du chargement du modèle SN13 :', error);
+		console.error('Error while loading SN13 model: ', error);
 	}
 }

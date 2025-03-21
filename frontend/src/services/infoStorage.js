@@ -9,7 +9,7 @@ export async function pushInfo(key, value) {
 		const data = await response.json();
 		return data;
 	} catch (error) {
-		console.error('Error pushing info:', error);
+		console.error('Error pushing info: ', error);
 	}
 }
 
@@ -25,7 +25,7 @@ export async function getInfo(key) {
 		const data = await response.json();
 		return data;
 	} catch (error) {
-		console.error('Error getting info:', error);
+		console.error('Error getting info: ', error);
 	}
 }
 
@@ -41,6 +41,6 @@ export async function deleteInfo(key) {
 		const data = await response.json();
 		return data;
 	} catch (error) {
-		console.error('Error deleting info:', error);
+		console.error('Error deleting info: ', error);
 	}
 }

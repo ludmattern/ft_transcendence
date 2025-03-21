@@ -124,7 +124,7 @@ export const tournamentContent = createComponent({
                     createNotificationMessage(data.message, 2500, true);
                 }
             } catch (error) {
-                console.error('Error joining tournament:', error);
+                console.error('Error joining tournament: ', error);
             }
         });
         
@@ -134,7 +134,7 @@ export const tournamentContent = createComponent({
             let tournamentSize = document.getElementById('tournamentSize-random').value;
             tournamentSize = parseInt(tournamentSize, 10);
             if (isNaN(tournamentSize) || tournamentSize <= 0) {
-                console.error('Invalid tournament size:', tournamentSize);
+                console.error('Invalid tournament size: ', tournamentSize);
                 createNotificationMessage('Please enter a valid tournament size', 2500, false);
                 return;
             }
@@ -159,7 +159,7 @@ export const tournamentContent = createComponent({
                     createNotificationMessage(data.message, 2500, true);
                 }
             } catch (error) {
-                console.error('Error joining tournament:', error);
+                console.error('Error joining tournament: ', error);
             }
         });
         

@@ -117,10 +117,10 @@ async function fetchLeaderboard() {
 		if (data.success) {
 			leaderboardData = data.players;
 		} else {
-			console.error('error when fetching leaderboard :', data.error);
+			console.error('Error when fetching leaderboard: ', data.error);
 		}
 	} catch (error) {
-		console.error('Error fetching leaderboard:', error);
+		console.error('Error fetching leaderboard: ', error);
 	}
 }
 

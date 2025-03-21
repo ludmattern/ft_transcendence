@@ -43,7 +43,7 @@ function processNotificationBuffer() {
 export function createNotificationMessage(message, duration = 2500, error = false) {
 	const container = document.getElementById('bottom-notification-container');
 	if (!container) {
-		console.error('Le container de notification n\'a pas été trouvé.');
+		console.error('Notification container has not been found');
 		return;
 	}
 
@@ -106,6 +106,6 @@ export async function updateAndCompareInfoData() {
 			sessionStorage.setItem('infoTabData', JSON.stringify(serverInfo));
 		}
 	} catch (error) {
-		console.error('Erreur lors de la mise à jour des informations :', error);
+		console.error('Error while updating information: ', error);
 	}
 }

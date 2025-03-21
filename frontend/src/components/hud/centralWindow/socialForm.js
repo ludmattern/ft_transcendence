@@ -222,7 +222,7 @@ async function getFriends() {
 				'<p style="opacity: 0.7;">It\'s a lonely world...</p>';
 		}
 	} catch (error) {
-		console.error("Error whnf fetching friend list:", error);
+		console.error("Error while fetching friend list: ", error);
 	}
 }
 
@@ -251,6 +251,6 @@ async function fetchPilot(query, container) {
 			}
 		}
 	} catch (error) {
-		console.error("Error searching pilots:", error);
+		console.error("Error searching pilots: ", error);
 	}
 }

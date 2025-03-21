@@ -104,7 +104,7 @@ export async function initWireframeScene() {
 		}
 		animateWireframe();
 	} catch (error) {
-		console.error('Erreur lors du chargement du modèle Wireframe :', error);
+		console.error('Error while loading Wireframe model :', error);
 	}
 
 	function onWireframeResize() {
