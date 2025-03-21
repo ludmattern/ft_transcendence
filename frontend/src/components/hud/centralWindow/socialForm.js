@@ -222,7 +222,7 @@ async function getFriends() {
 				'<p style="opacity: 0.7;">It\'s a lonely world...</p>';
 		}
 	} catch (error) {
-		console.error("Erreur lors de la récupération de la liste d'amis:", error);
+		console.error("Error whnf fetching friend list:", error);
 	}
 }
 

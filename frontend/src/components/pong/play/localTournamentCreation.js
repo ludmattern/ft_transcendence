@@ -186,7 +186,7 @@ export const localTournamentCreation = createComponent({
         });
       })
       .catch((error) => {
-        console.error('Erreur lors de la récupération des infos:', error);
+        console.error('error when fetching infos:', error);
       });
   },
 });

@@ -12,7 +12,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             await self.accept()
             await self.channel_layer.group_add("matchmaking_service", self.channel_name)
             logger.info(
-                f"🔗 COnnected on 'matchmaking_service' (channel={self.channel_name})"
+                f" COnnected on 'matchmaking_service' (channel={self.channel_name})"
             )
         except Exception as e:
             logger.exception("error on connection: %s", e)
@@ -20,7 +20,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         try:
             await self.channel_layer.group_discard("matchmaking_service", self.channel_name)
-            logger.info("🔴 disconnected of 'matchmaking_service'")
+            logger.info("disconnected of 'matchmaking_service'")
         except Exception as e:
             logger.exception("error on disconected déconnexion: %s", e)
 
@@ -56,7 +56,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                             },
                         )
                         logger.info(
-                            f"📡 Private match (room={room_code}) ! notif send to user_{p1}"
+                            f" Private match (room={room_code}) ! notif send to user_{p1}"
                         )
 
                         await self.channel_layer.group_send(
@@ -71,7 +71,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                             },
                         )
                         logger.info(
-                            f"📡 Private match (room={room_code}) !notif send to userr_{p2}"
+                            f" Private match (room={room_code}) !notif send to userr_{p2}"
                         )
                     else:
                         logger.info(
@@ -81,7 +81,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 elif action == "leave":
                     private_manager.remove_from_room(room_code, user_id)
                     logger.info(
-                        f"🔴 user_id={user_id} leave private room {room_code}"
+                        f" user_id={user_id} leave private room {room_code}"
                     )
 
             elif not room_code or room_code == "None":

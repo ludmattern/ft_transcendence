@@ -45,7 +45,7 @@ export const onlineTournamentCreation = createComponent({
 			const tournamentSize = parseInt(tournamentData.success ? tournamentData.value : 16, 10);
 			maxPlayersOnlineSpan.textContent = tournamentSize;
 		} catch (error) {
-			console.error('Erreur lors de la récupération du tournoi :', error);
+			console.error('error when fetching tournament :', error);
 		}
 
 		subscribe('leavingLobby', () => {

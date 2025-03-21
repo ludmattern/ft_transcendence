@@ -226,5 +226,5 @@ async def fetch_user_id(cookies):
             data = response.json()
             return data.get("user_id")
         else:
-            logger.error(f"Erreur lors de la récupération de l'ID utilisateur: {response.text}")
+            logger.error(f"error when get user id: {response.text}")
             return None

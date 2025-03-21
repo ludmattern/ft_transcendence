@@ -238,7 +238,7 @@ async function getBracketData() {
 		}
 		return await response.json();
 	} catch (error) {
-		console.error('Erreur lors de la récupération du bracket :', error);
+		console.error('error when fetching bracket :', error);
 		return {};
 	}
 }
