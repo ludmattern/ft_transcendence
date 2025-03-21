@@ -63,7 +63,6 @@ def get_info_storage(request):
         {"success": True, "key": key, "value": stored_value.decode("utf-8")}
     )
 
-# This is a custom decorator that checks if the request method is DELETE
 def require_DELETE(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
