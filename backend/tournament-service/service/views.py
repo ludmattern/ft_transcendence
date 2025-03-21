@@ -107,7 +107,6 @@ def get_current_tournament(request):
             except ManualUser.DoesNotExist:
                 return JsonResponse({"error": "Internal server error"}, status=500)
 
-        # Gestion du cas où un joueur a quitté le tournoi
         if match.status in ["pending", "ready"] and not match.winner_id:
             p1_participant = None
             p2_participant = None
@@ -155,10 +154,8 @@ def get_current_tournament(request):
     for round_num in sorted(size.keys()):
         size_list.append({"round": f"Round {round_num}", "matches": size[round_num]})
 
-    # Vérifier si tous les matchs sont terminés
     is_over = all(match["status"] == "completed" for round in size_list for match in round["matches"])
 
-    # Déterminer le gagnant du tournoi (le gagnant du dernier match)
     tournament_winner = "TBD"
     if size_list and size_list[-1]["matches"]:
         tournament_winner = size_list[-1]["matches"][-1].get("winner", "TBD")

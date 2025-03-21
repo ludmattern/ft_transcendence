@@ -38,7 +38,7 @@ class ManualUser(models.Model):
 
 
 class ManualFriendsRelations(models.Model):
-    id = models.AutoField(primary_key=True)  # Added primary key for Django ORM
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friends_initiated")
     friend = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friends_received")
     initiator = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friend_requests_sent")
@@ -63,7 +63,7 @@ class ManualFriendsRelations(models.Model):
 
 
 class ManualBlockedRelations(models.Model):
-    id = models.AutoField(primary_key=True)  # Added primary key
+    id = models.AutoField(primary_key=True) 
     user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="blocked_users")
     blocked_user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="blocked_by")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -103,7 +103,7 @@ class ManualTournament(models.Model):
 
 
 class ManualTournamentParticipants(models.Model):
-    id = models.AutoField(primary_key=True)  # Added primary key
+    id = models.AutoField(primary_key=True)
     tournament = models.ForeignKey(ManualTournament, on_delete=models.CASCADE, related_name="participants")
     user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="tournaments")
     status = models.CharField(
