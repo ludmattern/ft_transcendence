@@ -17,7 +17,7 @@ async def connect_dummy_chat():
                 while True:
                     await websocket.recv()
         except Exception as e:
-            logger.error("Erreur de connexion dummy au ChatConsumer : %s", e)
+            logger.error("Error connecting to ChatConsumer dummy: %s", e)
             await asyncio.sleep(5)
 
 

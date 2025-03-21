@@ -305,9 +305,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 winner_score=game.user_scores.get(winner_id),
                 loser_score=game.user_scores.get(loser_id),
             )
-            logger.info("table game history maj")
+            logger.info("Table game history maj")
         else:
-            logger.info("table game history non maj")
+            logger.info("Table game history non maj")
 
     async def game_over(self, event):
         logger.info(f"[PongGroupConsumer] game_over reçu: {event}")

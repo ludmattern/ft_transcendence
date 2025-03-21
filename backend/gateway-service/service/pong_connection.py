@@ -19,7 +19,7 @@ async def connect_dummy_pong():
                 while True:
                     await websocket.recv()
         except Exception as e:
-            logger.error("Erreur de connexion dummy au PongGroupConsumer : %s", e)
+            logger.error("Error connecting to PongGroupConsumer dummy: %s", e)
             await asyncio.sleep(5)
 
 

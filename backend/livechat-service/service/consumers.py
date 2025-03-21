@@ -385,7 +385,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
         elif str(action) == "back_cancel_tournament_invite":
-            logger.info("cancelling tournament invite")
+            logger.info("Cancelling tournament invite")
             recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
             recipient_username = await get_username(recipient_id)
             tournament_id = event.get("tournament_id")
@@ -470,7 +470,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 )
 
         elif str(action) == "back_tournament_game_over":
-            logger.info("tournament game over", event)
+            logger.info("Tournament game over", event)
             tournament_id = event.get("tournament_id")
             participant_list = event.get("participant_list")
             next_match_player_ids = event.get("next_match_player_ids")

@@ -17,9 +17,9 @@ async def connect_dummy_tournament():
             async with websockets.connect(ws_url, ssl=ssl_context) as websocket:
                 while True:
                     message = await websocket.recv()
-                    logger.info("Dummy  : %s", message)
+                    logger.info("Dummy: %s", message)
         except Exception as e:
-            logger.error("Erreur de connexion dummy au tournamentConsumer : %s", e)
+            logger.error("Error connecting to TournamentConsumer dummy: %s", e)
             await asyncio.sleep(5)
 
 

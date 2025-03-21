@@ -14,14 +14,14 @@ async def connect_dummy_matchmaking():
             ssl_context = ssl.create_default_context()
             ssl_context.load_verify_locations("/data/certs/selfsigned.crt")
 
-            logger.info("Tentative de connexion au MatchmakingConsumer via %s", ws_url)
+            logger.info("Trying to connect to MatchmakingConsumer with: %s", ws_url)
             async with websockets.connect(ws_url, ssl=ssl_context) as websocket:
-                logger.info("Connexion dummy établie au MatchmakingConsumer.")
+                logger.info("Connection established to MatchmakingConsumer.")
                 while True:
                     message = await websocket.recv()
-                    logger.info("Dummy Matchmaking a reçu : %s", message)
+                    logger.info("Dummy Matchmaking received : %s", message)
         except Exception as e:
-            logger.error("Erreur de connexion dummy au MatchmakingConsumer : %s", e)
+            logger.error("Error connecting to MatchmakingConsumer dummy: %s", e)
             await asyncio.sleep(5)
 
 

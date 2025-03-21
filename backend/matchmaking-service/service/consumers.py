@@ -12,17 +12,17 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
             await self.accept()
             await self.channel_layer.group_add("matchmaking_service", self.channel_name)
             logger.info(
-                f" COnnected on 'matchmaking_service' (channel={self.channel_name})"
+                f" Connected on 'matchmaking_service' (channel={self.channel_name})"
             )
         except Exception as e:
-            logger.exception("error on connection: %s", e)
+            logger.exception("Error on connection: %s", e)
 
     async def disconnect(self, close_code):
         try:
             await self.channel_layer.group_discard("matchmaking_service", self.channel_name)
-            logger.info("disconnected of 'matchmaking_service'")
+            logger.info("Disconnected of 'matchmaking_service'")
         except Exception as e:
-            logger.exception("error on disconected déconnexion: %s", e)
+            logger.exception("Error on disconnection: %s", e)
 
     async def matchmaking_event(self, event):
         try:
@@ -37,11 +37,11 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                         p1, p2 = result["players"][0], result["players"][1]
                         match_info_p1 = private_manager.match_found.get(p1)
                         if match_info_p1 is None:
-                            logger.error(f"no match info found for p1: {p1}")
+                            logger.error(f"No match info found for p1: {p1}")
                             return
                         match_info_p2 = private_manager.match_found.get(p2)
                         if match_info_p2 is None:
-                            logger.error(f"no match info found for p2: {p2}")
+                            logger.error(f"No match info found for p2: {p2}")
                             return
 
                         await self.channel_layer.group_send(
@@ -71,7 +71,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                             },
                         )
                         logger.info(
-                            f" Private match (room={room_code}) !notif send to userr_{p2}"
+                            f" Private match (room={room_code}) ! notif send to user_{p2}"
                         )
                     else:
                         logger.info(
@@ -81,7 +81,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                 elif action == "leave":
                     private_manager.remove_from_room(room_code, user_id)
                     logger.info(
-                        f" user_id={user_id} leave private room {room_code}"
+                        f"user_id={user_id} leave private room {room_code}"
                     )
 
             elif not room_code or room_code == "None":
@@ -93,11 +93,11 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
 
                         match_info_p1 = matchmaking_manager.match_found.get(p1)
                         if match_info_p1 is None:
-                            logger.error(f"no match info found for p1: {p1}")
+                            logger.error(f"No match info found for p1: {p1}")
                             return
                         match_info_p2 = matchmaking_manager.match_found.get(p2)
                         if match_info_p2 is None:
-                            logger.error(f"no match info found for p2: {p2}")
+                            logger.error(f"No match info found for p2: {p2}")
                             return
 
                         await self.channel_layer.group_send(
@@ -121,7 +121,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                             },
                         )
                     else:
-                        logger.info(f"no match found for user_id={user_id}")
+                        logger.info(f"No match found for user_id={user_id}")
                 elif action == "leave":
                     matchmaking_manager.remove_from_queue(user_id)
         except Exception as e:

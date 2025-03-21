@@ -27,7 +27,7 @@ async def connect_dummy_gateway():
                 while True:
                     await websocket.recv()
         except Exception as e:
-            logger.error("Erreur de connexion dummy au Gateway Consumer : %s", e)
+            logger.error("Error connecting to Gateway Consumer dummy: %s", e)
             await asyncio.sleep(5)
 
 

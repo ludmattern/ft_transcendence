@@ -191,7 +191,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         await self.send(json.dumps(event))
 
     async def leave_game(self, event):
-        logger.info("leave_game tst")
+        logger.info("Leave_game")
 
     async def match_found(self, event):
         await self.send(json.dumps(event))
@@ -226,5 +226,5 @@ async def fetch_user_id(cookies):
             data = response.json()
             return data.get("user_id")
         else:
-            logger.error(f"error when get user id: {response.text}")
+            logger.error(f"Error when get user id: {response.text}")
             return None

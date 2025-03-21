@@ -46,7 +46,7 @@ def get_accepted_participants(tournament_id):
 @database_sync_to_async
 def get_accepted_participants_id(tournament_id):
     participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related("user")
-    logger.info("participants_qs: %s", participants_qs)
+    logger.info("Participants_qs: %s", participants_qs)
     return [p.user.id for p in participants_qs]
 
 
