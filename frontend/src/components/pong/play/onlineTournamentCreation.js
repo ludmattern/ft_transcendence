@@ -45,7 +45,7 @@ export const onlineTournamentCreation = createComponent({
 			const tournamentSize = parseInt(tournamentData.success ? tournamentData.value : 16, 10);
 			maxPlayersOnlineSpan.textContent = tournamentSize;
 		} catch (error) {
-			console.error('error when fetching tournament :', error);
+			console.error('Error when fetching tournament: ', error);
 		}
 
 		subscribe('leavingLobby', () => {
@@ -176,7 +176,7 @@ async function checkOrCreateLobby() {
 			await createNewLobby(data.user_id, tournamentSize);
 		}
 	} catch (error) {
-		console.error('Erreur dans checkOrCreateLobby :', error);
+		console.error('Error in checkOrCreateLobby function: ', error);
 	}
 }
 
@@ -191,7 +191,7 @@ async function createNewLobby(userId, tournamentSize) {
 		};
 		ws.send(JSON.stringify(payload));
 	} catch (error) {
-		console.error('Erreur lors de la création du nouveau lobby :', error);
+		console.error('Error while creating a new lobby: ', error);
 	}
 }
 

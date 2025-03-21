@@ -79,6 +79,6 @@ export function loadComponentScript(moduleName, callback) {
 			if (callback) callback(module);
 		})
 		.catch((error) => {
-			console.error(`Error loading ${moduleName}:`, error);
+			console.error(`Error loading ${moduleName}: `, error);
 		});
 }

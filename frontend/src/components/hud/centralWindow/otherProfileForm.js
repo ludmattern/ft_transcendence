@@ -161,6 +161,6 @@ export async function fetchUserId(username) {
 		const data = await response.json();
 		return data.user_id;
 	} catch (error) {
-		console.error('Error fetching user ID:', error);
+		console.error('Error fetching user ID: ', error);
 	}
 }

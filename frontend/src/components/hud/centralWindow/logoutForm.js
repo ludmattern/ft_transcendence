@@ -31,7 +31,7 @@ export const logoutForm = createComponent({
 			try {
 				await logoutUser();
 			} catch (error) {
-				console.warn('Error during logout:', error);
+				console.warn('Error during logout: ', error);
 			}
 		});
 	},

@@ -58,7 +58,7 @@ export const rightSideWindow = createComponent({
 		if (wireframeDiv) {
 			initWireframeScene();
 		} else {
-			console.warn('Wireframe container not found in DOM.');
+			console.warn('Wireframe container not found in DOM');
 		}
 
 		const tabLinks = el.querySelectorAll('.r-side-window .nav-link a');

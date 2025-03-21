@@ -73,7 +73,7 @@ export const loginForm = createComponent({
 					window.open(data.url, 'oauthPopup', 'width=800,height=600');
 				}
 			} catch (error) {
-				console.error("Erreur lors de l'appel API :", error);
+				console.error("Error on API call: ", error);
 			}
 		});
 

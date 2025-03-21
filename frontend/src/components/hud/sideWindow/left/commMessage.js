@@ -41,7 +41,7 @@ async function checkImageExists(url) {
 	  const resp = await fetch(url, { method: 'HEAD' });
 	  return resp.ok;
 	} catch (err) {
-	  console.error("checkImageExists: Erreur fetch HEAD", err);
+	  console.error("checkImageExists: Erreur fetch HEAD: ", err);
 	  return false;
 	}
   }

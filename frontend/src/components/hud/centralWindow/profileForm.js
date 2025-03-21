@@ -171,7 +171,7 @@ export async function loadMatchHistory(userId) {
 			});
 		}
 	} catch (error) {
-		console.error('Error loading match history:', error);
+		console.error('Error loading match history: ', error);
 	}
 }
 
@@ -228,6 +228,6 @@ export async function loadUserProfile(userId) {
 
 		}
 	} catch (error) {
-		console.error('Error loading user profile:', error);
+		console.error('Error loading user profile: ', error);
 	}
 }

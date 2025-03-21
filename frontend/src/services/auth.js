@@ -54,7 +54,7 @@ export async function logoutUser() {
 			await closeWebSocket();
 		}
 	} catch (err) {
-		console.log('Error during logout:', err);
+		console.log('Error during logout: ', err);
 	}
 	resetPreviousRoutes();
 	componentManagers['Pong'].cleanupComponents([]);
@@ -138,11 +138,11 @@ export async function getUserIdFromCookieAPI() {
 		if (data.success) {
 			return data.user_id;
 		} else {
-			console.error('Erreur dans la réponse:', data.error);
+			console.error('Error in response: ', data.error);
 			return null;
 		}
 	} catch (error) {
-		console.error("error when fetching user ID:", error);
+		console.error("Error when fetching user ID: ", error);
 		return null;
 	}
 }
@@ -163,7 +163,7 @@ export async function getUsername(playerId) {
 		const data = await response.json();
 		return data.username;
 	} catch (error) {
-		console.error('Error fetching username:', error);
+		console.error('Error fetching username: ', error);
 		return `${playerId}`;
 	}
 }

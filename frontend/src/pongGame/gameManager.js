@@ -166,7 +166,7 @@ class GameManager {
 					this.username2 = player2Name;
 				})
 				.catch((error) => {
-					console.log('Error retrieving usernames:', error);
+					console.log('Error retrieving usernames: ', error);
 					this.username1 = player1;
 					this.username2 = player2;
 				});

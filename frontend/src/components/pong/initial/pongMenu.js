@@ -132,7 +132,7 @@ import * as THREE from 'https://esm.sh/three';
 function initM1() {
 	Store.menuElement2 = document.getElementById('pong-screen-container');
 	if (!Store.menuElement2) {
-		console.error('The element with ID \'pong-screen-container\' was not found.');
+		console.error('The element with ID \'pong-screen-container\' was not found');
 		return;
 	}
 

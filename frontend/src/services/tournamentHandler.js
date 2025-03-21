@@ -42,7 +42,7 @@ export async function handleLocalTournamentGameEnding(data) {
 				console.error('Error updating match result:', err);
 			});
 	} catch (error) {
-		console.error('Error parsing gameId:', error);
+		console.error('Error parsing gameId: ', error);
 	}
 }
 
@@ -65,7 +65,7 @@ export async function createTournament(players) {
 		if (data.success) {
 			handleRoute('/pong/play/current-tournament');
 		} else {
-			console.error('Error creating tournament:', data.error);
+			console.error('Error creating tournament: ', data.error);
 		}
 
 		return data;

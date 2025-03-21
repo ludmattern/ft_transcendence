@@ -123,7 +123,7 @@ export async function handleTournamentAction(action, item) {
 				return;
 			}
 		} catch (error) {
-			console.error('Erreur dans checkOrCreateLobby :', error);
+			console.error('Error in checkOrCreateLobby function: ', error);
 		}
 		action = 'join_tournament';
 	} else {

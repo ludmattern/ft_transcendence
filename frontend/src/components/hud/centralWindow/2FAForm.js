@@ -46,7 +46,7 @@ export const twoFAForm = createComponent({
 					}
 				}
 			} catch (err) {
-				console.error('2FA request error:', err.message);
+				console.error('2FA request error: ', err.message);
 			}
 		});
 	},

@@ -55,7 +55,7 @@ export async function fetchAndStoreInfoData(container) {
 			renderInfoTab(data.info, container);
 		}
 	} catch (error) {
-		console.error('Error fetching information:', error);
+		console.error('Error fetching information: ', error);
 	}
 }
 
@@ -153,7 +153,7 @@ export async function storeMessageInSessionStorage(msg) {
 		history.push(msg);
 		sessionStorage.setItem('chatHistory', JSON.stringify(history));
 	} catch (err) {
-		console.error('Failed to store message:', err);
+		console.error('Failed to store message: ', err);
 	}
 }
 

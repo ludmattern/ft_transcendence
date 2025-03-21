@@ -36,7 +36,7 @@ export const currentTournament = createComponent({
 				};
 				ws.send(JSON.stringify(payload));
 			} catch (error) {
-				console.error('Error creating online tournament:', error);
+				console.error('Error creating online tournament: ', error);
 			}
 		} else {
 			if (await handleTournamentRedirection('/pong/play/current-tournament')) {
@@ -190,7 +190,7 @@ export async function renderBracket() {
 					handleRoute('/pong/play');
 				}
 			} catch (error) {
-				console.error('Error abandoning tournament:', error);
+				console.error('Error abandoning tournament: ', error);
 			}
 		});
 	}
@@ -238,7 +238,7 @@ async function getBracketData() {
 		}
 		return await response.json();
 	} catch (error) {
-		console.error('error when fetching bracket :', error);
+		console.error('Error when fetching bracket: ', error);
 		return {};
 	}
 }

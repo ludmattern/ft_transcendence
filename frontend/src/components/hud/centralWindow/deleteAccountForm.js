@@ -34,7 +34,7 @@ export const deleteAccountForm = createComponent({
 				try {
 					await clearSession();
 				} catch (error) {
-					console.error('An unexpected error occurred while deleting your account.');
+					console.error('An unexpected error occurred while deleting your account');
 				}
 				e.preventDefault();
 			}
@@ -70,10 +70,10 @@ async function clearSession() {
 		if (response.ok) {
 			await closeWebSocket();
 		} else {
-			console.error('An unexpected error occurred while deleting your account.');
+			console.error('An unexpected error occurred while deleting your account');
 		}
 	} catch (err) {
-		console.error('Error during clearing session:', err);
+		console.error('Error during clearing session: ', err);
 	}
 	resetPreviousRoutes();
 	componentManagers['Pong'].cleanupComponents([]);

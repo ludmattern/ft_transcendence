@@ -106,7 +106,7 @@ export const settingsForm = createComponent({
 						emptyFormError(data);
 					}
 				} catch (error) {
-					console.error('Error updating information:', error);
+					console.error('Error updating information: ', error);
 				}
 			}
 		});
@@ -311,7 +311,7 @@ async function checkOAuthStatus() {
 		const data = await response.json();
 		return data.oauth_null;
 	} catch (error) {
-		console.error('Erreur lors de la vérification de OAuth:', error);
+		console.error('Error on OAuth check: ', error);
 		return null;
 	}
 }
