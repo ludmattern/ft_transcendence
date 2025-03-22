@@ -7,6 +7,8 @@ import Store from './store.js';
 import { loadModels } from '/src/3d/loader.js';
 import { initCSSRenderer } from '/src/3d/CSS3DRender.js';
 import { initLights, initSkybox, initRenderer, initCamera, initScene } from '/src/3d/initScene.js';
+// import { initControls } from '/src/3d/initScene.js';
+import { initParticles, updateParticles } from '/src/3d/particules.js';
 
 export function onWindowResize() {
 	const width = window.innerWidth;
@@ -29,8 +31,9 @@ export async function buildScene() {
 	initCSSRenderer();
 	initSkybox();
 	initLights();
-	//initControls();
+	// initControls();
 	await loadModels();
+	initParticles();
 	addEventListeners();
 
 	Store.initialCameraRotation.x = Store.camera.rotation.x;
@@ -48,18 +51,21 @@ export async function buildScene() {
 }
 
 let lastGameUpdateTime = 0;
+const clock = new THREE.Clock();
 
 function animate() {
 	requestAnimationFrame(animate);
 
+	const delta = clock.getDelta();
+	updateParticles(delta);
 	const now = performance.now();
 	if (now - lastGameUpdateTime > 16.67) {
 		animatePong(Store.renderer);
 		lastGameUpdateTime = now;
 	}
 
-	if (Store.controls) Store.controls.update(0.01);
-
+	if (Store.controls) Store.controls.update(0.01); 
+		
 	if (Store.composer) {
 		Store.composer.render(Store.scene, Store.camera);
 	} else {

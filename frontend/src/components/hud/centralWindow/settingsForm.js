@@ -17,7 +17,7 @@ export const settingsForm = createComponent({
 		`
 		<div id="settings-form" class="form-container d-none">
 		  <h5>SETTINGS</h5>
-		  <span class="background-central-span">
+		  <span class="background-central-span p-4">
 			<form action="#" method="post" class="w-100">
 			  <!-- Hidden username field for accessibility in password forms -->
 			  <input type="text" name="username" id="username" autocomplete="username" style="display: none;" />

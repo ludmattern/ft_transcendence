@@ -9,7 +9,7 @@ export const logoutForm = createComponent({
 	render: () => `
     <div id="logout-form" class="form-container">
       <h5>LOG OUT</h5>
-      <span class="background-central-span">
+      <span class="background-central-span p-4">
         <p>Are you sure you want to logout?</p>
         <div class="d-flex justify-content-center">
           <button class="btn bi bi-x" id="cancel-logout">No</button>

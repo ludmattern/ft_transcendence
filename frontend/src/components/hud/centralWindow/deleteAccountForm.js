@@ -13,7 +13,7 @@ export const deleteAccountForm = createComponent({
 	render: () => `
     <div id="delete-account-form" class="form-container">
       <h5>RESIGN</h5>
-      <span class="background-central-span">
+      <span class="background-central-span p-4">
         <p>Are you sure you want to delete your account?</p>
         <p>This action can't be reversed.</p>
         <div class="d-flex justify-content-center">
