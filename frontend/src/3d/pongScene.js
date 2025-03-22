@@ -1,5 +1,5 @@
 import * as THREE from 'https://esm.sh/three';
-import Store from './store.js';
+import Store from '/src/3d/store.js';
 import { LineSegments } from 'https://esm.sh/three';
 import { EdgesGeometry } from 'https://esm.sh/three';
 import { LineBasicMaterial } from 'https://esm.sh/three';

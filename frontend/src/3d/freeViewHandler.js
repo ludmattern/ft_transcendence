@@ -1,5 +1,5 @@
 import * as THREE from 'https://esm.sh/three';
-import Store from './store.js';
+import Store from '/src/3d/store.js';
 import { animateCameraBackToInitialPosition } from '/src/3d/animation.js';
 import { emit } from '/src/services/eventEmitter.js';
 

@@ -1,6 +1,6 @@
 import * as THREE from 'https://esm.sh/three';
 import { GLTFLoader } from 'https://esm.sh/three/examples/jsm/loaders/GLTFLoader.js';
-import Store from './store.js';
+import Store from '/src/3d/store.js';
 import { CacheDB } from '/src/utils/IndexedDBCache.js';
 
 export async function loadModels() {

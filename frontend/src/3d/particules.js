@@ -1,5 +1,5 @@
 import * as THREE from 'https://esm.sh/three';
-import Store from './store.js';
+import Store from '/src/3d/store.js';
 
 const PARTICLE_COUNT     = 500;	
 const PARTICLE_SPEED     = 25;

@@ -3,7 +3,7 @@ import { EffectComposer } from 'https://esm.sh/three/examples/jsm/postprocessing
 import { RenderPass } from 'https://esm.sh/three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://esm.sh/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { animatePong } from '/src/3d/pongScene.js';
-import Store from './store.js';
+import Store from '/src/3d/store.js';
 import { loadModels } from '/src/3d/loader.js';
 import { initCSSRenderer } from '/src/3d/CSS3DRender.js';
 import { initLights, initSkybox, initRenderer, initCamera, initScene } from '/src/3d/initScene.js';
@@ -64,14 +64,9 @@ function animate() {
 		lastGameUpdateTime = now;
 	}
 
-	if (Store.controls) Store.controls.update(0.01); 
-		
-	if (Store.composer) {
-		Store.composer.render(Store.scene, Store.camera);
-	} else {
-		Store.renderer.render(Store.scene, Store.camera);
-	}
-	if (Store.cssRenderer && Store.scene && Store.camera) {
-		Store.cssRenderer.render(Store.scene, Store.camera);
-	}
+	if (Store.controls) Store.controls.update(0.01);
+
+	if (Store.composer) Store.composer.render(Store.scene, Store.camera);
+	else Store.renderer.render(Store.scene, Store.camera);
+	if (Store.cssRenderer && Store.scene && Store.camera) Store.cssRenderer.render(Store.scene, Store.camera);
 }

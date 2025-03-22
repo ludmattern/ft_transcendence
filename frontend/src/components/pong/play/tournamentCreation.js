@@ -1,7 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleTournamentRedirection } from '/src/services/router.js';
-import { localTournamentCreation } from './localTournamentCreation.js';
-import { onlineTournamentCreation } from './onlineTournamentCreation.js';
+import { localTournamentCreation } from '/src/components/pong/play/localTournamentCreation.js';
+import { onlineTournamentCreation } from '/src/components/pong/play/onlineTournamentCreation.js';
 import { getInfo } from '/src/services/infoStorage.js';
 
 export const tournamentCreation = createComponent({
