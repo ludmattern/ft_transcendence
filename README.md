@@ -175,7 +175,7 @@ Microservices communicate primarily through:
     JSON Web Tokens (JWT) secure API requests, and Two-Factor Authentication (2FA) is implemented to add an extra layer of security.
 
 -   **Secrets Management:**  
-    Sensitive data (API keys, credentials) are injected via a secure `secrets.txt` file into the docker-compose setup.
+    Sensitive data (API keys, credentials) are injected via secures `e.g. secrets.txt` files into the docker-compose setup.
 
 -   **Additional Measures:**  
     The use of robust hashing (bcrypt) and cryptographic libraries (cryptography, pyotp) further secures user data and application integrity.
