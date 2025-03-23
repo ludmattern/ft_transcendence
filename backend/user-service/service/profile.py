@@ -25,29 +25,3 @@ def profile_info(request):
         )
     except ManualUser.DoesNotExist:
         return JsonResponse({"success": False, "message": "User not found"}, status=404)
-
-
-@require_POST
-def winrate_update(request):
-    try:
-        body = json.loads(request.body.decode("utf-8"))
-        username = body.get("username")
-        win = body.get("win")
-
-        user = ManualUser.objects.get(username=username)
-
-        if win:
-            user.total_wins += 1
-        else:
-            user.total_losses += 1
-
-        user.total_games += 1
-        user.winrate = user.total_wins / user.total_games
-
-        user.save()
-
-        return JsonResponse({"success": True, "message": "Winrate updated correctly"}, status=200)
-    except ManualUser.DoesNotExist:
-        return JsonResponse({"success": False, "message": "User not found"}, status=404)
-    except ManualGameHistory.DoesNotExist:
-        return JsonResponse({"success": False, "message": "Game not found"}, status=404)
