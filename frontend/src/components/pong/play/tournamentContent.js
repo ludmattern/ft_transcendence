@@ -165,7 +165,6 @@ export const tournamentContent = createComponent({
         
         
 
-        // Création d'un tournoi
         const createButton = el.querySelector('#createbutton');
         createButton.addEventListener('click', async () => {
             const mode = document.getElementById('tournamentMode').value;
@@ -180,9 +179,7 @@ export const tournamentContent = createComponent({
     },
 });
 
-/**
- * Sélecteur du type de tournoi (Local ou Online)
- */
+
 function generateModeSelector() {
     return `
     <div class="mb-3">

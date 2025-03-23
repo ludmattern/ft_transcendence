@@ -6,7 +6,6 @@ import { getCurrentWindow } from '/src/3d/animation.js';
 export const soloContent = createComponent({
 	tag: 'soloContent',
 
-	// Générer le HTML
 	render: () => `
     <section class="p-5 flex-grow-1" style="background-color: #111111; max-height: 700px; overflow: auto;">
       <h2 class="text-white text-center">So, You Think You Can Win against AI?</h2>

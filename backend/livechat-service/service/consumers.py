@@ -633,7 +633,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             except ManualUser.DoesNotExist:
                 await self.channel_layer.group_send(f"user_{author_id}", {"type": "error_message", "error": "User not found."})
 
-        # Gestionnaire principal d'actions
         elif str(action) == "private_game_invite":
             await private_game_invite(self, event)
 
@@ -701,12 +700,10 @@ async def private_game_invite(self, event):
             )
         return
 
-    # Créer la nouvelle invitation en conservant l'information sur l'initiateur
     await database_sync_to_async(ManualPrivateGames.objects.create)(
         initiator=inviter, user=user, recipient=recipient, status="pending"
     )
 
-    # Notifier l'invitee et l'inviteur
     await self.channel_layer.group_send(f"user_{invitee_id}", event)
     await self.channel_layer.group_send(
         f"user_{inviter_id}",

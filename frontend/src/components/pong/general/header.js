@@ -31,7 +31,6 @@ export const header = createComponent({
 				route = window.location.pathname;
 			}
 
-			// Sécurise et tronque la route
 			route = sanitizePath(route);
 
 			if (route.startsWith('/pong')) {

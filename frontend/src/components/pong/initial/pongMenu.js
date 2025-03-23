@@ -7,7 +7,6 @@ import Store from '/src/3d/store.js';
 export const pongMenu = createComponent({
 	tag: 'pongMenu',
 
-	// Générer le HTML
 	render: () => `
     <div class="container-fluid" id="main-container">
       <!-- Header Section -->
@@ -103,9 +102,7 @@ export const pongMenu = createComponent({
 	},
 });
 
-/**
- * Met à jour l'heure et la date affichées dans le footer.
- */
+
 function updateDateTime() {
 	const timeElement = document.getElementById('current-time');
 	const dateElement = document.getElementById('current-date');
@@ -123,9 +120,8 @@ function updateDateTime() {
 	dateElement.textContent = `${day}/${month}/${year}`;
 }
 
-/**
- * Initialise l'objet 3D du menu dans la scène Three.js.
- */
+
+
 
 import * as THREE from 'https://esm.sh/three';
 

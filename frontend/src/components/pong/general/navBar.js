@@ -11,7 +11,6 @@ const navigationLinks = {
 export const navBar = createComponent({
 	tag: 'navBar',
 
-	// Générer le HTML
 	render: () => `
 	<!-- Sous-menu à gauche -->
 	<aside class="col-md-3 p-3">
@@ -47,10 +46,8 @@ export const navBar = createComponent({
 });
 
 /**
- * Met à jour le lien actif en fonction de l'URL actuelle ou de la route reçue.
- *
- * @param {HTMLElement} el - L'élément racine du menu
- * @param {string} futurePath - La route actuelle (fourni par `routeChanged` ou `popstate`)
+ * @param {HTMLElement} el
+ * @param {string} futurePath
  */
 function updateActiveLink(el, futurePath) {
 	const activeLinkId = Object.keys(navigationLinks).find((key) => {

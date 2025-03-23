@@ -5,11 +5,10 @@ import { getUsername } from '/src/services/auth.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 
-// Variables globales
 let leaderboardData = [];
 let currentPage = 0;
 const playersPerPage = 8;
-let previousList = null; // Sauvegarde la liste affichée avant le "Find Me"
+let previousList = null;
 
 export const leaderboard = createComponent({
 	tag: 'leaderboard',

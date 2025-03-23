@@ -1,7 +1,6 @@
 import json
 from django.http import JsonResponse  # type: ignore
 
-# Need to get rid of this import
 
 from .models import ManualUser, ManualBlockedRelations
 from django.views.decorators.http import require_POST

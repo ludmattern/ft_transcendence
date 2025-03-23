@@ -3,12 +3,12 @@ import { renderPage } from '/src/utils/componentRenderer.js';
 import { hudPages, pongPages } from '/src/pages/pages.js';
 
 /**
- * Fonction générique pour naviguer dans l'application.
- * @param {string} type - "HUD" ou "Pong"
- * @param {string} pageKey - Nom de la page
- * @param {boolean} blurEffect - Ajoute ou enlève l'effet blur
- * @param {string|null} windowType - Type de fenêtre à changer (ex: "home", "pong", "race")
+ * @param {string} type 
+ * @param {string} pageKey 
+ * @param {boolean} blurEffect 
+ * @param {string|null} windowType 
  */
+
 function navigateTo(type, pageKey, blurEffect = true, waitingScreen = false, windowType = null) {
 	const pages = type === 'HUD' ? hudPages : pongPages;
 	renderPage(pages, pageKey, type);

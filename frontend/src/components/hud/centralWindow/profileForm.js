@@ -4,7 +4,6 @@ import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 export const profileForm = createComponent({
 	tag: 'profileForm',
 
-	// Générer le HTML
 	render: () => `
     <div id="profile-form" class="form-container">
       <h5 class="text-center">Pilot Profile</h5>
@@ -68,17 +67,6 @@ export const profileForm = createComponent({
 	},
 });
 
-/**
- * Génère un élément d'historique de match.
- *
- * @param {string} outcome - Résultat du match (Win/Loss)
- * @param {string} mode - Mode de jeu
- * @param {string} duration - Durée du match
- * @param {string} date - Date du match
- * @param {string} opponents - Opposants
- * @param {string} outcomeClass - Classe CSS pour le résultat
- * @returns {string} - HTML du match
- */
 
 function attachProfilePicUpload() {
 	const profilePicLink = document.getElementById('profile-pic-link');

@@ -538,7 +538,7 @@ def try_join_tournament_with_room_code(request):
 
         if participant_count >= tournament.size:
             return JsonResponse({"message": "Tournament is full"}, status=400)
-
+        
         ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
 
         return JsonResponse(

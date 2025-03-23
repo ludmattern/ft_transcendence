@@ -1,11 +1,9 @@
 // src/components/hud/navigation.js
 
 /**
- * Génère un élément de navigation (onglet) avec un lien.
- *
- * @param {string} label - Le label de l'onglet
- * @param {boolean} active - Si l'onglet est actif
- * @returns {string} - HTML de l'onglet
+ * @param {string} label
+ * @param {boolean} active 
+ * @returns {string}
  */
 export function createNavItem(label, active = false) {
 	return `

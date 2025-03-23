@@ -67,10 +67,7 @@ function renderInfoTab(tabItems, container) {
 	});
 }
 
-/**
- * Affiche un message dans le conteneur "COMM" en utilisant `commMessage.render(...)`,
- * tout en gérant le regroupement si c'est le même auteur + même channel.
- */
+
 function renderCommMessage(item, container, currentUserId) {
 	const authorAsString = item.author ? item.author.toString() : '';
   

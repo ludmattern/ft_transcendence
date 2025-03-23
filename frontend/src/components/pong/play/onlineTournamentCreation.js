@@ -68,16 +68,13 @@ export const onlineTournamentCreation = createComponent({
 				.catch(() => createNotificationMessage('Failed to copy tournament code', 2500, true));
 		});
 
-		// Si le tournoi n'existe pas, on ne fait rien d'autre
 		if (data.tournament === null) {
 			return;
 		}
 
 		const isOrganizer = data.user_id === data.organizer_id;
 
-		// Si l'organisateur et qu'il y a encore de la place pour inviter, on insère le formulaire d'invitation
 		if (isOrganizer && data.participants_count < data.size) {
-			// On vérifie si le formulaire n'existe pas déjà
 			if (!document.getElementById('invite-container')) {
 				const inviteContainerHTML = `
 				<div id="invite-container" class="w-50 mb-4">
@@ -125,7 +122,6 @@ export const onlineTournamentCreation = createComponent({
 			}
 		}
 
-		// Boutons statiques selon le rôle de l'utilisateur
 		if (isOrganizer) {
 			let cancelTournamentButton = controlButtonsContainer.querySelector('#cancel-tournament');
 			if (!cancelTournamentButton) {
@@ -208,9 +204,7 @@ export function updateOnlinePlayersUI(data) {
 	roomCodeElement.textContent = data.serial_key;
 	maxPlayersOnlineSpan.textContent = data.size;
 
-	// Mise à jour pour l'organisateur
 	if (data.user_id === data.organizer_id) {
-		// Gestion du bouton "Create Tournament"
 		let createTournamentButton = controlButtonsContainer.querySelector('#create-tournament');
 		if (data.participants_accepted === data.size) {
 			if (!createTournamentButton) {
@@ -222,7 +216,6 @@ export function updateOnlinePlayersUI(data) {
 					await pushInfo('TournamentCreationNeeded', true);
 					handleRoute('/pong/play/current-tournament');
 				});
-				// Insertion avant le bouton statique déjà présent (Cancel)
 				controlButtonsContainer.insertBefore(createTournamentButton, controlButtonsContainer.firstChild);
 			}
 			createTournamentButton.disabled = false;
@@ -230,10 +223,8 @@ export function updateOnlinePlayersUI(data) {
 			if (createTournamentButton) createTournamentButton.remove();
 		}
 
-		// Gestion du formulaire d'invitation
 		let inviteContainer = document.getElementById('invite-container');
 		if (data.participants_count < data.size) {
-			// S'il n'existe pas, on le crée et l'insère
 			if (!inviteContainer) {
 				inviteContainer = document.createElement('div');
 				inviteContainer.id = 'invite-container';
@@ -280,17 +271,14 @@ export function updateOnlinePlayersUI(data) {
 					}
 				});
 			} else {
-				// Mise à jour de l'état (désactivation si nécessaire)
 				const sendInviteButton = inviteContainer.querySelector('#send-invite');
 				sendInviteButton.disabled = data.participants_count >= data.size;
 			}
 		} else {
-			// S'il n'y a plus de place, on retire le formulaire d'invitation
 			if (inviteContainer) inviteContainer.remove();
 		}
 	}
 
-	// Mise à jour de la liste des participants
 	participants.innerHTML = '';
 	const sortedParticipants = data.participants.sort((a, b) => {
 		const aPending = a.status === 'pending' ? 1 : 0;

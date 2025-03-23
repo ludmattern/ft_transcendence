@@ -117,10 +117,9 @@ export const hudPages = {
 };
 
 /**
- * Factory function pour créer une page Pong.
- * @param {Array} centralComponents - Composants spécifiques à ajouter dans le container principal
- * @param {boolean} [includeNavBar=true] - Indique s'il faut inclure la navbar ou non
- * @returns {Object} Configuration de la page Pong
+ * @param {Array} centralComponents 
+ * @param {boolean} [includeNavBar=true] 
+ * @returns {Object} 
  */
 const createPongPage = (centralComponents = [], includeNavBar = true) => ({
 	components: [

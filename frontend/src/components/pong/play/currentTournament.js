@@ -250,7 +250,6 @@ function hasUserCompletedInPreviousRound(bracketData, roundIndex, username) {
 }
 
 function createCompletedMatchHtml(match, displayHtml) {
-	// On compte le nombre de tirets dans match.score
 	const dashCount = (match.score.match(/-/g) || []).length;
 	const scoreText = dashCount === 2 ? 'forfeit' : match.score;
 

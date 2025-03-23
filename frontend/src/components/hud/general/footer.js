@@ -29,11 +29,7 @@ export const footer = createComponent({
 	},
 });
 
-/**
- * Générer dynamiquement les points de la boussole.
- *
- * @returns {string} - HTML des points de la boussole
- */
+
 function generateCompassHTML() {
 	const points = [
 		'N', '', '15', '', '30', '', 'NE', '', '60', '', '75',
@@ -47,19 +43,16 @@ function generateCompassHTML() {
 }
 
 /**
- * Vérifie si un point doit être en gras.
- *
- * @param {string} text - Texte du point
- * @returns {boolean} - Retourne true si en gras
+
+ * @param {string} text 
+ * @returns {boolean}
  */
 function isBold(text) {
 	return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'].includes(text);
 }
 
 /**
- * Initialise la boussole et ses événements.
- *
- * @param {HTMLElement} el - Élément racine du composant
+ * @param {HTMLElement} el
  */
 function initializeCompass(el) {
 	const points = el.querySelectorAll('.point');
@@ -68,13 +61,10 @@ function initializeCompass(el) {
 	const baseHeight = 5;
 	const rotationRatio = 0.1;
 
-	// Positionnement initial
 	positionPoints(points, compass, radius, baseHeight, 198);
 
-	// Gestion de la taille de la fenêtre
 	window.addEventListener('resize', () => positionPoints(points, compass, radius, baseHeight, lastOffset));
 
-	// Mise à jour avec la rotation de la caméra
 	addCameraRotationListener((cameraRotation) => {
 		const percent = (cameraRotation + 1) / 2;
 		const offset = percent * 360 * rotationRatio + 180;
@@ -84,13 +74,11 @@ function initializeCompass(el) {
 }
 
 /**
- * Positionne les points de la boussole.
- *
- * @param {NodeList} points - Liste des points
- * @param {HTMLElement} compass - Élément parent de la boussole
- * @param {number} radius - Rayon de la boussole
- * @param {number} baseHeight - Hauteur de base
- * @param {number} [offset=180] - Décalage d'angle
+ * @param {NodeList} points 
+ * @param {HTMLElement} compass
+ * @param {number} radius 
+ * @param {number} baseHeight
+ * @param {number} [offset=180]
  */
 function positionPoints(points, compass, radius, baseHeight, offset = 180) {
 	const curve = 110 * (1.2 / (window.innerWidth / 3840));

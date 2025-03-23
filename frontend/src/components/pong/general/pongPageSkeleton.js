@@ -3,7 +3,6 @@ import { createComponent } from '/src/utils/component.js';
 export const pongPageSkeleton = createComponent({
 	tag: 'pongPageSkeleton',
 
-	// Générer le HTML
 	render: () => `
 	  <main class="row d-flex flex-column flex-grow-1 p-5" id="pong-menu-container">
 		

@@ -2,11 +2,9 @@ import { getCurrentWindow } from '/src/3d/animation.js';
 import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.js';
 
 /**
- * Commence une animation sur un élément.
- *
- * @param {HTMLElement} target - L'élément cible.
- * @param {string} animation - Le nom de l'animation.
- * @param {number} delay - Le délai en milisecondes avant le début de l'animation.
+ * @param {HTMLElement} target 
+ * @param {string} animation 
+ * @param {number} delay
  */
 export async function startAnimation(target, animation, delay = 0) {
 	const elements = target instanceof NodeList || Array.isArray(target) ? target : [target];
@@ -29,10 +27,9 @@ export async function startAnimation(target, animation, delay = 0) {
 }
 
 /**
- * Attend que l'élément correspondant au sélecteur soit présent dans le DOM.
- * @param {string} selector - Le sélecteur CSS de l'élément recherché.
- * @param {number} timeout - Temps maximal en ms à attendre (par défaut 5000ms).
- * @returns {Promise<HTMLElement>} - Une promesse résolue avec l'élément, ou rejetée après timeout.
+ * @param {string} selector 
+ * @param {number} timeout 
+ * @returns {Promise<HTMLElement>} 
  */
 export function waitForElement(selector, timeout = 5000) {
 	return new Promise((resolve, reject) => {
@@ -46,7 +43,7 @@ export function waitForElement(selector, timeout = 5000) {
 				clearInterval(interval);
 				reject(new Error(`Element "${selector}" not found within timeout`));
 			}
-		}, 50); // vérifie toutes les 50ms
+		}, 50); 
 	});
 }
 

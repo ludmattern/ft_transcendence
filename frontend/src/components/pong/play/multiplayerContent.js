@@ -78,7 +78,6 @@ export const multiplayerContent = createComponent({
 			playGame(config);
 		});
 
-		// Online Matchmaking
 		const matchButton = el.querySelector('#launchMatch');
 		const leaveMatchButton = el.querySelector('#leaveMatch');
 		matchButton.addEventListener('click', () => {
@@ -99,7 +98,6 @@ export const multiplayerContent = createComponent({
 			matchButton.classList.remove('d-none');
 		});
 
-		// Private Match
 		const createPrivateButton = el.querySelector('#createPrivate');
 		const privateGameInput = el.querySelector('#privateGameInput');
 

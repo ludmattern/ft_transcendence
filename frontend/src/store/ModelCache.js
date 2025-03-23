@@ -42,7 +42,7 @@ class ModelCacheClass {
 					this.models.set(url, gltf.scene);
 					const response = await fetch(url);
 					const arrayBuffer = await response.arrayBuffer();
-					await CacheDB.saveFile('models', url, arrayBuffer); // Utilise saveFile
+					await CacheDB.saveFile('models', url, arrayBuffer);
 
 					resolve(gltf.scene.clone());
 				},

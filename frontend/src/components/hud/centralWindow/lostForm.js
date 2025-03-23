@@ -4,7 +4,6 @@ import { handleRoute } from '/src/services/router.js';
 export const lostForm = createComponent({
 	tag: 'lostForm',
 
-	// Générer le HTML
 	render: () => `
     <div id="logout-form" class="form-container">
       <h5>Wrong turn</h5>

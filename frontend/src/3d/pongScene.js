@@ -128,10 +128,10 @@ export function buildGameScene(gameConfig) {
 	`;
 
 	const fragmentShader = `
-		uniform float uCellSize;      // Taille manuelle de la cellule (hauteur)
-		uniform float uNumCells;      // Nombre de cellules par axe (pour le mode nombre de cellules)
-		uniform float uUseNumCells;   // Mode : 1.0 = utiliser le nombre de cellules, 0.0 = utiliser uCellSize
-		uniform float uCellAspect;    // Facteur pour la largeur de la cellule (1.0 = carré, < 1.0 = cellule plus étroite)
+		uniform float uCellSize;  
+		uniform float uNumCells; 
+		uniform float uUseNumCells;
+		uniform float uCellAspect;
 		uniform float uThickness;
 		uniform float uModOffset;
 		uniform float uGridCenter;
@@ -141,12 +141,9 @@ export function buildGameScene(gameConfig) {
 		varying vec2 vUv;
 		
 		void main() {
-			// Calcul de la taille effective (hauteur) de la cellule selon le mode choisi
 			float effectiveCellSize = mix(uCellSize, 1.0 / uNumCells, uUseNumCells);
-			// La largeur effective est réduite par le facteur uCellAspect
 			float effectiveCellSizeX = effectiveCellSize * uCellAspect;
 			
-			// Calcul des coordonnées locales dans chaque cellule
 			float gridX = mod(vUv.x / effectiveCellSizeX + uModOffset, 1.0);
 			float gridY = mod(vUv.y / effectiveCellSize + uModOffset, 1.0);
 

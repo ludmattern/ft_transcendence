@@ -5,7 +5,6 @@ import { logoutUser } from '/src/services/auth.js';
 export const logoutForm = createComponent({
 	tag: 'logoutForm',
 
-	// Générer le HTML
 	render: () => `
     <div id="logout-form" class="form-container">
       <h5>LOG OUT</h5>

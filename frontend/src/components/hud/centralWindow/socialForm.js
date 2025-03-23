@@ -143,14 +143,7 @@ export const socialForm = createComponent({
 	
 });
 
-/**
- * Génère un élément d'ami dans la liste
- *
- * @param {string} status - Statut de l'ami (par exemple, 'Online' ou 'Offline')
- * @param {string} pseudo - Pseudo de l'ami
- * @param {string} statusClass - Classe CSS pour le style du statut
- * @returns {string} - HTML du composant ami
- */
+
 function createFriendItem(status, pseudo, statusClass) {
 	return `
     <div class="friend-item d-flex justify-content-between align-items-center px-3">
@@ -166,14 +159,7 @@ function createFriendItem(status, pseudo, statusClass) {
   `;
 }
 
-/**
- * Génère un élément de pilote dans la liste
- *
- * @param {string} status - Statut du pilote
- * @param {string} pseudo - Pseudo du pilote
- * @param {string} statusClass - Classe CSS pour le style du statut
- * @returns {string} - HTML du composant pilote
- */
+
 function createPilotItem(status, pseudo, statusClass) {
 	return `
     <div class="pilot-item d-flex justify-content-between align-items-center px-3">
@@ -189,12 +175,7 @@ function createPilotItem(status, pseudo, statusClass) {
   `;
 }
 
-/**
- * Récupère la liste d'amis depuis l'API et construit dynamiquement la liste dans le DOM
- * Ne met à jour le DOM que s'il y a au moins un ami.
- *
- * @param {string} userId
- */
+
 async function getFriends() {
 	try {
 		const response = await fetch("/api/user-service/get_friends/", {

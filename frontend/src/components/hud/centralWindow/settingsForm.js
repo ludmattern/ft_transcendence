@@ -1,4 +1,3 @@
-// settingsForm.js
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { validatePassword } from '/src/components/hud/centralWindow/subscribeForm.js';
@@ -12,7 +11,6 @@ import { createNotificationMessage } from '/src/components/hud/sideWindow/left/n
 export const settingsForm = createComponent({
 	tag: 'settingsForm',
 
-	// Générer le HTML
 	render: () =>
 		`
 		<div id="settings-form" class="form-container d-none">
@@ -205,14 +203,7 @@ function emptyFields() {
 	document.getElementById('confirm-new-email').value = '';
 }
 
-/**
- * Crée un groupe de formulaire réutilisable
- *
- * @param {string} id - L'ID de l'input
- * @param {string} type - Le type de l'input (text, password, email)
- * @param {string} label - Le label affiché au-dessus de l'input
- * @returns {string} - HTML du groupe de formulaire
- */
+
 function createFormGroup(id, type, label) {
 	return `
 	<div class="form-group">
@@ -257,12 +248,7 @@ function getAutocompleteValue(id) {
 	}
 }
 
-/**
- * Collecte les données du formulaire
- *
- * @param {HTMLElement} el - Élément racine du formulaire
- * @returns {Object} - Données collectées du formulaire
- */
+
 async function collectFormData(el) {
 	return {
 		username: (await getInfo('username')).success ? (await getInfo('username')).value : null,

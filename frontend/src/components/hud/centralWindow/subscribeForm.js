@@ -5,7 +5,6 @@ import { registerUser } from '/src/services/auth.js';
 export const subscribeForm = createComponent({
 	tag: 'subscribeForm',
 
-	// Générer le HTML
 	render: () => `
     <div id="subscribe-form" class="form-container">
       <h5>PILOT IDENTIFICATION - REGISTER</h5>
@@ -144,9 +143,7 @@ function getFormValues(el) {
 	};
 }
 
-/**
- * Cache tous les messages d'erreur liés au formulaire
- */
+
 function resetErrorMessages() {
 	const errorIds = ['bad-id', 'bad-pass-size', 'bad-pass-upper', 'bad-pass-number', 'bad-pass-lower', 'bad-pass-special', 'error-message-mail-size', 'error-message-mail', 'error-message-mail2', 'error-message-pass'];
 
@@ -156,9 +153,7 @@ function resetErrorMessages() {
 	});
 }
 
-/**
- * @returns {boolean} 
- */
+
 
 export function validateId(id) {
 	if (id.length < 6 || id.length > 20) {

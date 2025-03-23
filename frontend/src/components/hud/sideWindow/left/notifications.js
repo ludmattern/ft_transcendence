@@ -4,11 +4,8 @@ import { emit } from '/src/services/eventEmitter.js';
 let notificationBuffer = [];
 
 /**
- * Crée et affiche une notification qui fade-in, reste visible pendant une durée donnée,
- * puis s'effondre en douceur avant d'être retirée du DOM.
- *
- * @param {string} message - Le contenu HTML ou texte de la notification.
- * @param {number} [duration=5000] - La durée en millisecondes avant de lancer le collapse (par défaut 30s).
+ * @param {string} message 
+ * @param {number} [duration=5000]
  */
 function collapseNotification(notification) {
 	notification.classList.add('collapsing');
@@ -23,9 +20,7 @@ function collapseNotification(notification) {
 	});
 }
 
-/**
- * Traite les notifications en attente dans la file d'attente.
- */
+
 function processNotificationBuffer() {
 	const container = document.getElementById('bottom-notification-container');
 	while (container.childElementCount < 3 && notificationBuffer.length > 0) {
@@ -35,10 +30,8 @@ function processNotificationBuffer() {
 }
 
 /**
- * Crée et affiche une notification qui fade-in, reste visible pendant une durée donnée,
- *
- * @param {string} message - Le contenu HTML ou texte de la notification.
- * @param {number} [duration=2500] - La durée en millisecondes avant de lancer le collapse (par défaut 30s).
+ * @param {string} message 
+ * @param {number} [duration=2500]
  */
 export function createNotificationMessage(message, duration = 2500, error = false) {
 	const container = document.getElementById('bottom-notification-container');

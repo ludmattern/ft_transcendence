@@ -7,7 +7,6 @@ import { createNotificationMessage } from '/src/components/hud/sideWindow/left/n
 export const localTournamentCreation = createComponent({
   tag: 'localTournamentCreation',
 
-  // La fonction render est synchrone et renvoie du HTML statique avec des conteneurs vides
   render: () => {
     return `
       <section class="col-12 d-flex flex-column align-items-center text-center p-5"
@@ -31,26 +30,21 @@ export const localTournamentCreation = createComponent({
     `;
   },
 
-  // attachEvents gère toute la logique d'injection dynamique et d'attachement des événements
   attachEvents: (el) => {
-    // Récupérer les informations nécessaires (taille du tournoi et username) via Promise.all
     Promise.all([getInfo('tournamentSize'), getInfo('username')])
       .then(([tournamentSizeData, usernameData]) => {
         const tournamentSize = parseInt(tournamentSizeData.success ? tournamentSizeData.value : 16, 10);
         const username = usernameData.success ? usernameData.value : 'You';
 
-        // Mise à jour de l'affichage du nombre maximum de joueurs
         const maxPlayersElement = el.querySelector('#max-players');
         maxPlayersElement.textContent = tournamentSize;
 
-        // Récupération des conteneurs
         const playerInputContainer = el.querySelector('#player-input-container');
         const tournamentButtonContainer = el.querySelector('#tournament-button-container');
         const playersCountSpan = el.querySelector('#players-count');
         const playersList = el.querySelector('#players-list');
         const cancelTournamentButton = el.querySelector('#cancel-tournament');
 
-        // Injection de la zone d'ajout de joueur dans le DOM
         playerInputContainer.innerHTML = `
           <div class="input-group" id="player-input-group">
             <input id="player-name" type="text" class="form-control" placeholder="Enter player name" aria-label="Player name">
@@ -58,26 +52,22 @@ export const localTournamentCreation = createComponent({
           </div>
         `;
 
-        // Création du bouton "Create Tournament" (non injecté immédiatement)
         const createTournamentButton = document.createElement('button');
         createTournamentButton.id = 'create-tournament';
         createTournamentButton.className = 'btn btn-pong';
         createTournamentButton.textContent = 'Create Tournament';
-        tournamentButtonContainer.innerHTML = ''; // On vide le conteneur
+        tournamentButtonContainer.innerHTML = ''; 
         tournamentButtonContainer.appendChild(createTournamentButton);
 
-        // Gestion du bouton Cancel
         cancelTournamentButton.addEventListener('click', () => {
           handleRoute('/pong/play/tournament');
         });
 
-        // Récupération des éléments de la zone d'ajout
         const playerNameInput = el.querySelector('#player-name');
         const addPlayerButton = el.querySelector('#add-player');
 
         let players = [username];
 
-        // Fonction qui met à jour l'UI locale (liste des joueurs et affichage des zones)
         function updateLocalUI() {
           playersCountSpan.textContent = players.length;
           playersList.innerHTML = '';
@@ -105,9 +95,7 @@ export const localTournamentCreation = createComponent({
             playersList.appendChild(li);
           });
 
-          // Gestion dynamique des éléments :
-          // - Si le nombre de joueurs est inférieur à la taille requise, on affiche la zone d'ajout et on vide le conteneur du bouton.
-          // - Sinon, on retire la zone d'ajout et on affiche le bouton "Create Tournament".
+
           if (players.length < tournamentSize) {
             playerInputContainer.style.display = 'block';
             tournamentButtonContainer.innerHTML = '';
@@ -122,7 +110,6 @@ export const localTournamentCreation = createComponent({
 
         updateLocalUI();
 
-        // Fonction de validation externe pour le nom d'utilisateur
         function validateUsername(name) {
           if (name.length < 6 || name.length > 20) {
             return { success: false, message: 'Username must be between 6 and 20 characters.' };
@@ -133,7 +120,6 @@ export const localTournamentCreation = createComponent({
           return { success: true };
         }
 
-        // Gestion de l'ajout d'un joueur
         function addPlayerHandler() {
           const name = playerNameInput.value.trim();
           if (!name) return;
@@ -158,7 +144,6 @@ export const localTournamentCreation = createComponent({
           updateLocalUI();
         }
 
-        // Attacher les événements à la zone d'ajout
         addPlayerButton.addEventListener('click', addPlayerHandler);
         playerNameInput.addEventListener('keypress', (e) => {
           if (e.key === 'Enter') {
@@ -166,7 +151,6 @@ export const localTournamentCreation = createComponent({
           }
         });
 
-        // Fonction utilitaire de mélange (shuffle)
         function shuffleArray(array) {
           for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -175,7 +159,6 @@ export const localTournamentCreation = createComponent({
           return array;
         }
 
-        // Gestion de la création du tournoi
         createTournamentButton.addEventListener('click', () => {
           if (players.length === tournamentSize) {
             const shuffledPlayers = shuffleArray([...players]);

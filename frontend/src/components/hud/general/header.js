@@ -81,11 +81,9 @@ export const header = createComponent({
 });
 
 /**
- * Crée un élément de navigation (<li>) avec un lien (<a>)
- *
- * @param {string} text - Le texte du lien
- * @param {string} id - L'ID de l'élément <a>
- * @returns {string} - HTML du menu de navigation
+ * @param {string} text
+ * @param {string} id
+ * @returns {string}
  */
 function createNavItem(text, id = '') {
 	return `
@@ -98,27 +96,21 @@ function createNavItem(text, id = '') {
 }
 
 /**
- * Met à jour le lien actif en fonction de l'URL actuelle ou de la route reçue.
- *
- * @param {HTMLElement} el - L'élément racine du header
- * @param {string} route - La route actuelle
+ * @param {HTMLElement} el 
+ * @param {string} route
  */
 export function updateActiveLink(el, route) {
-	let currentPath = route || window.location.pathname; // Fallback si pas de route
+	let currentPath = route || window.location.pathname; 
 
-	// Extraire uniquement la première section après le "/"
-	const firstSegment = currentPath.split('/')[1] || ''; // Évite les erreurs si vide
+	const firstSegment = currentPath.split('/')[1] || ''; 
 
-	// Trouver l'ID du lien correspondant
 	const activeLinkId = Object.keys(navigationLinks).find((key) => {
-		const path = navigationLinks[key].replace('/', ''); // Supprime le premier "/"
+		const path = navigationLinks[key].replace('/', ''); 
 		return firstSegment === path;
 	});
 
-	// Réinitialiser l'état de tous les liens
 	el.querySelectorAll('a').forEach((link) => link.classList.remove('active'));
 
-	// Activer le lien correspondant
 	if (activeLinkId && activeLinkId !== 'home-link') {
 		const activeLink = el.querySelector(`#${activeLinkId}`);
 		if (activeLink) {

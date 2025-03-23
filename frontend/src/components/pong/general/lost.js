@@ -4,7 +4,6 @@ import { handleRoute } from '/src/services/router.js';
 export const lost = createComponent({
 	tag: 'lost',
 
-	// Générer le HTML
 	render: () => `
     <section class="col-12 d-flex flex-column align-items-center justify-content-center text-center p-5"
              style="background-color: #111111; color: white;">
