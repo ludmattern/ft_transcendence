@@ -80,7 +80,7 @@ Base URL: `/api/auth-service/`
 ## Authentication Details
 
 -   **JWT Protection:**  
-    Every API request must include a valid JWT in the header. For example:
+    Most API requests must include a valid JWT in the header. For example:
 
 ```javascript
 const response = await fetch('/api/auth-service/check-auth/', {
