@@ -1,6 +1,7 @@
 *.env
 **/*.env
-
+.github/*
+.vscode/*
 secret/*
 nginx/certs/*
 secret/*
