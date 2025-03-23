@@ -133,8 +133,7 @@ ft_transcendence/                # Root folder for the entire project.
 ├── README.md                    # Project documentation (this file).
 ├── secret                       # Contains sensitive files (handled securely).
 └── subject                      # Project specifications and additional documentation.
-    ├── ft_transcendence.pdf     # Detailed project requirements and modules.
-    └── tree.txt                 # A text representation of the project tree.
+    └── ft_transcendence.pdf     # Detailed project requirements and modules.
 ```
 
 ---
@@ -176,7 +175,7 @@ Microservices communicate primarily through:
     JSON Web Tokens (JWT) secure API requests, and Two-Factor Authentication (2FA) is implemented to add an extra layer of security.
 
 -   **Secrets Management:**  
-    Sensitive data (API keys, credentials) are injected via a secure `secrets.txt` file into the docker-compose setup.
+    Sensitive data (API keys, credentials) are injected via secures `e.g. secrets.txt` files into the docker-compose setup.
 
 -   **Additional Measures:**  
     The use of robust hashing (bcrypt) and cryptographic libraries (cryptography, pyotp) further secures user data and application integrity.
@@ -200,12 +199,7 @@ The project includes a suite of code tests to verify the functionality of indivi
 
 ---
 
-## Documentation & Future Work
-
--   **API Documentation:**  
-    There is currently no formal documentation for API endpoints. Future work will include the implementation of a tool (such as Swagger/OpenAPI) to document and version the APIs.
--   **Further Improvements:**  
-    Planned improvements include enhanced inter-service communication documentation, more comprehensive testing, and additional modules as per the project specifications.
+## Documentation
 
 -   **Project Specifications:**  
     Detailed project requirements and modules are outlined in the subject file located in the `subject` directory [ft_transcendence.pdf](./subject/ft_transcendence.pdf).
@@ -215,7 +209,3 @@ The project includes a suite of code tests to verify the functionality of indivi
 ## License
 
 Refer to the [LICENSE](./LICENSE) file for details on the project’s license.
-
----
-
-ft_transcendence is designed to push the boundaries of traditional Pong, integrating modern web technologies and secure microservices architecture to create an engaging multiplayer experience.
