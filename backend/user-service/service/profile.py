@@ -1,8 +1,8 @@
 import json
 from django.http import JsonResponse  # type: ignore
-from .models import ManualUser, ManualGameHistory
+from .models import ManualUser
 from service.views import jwt_required
-from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.http import require_GET
 
 
 @require_GET
