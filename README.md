@@ -199,12 +199,7 @@ The project includes a suite of code tests to verify the functionality of indivi
 
 ---
 
-## Documentation & Future Work
-
--   **API Documentation:**  
-    There is currently no formal documentation for API endpoints. Future work will include the implementation of a tool (such as Swagger/OpenAPI) to document and version the APIs.
--   **Further Improvements:**  
-    Planned improvements include enhanced inter-service communication documentation, more comprehensive testing, and additional modules as per the project specifications.
+## Documentation
 
 -   **Project Specifications:**  
     Detailed project requirements and modules are outlined in the subject file located in the `subject` directory [ft_transcendence.pdf](./subject/ft_transcendence.pdf).
@@ -214,7 +209,3 @@ The project includes a suite of code tests to verify the functionality of indivi
 ## License
 
 Refer to the [LICENSE](./LICENSE) file for details on the project’s license.
-
----
-
-ft_transcendence is designed to push the boundaries of traditional Pong, integrating modern web technologies and secure microservices architecture to create an engaging multiplayer experience.
