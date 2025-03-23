@@ -133,8 +133,7 @@ ft_transcendence/                # Root folder for the entire project.
 ├── README.md                    # Project documentation (this file).
 ├── secret                       # Contains sensitive files (handled securely).
 └── subject                      # Project specifications and additional documentation.
-    ├── ft_transcendence.pdf     # Detailed project requirements and modules.
-    └── tree.txt                 # A text representation of the project tree.
+    └── ft_transcendence.pdf     # Detailed project requirements and modules.
 ```
 
 ---
