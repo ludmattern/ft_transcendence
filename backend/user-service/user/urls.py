@@ -1,3 +1,4 @@
+# user-service/urls.py
 from django.urls import path  # type: ignore
 from service.views import (
     get_leaderboard,

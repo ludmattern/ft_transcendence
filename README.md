@@ -203,6 +203,8 @@ The project includes a suite of code tests to verify the functionality of indivi
 
 -   **Project Specifications:**  
     Detailed project requirements and modules are outlined in the subject file located in the `subject` directory [ft_transcendence.pdf](./subject/ft_transcendence.pdf).
+-   **API Documentations:**
+    Detailed API documentation can be found in the [API_documentation](./API_documentation.md).
 
 ---
 

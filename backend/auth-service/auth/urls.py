@@ -1,3 +1,4 @@
+# auth-service/urls.py
 from django.urls import path  # type: ignore
 from service.views import (
     get_42_auth_url,
