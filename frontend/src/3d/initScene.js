@@ -1,16 +1,8 @@
 import * as THREE from 'https://esm.sh/three';
-import { FlyControls } from 'https://esm.sh/three/examples/jsm/controls/FlyControls.js';
 import Store from '/src/3d/store.js';
 
 export function initScene() {
 	Store.scene = new THREE.Scene();
-}
-
-export function initControls() {
-	Store.controls = new FlyControls(Store.camera, Store.renderer.domElement);
-	Store.controls.movementSpeed = 5;
-	Store.controls.rollSpeed = Math.PI / 10;
-	Store.controls.dragToLook = true;
 }
 
 export function initCamera() {

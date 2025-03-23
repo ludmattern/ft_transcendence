@@ -7,7 +7,6 @@ import Store from '/src/3d/store.js';
 import { loadModels } from '/src/3d/loader.js';
 import { initCSSRenderer } from '/src/3d/CSS3DRender.js';
 import { initLights, initSkybox, initRenderer, initCamera, initScene } from '/src/3d/initScene.js';
-// import { initControls } from '/src/3d/initScene.js';
 import { initParticles, updateParticles } from '/src/3d/particules.js';
 
 export function onWindowResize() {
@@ -31,7 +30,6 @@ export async function buildScene() {
 	initCSSRenderer();
 	initSkybox();
 	initLights();
-	// initControls();
 	await loadModels();
 	initParticles();
 	addEventListeners();
