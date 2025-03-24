@@ -18,6 +18,12 @@ logger = logging.getLogger(__name__)
 @database_sync_to_async
 def get_username(user_id):
     try:
+        if not user_id:
+            return None
+        try:
+            user_id = int(user_id)
+        except ValueError:
+            return None
         user = ManualUser.objects.get(pk=user_id)
         return user.username
     except ManualUser.DoesNotExist:
@@ -131,8 +137,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
         """Send a friend request or accept an existing one if initiated by the other user."""
 
         action = event.get("action")
-        author_id = event.get("author")
-        recipient_id = event.get("recipient")
+        try:
+            author_id = event.get("author")
+            if not author_id:
+                logger.warning("Author not provided")
+                return
+            recipient_id = event.get("recipient")
+            if not recipient_id:
+                logger.warning("Recipient not provided")
+                return
+            author_id = int(author_id)
+            recipient_id = int(recipient_id)
+        except ValueError:
+            logger.warning("Invalid author or recipient id")
+            return
+        
         author_username = await get_username(author_id)
         event["author_username"] = author_username
         recipient_username = await get_username(recipient_id)
