@@ -10,8 +10,9 @@ x-common-networks: &common_networks
   - frontend_network
 
 x-redis-env: &redis_env
-  REDIS_HOST: redis
-  REDIS_PORT: "6379"
+  REDIS_HOST: ${REDIS_HOST}
+  REDIS_PORT: ${REDIS_PORT}
+  REDIS_PASS: ${REDIS_PASS}
 
 x-build-defaults: &build_defaults
   context: .
@@ -89,6 +90,7 @@ services:
       - redis_data:/data
     ports:
       - "6380:6379"
+    env_file: *common_env
 
   gateway-service:
     <<: *service_defaults

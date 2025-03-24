@@ -3,12 +3,16 @@ import redis
 from django.http import JsonResponse  # type: ignore
 from django.views.decorators.http import require_POST, require_GET
 from functools import wraps
-
-
-
+import os
 from service.views import jwt_required
 
-r = redis.Redis(host="redis", port=6379, db=0)
+
+r = redis.Redis(
+    host=os.getenv("REDIS_HOST"),
+    port=int(os.getenv("REDIS_PORT")),
+    db=0,
+    password=os.getenv("REDIS_PASS"),
+)
 
 
 @require_POST
@@ -45,7 +49,6 @@ def push_info_storage(request):
 def get_info_storage(request):
     """
     GET /storage/get/?key=roomCode
-    Récupère la valeur dans Redis.
     """
     user = request.user
     key = request.GET.get("key")
@@ -77,7 +80,6 @@ def require_DELETE(view_func):
 def delete_info_storage(request):
     """
     DELETE /storage/delete/?key=roomCode
-    Supprime la valeur dans Redis.
     """
     user = request.user
     key = request.GET.get("key")
