@@ -130,7 +130,7 @@ def validate_password(password):
         return "Password must contain at least one uppercase letter"
     if not re.search(r"[0-9]", password):
         return "Password must contain at least one digit"
-    if not re.search(r"[@$+!%*-.?&#^]", password):
+    if not re.search(r"[!@#$%^&*()_\-+={}[\]|\\:;\"'<>,.?/~`]", password):
         return "Password must contain at least one special character"
     return None
 
@@ -176,7 +176,15 @@ def register_user(request):
             return JsonResponse({"success": False, "message": password_error}, status=400)
 
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-        encrypted_phone = encrypt_thing(phone_number) if phone_number else None
+
+        phone_regex = re.compile(r"^\+[1-9]\d{7,14}$")        
+        if phone_number:
+            if phone_regex.match(phone_number):
+                encrypted_phone = encrypt_thing(phone_number)
+            else:
+                return JsonResponse({"success": False, "message": "Invalid phone number format"}, status=400)
+        else:
+            encrypted_phone = None
 
         user = ManualUser.objects.create(
             username=username,

@@ -181,6 +181,12 @@ function emailError(data) {
 		document.getElementById('error-message-mail-size').style.display = 'none';
 	}
 
+	if (data.message.includes('Email has an invalid format')) {
+		document.getElementById('error-message-mail-format').style.display = 'block';
+	} else {
+		document.getElementById('error-message-mail-format').style.display = 'none';
+	}
+
 	if (data.message.includes('You\'re already using this email')) {
 		document.getElementById('error-same-as-old-email').style.display = 'block';
 	} else {
@@ -223,6 +229,7 @@ function createFormGroup(id, type, label) {
 	  ${id === 'confirm-new-password' ? '<div id="error-message-pass" class="text-danger mt-2" style="display: none;">Password does not match</div>' : ''}
 	  ${id === 'new-email' ? '<div id="error-message-mail" class="text-danger mt-2" style="display: none;">E-mail already taken</div>' : ''}
 	  ${id === 'new-email' ? '<div id="error-message-mail-size" class="text-danger mt-2" style="display: none;">E-mail too long</div>' : ''}
+	  ${id === 'new-email' ? '<div id="error-message-mail-format" class="text-danger mt-2" style="display: none;">E-mail has an invalid format</div>' : ''}
 	  ${id === 'new-email' ? '<div id="error-same-as-old-email" class="text-danger mt-2" style="display: none;">You\'re already using this email</div>' : ''}
 	  ${id === 'confirm-new-email' ? '<div id="error-message-mail2" class="text-danger mt-2" style="display: none;">E-mail does not match</div>' : ''}
 	</div>
@@ -276,6 +283,7 @@ function resetErrorMessages() {
 		'error-same-as-old-pass',
 		'error-message-pass',
 		'error-message-mail-size',
+		'error-message-mail-format',
 		'error-message-mail',
 		'error-message-mail2',
 		'error-same-as-old-email',
