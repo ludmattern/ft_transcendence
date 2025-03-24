@@ -361,7 +361,6 @@ def get_profile(request):
 ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
 MAX_FILE_SIZE = 2 * 1024 * 1024
 
-
 @require_POST
 @jwt_required
 def upload_profile_picture(request):

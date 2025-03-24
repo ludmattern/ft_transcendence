@@ -174,6 +174,9 @@ def login_view(request):
 
     now_utc = datetime.datetime.utcnow()
 
+    if not user.password:
+        return JsonResponse({"success": False, "message": "This account does not support password login"}, status=400)
+
     if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
         return JsonResponse({"success": False, "message": "Invalid credentials"}, status=401)
 
