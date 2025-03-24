@@ -157,10 +157,13 @@ export async function fetchUserId(username) {
 		const response = await fetch(`/api/user-service/get_user_id/${username}/`, {
 			credentials: 'include'
 		  });
-		if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+		if (!response.ok) {
+			return null
+		}
 		const data = await response.json();
 		return data.user_id;
 	} catch (error) {
-		console.error('Error fetching user ID: ', error);
+		console.error('Error fetching user id', error);
+		return null;
 	}
 }

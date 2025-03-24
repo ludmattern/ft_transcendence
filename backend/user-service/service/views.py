@@ -321,6 +321,10 @@ def getUsername(request):
 @require_GET
 def get_user_id(request, username):
     try:
+        if not username:
+            return JsonResponse({"error": "username parameter is required"}, status=400)
+        if len(username) < 6 or len(username) > 20:
+            return JsonResponse({"error": "Username must be between 6 and 20 characters"}, status=400)
         user = ManualUser.objects.get(username=username)
         return JsonResponse({"success": True, "user_id": str(user.id)})
     except ManualUser.DoesNotExist:

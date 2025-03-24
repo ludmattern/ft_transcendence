@@ -79,7 +79,7 @@ export const onlineTournamentCreation = createComponent({
 				const inviteContainerHTML = `
 				<div id="invite-container" class="w-50 mb-4">
 					<div class="input-group">
-						<input id="invite-input" type="text" class="form-control" placeholder="Enter invitation message" aria-label="Invitation">
+						<input id="invite-input" type="text" class="form-control" placeholder="Enter pilot username" aria-label="Invitation">
 						<button id="send-invite" class="btn btn-pong-blue" type="button">Send Invitation</button>
 					</div>
 				</div>
@@ -231,7 +231,7 @@ export function updateOnlinePlayersUI(data) {
 				inviteContainer.className = 'w-50 mb-4';
 				inviteContainer.innerHTML = `
 					<div class="input-group">
-						<input id="invite-input" type="text" class="form-control" placeholder="Enter invitation message" aria-label="Invitation">
+						<input id="invite-input" type="text" class="form-control" placeholder="Enter pilot username" aria-label="Invitation">
 						<button id="send-invite" class="btn btn-pong-blue" type="button">Send Invitation</button>
 					</div>
 				`;
