@@ -1,6 +1,5 @@
 from django.http import JsonResponse  # type: ignore
 
-
 import math
 import random
 import string
@@ -142,17 +141,7 @@ def get_current_tournament(request):
             else:
                 match_key = None
 
-            size.setdefault(match.round_number, []).append(
-                {
-                    "id": match.id,
-                    "player1": p1_display,
-                    "player2": p2_display,
-                    "status": match.status,
-                    "winner": w_display,
-                    "score": match.score,
-                    "match_key": match_key,
-                }
-            )
+            size.setdefault(match.round_number, []).append({"id": match.id, "player1": p1_display, "player2": p2_display, "status": match.status, "winner": w_display, "score": match.score, "match_key": match_key})
 
         size_list = []
         for round_num in sorted(size.keys()):
@@ -164,16 +153,7 @@ def get_current_tournament(request):
         if size_list and size_list[-1]["matches"]:
             tournament_winner = size_list[-1]["matches"][-1].get("winner", "TBD")
 
-        data = {
-            "tournament_id": tournament.id,
-            "serial_key": tournament.serial_key,
-            "status": tournament.status,
-            "participants": list(tournament.participants.all().values_list("user__username", flat=True)),
-            "size": size_list,
-            "mode": tournament.mode,
-            "isOver": is_over,
-            "winner": tournament_winner,
-        }
+        data = {"tournament_id": tournament.id, "serial_key": tournament.serial_key, "status": tournament.status, "participants": list(tournament.participants.all().values_list("user__username", flat=True)), "size": size_list, "mode": tournament.mode, "isOver": is_over, "winner": tournament_winner}
         return JsonResponse(data)
     except Exception as e:
         logger.exception("Unexpected error in get_current_tournament: %s", e)
@@ -344,14 +324,14 @@ def encrypt_thing(args):
 @jwt_required
 def create_local_tournament_view(request):
     """Create a local tournament with the provided players."""
-    user = request.user
-    if not user:
-        return JsonResponse({"error": "Unauthorized"}, status=401)
-    body = json.loads(request.body.decode("utf-8"))
-    players = body.get("players", [])
-    if not players:
-        return JsonResponse({"error": "No players provided"}, status=400)
     try:
+        user = request.user
+        if not user:
+            return JsonResponse({"error": "Unauthorized"}, status=401)
+        body = json.loads(request.body.decode("utf-8"))
+        players = body.get("players", [])
+        if not players:
+            return JsonResponse({"error": "No players provided"}, status=400)
         if len(players) not in [4, 8, 16]:
             logger.error(f"Invalid tournament size: {len(players)} players provided. Expected 4, 8, or 16.")
             return JsonResponse({"error": "Invalid tournament size"}, status=400)
@@ -363,14 +343,7 @@ def create_local_tournament_view(request):
 
         serial_key = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
-        tournament = ManualTournament.objects.create(
-            serial_key=serial_key,
-            name="Local Tournament",
-            organizer=user,
-            size=len(players) // 2,
-            status="ongoing",
-            mode="local",
-        )
+        tournament = ManualTournament.objects.create(serial_key=serial_key, name="Local Tournament", organizer=user, size=len(players) // 2, status="ongoing", mode="local")
 
         users_list = []
 
@@ -407,36 +380,16 @@ def create_local_tournament_view(request):
             match_order = (i // 2) + 1
             p1_user = users_list[i]
             p2_user = users_list[i + 1]
-
-            TournamentMatch.objects.create(
-                tournament=tournament,
-                round_number=1,
-                match_order=match_order,
-                player1_id=p1_user.id,
-                player2_id=p2_user.id,
-                status="pending",
-            )
+            TournamentMatch.objects.create(tournament=tournament, round_number=1, match_order=match_order, player1_id=p1_user.id, player2_id=p2_user.id, status="pending")
 
         previous_matches = n // 2
         for round_number in range(2, size_count + 1):
             num_matches = previous_matches // 2
             for match_order in range(1, num_matches + 1):
-                TournamentMatch.objects.create(
-                    tournament=tournament,
-                    round_number=round_number,
-                    match_order=match_order,
-                    player1_id=None,
-                    player2_id=None,
-                    status="pending",
-                )
+                TournamentMatch.objects.create(tournament=tournament, round_number=round_number, match_order=match_order, player1_id=None, player2_id=None, status="pending")
             previous_matches = num_matches
 
-        response_data = {
-            "success": True,
-            "serial_key": serial_key,
-            "tournament_id": tournament.id,
-            "players": players,
-        }
+        response_data = {"success": True, "serial_key": serial_key, "tournament_id": tournament.id, "players": players}
         return JsonResponse(response_data, status=200)
 
     except json.JSONDecodeError:
@@ -533,13 +486,7 @@ def try_join_tournament_with_room_code(request):
 
         ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
 
-        return JsonResponse(
-            {
-                "success": True,
-                "message": "User joined the tournament",
-                "payload": {"userId": user.id, "tournament_id": tournament.id},
-            }
-        )
+        return JsonResponse({"success": True, "message": "User joined the tournament", "payload": {"userId": user.id, "tournament_id": tournament.id}})
     except json.JSONDecodeError:
         return JsonResponse({"message": "Invalid JSON"}, status=400)
     except Exception as e:

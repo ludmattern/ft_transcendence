@@ -103,39 +103,50 @@ def check_auth_view(request):
 
 
 def jwt_required(view_func):
-    """Decorator to require a valid JWT token."""
+    """Decorator to check for a valid JWT token in the request."""
 
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        token = request.COOKIES.get("access_token")
-        if not token:
-            return JsonResponse({"success": False, "message": "No access_token cookie"}, status=401)
-
         try:
+            token = request.COOKIES.get("access_token")
+            if not token:
+                return JsonResponse({"success": False, "message": "No access_token cookie"}, status=401)
             payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+            if not payload:
+                return JsonResponse({"success": False, "message": "Invalid token"}, status=401)
             user_id = payload.get("sub")
             if not user_id:
                 return JsonResponse({"success": False, "message": "Invalid token: no sub"}, status=401)
+            try:
+                user_id = int(user_id)
+            except ValueError:
+                return JsonResponse({"success": False, "message": "Invalid user ID"}, status=401)
 
             try:
                 user = ManualUser.objects.get(pk=user_id)
             except ManualUser.DoesNotExist:
-                return JsonResponse({"success": False, "message": "User not found"}, status=200)
+                return JsonResponse({"success": False, "message": "User not found"}, status=404)
 
             if user.session_token != token:
                 return JsonResponse({"success": False, "message": "Invalid or outdated token"}, status=401)
 
-            if not user.token_expiry or user.token_expiry < datetime.datetime.utcnow():
+            now = datetime.datetime.utcnow()
+            if user.token_expiry is None or user.token_expiry < now:
                 return JsonResponse({"success": False, "message": "Token expired in DB"}, status=401)
 
             request.user = user
+            if not user:
+                return JsonResponse({"success": False, "message": "Unauthorized"}, status=401)
+
+            return view_func(request, *args, **kwargs)
+
         except jwt.ExpiredSignatureError:
             return JsonResponse({"success": False, "message": "Token expired"}, status=401)
-        except jwt.InvalidTokenError as e:
-            logging.error("Invalid token: %s", e)
-            return JsonResponse({"success": False, "message": "Token error"}, status=401)
-
-        return view_func(request, *args, **kwargs)
+        except jwt.InvalidTokenError:
+            return JsonResponse({"success": False, "message": "Internal server error"}, status=401)
+        except Exception as e:
+            logger.exception(f"Error in jwt_required: {str(e)}")
+            return JsonResponse({"success": False, "message": "Internal server error"}, status=500)
 
     return wrapper
 
@@ -159,6 +170,7 @@ def send_2fa_sms(phone_number, code):
     except Exception as e:
         logger.error("Error sending SMS: %s", e)
 
+
 @require_POST
 def login_view(request):
     try:
@@ -170,12 +182,11 @@ def login_view(request):
             return JsonResponse({"success": False, "message": "Username and password are required."}, status=400)
 
         user = ManualUser.objects.get(username=username)
-        
 
         now_utc = datetime.datetime.utcnow()
 
         if not user.password:
-           return JsonResponse({"success": False, "message": "This account does not support password login"}, status=400)
+            return JsonResponse({"success": False, "message": "This account does not support password login"}, status=400)
 
         if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
             return JsonResponse({"success": False, "message": "Invalid credentials"}, status=401)
@@ -200,9 +211,7 @@ def login_view(request):
                 user.session_token = None
                 user.save()
                 channel_layer = get_channel_layer()
-                async_to_sync(channel_layer.group_send)(
-                    f"user_{user.id}", {"type": "logout", "message": "session replaced"}
-                )
+                async_to_sync(channel_layer.group_send)(f"user_{user.id}", {"type": "logout", "message": "session replaced"})
             else:
                 return JsonResponse({"success": False, "message": "User is already connected"}, status=403)
         else:
@@ -219,10 +228,11 @@ def login_view(request):
         return response
 
     except ManualUser.DoesNotExist:
-            return JsonResponse({"success": False, "message": "User not found"}, status=404)
+        return JsonResponse({"success": False, "message": "User not found"}, status=404)
     except Exception as e:
         logger.exception(f"Unexpected error during login: {e}")
         return JsonResponse({"success": False, "message": "Internal server error"}, status=500)
+
 
 @require_POST
 @jwt_required
@@ -311,6 +321,7 @@ def verify_2fa_view(request):
     except Exception as e:
         logging.exception("Unexpected error during 2FA verification: %s", e)
         return JsonResponse({"success": False, "message": "Internal server error"}, status=500)
+
 
 @require_GET
 def get_user_id_from_cookie(request):

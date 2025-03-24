@@ -10,6 +10,7 @@ import logging
 
 from io import BytesIO
 from functools import wraps
+import datetime
 from PIL import Image  # type: ignore
 from cryptography.fernet import Fernet
 from django.http import JsonResponse, HttpResponse  # type: ignore
@@ -22,6 +23,7 @@ from django.conf import settings  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
 from .models import ManualUser, ManualGameHistory, ManualBlockedRelations
 
+logger = logging.getLogger(__name__)
 cipher = Fernet(settings.FERNET_KEY)
 
 
@@ -42,16 +44,24 @@ def encrypt_thing(text):
 
 
 def jwt_required(view_func):
+    """Decorator to check for a valid JWT token in the request."""
+
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        token = request.COOKIES.get("access_token")
-        if not token:
-            return JsonResponse({"success": False, "message": "No access_token cookie"}, status=401)
         try:
+            token = request.COOKIES.get("access_token")
+            if not token:
+                return JsonResponse({"success": False, "message": "No access_token cookie"}, status=401)
             payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+            if not payload:
+                return JsonResponse({"success": False, "message": "Invalid token"}, status=401)
             user_id = payload.get("sub")
             if not user_id:
                 return JsonResponse({"success": False, "message": "Invalid token: no sub"}, status=401)
+            try:
+                user_id = int(user_id)
+            except ValueError:
+                return JsonResponse({"success": False, "message": "Invalid user ID"}, status=401)
 
             try:
                 user = ManualUser.objects.get(pk=user_id)
@@ -61,18 +71,23 @@ def jwt_required(view_func):
             if user.session_token != token:
                 return JsonResponse({"success": False, "message": "Invalid or outdated token"}, status=401)
 
-            if is_expired(user.token_expiry):
+            now = datetime.datetime.utcnow()
+            if user.token_expiry is None or user.token_expiry < now:
                 return JsonResponse({"success": False, "message": "Token expired in DB"}, status=401)
 
             request.user = user
+            if not user:
+                return JsonResponse({"success": False, "message": "Unauthorized"}, status=401)
+
+            return view_func(request, *args, **kwargs)
 
         except jwt.ExpiredSignatureError:
             return JsonResponse({"success": False, "message": "Token expired"}, status=401)
-        except jwt.InvalidTokenError as e:
-            logging.error("Invalid token: %s", str(e))
+        except jwt.InvalidTokenError:
             return JsonResponse({"success": False, "message": "Internal server error"}, status=401)
-
-        return view_func(request, *args, **kwargs)
+        except Exception as e:
+            logger.exception(f"Error in jwt_required: {str(e)}")
+            return JsonResponse({"success": False, "message": "Internal server error"}, status=500)
 
     return wrapper
 
@@ -177,7 +192,7 @@ def register_user(request):
 
         hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
-        phone_regex = re.compile(r"^\+[1-9]\d{7,14}$")        
+        phone_regex = re.compile(r"^\+[1-9]\d{7,14}$")
         if phone_number:
             if phone_regex.match(phone_number):
                 encrypted_phone = encrypt_thing(phone_number)
