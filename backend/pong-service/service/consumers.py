@@ -169,7 +169,13 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         """Finalize a tournament game."""
         try:
             winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
+            if not winner:
+                logger.warning("No user found")
+                return
             loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
+            if not loser:
+                logger.warning("No user found")
+                return
 
             match = await sync_to_async(
                 TournamentMatch.objects.filter(match_key=game_id).first
@@ -188,6 +194,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             if participant:
                 participant.status = "eliminated"
                 await sync_to_async(participant.save)()
+            else:
+                logger.warning("No participant found")
+                return
 
             match.winner_id = winner.id
 
@@ -209,6 +218,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     match_order=next_match_order
                 ).first
             )()
+            if not next_match:
+                logger.warning("No next match found")
+                return
 
             if next_match:
                 if match.match_order % 2 == 1:
@@ -234,6 +246,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     .values_list("user_id", flat=True) 
                 )
             )()
+            if not participant_list:
+                logger.warning("No participant list found")
+                return
 
 
             payload = {
@@ -253,7 +268,13 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
     async def process_matchmaking(self, game_id, game, winner_id, loser_id):
         """finalize matchmaking game."""
         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
+        if not winner: 
+            logger.warning("No user found")
+            return
         loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
+        if not loser:
+            logger.warning("No user found")
+            return
         if winner.elo == 0:
             winner.elo = 1000
             await sync_to_async(winner.save)()
