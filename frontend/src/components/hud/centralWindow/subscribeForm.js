@@ -35,6 +35,7 @@ export const subscribeForm = createComponent({
             <input type="email" id="email" name="email" autocomplete="email" class="form-control" required />
             <div id="error-message-mail" class="text-danger mt-2" style="display: none;">E-mail already taken</div>
             <div id="error-message-mail-size" class="text-danger mt-2" style="display: none;">E-mail too long</div>
+            <div id="error-message-mail-format" class="text-danger mt-2" style="display: none;">E-mail has an invalid format</div>
           </div>
           <div class="form-group">
             <label class="mb-3" for="confirm-email">Confirm Email</label>
@@ -59,7 +60,7 @@ export const subscribeForm = createComponent({
             <div class="form-group" id="phone-group" style="display: none;">
               <label for="phone-number">Phone Number</label>
               <input type="text" id="phone-number" name="phone-number" class="form-control" />
-              <div id="error-message-phone" class="text-danger mt-2" style="display: none;">Phone number must contain exactly 10 digits.</div>
+              <div id="error-message-phone" class="text-danger mt-2" style="display: none;">Phone number must start by '+' (E.164 standard)</div>
             </div>
           </div>
           <button type="submit" class="btn btn-block bi bi-check2-square">Register</button>
@@ -109,10 +110,8 @@ export const subscribeForm = createComponent({
 			if (canRegister && !validatePassword(password)) canRegister = false;
 			if (canRegister && !checkPasswordConfirmation(password, confirmPassword)) canRegister = false;
 			if (canRegister && !checkEmailConfirmation(mail, confirmMail)) canRegister = false;
-			if (is2FAEnabled && twoFAMethod === 'sms' && !phoneNumber) {
-				if (!validatePhoneNumber(phoneNumber)) {
+			if (is2FAEnabled && twoFAMethod === 'sms' && !validatePhoneNumber(phoneNumber)) {
 					canRegister = false;
-				}
 			}
 			if (canRegister) {
 				try {
@@ -145,7 +144,19 @@ function getFormValues(el) {
 
 
 function resetErrorMessages() {
-	const errorIds = ['bad-id', 'bad-pass-size', 'bad-pass-upper', 'bad-pass-number', 'bad-pass-lower', 'bad-pass-special', 'error-message-mail-size', 'error-message-mail', 'error-message-mail2', 'error-message-pass'];
+	const errorIds = [
+		'bad-id',
+		'bad-pass-size',
+		'bad-pass-upper',
+		'bad-pass-number',
+		'bad-pass-lower',
+		'bad-pass-special',
+		'error-message-mail-size',
+		'error-message-mail',
+		'error-message-mail-format',
+		'error-message-mail2',
+		'error-message-pass'
+	];
 
 	errorIds.forEach((errId) => {
 		const el = document.getElementById(errId);
@@ -165,8 +176,7 @@ export function validateId(id) {
 		return false;
 	}
 	const regex = /^[a-zA-Z0-9_\-]+$/;
-	if (!regex.test(id)) 
-	{
+	if (!regex.test(id)) {
 		const badId = document.getElementById('bad-id');
 		if (badId) {
 			badId.textContent = 'Id must contain only letters, numbers and underscores';
@@ -207,7 +217,7 @@ export function validatePassword(password) {
 		isValid = false;
 	}
 
-	const regexSpecial = /[@$!%*?+\-&#^]/;
+	const regexSpecial = /[!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/~`]/;
 	if (!regexSpecial.test(password)) {
 		document.getElementById('bad-pass-special').style.display = 'block';
 		isValid = false;
@@ -233,8 +243,14 @@ export function checkEmailConfirmation(mail, confirmMail) {
 }
 
 export function validatePhoneNumber(phoneNumber) {
-	const phoneRegex = /^\d{10}$/;
-	if (!phoneRegex.test(phoneNumber)) {
+	if(!phoneNumber) {
+		document.getElementById('error-message-phone').style.display = 'block';
+		return false;
+	}
+
+	const cleaned = phoneNumber.replace(/[\s\-()]/g, '');
+	const phoneRegex = /^\+[1-9]\d{7,14}$/;
+	if (!phoneRegex.test(cleaned)) {
 		document.getElementById('error-message-phone').style.display = 'block';
 		return false;
 	}
@@ -243,6 +259,12 @@ export function validatePhoneNumber(phoneNumber) {
 }
 
 export function validateMail(mail) {
+	const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+	if (!emailRegex.test(mail)) {
+		document.getElementById('error-message-mail-format').style.display = 'block';
+		return false;
+	}
+
 	if (mail && mail.length <= 50) {
 		return true;
 	}

@@ -3,13 +3,13 @@ import { handleRoute } from '/src/services/router.js';
 import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.js';
 import { subscribe } from '/src/services/eventEmitter.js';
 import { ws } from '/src/services/websocket.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 
 export const socialForm = createComponent({
 	tag: 'socialForm',
 
 	// Générer le HTML du composant
 	render: () => {
-
 		// Le contenu HTML initial. La liste d'amis sera mise à jour après rendu.
 		return `
       <div id="social-form" class="form-container">
@@ -49,12 +49,12 @@ export const socialForm = createComponent({
 		subscribe('updateFriendsList', async () => {
 			getFriends();
 		});
-	
+
 		getFriends();
-	
+
 		el.addEventListener('click', async (e) => {
 			e.preventDefault();
-	
+
 			// Handle "View Profile" button click
 			if (e.target.matches('#other-profile-link')) {
 				const item = e.target.closest('.friend-item') || e.target.closest('.pilot-item');
@@ -67,16 +67,16 @@ export const socialForm = createComponent({
 				}
 				return;
 			}
-	
+
 			// Handle "Add Friend" button click
 			if (e.target.matches('#add-link')) {
 				const pilotItem = e.target.closest('.pilot-item');
 				const authorElement = pilotItem?.querySelector('.profile-pseudo');
-	
+
 				if (!authorElement) {
 					return;
 				}
-	
+
 				const author = authorElement.textContent.trim();
 				const payload = {
 					type: 'info_message',
@@ -84,11 +84,11 @@ export const socialForm = createComponent({
 					recipient: await fetchUserId(author),
 					timestamp: new Date().toISOString(),
 				};
-	
+
 				ws.send(JSON.stringify(payload));
 				return;
 			}
-	
+
 			// Handle "Remove Friend" button click
 			if (e.target.matches('#remove-link')) {
 				const item = e.target.closest('.friend-item');
@@ -102,13 +102,13 @@ export const socialForm = createComponent({
 							recipient: await fetchUserId(friendUsername),
 							timestamp: new Date().toISOString(),
 						};
-	
+
 						ws.send(JSON.stringify(payload));
 					}
 				}
 				return;
 			}
-	
+
 			// Handle "Search" button click
 			if (e.target.matches('#search-link')) {
 				const searchBar = el.querySelector('#search-bar');
@@ -116,33 +116,32 @@ export const socialForm = createComponent({
 					const query = searchBar.value.trim();
 					if (!query) {
 						return;
+					} else if (query.length > 20) {
+						createNotificationMessage('Pilot username must be at most 20 characters long', 2500, true);
+						return;
 					}
+					console.log('Searching for pilot:', query);
 					const pilotListContainer = el.querySelector('.pilot-list-container');
 					fetchPilot(query, pilotListContainer);
 				}
 				return;
 			}
 		});
-	
-		// Handle "Enter" key press for search bar
+
 		const searchBar = el.querySelector('#search-bar');
 		if (searchBar) {
 			searchBar.addEventListener('keydown', (e) => {
 				if (e.key === 'Enter') {
 					e.preventDefault();
-					const query = searchBar.value.trim();
-					if (!query) {
-						return;
+					const searchButton = el.querySelector('#search-link');
+					if (searchButton) {
+						searchButton.click();
 					}
-					const pilotListContainer = el.querySelector('.pilot-list-container');
-					fetchPilot(query, pilotListContainer);
 				}
 			});
 		}
 	},
-	
 });
-
 
 function createFriendItem(status, pseudo, statusClass) {
 	return `
@@ -159,7 +158,6 @@ function createFriendItem(status, pseudo, statusClass) {
   `;
 }
 
-
 function createPilotItem(status, pseudo, statusClass) {
 	return `
     <div class="pilot-item d-flex justify-content-between align-items-center px-3">
@@ -175,43 +173,33 @@ function createPilotItem(status, pseudo, statusClass) {
   `;
 }
 
-
 async function getFriends() {
 	try {
-		const response = await fetch("/api/user-service/get_friends/", {
-			method: "GET",
-			credentials: "include",
+		const response = await fetch('/api/user-service/get_friends/', {
+			method: 'GET',
+			credentials: 'include',
 		});
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
 		const data = await response.json();
 
-		const friendListContainer = document.querySelector(".friend-list-container");
+		const friendListContainer = document.querySelector('.friend-list-container');
 		if (friendListContainer && data.friends && data.friends.length > 0) {
-			friendListContainer.innerHTML = data.friends
-				.map((friend) =>
-					createFriendItem(
-						"Online",
-						friend.username,
-						friend.is_connected ? "text-success" : "text-danger"
-					)
-				)
-				.join("");
+			friendListContainer.innerHTML = data.friends.map((friend) => createFriendItem('Online', friend.username, friend.is_connected ? 'text-success' : 'text-danger')).join('');
 		} else if (friendListContainer && data.friends && data.friends.length === 0) {
-			friendListContainer.innerHTML =
-				'<p style="opacity: 0.7;">It\'s a lonely world...</p>';
+			friendListContainer.innerHTML = '<p style="opacity: 0.7;">It\'s a lonely world...</p>';
 		}
 	} catch (error) {
-		console.error("Error while fetching friend list: ", error);
+		console.error('Error while fetching friend list: ', error);
 	}
 }
 
 async function fetchPilot(query, container) {
 	try {
 		const response = await fetch(`/api/user-service/search_pilots/?query=${encodeURIComponent(query)}`, {
-			method: "GET",
-			credentials: "include",
+			method: 'GET',
+			credentials: 'include',
 		});
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
@@ -223,15 +211,11 @@ async function fetchPilot(query, container) {
 				container.innerHTML = '<p>Maybe this pilot crashed or went far far far away...</p>';
 			} else {
 				container.innerHTML = data.pilots
-					.map((pilot) => createPilotItem(
-						pilot.is_connected ? "Online" : "Offline",
-						pilot.username,
-						pilot.is_connected ? "text-success" : "text-danger"
-					))
-					.join("");
+					.map((pilot) => createPilotItem(pilot.is_connected ? 'Online' : 'Offline', pilot.username, pilot.is_connected ? 'text-success' : 'text-danger'))
+					.join('');
 			}
 		}
 	} catch (error) {
-		console.error("Error searching pilots: ", error);
+		console.error('Error searching pilots: ', error);
 	}
 }

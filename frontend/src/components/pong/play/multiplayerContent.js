@@ -109,7 +109,13 @@ export const multiplayerContent = createComponent({
 			}
 			const opponentUsername = privateGameInput.value.trim();
 			if (!opponentUsername) {
-				createNotificationMessage('Please enter a username code', 2500, false);
+				createNotificationMessage('Please enter a username code', 2500, true);
+				return;
+			} else if (opponentUsername.length < 6) {
+				createNotificationMessage('Username must be at least 6 characters long', 2500, true);
+				return;
+			} else if (opponentUsername.length > 20) {
+				createNotificationMessage('Username must be at most 20 characters long', 2500, true);
 				return;
 			}
 			if (notAuthenticatedThenRedirect()) return;
