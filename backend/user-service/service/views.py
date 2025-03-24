@@ -16,7 +16,6 @@ from django.http import JsonResponse, HttpResponse  # type: ignore
 from django.views.decorators.http import require_POST, require_GET
 
 
-
 from django.db.models import Q  # type: ignore
 from django.db.models.functions import Length  # type: ignore
 from django.conf import settings  # type: ignore
@@ -27,7 +26,6 @@ cipher = Fernet(settings.FERNET_KEY)
 
 
 def is_expired(expiry):
-
     if expiry is None:
         return True
     if not is_aware(expiry):
@@ -71,6 +69,7 @@ def jwt_required(view_func):
         except jwt.ExpiredSignatureError:
             return JsonResponse({"success": False, "message": "Token expired"}, status=401)
         except jwt.InvalidTokenError as e:
+            logging.error("Invalid token: %s", str(e))
             return JsonResponse({"success": False, "message": "Internal server error"}, status=401)
 
         return view_func(request, *args, **kwargs)
@@ -90,12 +89,15 @@ def generate_qr_code(request, username):
         return HttpResponse(buffer, content_type="image/png")
     except ManualUser.DoesNotExist:
         return HttpResponse("User not found", status=404)
+    except Exception as e:
+        logging.error("An error occurred in generate_qr_code: %s", str(e))
+        return HttpResponse("An error occurred", status=500)
 
 
 def validate_username(username):
     if len(username) < 6 or len(username) > 20:
         return "Username must be between 6 and 20 characters"
-    if not re.match(r'^[a-zA-Z0-9_\-]+$', username):
+    if not re.match(r"^[a-zA-Z0-9_\-]+$", username):
         return "Username can only contain alphanumeric characters, underscores and hyphens"
     if ManualUser.objects.filter(username=username).exists():
         return "Username already taken"
@@ -135,14 +137,15 @@ def validate_password(password):
 
 @require_POST
 def register_user(request):
-    body = json.loads(request.body.decode("utf-8"))
-    username = body.get("username")
-    email = body.get("email")
-    password = body.get("password")
-    is_2fa_enabled = body.get("is_2fa_enabled", False)
-    twofa_method = body.get("twofa_method", None)
-    phone_number = body.get("phone_number", None)
     try:
+        body = json.loads(request.body.decode("utf-8"))
+        username = body.get("username")
+        email = body.get("email")
+        password = body.get("password")
+        is_2fa_enabled = body.get("is_2fa_enabled", False)
+        twofa_method = body.get("twofa_method", None)
+        phone_number = body.get("phone_number", None)
+
         if not username or not email or not password:
             logging.error("Missing required fields")
             return JsonResponse({"success": False, "message": "Missing required fields"}, status=400)
@@ -153,7 +156,12 @@ def register_user(request):
             return JsonResponse({"success": False, "message": username_error}, status=400)
 
         email_error_or_encrypted = validate_email(email)
-        if email_error_or_encrypted == "Email decryption failed" or  email_error_or_encrypted == "Email already in use" or email_error_or_encrypted == "Email must be less than 50 characters" or email_error_or_encrypted == "Invalid email format":
+        if email_error_or_encrypted in (
+            "Email decryption failed",
+            "Email already in use",
+            "Email must be less than 50 characters",
+            "Invalid email format",
+        ):
             logging.error("Email error: %s", email_error_or_encrypted)
             return JsonResponse({"success": False, "message": email_error_or_encrypted}, status=400)
         encrypted_email = email_error_or_encrypted
@@ -245,10 +253,10 @@ def update_info(request):
                 if ManualUser.objects.exclude(id=user.id).filter(email=encrypt_thing(new_email)).exists():
                     return JsonResponse({"success": False, "message": "Email already in use"}, status=200)
                 new_email_error_or_encrypted = validate_email(new_email)
-                if new_email_error_or_encrypted == "Email decryption failed" or  new_email_error_or_encrypted == "Email already in use" or new_email_error_or_encrypted == "Email must be less than 50 characters" or new_email_error_or_encrypted == "Invalid email format":
+                if new_email_error_or_encrypted == "Email decryption failed" or new_email_error_or_encrypted == "Email already in use" or new_email_error_or_encrypted == "Email must be less than 50 characters" or new_email_error_or_encrypted == "Invalid email format":
                     logging.error("Email error: %s", new_email_error_or_encrypted)
                     return JsonResponse({"success": False, "message": new_email_error_or_encrypted}, status=200)
-                
+
             user.email = encrypt_thing(new_email)
 
         if new_password == old_password:
@@ -268,6 +276,7 @@ def update_info(request):
         logging.error("Error in update_info: %s", str(e))
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
+
 @jwt_required
 @require_POST
 def getUsername(request):
@@ -284,6 +293,7 @@ def getUsername(request):
         logging.error("Error in getUsername: %s", str(e))
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
+
 @jwt_required
 @require_GET
 def get_user_id(request, username):
@@ -292,14 +302,27 @@ def get_user_id(request, username):
         return JsonResponse({"success": True, "user_id": str(user.id)})
     except ManualUser.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
+    except Exception as e:
+        logging.error("An error occurred in get_user_id: %s", str(e))
+        return JsonResponse({"error": "An internal error has occurred!"}, status=500)
+
 
 @jwt_required
 @require_GET
 def get_game_history(request):
-    user_id = request.GET.get("user_id")
-    if not user_id:
-        return JsonResponse({"error": "user_id parameter is required"}, status=400)
     try:
+        user_id = request.GET.get("user_id")
+        if not user_id:
+            return JsonResponse({"error": "user_id parameter is required"}, status=400)
+        try:
+            user_id = int(user_id)
+        except ValueError:
+            return JsonResponse({"error": "user_id must be an integer"}, status=400)
+        try:
+            ManualUser.objects.get(id=user_id)
+        except ManualUser.DoesNotExist:
+            return JsonResponse({"error": "User not found"}, status=404)
+
         history_entries = ManualGameHistory.objects.filter(Q(winner_id=user_id) | Q(loser_id=user_id)).order_by("-created_at")[:20]
         history_list = []
         wins = 0
@@ -315,7 +338,7 @@ def get_game_history(request):
                 loser_username = loser_user.username
             except ManualUser.DoesNotExist:
                 loser_username = None
-            if str(entry.winner_id) == user_id:
+            if entry.winner_id == user_id:
                 wins += 1
             history_list.append(
                 {
@@ -334,18 +357,18 @@ def get_game_history(request):
         logging.error("An error occurred in get_game_history: %s", str(e))
         return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
+
 @jwt_required
 @require_GET
 def get_profile(request):
-    user_id = request.GET.get("user_id")
-    if not user_id:
-        return JsonResponse({"error": "user_id parameter is required"}, status=400)
     try:
+        user_id = request.GET.get("user_id")
+        if not user_id:
+            return JsonResponse({"error": "user_id parameter is required"}, status=400)
         user = ManualUser.objects.get(id=user_id)
         profile_picture = user.profile_picture.url
         data = {
             "username": user.username,
-            "email": user.email,
             "profile_picture": profile_picture,
             "is_connected": user.is_connected,
             "elo": user.elo,
@@ -360,6 +383,7 @@ def get_profile(request):
 
 ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp"]
 MAX_FILE_SIZE = 2 * 1024 * 1024
+
 
 @require_POST
 @jwt_required
@@ -403,12 +427,13 @@ def search_pilots(request):
     query = request.GET.get("query")
     if not query:
         return JsonResponse({"message": "Query parameter is required"}, status=400)
+    query = str(query)[:20] if len(query) > 20 else str(query)
     try:
         user = request.user
+        if not user:
+            return JsonResponse({"success": False, "error": "Unauthorized"}, status=200)
         blocked_users = ManualBlockedRelations.objects.filter(blocked_user=user).values_list("user_id", flat=True)
-        pilots = ManualUser.objects.filter(username__icontains=query).exclude(id__in=blocked_users).exclude(id=user.id).annotate(
-            username_length=Length('username')
-        ).order_by('username_length', 'username')
+        pilots = ManualUser.objects.filter(username__icontains=query).exclude(id__in=blocked_users).exclude(id=user.id).annotate(username_length=Length("username")).order_by("username_length", "username")
         results = [{"username": pilot.username, "user_id": pilot.id, "is_connected": pilot.is_connected} for pilot in pilots]
         return JsonResponse({"success": True, "pilots": results}, status=200)
 
@@ -416,12 +441,17 @@ def search_pilots(request):
         logging.error("An error occurred in search_pilots: %s", str(e))
         return JsonResponse({"error": "An internal error has occurred!"}, status=500)
 
+
 @jwt_required
 @require_GET
 def get_leaderboard(request):
-    players = ManualUser.objects.filter(elo__gt=0).order_by("-elo")[:500]
-    results = [{"rank": index + 1, "username": player.username, "elo": player.elo} for index, player in enumerate(players)]
-    return JsonResponse({"success": True, "players": results})
+    try:
+        players = ManualUser.objects.filter(elo__gt=0).order_by("-elo")[:500]
+        results = [{"rank": index + 1, "username": player.username, "elo": player.elo} for index, player in enumerate(players)]
+        return JsonResponse({"success": True, "players": results})
+    except Exception as e:
+        logging.error("An error occurred in get_leaderboard: %s", str(e))
+        return JsonResponse({"success": False, "error": "An internal error has occurred!"}, status=500)
 
 
 @jwt_required
