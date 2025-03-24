@@ -5,7 +5,6 @@ from django.views.decorators.http import require_POST, require_GET
 from functools import wraps
 
 
-
 from service.views import jwt_required
 
 r = redis.Redis(host="redis", port=6379, db=0)
@@ -17,9 +16,7 @@ def push_info_storage(request):
     try:
         data = json.loads(request.body.decode("utf-8"))
     except (json.JSONDecodeError, UnicodeDecodeError):
-        return JsonResponse(
-            {"success": False, "error": "Invalid JSON body"}, status=400
-        )
+        return JsonResponse({"success": False, "error": "Invalid JSON body"}, status=400)
 
     user = request.user
     key = data.get("key")
@@ -33,12 +30,8 @@ def push_info_storage(request):
 
     r.setex(redis_key, expiration_time, str(value))
 
-    return JsonResponse(
-        {
-            "success": True,
-            "message": f"Value stored under key '{key}' for user_id={user.id} (expires in 1 hour)",
-        }
-    )
+    return JsonResponse({"success": True, "message": f"Value stored under key '{key}' for user_id={user.id} (expires in 1 hour)"})
+
 
 @require_GET
 @jwt_required
@@ -59,16 +52,16 @@ def get_info_storage(request):
     if stored_value is None:
         return JsonResponse({"success": True, "key": key, "value": None})
 
-    return JsonResponse(
-        {"success": True, "key": key, "value": stored_value.decode("utf-8")}
-    )
+    return JsonResponse({"success": True, "key": key, "value": stored_value.decode("utf-8")})
+
 
 def require_DELETE(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
-        if request.method != 'DELETE':
+        if request.method != "DELETE":
             return JsonResponse({"success": False, "error": "Method not allowed"}, status=405)
         return view_func(request, *args, **kwargs)
+
     return _wrapped_view
 
 
