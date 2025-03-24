@@ -159,61 +159,70 @@ def send_2fa_sms(phone_number, code):
     except Exception as e:
         logger.error("Error sending SMS: %s", e)
 
-
 @require_POST
 def login_view(request):
-    """POST /login/"""
-    body = json.loads(request.body.decode("utf-8"))
-    username = body.get("username")
-    password = body.get("password")
-
     try:
+        body = json.loads(request.body.decode("utf-8"))
+        username = body.get("username")
+        password = body.get("password")
+
+        if not username or not password:
+            return JsonResponse({"success": False, "message": "Username and password are required."}, status=400)
+
         user = ManualUser.objects.get(username=username)
-    except ManualUser.DoesNotExist:
-        return JsonResponse({"success": False, "message": "User not found"}, status=404)
+        
 
-    now_utc = datetime.datetime.utcnow()
+        now_utc = datetime.datetime.utcnow()
 
-    if not user.password:
-        return JsonResponse({"success": False, "message": "This account does not support password login"}, status=400)
+        if not user.password:
+           return JsonResponse({"success": False, "message": "This account does not support password login"}, status=400)
 
-    if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
-        return JsonResponse({"success": False, "message": "Invalid credentials"}, status=401)
+        if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
+            return JsonResponse({"success": False, "message": "Invalid credentials"}, status=401)
 
-    if user.is_2fa_enabled:
-        code = generate_2fa_code()
-        hashed_code = bcrypt.hashpw(code.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-        user.temp_2fa_code = hashed_code
-        user.reset_2fa_expiry = datetime.datetime.utcnow() + timedelta(minutes=2)
-        user.save()
-        if user.twofa_method == "email":
-            send_2fa_email(user.email, code)
-        elif user.twofa_method == "sms":
-            send_2fa_sms(user.phone_number, code)
-        return JsonResponse({"success": True, "message": "2FA required", "twofa_method": user.twofa_method}, status=200)
-    cookie_token = request.COOKIES.get("access_token")
-
-    if user.token_expiry and user.token_expiry > now_utc:
-        if not cookie_token or cookie_token != user.session_token:
-            user.token_expiry = None
-            user.session_token = None
+        if user.is_2fa_enabled:
+            code = generate_2fa_code()
+            hashed_code = bcrypt.hashpw(code.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+            user.temp_2fa_code = hashed_code
+            user.reset_2fa_expiry = now_utc + timedelta(minutes=2)
             user.save()
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(f"user_{user.id}", {"type": "logout", "message": "session replaced"})
+            if user.twofa_method == "email":
+                send_2fa_email(user.email, code)
+            elif user.twofa_method == "sms":
+                send_2fa_sms(user.phone_number, code)
+            return JsonResponse({"success": True, "message": "2FA required", "twofa_method": user.twofa_method}, status=200)
+
+        cookie_token = request.COOKIES.get("access_token")
+
+        if user.token_expiry and user.token_expiry > now_utc:
+            if not cookie_token or cookie_token != user.session_token:
+                user.token_expiry = None
+                user.session_token = None
+                user.save()
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f"user_{user.id}", {"type": "logout", "message": "session replaced"}
+                )
+            else:
+                return JsonResponse({"success": False, "message": "User is already connected"}, status=403)
         else:
-            return JsonResponse({"success": False, "message": "User is already connected"}, status=403)
-    else:
-        logger.info(f"User {user.id}: no active session or token expired")
+            logger.info(f"User {user.id}: no active session or token expired")
 
-    token_str, expiry = generate_session_token(user)
-    user.token_expiry = expiry
-    user.session_token = token_str
-    user.status = "online"
-    user.save()
-    response = JsonResponse({"success": True, "message": "Logged in", "id": user.id, "username": user.username})
-    set_access_token_cookie(response, token_str)
-    return response
+        token_str, expiry = generate_session_token(user)
+        user.token_expiry = expiry
+        user.session_token = token_str
+        user.status = "online"
+        user.save()
 
+        response = JsonResponse({"success": True, "message": "Logged in", "id": user.id, "username": user.username})
+        set_access_token_cookie(response, token_str)
+        return response
+
+    except ManualUser.DoesNotExist:
+            return JsonResponse({"success": False, "message": "User not found"}, status=404)
+    except Exception as e:
+        logger.exception(f"Unexpected error during login: {e}")
+        return JsonResponse({"success": False, "message": "Internal server error"}, status=500)
 
 @require_POST
 @jwt_required
@@ -236,38 +245,59 @@ def logout_view(request):
 
     except jwt.ExpiredSignatureError:
         return JsonResponse({"success": False, "message": "Token already expired"}, status=401)
+
     except (jwt.InvalidTokenError, ManualUser.DoesNotExist) as e:
         logging.error("Error during logout: %s", e)
         return JsonResponse({"success": False, "message": "Unexpected error"}, status=401)
+
+    except Exception as e:
+        logging.exception("Unhandled error during logout: %s", e)
+        return JsonResponse({"success": False, "message": "Internal server error"}, status=500)
 
 
 @require_POST
 def verify_2fa_view(request):
     """POST /verify-2fa/"""
-    body = json.loads(request.body.decode("utf-8"))
-    username = body.get("username")
-    code = body.get("twofa_code")
-
     try:
-        user = ManualUser.objects.get(username=username)
-    except ManualUser.DoesNotExist:
-        return JsonResponse({"success": False, "message": "User not found"}, status=404)
+        body = json.loads(request.body.decode("utf-8"))
+        username = body.get("username")
+        code = body.get("twofa_code")
+        if not username or not code:
+            return JsonResponse({"success": False, "message": "Username and 2FA code are required"}, status=400)
 
-    cookie_token = request.COOKIES.get("access_token")
-    now_utc = datetime.datetime.utcnow()
-    if user.token_expiry and user.token_expiry > now_utc:
-        if not cookie_token or cookie_token != user.session_token:
-            user.token_expiry = None
-            user.session_token = None
-            user.save()
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(f"user_{user.id}", {"type": "logout", "message": "session replaced"})
-        else:
-            return JsonResponse({"success": False, "message": "User is already connected"}, status=403)
+        try:
+            user = ManualUser.objects.get(username=username)
+        except ManualUser.DoesNotExist:
+            return JsonResponse({"success": False, "message": "User not found"}, status=404)
 
-    if user.twofa_method == "authenticator-app":
-        totp = pyotp.TOTP(user.totp_secret)
-        if totp.verify(code):
+        cookie_token = request.COOKIES.get("access_token")
+        now_utc = datetime.datetime.utcnow()
+        if user.token_expiry and user.token_expiry > now_utc:
+            if not cookie_token or cookie_token != user.session_token:
+                user.token_expiry = None
+                user.session_token = None
+                user.save()
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(f"user_{user.id}", {"type": "logout", "message": "session replaced"})
+            else:
+                return JsonResponse({"success": False, "message": "User is already connected"}, status=403)
+
+        if user.twofa_method == "authenticator-app":
+            totp = pyotp.TOTP(user.totp_secret)
+            if totp.verify(code):
+                token_str, expiry = generate_session_token(user)
+                user.token_expiry = expiry
+                user.session_token = token_str
+                user.status = "online"
+                user.save()
+                response = JsonResponse({"success": True, "message": "2FA verified"})
+                set_access_token_cookie(response, token_str)
+                return response
+            else:
+                return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
+        elif bcrypt.checkpw(code.encode("utf-8"), user.temp_2fa_code.encode("utf-8")):
+            if datetime.datetime.utcnow() > user.reset_2fa_expiry:
+                return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
             token_str, expiry = generate_session_token(user)
             user.token_expiry = expiry
             user.session_token = token_str
@@ -278,20 +308,9 @@ def verify_2fa_view(request):
             return response
         else:
             return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
-    elif bcrypt.checkpw(code.encode("utf-8"), user.temp_2fa_code.encode("utf-8")):
-        if datetime.datetime.utcnow() > user.reset_2fa_expiry:
-            return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
-        token_str, expiry = generate_session_token(user)
-        user.token_expiry = expiry
-        user.session_token = token_str
-        user.status = "online"
-        user.save()
-        response = JsonResponse({"success": True, "message": "2FA verified"})
-        set_access_token_cookie(response, token_str)
-        return response
-    else:
-        return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
-
+    except Exception as e:
+        logging.exception("Unexpected error during 2FA verification: %s", e)
+        return JsonResponse({"success": False, "message": "Internal server error"}, status=500)
 
 @require_GET
 def get_user_id_from_cookie(request):
@@ -488,7 +507,8 @@ def verify_reset_code(request):
 
         if not reset_expiry or reset_expiry < current_time:
             return JsonResponse({"success": False, "message": "Reset code expired"}, status=400)
-
+        if not user.temp_reset_code:
+            return JsonResponse({"success": False, "message": "No reset code found"}, status=400)
         if not bcrypt.checkpw(code.encode("utf-8"), user.temp_reset_code.encode("utf-8")):
             return JsonResponse({"success": False, "message": "Invalid code"}, status=401)
 
@@ -504,6 +524,8 @@ def verify_reset_code(request):
         )
         reset_token_str = reset_token if isinstance(reset_token, str) else reset_token.decode("utf-8")
         return JsonResponse({"success": True, "message": "Code verified", "reset_token": reset_token_str})
+    except ManualUser.DoesNotExist:
+        return JsonResponse({"success": False, "message": "User not found"}, status=404)
     except Exception as e:
         logger.error("An error occurred while verifying the reset code: %s", str(e))
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
@@ -539,6 +561,8 @@ def change_password(request):
         user.save()
 
         return JsonResponse({"success": True, "message": "Password changed successfully"})
+    except ManualUser.DoesNotExist:
+        return JsonResponse({"success": False, "message": "User not found"}, status=404)
     except Exception as e:
         logger.error("An error occurred while changing the password: %s", str(e))
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)

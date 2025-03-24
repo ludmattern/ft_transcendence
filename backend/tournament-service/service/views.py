@@ -70,108 +70,112 @@ def jwt_required(view_func):
 @jwt_required
 def get_current_tournament(request):
     """Retrieve the current tournament for the authenticated user."""
-    user = request.user
-    if not user:
-        return JsonResponse({"error": "Unauthorized"}, status=401)
-
     try:
-        tournament = ManualTournament.objects.filter(status="ongoing", participants__user__id=user.id).latest("created_at")
-    except ManualTournament.DoesNotExist:
-        return JsonResponse({"error": "No active tournament found for this user"}, status=404)
+        user = request.user
+        if not user:
+            return JsonResponse({"error": "Unauthorized"}, status=401)
 
-    matches = TournamentMatch.objects.filter(tournament=tournament).order_by("round_number", "match_order")
+        try:
+            tournament = ManualTournament.objects.filter(status="ongoing", participants__user__id=user.id).latest("created_at")
+        except ManualTournament.DoesNotExist:
+            return JsonResponse({"error": "No active tournament found for this user"}, status=404)
 
-    size = {}
-    for match in matches:
-        player1_obj = None
-        player2_obj = None
-        winner_obj = None
+        matches = TournamentMatch.objects.filter(tournament=tournament).order_by("round_number", "match_order")
+        if not matches:
+            return JsonResponse({"error": "No matches found for this tournament"}, status=404)
+        size = {}
+        for match in matches:
+            player1_obj = None
+            player2_obj = None
+            winner_obj = None
 
-        if match.player1_id:
-            try:
-                player1_obj = ManualUser.objects.get(id=match.player1_id)
-            except ManualUser.DoesNotExist:
-                logger.exception("Player 1 not found for match")
-                return JsonResponse({"error": "Internal server error"}, status=500)
+            if match.player1_id:
+                try:
+                    player1_obj = ManualUser.objects.get(id=match.player1_id)
+                except ManualUser.DoesNotExist:
+                    logger.exception("Player 1 not found for match")
+                    return JsonResponse({"error": "User not found"}, status=404)
 
-        if match.player2_id:
-            try:
-                player2_obj = ManualUser.objects.get(id=match.player2_id)
-            except ManualUser.DoesNotExist:
-                logger.exception("Player 2 not found for match")
-                return JsonResponse({"error": "Internal server error"}, status=500)
+            if match.player2_id:
+                try:
+                    player2_obj = ManualUser.objects.get(id=match.player2_id)
+                except ManualUser.DoesNotExist:
+                    logger.exception("Player 2 not found for match")
+                    return JsonResponse({"error": "User not found"}, status=404)
 
-        if match.winner_id:
-            try:
-                winner_obj = ManualUser.objects.get(id=match.winner_id)
-            except ManualUser.DoesNotExist:
-                return JsonResponse({"error": "Internal server error"}, status=500)
+            if match.winner_id:
+                try:
+                    winner_obj = ManualUser.objects.get(id=match.winner_id)
+                except ManualUser.DoesNotExist:
+                    return JsonResponse({"error": "User not found"}, status=404)
 
-        if match.status in ["pending", "ready"] and not match.winner_id:
-            p1_participant = None
-            p2_participant = None
-            if player1_obj:
-                p1_participant = ManualTournamentParticipants.objects.filter(tournament=tournament, user=player1_obj).first()
-            if player2_obj:
-                p2_participant = ManualTournamentParticipants.objects.filter(tournament=tournament, user=player2_obj).first()
+            if match.status in ["pending", "ready"] and not match.winner_id:
+                p1_participant = None
+                p2_participant = None
+                if player1_obj:
+                    p1_participant = ManualTournamentParticipants.objects.filter(tournament=tournament, user=player1_obj).first() 
+                if player2_obj:
+                    p2_participant = ManualTournamentParticipants.objects.filter(tournament=tournament, user=player2_obj).first()
 
-            if p1_participant and p1_participant.status == "left" and (not p2_participant or p2_participant.status != "left"):
-                match.winner_id = match.player2_id
-                match.score = "Forfeit"
-                match.status = "completed"
-                match.save()
-                winner_obj = player2_obj
+                if p1_participant and p1_participant.status == "left" and (not p2_participant or p2_participant.status != "left"):
+                    match.winner_id = match.player2_id
+                    match.score = "Forfeit"
+                    match.status = "completed"
+                    match.save()
+                    winner_obj = player2_obj
 
-            elif p2_participant and p2_participant.status == "left" and (not p1_participant or p1_participant.status != "left"):
-                match.winner_id = match.player1_id
-                match.score = "Forfeit"
-                match.status = "completed"
-                match.save()
-                winner_obj = player1_obj
+                elif p2_participant and p2_participant.status == "left" and (not p1_participant or p1_participant.status != "left"):
+                    match.winner_id = match.player1_id
+                    match.score = "Forfeit"
+                    match.status = "completed"
+                    match.save()
+                    winner_obj = player1_obj
 
-        p1_display = player1_obj.username if player1_obj else "TBD"
-        p2_display = player2_obj.username if player2_obj else "TBD"
-        w_display = winner_obj.username if winner_obj else "TBD"
+            p1_display = player1_obj.username if player1_obj else "TBD"
+            p2_display = player2_obj.username if player2_obj else "TBD"
+            w_display = winner_obj.username if winner_obj else "TBD"
 
-        if user.id in [match.player1_id, match.player2_id]:
-            match_key = match.match_key
-        else:
-            match_key = None
+            if user.id in [match.player1_id, match.player2_id]:
+                match_key = match.match_key
+            else:
+                match_key = None
 
-        size.setdefault(match.round_number, []).append(
-            {
-                "id": match.id,
-                "player1": p1_display,
-                "player2": p2_display,
-                "status": match.status,
-                "winner": w_display,
-                "score": match.score,
-                "match_key": match_key,
-            }
-        )
+            size.setdefault(match.round_number, []).append(
+                {
+                    "id": match.id,
+                    "player1": p1_display,
+                    "player2": p2_display,
+                    "status": match.status,
+                    "winner": w_display,
+                    "score": match.score,
+                    "match_key": match_key,
+                }
+            )
 
-    size_list = []
-    for round_num in sorted(size.keys()):
-        size_list.append({"round": f"Round {round_num}", "matches": size[round_num]})
+        size_list = []
+        for round_num in sorted(size.keys()):
+            size_list.append({"round": f"Round {round_num}", "matches": size[round_num]})
 
-    is_over = all(match["status"] == "completed" for round in size_list for match in round["matches"])
+        is_over = all(match["status"] == "completed" for round in size_list for match in round["matches"])
 
-    tournament_winner = "TBD"
-    if size_list and size_list[-1]["matches"]:
-        tournament_winner = size_list[-1]["matches"][-1].get("winner", "TBD")
+        tournament_winner = "TBD"
+        if size_list and size_list[-1]["matches"]:
+            tournament_winner = size_list[-1]["matches"][-1].get("winner", "TBD")
 
-    data = {
-        "tournament_id": tournament.id,
-        "serial_key": tournament.serial_key,
-        "status": tournament.status,
-        "participants": list(tournament.participants.all().values_list("user__username", flat=True)),
-        "size": size_list,
-        "mode": tournament.mode,
-        "isOver": is_over,
-        "winner": tournament_winner,
-    }
-
-    return JsonResponse(data)
+        data = {
+            "tournament_id": tournament.id,
+            "serial_key": tournament.serial_key,
+            "status": tournament.status,
+            "participants": list(tournament.participants.all().values_list("user__username", flat=True)),
+            "size": size_list,
+            "mode": tournament.mode,
+            "isOver": is_over,
+            "winner": tournament_winner,
+        }
+        return JsonResponse(data)
+    except Exception as e:
+        logger.exception("Unexpected error in get_current_tournament: %s", e)
+        return JsonResponse({"error": "Internal server error"}, status=500)
 
 
 @require_GET
@@ -179,53 +183,58 @@ def get_current_tournament(request):
 def getCurrentTournamentInformation(request):
     """Retrieve the information of the current tournament for the authenticated user."""
     try:
-        user = request.user
-    except ManualUser.DoesNotExist:
-        return JsonResponse({"error": "User not found"}, status=404)
+        try:
+            user = request.user
+        except ManualUser.DoesNotExist:
+            return JsonResponse({"error": "User not found"}, status=404)
 
-    if user.current_tournament_id == 0:
-        return JsonResponse(
+        if user.current_tournament_id == 0:
+            return JsonResponse(
+                {
+                    "tournament": None,
+                    "message": "User is not participating in any tournament.",
+                    "user_id": user.id,
+                }
+            )
+
+        try:
+            tournament = ManualTournament.objects.get(id=user.current_tournament_id)
+        except ManualTournament.DoesNotExist:
+            return JsonResponse(
+                {
+                    "tournament": None,
+                    "message": "Tournament not found.",
+                    "user_id": user.id,
+                }
+            )
+
+        participants_qs = ManualTournamentParticipants.objects.filter(tournament=tournament).exclude(status="rejected").select_related("user")
+        participants_list = [
             {
-                "tournament": None,
-                "message": "User is not participating in any tournament.",
-                "user_id": user.id,
+                "id": participant.user.id,
+                "username": participant.user.username,
+                "status": participant.status,
             }
-        )
+            for participant in participants_qs
+        ]
 
-    try:
-        tournament = ManualTournament.objects.get(id=user.current_tournament_id)
-    except ManualTournament.DoesNotExist:
-        return JsonResponse(
-            {
-                "tournament": None,
-                "message": "Tournament not found.",
-                "user_id": user.id,
-            }
-        )
-
-    participants_qs = ManualTournamentParticipants.objects.filter(tournament=tournament).exclude(status="rejected").select_related("user")
-    participants_list = [
-        {
-            "id": participant.user.id,
-            "username": participant.user.username,
-            "status": participant.status,
+        data = {
+            "user_id": user.id,
+            "tournament_id": tournament.id,
+            "serial_key": tournament.serial_key,
+            "size": tournament.size,
+            "status": tournament.status,
+            "organizer_id": tournament.organizer.id if tournament.organizer else None,
+            "participants": participants_list,
+            "participants_count": len(participants_list),
+            "participants_accepted": len([p for p in participants_list if p["status"] == "accepted"]),
+            "mode": tournament.mode,
         }
-        for participant in participants_qs
-    ]
+        return JsonResponse(data)
+    except Exception as e:
+        logger.exception("Unexpected error in getCurrentTournamentInformation: %s", e)
+        return JsonResponse({"error": "Internal server error"}, status=500)
 
-    data = {
-        "user_id": user.id,
-        "tournament_id": tournament.id,
-        "serial_key": tournament.serial_key,
-        "size": tournament.size,
-        "status": tournament.status,
-        "organizer_id": tournament.organizer.id if tournament.organizer else None,
-        "participants": participants_list,
-        "participants_count": len(participants_list),
-        "participants_accepted": len([p for p in participants_list if p["status"] == "accepted"]),
-        "mode": tournament.mode,
-    }
-    return JsonResponse(data)
 
 
 @require_POST
@@ -248,7 +257,6 @@ def update_match_result(request):
             tournament_id = int(tournament_id)
         except ValueError:
             return JsonResponse({"error": "Invalid tournament_id"}, status=400)
-
         try:
             winner_user = ManualUser.objects.get(username=winner_username)
             p1_user = ManualUser.objects.get(username=p1_username)
@@ -301,6 +309,8 @@ def update_match_result(request):
             logger.info("Final match reached: no next match found.")
 
         return JsonResponse({"success": True, "message": "Match updated"})
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
     except Exception as e:
         logger.exception(f"Error updating local match result: {str(e)}")
         return JsonResponse({"Internal server error"}, status=500)
@@ -320,7 +330,8 @@ def abandon_local_tournament(request):
 
         tournament = ManualTournament.objects.filter(id=tournament_id, organizer=organizer).first()
         if not tournament:
-            return None
+            return JsonResponse({"error": "Tournament not found or not authorized"}, status=404)
+
 
         TournamentMatch.objects.filter(tournament=tournament).delete()
         participants = ManualTournamentParticipants.objects.filter(tournament=tournament).exclude(user=tournament.organizer)
@@ -337,12 +348,13 @@ def abandon_local_tournament(request):
         organizer.save()
 
         return JsonResponse({"success": True, "message": "Tournament abandoned and players removed except organizer"})
-
+    except ManualTournament.DoesNotExist:
+        return JsonResponse({"error": "Tournament not found"}, status=404)
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
     except Exception as e:
         logger.exception(f"Error abandoning tournament: {str(e)}")
-        return JsonResponse({"Internal server error"}, status=500)
+        return JsonResponse({"error": "Internal server error"}, status=500)
 
 
 def encrypt_thing(args):
@@ -355,8 +367,12 @@ def encrypt_thing(args):
 def create_local_tournament_view(request):
     """Create a local tournament with the provided players."""
     user = request.user
+    if not user:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
     body = json.loads(request.body.decode("utf-8"))
     players = body.get("players", [])
+    if not players:
+        return JsonResponse({"error": "No players provided"}, status=400)
     try:
         if len(players) not in [4, 8, 16]:
             logger.error(f"Invalid tournament size: {len(players)} players provided. Expected 4, 8, or 16.")
