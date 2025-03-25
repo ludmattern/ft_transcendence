@@ -246,7 +246,7 @@ def update_info(request):
         confirm_email = body.get("confirmEmail", "").strip()
 
         user = request.user
-        if not user:
+        if not user or not user.password:
             return JsonResponse({"success": False, "message": "Unauthorized"}, status=200)
 
         if not old_password:

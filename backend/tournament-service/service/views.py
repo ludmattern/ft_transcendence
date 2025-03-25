@@ -317,7 +317,7 @@ def encrypt_thing(args):
         return result
     except Exception as e:
         logger.exception(f"Error encrypting: {str(e)}")
-        result = None
+        return None
 
 
 @require_POST
