@@ -107,6 +107,7 @@ async def is_blocked(author_id, recipient_id):
 
 async def safe_group_send(consumer, user_id, message):
     try:
+        user_id = int(user_id)
         await consumer.channel_layer.group_send(f"user_{user_id}", message)
     except Exception as e:
         logger.exception("group_send failed to user_%s: %s", user_id, e)
@@ -418,6 +419,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 next_match_player_ids = event.get("next_match_player_ids")
                 current_match_player_ids = event.get("current_match_player_ids")
 
+                logger.info(f"participant_list: {participant_list}")
+                
                 for user_id in participant_list:
                     await safe_group_send(self,user_id, {"type": "info_message", "action": "refresh_brackets", "tournament_id": tournament_id})
 

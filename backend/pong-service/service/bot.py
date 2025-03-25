@@ -11,12 +11,12 @@ class AIPaddle:
         self.target_z = 0
         self.last_move_time = 0
         self.start_time = time.time()
-        if difficulty == "hard":
-            self.allowed_to_observe = 1.0
+        if difficulty == "insane":
+            self.allowed_to_observe = 0.1
         elif difficulty == "very-hard":
             self.allowed_to_observe = 0.5
         else:
-            self.allowed_to_observe = 0.1
+            self.allowed_to_observe = 1
         self.random_check = 0
 
     def update(self):

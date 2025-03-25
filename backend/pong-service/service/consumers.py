@@ -218,10 +218,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     match_order=next_match_order
                 ).first
             )()
-            if not next_match:
-                logger.warning("No next match found")
-                return
-
+           
             if next_match:
                 if match.match_order % 2 == 1:
                     next_match.player1_id = winner.id
