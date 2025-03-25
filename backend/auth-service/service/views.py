@@ -178,10 +178,14 @@ def login_view(request):
         username = body.get("username")
         password = body.get("password")
 
+
         if not username or not password:
             return JsonResponse({"success": False, "message": "Username and password are required."}, status=400)
 
         user = ManualUser.objects.get(username=username)
+
+        if user.is_dummy:
+            return JsonResponse({"success": False, "message": "This account is a dummy account"}, status=400)
 
         now_utc = datetime.datetime.utcnow()
 
