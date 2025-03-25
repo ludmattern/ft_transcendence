@@ -23,40 +23,55 @@ def update_user_status(user_id, is_connected):
 
 class GatewayConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        await self.accept()
-        query_string = self.scope["query_string"].decode("utf-8")
-        query_params = urllib.parse.parse_qs(query_string)
-        self.game_id = None
-        if query_params.get("dummy", [None])[0] == "true":
-            self.user_id = 0
-        else:
-            cookies = self.scope.get("cookies", {})
-            self.user_id = await fetch_user_id(cookies)
-            if not self.user_id:
-                return await self.close()
+        try:
+            await self.accept()
+            query_string = self.scope["query_string"].decode("utf-8")
+            query_params = urllib.parse.parse_qs(query_string)
 
-        await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
-        await update_user_status(self.user_id, True)
-        await self.channel_layer.group_add("gateway", self.channel_name)
+            self.game_id = None
 
-        query_string = self.scope["query_string"].decode("utf-8")
-        query_params = urllib.parse.parse_qs(query_string)
-        serial_keys = query_params.get("serial_key", [])
-        if serial_keys:
-            serial_key = serial_keys[0]
-            group_name = f"tournament_{serial_key}"
-            await self.channel_layer.group_add(group_name, self.channel_name)
-        return None
+            if query_params.get("dummy", [None])[0] == "true":
+                self.user_id = 0
+            else:
+                cookies = self.scope.get("cookies", {})
+                try:
+                    self.user_id = await fetch_user_id(cookies)
+                except Exception as e:
+                    logger.exception("Failed to fetch user ID: %s", e)
+                    return await self.close()
+                    
+                if not self.user_id:
+                    return await self.close()
+
+            await self.channel_layer.group_add(f"user_{self.user_id}", self.channel_name)
+            await update_user_status(self.user_id, True)
+            await self.channel_layer.group_add("gateway", self.channel_name)
+
+            query_string = self.scope["query_string"].decode("utf-8")
+            query_params = urllib.parse.parse_qs(query_string)
+            serial_keys = query_params.get("serial_key", [])
+            if serial_keys:
+                serial_key = serial_keys[0]
+                group_name = f"tournament_{serial_key}"
+                await self.channel_layer.group_add(group_name, self.channel_name)
+            return None
+            
+        except Exception as e:
+            logger.exception("Error during WebSocket connect: %s", e)
+            await self.close()
 
     async def disconnect(self, close_code):
-        if self.user_id:
-            await update_user_status(self.user_id, False)
-            await self.channel_layer.group_send(
-                "pong_service", {"type": "game_event", "action": "game_giveup", "user_id": self.user_id, "game_id": self.game_id}
-            )
-            await self.channel_layer.group_discard(f"user_{self.user_id}", self.channel_name)
+        try:
+            if self.user_id:
+                await update_user_status(self.user_id, False)
+                await self.channel_layer.group_send(
+                    "pong_service", {"type": "game_event", "action": "game_giveup", "user_id": self.user_id, "game_id": self.game_id}
+                )
+                await self.channel_layer.group_discard(f"user_{self.user_id}", self.channel_name)
 
-        await self.channel_layer.group_discard("gateway", self.channel_name)
+            await self.channel_layer.group_discard("gateway", self.channel_name)
+        except Exception as e:
+            logger.exception("Error during WebSocket disconnect: %s", e)
 
     async def receive(self, text_data):
         try:
@@ -151,80 +166,127 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             await self.send(json.dumps({"error": "Format JSON invalide"}))
 
     async def chat_message(self, event):
-        """Reçoit un message (provenant du chat-service) et le renvoie au client."""
-        await self.send(json.dumps(event))
+        try:
+            """Reçoit un message (provenant du chat-service) et le renvoie au client."""
+            await self.send(json.dumps(event))
+        except Exception as e:
+            logger.exception("Failed to send chat message: %s", e)
 
     async def private_message(self, event):
-        """This method handles private_message events delivered to this consumer."""
-        await self.send(json.dumps(event))
+        try:
+            """This method handles private_message events delivered to this consumer."""
+            await self.send(json.dumps(event))
+        except Exception as e:
+            logger.exception("Failed to send private message: %s", e)
+
 
     async def info_message(self, event):
-        """This method handles friend request sending events delivered to this consumer."""
-        action = event.get("action")
-        if (
-            action == "back_tournament_invite"
-            or action == "back_join_tournament"
-            or action == "back_reject_tournament"
-            or action == "back_cancel_tournament_invite"
-            or action == "back_kick_tournament"
-            or action == "back_cancel_tournament"
-            or action == "back_leave_tournament"
-            or action == "back_tournament_game_over"
-            or action == "back_create_online_tournament"
-        ):
-            await self.channel_layer.group_send("chat_service", event)
-        else:
-            await self.send(json.dumps(event))
+        try:
+            """This method handles friend request sending events delivered to this consumer."""
+            action = event.get("action")
+            if (
+                action == "back_tournament_invite"
+                or action == "back_join_tournament"
+                or action == "back_reject_tournament"
+                or action == "back_cancel_tournament_invite"
+                or action == "back_kick_tournament"
+                or action == "back_cancel_tournament"
+                or action == "back_leave_tournament"
+                or action == "back_tournament_game_over"
+                or action == "back_create_online_tournament"
+            ):
+                await self.channel_layer.group_send("chat_service", event)
+            else:
+                await self.send(json.dumps(event))
+        except Exception as e:
+            logger.exception("Failed to send info message: %s", e)
 
     async def tournament_message(self, event):
-        await self.send(json.dumps(event))
+        try:
+            await self.send(json.dumps(event))
+        except Exception as e:
+            logger.exception("Failed to send tournament message: %s", e)
 
     async def error_message(self, event):
-        """This method handles error_message events delivered to this consumer."""
-        await self.send(json.dumps(event))
+        try: 
+            """This method handles error_message events delivered to this consumer."""
+            await self.send(json.dumps(event))
+        except Exception as e:
+            logger.exception("Failed to send error message: %s", e)
 
     async def game_state(self, event):
-        await self.send(json.dumps(event))
+        try:
+            await self.send(json.dumps(event))
+        except Exception as e:
+            logger.exception("Failed to send game state: %s", e)
 
     async def game_over(self, event):
-        """Gère la fin du jeu et envoie le message au client."""
-        await self.send(json.dumps(event))
+        try:
+            """Gère la fin du jeu et envoie le message au client."""
+            await self.send(json.dumps(event))
+        except Exception as e:
+            logger.exception("Failed to send game over: %s", e)
 
     async def leave_game(self, event):
         logger.info("Leave_game")
 
     async def match_found(self, event):
-        await self.send(json.dumps(event))
+        try:
+            await self.send(json.dumps(event))
+        except Exception as e:
+            logger.exception("Failed to send match found: %s", e)
 
     async def private_match_found(self, event):
-        await self.send(json.dumps(event))
+        try:
+            await self.send(json.dumps(event))
+        except Exception as e:
+            logger.exception("Failed to send private match found: %s", e)
 
     async def tournament_creation(self, event):
-        await self.send(json.dumps(event))
+        try:
+            await self.send(json.dumps(event))
+        except Exception as e:
+            logger.exception("Failed to send tournament creation: %s", e)
 
     async def logout(self, event):
-        await self.send(
-            json.dumps(
-                {
-                    "type": "logout",
-                    "message": "Votre session a expiré ou a été supprimée.",
-                }
+        try:
+            await self.send(
+                json.dumps(
+                    {
+                        "type": "logout",
+                        "message": "Votre session a expiré ou a été supprimée.",
+                    }
+                )
             )
-        )
-        await self.close()
+            await self.close()
+        except Exception as e:
+            logger.exception("Failed to send logout: %s", e)
 
 ca_cert_path = "/data/certs/selfsigned.crt"
 
 async def fetch_user_id(cookies):
-    async with httpx.AsyncClient(
-        base_url="https://auth-service:3001",
-        verify=ca_cert_path
-    ) as client:
-        response = await client.get("/get_user_id_from_cookie/", cookies=cookies)
+    try:
+        async with httpx.AsyncClient(
+            base_url="https://auth-service:3001",
+            verify=ca_cert_path
+        ) as client:
+            response = await client.get("/get_user_id_from_cookie/", cookies=cookies)
 
-        if response.status_code == 200:
-            data = response.json()
-            return data.get("user_id")
-        else:
-            logger.error(f"Error when get user id: {response.text}")
-            return None
+            if response.status_code == 200:
+                try:
+                    data = response.json()
+                    return data.get("user_id")
+                except ValueError:
+                    logger.error("Invalid JSON in response when fetching user ID")
+                    return None
+            else:
+                logger.error(f"Error when get user id: {response.text}")
+                return None
+
+    except httpx.RequestError as e:
+        logger.exception(f"Request error while fetching user ID: {e}")
+        return None
+
+    except Exception as e:
+        logger.exception(f"Unexpected error while fetching user ID: {e}")
+        return None
