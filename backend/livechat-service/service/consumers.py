@@ -1,5 +1,5 @@
 import logging
-from django.db import models  # type: ignore
+from django.db import models, DatabaseError  # type: ignore
 from channels.generic.websocket import AsyncWebsocketConsumer  # type: ignore
 from channels.db import database_sync_to_async  # type: ignore
 from .models import (
@@ -202,20 +202,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             action = event.get("action")
             author_id = event.get("author")
-            if not author_id:
-                logger.warning("Author not provided")
-                return
+            if author_id is not None:
+                author_id = int(author_id)
+                author_username = await get_username(author_id)
+                event["author_username"] = author_username
+
             recipient_id = event.get("recipient")
-            if not recipient_id:
-                logger.warning("Recipient not provided")
-                return
-            author_id = int(author_id)
-            recipient_id = int(recipient_id)
-        
-            author_username = await get_username(author_id)
-            event["author_username"] = author_username
-            recipient_username = await get_username(recipient_id)
-            event["recipient_username"] = recipient_username
+            if recipient_id is not None:
+                recipient_id = int(recipient_id)
+                recipient_username = await get_username(recipient_id)
+                event["recipient_username"] = recipient_username
 
 
             if str(action) == "send_friend_request":
