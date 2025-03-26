@@ -18,24 +18,24 @@ export const settingsForm = createComponent({
 		  <span class="background-central-span p-4">
 			<form action="#" method="post" class="w-100">
 			  <!-- Hidden username field for accessibility in password forms -->
-			  <input type="text" name="username" id="username" autocomplete="username" style="display: none;" />
+			  <input type="text" name="username" id="username" autocomplete="username" maxlength="20" style="display: none;" />
 			  
 			  <fieldset>
 				<legend class="d-none">Update Username</legend>
-				${createFormGroup('new-username', 'text', 'New username')}
+				${createFormGroup('new-username', 'text', 'New username', '20')}
 			  </fieldset>
 			  
 			  <fieldset>
 				<legend class="d-none">Update Password</legend>
-				${createFormGroup('old-password', 'password', 'Current password')}
-				${createFormGroup('new-password', 'password', 'New Password')}
-				${createFormGroup('confirm-new-password', 'password', 'Confirm new password')}
+				${createFormGroup('old-password', 'password', 'Current password', '20')}
+				${createFormGroup('new-password', 'password', 'New Password', '20')}
+				${createFormGroup('confirm-new-password', 'password', 'Confirm new password', '20')}
 			  </fieldset>
 			  
 			  <fieldset>
 				<legend class="d-none">Update Email</legend>
-				${createFormGroup('new-email', 'email', 'New Email')}
-				${createFormGroup('confirm-new-email', 'email', 'Confirm new Email')}
+				${createFormGroup('new-email', 'email', 'New Email', '50')}
+				${createFormGroup('confirm-new-email', 'email', 'Confirm new Email', '50')}
 			  </fieldset>
 			  
 			  <button class="btn bi bi-arrow-repeat" id="update-button" name="update-button">Update</button>
@@ -210,11 +210,11 @@ function emptyFields() {
 }
 
 
-function createFormGroup(id, type, label) {
+function createFormGroup(id, type, label, maxLength) {
 	return `
 	<div class="form-group">
 	  <label class="mb-3" for="${id}">${label}</label>
-	  <input type="${type}" id="${id}" name="${id}" class="form-control" autocomplete="${getAutocompleteValue(id)}"/>
+	  <input type="${type}" id="${id}" name="${id}" maxlength="${maxLength}" class="form-control" autocomplete="${getAutocompleteValue(id)}"/>
 	  ${id === 'new-username' ? '<div id="error-message-id" class="text-danger mt-2" style="display: none;">Id already taken</div>' : ''}
 	  ${id === 'new-username' ? '<div id="bad-length" class="text-danger mt-2" style="display: none;">Id must contain between 6 and 20 char</div>' : ''}
 	  ${id === 'new-username' ? '<div id="bad-user-rule" class="text-danger mt-2" style="display: none;">Id can only contain alphanumeric characters and underscores</div>' : ''}

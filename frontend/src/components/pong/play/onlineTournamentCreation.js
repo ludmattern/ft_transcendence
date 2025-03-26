@@ -79,7 +79,7 @@ export const onlineTournamentCreation = createComponent({
 				const inviteContainerHTML = `
 				<div id="invite-container" class="w-50 mb-4">
 					<div class="input-group">
-						<input id="invite-input" type="text" class="form-control" placeholder="Enter pilot username" aria-label="Invitation">
+						<input id="invite-input" type="text" maxlength="20" class="form-control" placeholder="Enter pilot username" aria-label="Invitation">
 						<button id="send-invite" class="btn btn-pong-blue" type="button">Send Invitation</button>
 					</div>
 				</div>
@@ -244,6 +244,12 @@ export function updateOnlinePlayersUI(data) {
 					const invitedUsernamePilot = inviteInput.value.trim();
 					if (!invitedUsernamePilot) return;
 					if (data.participants_count >= data.size) return;
+
+					if (invitedUsernamePilot.length < 6 || invitedUsernamePilot.length > 20) {
+						createNotificationMessage('Invalid username', 5000, true);
+						inviteInput.value = '';
+						return;
+					}
 
 					const recipientId = await fetchUserId(invitedUsernamePilot);
 					if (!recipientId) {

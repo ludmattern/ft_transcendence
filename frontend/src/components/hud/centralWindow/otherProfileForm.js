@@ -153,12 +153,22 @@ export const otherProfileForm = createComponent({
 });
 
 export async function fetchUserId(username) {
+	if (!username) {
+		console.error('Invalid username');
+		return null;
+	}
+
+	if (username.length < 6 || username.length > 20) {
+		console.error('Invalid username length');
+		return;
+	}
+
 	try {
 		const response = await fetch(`/api/user-service/get_user_id/${username}/`, {
-			credentials: 'include'
-		  });
+			credentials: 'include',
+		});
 		if (!response.ok) {
-			return null
+			return null;
 		}
 		const data = await response.json();
 		return data.user_id;

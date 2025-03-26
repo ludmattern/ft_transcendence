@@ -505,6 +505,12 @@ def verify_reset_code(request):
         code = body.get("code")
         if not email or not code:
             return JsonResponse({"success": False, "message": "Missing email or code"}, status=400)
+        
+        if len(email) > 50:
+            return JsonResponse({"success": False, "message": "Invalid email"}, status=400)
+        
+        if len(code) != 6:
+            return JsonResponse({"success": False, "message": "Invalid code"}, status=400)
 
         user = None
         for u in ManualUser.objects.filter(email__isnull=False).exclude(email=""):

@@ -18,7 +18,7 @@ export async function setupChatInput() {
 			<div class="d-flex" 
 				style="flex-wrap: wrap; background: #ffffff07; position: absolute; width: 100%;" 
 				id="message-input-container">
-			<input type="text" id="message-input" placeholder="Enter your message..." 
+			<input type="text" id="message-input" maxlength="150" placeholder="Enter your message..." 
 					class="form-control w-50 me-2 p-3" 
 					style="flex: auto; color: var(--content-color);" />
 			<button id="chat-send-button" class="btn btn-sm">Send</button>

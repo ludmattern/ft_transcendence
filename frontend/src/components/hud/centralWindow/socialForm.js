@@ -31,7 +31,7 @@ export const socialForm = createComponent({
             </h6>
             <!-- Search Bar -->
             <div class="d-flex justify-content-center mb-4" style="flex-wrap: wrap;">
-              <input type="text" id="search-bar" name="search-bar" class="form-control w-50 me-2" placeholder="Search for a pilot" required />
+              <input type="text" id="search-bar" name="search-bar" maxlength="20" class="form-control w-50 me-2" placeholder="Search for a pilot" required />
               <button class="btn btn-sm bi bi-search" id="search-link">Search</button>
             </div>
             <div class="pilot-list-container d-flex flex-column" style="max-height: 18vh; overflow-y: auto;">

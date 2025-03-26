@@ -20,7 +20,7 @@ export const forgotPassword = (() => {
         <form id="email-form" action="#" method="post" class="w-100">
           <div class="form-group">
             <label for="email" class="mb-3">Enter your email</label>
-            <input type="email" id="email" name="email" class="form-control" required />
+            <input type="email" id="email" name="email" class="form-control" maxlength="50" required />
 			<div id="error-message" class="text-danger mt-2 d-none">Passwords do not match</div>
           </div>
           <button type="submit" class="btn">Send Code</button>
@@ -37,7 +37,8 @@ export const forgotPassword = (() => {
         <form id="code-form" action="#" method="post" class="w-100">
           <div class="form-group">
             <label for="code" class="mb-3">Enter the code</label>
-            <input type="text" id="code" name="code" class="form-control" required />
+            <input type="text" id="code" name="code" class="form-control" maxlength="6" required />
+            <div id="error-message" class="text-danger mt-2 d-none">Invalid Code</div>
           </div>
           <button type="submit" class="btn">Verify Code</button>
         </form>
@@ -88,6 +89,16 @@ export const forgotPassword = (() => {
 			e.preventDefault();
 			const emailInput = container.querySelector('#email');
 			if (!emailInput) return;
+			if (!validateMail(emailInput.value)) {
+				console.error('Invalid email');
+				const errorMessageElement = container.querySelector('#error-message');
+				if (errorMessageElement) {
+					errorMessageElement.textContent = 'Invalid email';
+					errorMessageElement.classList.remove('d-none');
+				}
+				return;
+			}
+
 			state.email = emailInput.value;
 			try {
 				const response = await fetch('/api/auth-service/request-password-reset/', {
@@ -108,7 +119,14 @@ export const forgotPassword = (() => {
 							errorMessageElement.classList.remove('d-none');
 						}
 					} else {
-						console.error('Error requesting password reset: ', data.message);
+						const errorMessageElement = container.querySelector('#error-message');
+						if (errorMessageElement) {
+							errorMessageElement.textContent = data.message;
+							errorMessageElement.classList.remove('d-none');
+							console.error('Error requesting password reset: ', data.message);
+						} else {
+							console.error('Error requesting password reset: ', data.message);
+						}
 					}
 				}
 			} catch (error) {
@@ -126,6 +144,16 @@ export const forgotPassword = (() => {
 			const codeInput = container.querySelector('#code');
 			if (!codeInput) return;
 			const code = codeInput.value;
+
+			if (code.length !== 6) {
+				const errorMessageElement = container.querySelector('#error-message');
+				if (errorMessageElement) {
+					errorMessageElement.textContent = 'Invalid code';
+					errorMessageElement.classList.remove('d-none');
+				}
+				return;
+			}
+
 			try {
 				const response = await fetch('/api/auth-service/verify-reset-code/', {
 					method: 'POST',
@@ -138,8 +166,19 @@ export const forgotPassword = (() => {
 					state.step = 'changePassword';
 					container.innerHTML = renderView();
 					attachEvents(container);
+				} else {
+					const errorMessageElement = container.querySelector('#error-message');
+					if (errorMessageElement) {
+						errorMessageElement.textContent = data.message;
+						errorMessageElement.classList.remove('d-none');
+					}
 				}
 			} catch (error) {
+				const errorMessageElement = container.querySelector('#error-message');
+				if (errorMessageElement) {
+					errorMessageElement.textContent = 'Invalid code';
+					errorMessageElement.classList.remove('d-none');
+				}
 				console.error('Error: ', error);
 			}
 		});
@@ -154,7 +193,14 @@ export const forgotPassword = (() => {
 					});
 					const data = await response.json();
 					if (!data.success) {
-						console.error('Error resending code: ', data.message);
+						const errorMessageElement = container.querySelector('#error-message');
+						if (errorMessageElement) {
+							errorMessageElement.textContent = data.message;
+							errorMessageElement.classList.remove('d-none');
+							console.error('Error resending code: ', data.message);
+						} else {
+							console.error('Error resending code: ', data.message);
+						}
 					}
 				} catch (error) {
 					console.error('Error: ', error);
@@ -225,3 +271,10 @@ export const forgotPassword = (() => {
 		attachEvents,
 	});
 })();
+
+function validateMail(email) {
+	if (!email) return false;
+	if (email.length > 50) return false;
+	const re = /\S+@\S+\.\S+/;
+	return re.test(email);
+}

@@ -47,7 +47,7 @@ export const localTournamentCreation = createComponent({
 
         playerInputContainer.innerHTML = `
           <div class="input-group" id="player-input-group">
-            <input id="player-name" type="text" class="form-control" placeholder="Enter player name" aria-label="Player name">
+            <input id="player-name" type="text" class="form-control" maxlength="20" placeholder="Enter player name" aria-label="Player name">
             <button id="add-player" class="btn btn-pong-blue" type="button">Add Player</button>
           </div>
         `;
@@ -115,7 +115,7 @@ export const localTournamentCreation = createComponent({
             return { success: false, message: 'Username must be between 6 and 20 characters.' };
           }
           if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
-            return { success: false, message: 'Username can only contain letters, numbers, and underscores.' };
+            return { success: false, message: 'Username can only contain letters, numbers, underscores and hyphens.' };
           }
           return { success: true };
         }

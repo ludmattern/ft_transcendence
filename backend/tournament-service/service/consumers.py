@@ -38,18 +38,14 @@ def get_single_user_tournament(user_id):
 
 @database_sync_to_async
 def get_accepted_participants(tournament_id):
-    participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related(
-        "user"
-    )
+    participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related("user")
 
     return [p.user.username for p in participants_qs]
 
 
 @database_sync_to_async
 def get_accepted_participants_id(tournament_id):
-    participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related(
-        "user"
-    )
+    participants_qs = ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="accepted").select_related("user")
     logger.info("Participants_qs: %s", participants_qs)
     return [p.user.id for p in participants_qs]
 
@@ -151,27 +147,48 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             await self.send(json.dumps({"error": "Unknown action"}))
 
     async def handle_create_tournament_lobby(self, event):
-        user_id = event.get("userId")
-        tournament_size = event.get("tournamentSize")
-        user = await self.get_user(user_id)
-        serial_key = await self.generate_unique_serial_key()
-        tournament = await self.create_tournament(serial_key, user, tournament_size)
-        user.current_tournament_id = tournament.id
-        await sync_to_async(user.save)()
-        await self.add_participant(tournament, user)
-        await self.update_user_status(user, "lobby")
-        await self.channel_layer.group_send(
-            f"user_{user_id}",
-            {
-                "type": "tournament_message",
-                "action": "create_tournament_lobby",
-                "tournamentLobbyId": tournament.serial_key,
-                "organizer": user.username,
-                "tournamentSize": tournament_size,
-                "message": f"Tournament lobby created successfully by {user.username}",
-            },
-        )
-        logger.info("Tournament lobby created successfully")
+        try:
+            user_id = event.get("userId")
+
+            if not user_id:
+                logger.warning("User id is required")
+                return
+
+            user_id = int(user_id)
+            tournament_size = event.get("tournamentSize")
+            if not tournament_size:
+                logger.warning("Tournament size is required")
+                return
+
+            tournament_size = int(tournament_size)
+            
+            if tournament_size not in [4, 8, 16]:
+                logger.warning("Invalid tournament size")
+                return
+            
+            user = await self.get_user(user_id)
+            serial_key = await self.generate_unique_serial_key()
+            tournament = await self.create_tournament(serial_key, user, tournament_size)
+            user.current_tournament_id = tournament.id
+            await sync_to_async(user.save)()
+            await self.add_participant(tournament, user)
+            await self.update_user_status(user, "lobby")
+            await self.channel_layer.group_send(
+                f"user_{user_id}",
+                {
+                    "type": "tournament_message",
+                    "action": "create_tournament_lobby",
+                    "tournamentLobbyId": tournament.serial_key,
+                    "organizer": user.username,
+                    "tournamentSize": tournament_size,
+                    "message": f"Tournament lobby created successfully by {user.username}",
+                },
+            )
+            logger.info("Tournament lobby created successfully")
+        except ValueError as ve:
+            logger.error(f"Error while creating tournament lobby: {str(ve)}")
+        except Exception as e:
+            logger.exception("Error while creating tournament lobby: %s", str(e))
 
     async def handle_participant_status_change(self, event, new_status, callback_action):
         invited_id = event.get("userId")
@@ -199,9 +216,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
         if str(recipient_id) == str(author_id):
             logger.warning("You can't invite yourself to a tournamnet.")
-            await self.channel_layer.group_send(
-                f"user_{author_id}", {"type": "info_message", "info": "You can't invite yourself to a tournamnet."}
-            )
+            await self.channel_layer.group_send(f"user_{author_id}", {"type": "info_message", "info": "You can't invite yourself to a tournamnet."})
             return
 
         event["author_username"] = await get_username(author_id)
@@ -251,9 +266,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
         recipient_user.current_tournament_id = 0
         await sync_to_async(recipient_user.save)()
         await self.kick_participant(tournament, recipient_user)
-        await self.send_info(
-            author_id, "back_kick_tournament", author=author_id, recipient=recipient_id, tournament_id=tournament.id
-        )
+        await self.send_info(author_id, "back_kick_tournament", author=author_id, recipient=recipient_id, tournament_id=tournament.id)
 
     async def handle_cancel_tournament(self, event):
         logger.info("Cancel tournament event received: %s", event)
@@ -281,9 +294,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
         logger.info("Participant list: %s", participant_list)
         await self.cancel_tournament(tournament)
-        await self.send_info(
-            author_id, "back_cancel_tournament", author=author_id, tournament_id=tournament.id, participant_list=participant_list
-        )
+        await self.send_info(author_id, "back_cancel_tournament", author=author_id, tournament_id=tournament.id, participant_list=participant_list)
         logger.info("Tournament has been cancelled")
 
     async def handle_leave_tournament(self, event):
@@ -342,9 +353,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def invite_participant(self, tournament, user):
-        participant, created = ManualTournamentParticipants.objects.get_or_create(
-            tournament=tournament, user=user, defaults={"status": "pending"}
-        )
+        participant, created = ManualTournamentParticipants.objects.get_or_create(tournament=tournament, user=user, defaults={"status": "pending"})
         if not created and participant.status == "rejected":
             participant.status = "pending"
             participant.save()
@@ -374,6 +383,12 @@ class TournamentConsumer(AsyncWebsocketConsumer):
     async def create_online_tournament(self, event):
         try:
             user_id = event.get("organizer_id")
+
+            if not user_id:
+                logger.warning("User id is required")
+                return
+
+            user_id = int(user_id)
             user = await self.get_user(user_id)
             if not user:
                 logger.warning(f"User {user_id} not found.")
@@ -389,20 +404,16 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 logger.warning(f"No participants found with status 'accepted' for tournament {tournament.id}")
                 return
 
+            if len(participant_ids) != tournament.size:
+                logger.warning("Invalid number of participants")
+                return
+
             await set_tournament_mode(tournament.id, "online")
 
             updated_tournament = await create_matches_for_tournament(tournament.id, participant_ids)
-            logger.info(
-                f"Online tournament bracket created successfully for tournament {updated_tournament.id} with {len(participant_ids)} participants."
-            )
+            logger.info(f"Online tournament bracket created successfully for tournament {updated_tournament.id} with {len(participant_ids)} participants.")
 
-            await self.send_info(
-                user.id,
-                "back_create_online_tournament",
-                author=user.id,
-                tournament_id=tournament.id,
-                participant_list=participant_ids,
-            )
+            await self.send_info(user.id, "back_create_online_tournament", author=user.id, tournament_id=tournament.id, participant_list=participant_ids)
 
         except ValueError as ve:
             logger.error(f"Bracket creation failed: {str(ve)}")
@@ -427,9 +438,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 logger.warning(f"No active tournament found for user {user.username}")
                 return
 
-            participant = await sync_to_async(
-                lambda: ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, user=user).first()
-            )()
+            participant = await sync_to_async(lambda: ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, user=user).first())()
 
             if not participant:
                 await self.send(json.dumps({"error": "User not found in tournament"}))
@@ -438,12 +447,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
             participant.status = "left"
             await sync_to_async(participant.save)()
 
-            match = await sync_to_async(
-                lambda: TournamentMatch.objects.filter(tournament_id=tournament_id)
-                .filter(Q(status="pending") | Q(status="ready"))
-                .filter(Q(player1_id=user.id) | Q(player2_id=user.id))
-                .first()
-            )()
+            match = await sync_to_async(lambda: TournamentMatch.objects.filter(tournament_id=tournament_id).filter(Q(status="pending") | Q(status="ready")).filter(Q(player1_id=user.id) | Q(player2_id=user.id)).first())()
 
             next_match_player_ids = []
             current_match_player_ids = []
@@ -466,11 +470,7 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
                 next_round = match.round_number + 1
                 next_match_order = (match.match_order + 1) // 2
-                next_match = await sync_to_async(
-                    lambda: TournamentMatch.objects.filter(
-                        tournament_id=tournament_id, round_number=next_round, match_order=next_match_order
-                    ).first()
-                )()
+                next_match = await sync_to_async(lambda: TournamentMatch.objects.filter(tournament_id=tournament_id, round_number=next_round, match_order=next_match_order).first())()
 
                 if next_match and opponent_id is not None:
                     if match.match_order % 2 == 1:
@@ -494,24 +494,14 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 ).count()
             )()
 
-            left_players_count = await sync_to_async(
-                lambda: ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="left").count()
-            )()
+            left_players_count = await sync_to_async(lambda: ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, status="left").count())()
 
-            logger.info(
-                f"Tournament {tournament_id} - Active Players: {active_players_count}, Left Players: {left_players_count}"
-            )
+            logger.info(f"Tournament {tournament_id} - Active Players: {active_players_count}, Left Players: {left_players_count}")
 
             if active_players_count > 0 and active_players_count == left_players_count:
                 await sync_to_async(lambda: ManualTournament.objects.filter(id=tournament_id).delete())()
 
-            participant_list = await sync_to_async(
-                lambda: list(
-                    ManualTournamentParticipants.objects.filter(tournament_id=tournament_id)
-                    .exclude(Q(status="rejected") | Q(status="left"))
-                    .values_list("user_id", flat=True)
-                )
-            )()
+            participant_list = await sync_to_async(lambda: list(ManualTournamentParticipants.objects.filter(tournament_id=tournament_id).exclude(Q(status="rejected") | Q(status="left")).values_list("user_id", flat=True)))()
 
             payload = {
                 "type": "info_message",

@@ -56,7 +56,7 @@ export const multiplayerContent = createComponent({
         </p>
         <label for="privateGameInput" class="form-label">Opponent username</label>
         <div class="input-group mt-2">
-          <input type="text" class="form-control" id="privateGameInput" placeholder="Enter player username" aria-label="Room Code">
+          <input type="text" class="form-control" maxlength="20" id="privateGameInput" placeholder="Enter player username" aria-label="Room Code">
           <button class="btn btn-pong-blue mx-3" id="createPrivate" type="button">Invite Player</button>
         </div>
       </div>

@@ -432,6 +432,9 @@ def try_join_random_tournament(request):
             tournament_size = int(tournament_size)
         except ValueError:
             return JsonResponse({"message": "Invalid tournament size"}, status=400)
+        
+        if tournament_size not in [4, 8, 16]:
+            return JsonResponse({"message": "Invalid tournament size"}, status=400)
 
         tournament = ManualTournament.objects.filter(status="upcoming", mode="online", size=tournament_size).order_by("created_at").first()
 
@@ -470,6 +473,9 @@ def try_join_tournament_with_room_code(request):
         room_code = body.get("roomCode")
         if not room_code:
             return JsonResponse({"message": "roomCode is required"}, status=400)
+        
+        if len(str(room_code)) != 8:
+            return JsonResponse({"message": "Invalid room code"}, status=400)
 
         if user.current_tournament_id != 0:
             return JsonResponse({"message": "User is already in a tournament"}, status=400)
