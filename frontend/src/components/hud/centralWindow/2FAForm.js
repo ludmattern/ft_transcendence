@@ -17,6 +17,7 @@ export const twoFAForm = createComponent({
             <div id="twofa-expired" class="text-danger mt-2" style="display: none;">2FA code expired</div>
           </div>
           <button class="btn bi bi-check">Verify</button>
+		  <button id="cancel" class="btn">Cancel</button>
         </form>
       </span>
     </div>
@@ -25,11 +26,18 @@ export const twoFAForm = createComponent({
 	attachEvents: async (el) => {
 		const username = sessionStorage.getItem('pending2FA_user');
 
+		const cancelButton = el.querySelector('#cancel');
+		if (cancelButton) {
+			cancelButton.addEventListener('click', (e) => {
+				e.preventDefault();
+				handleRoute('/login');
+			});
+		}
 		el.querySelector('form').addEventListener('submit', async (e) => {
 			e.preventDefault();
 
 			const code = el.querySelector('#twofa-code').value;
-
+			
 			try {
 				if (!username || !code) {
 					throw new Error('Missing username or code');
