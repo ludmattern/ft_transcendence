@@ -1,12 +1,8 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
-import { validatePassword } from '/src/components/hud/centralWindow/subscribeForm.js';
-import { checkPasswordConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
-import { checkEmailConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
-import { validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
+import { validatePassword, validateId, checkPasswordConfirmation, checkEmailConfirmation, validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { getInfo, pushInfo } from '/src/services/infoStorage.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
-
 
 export const settingsForm = createComponent({
 	tag: 'settingsForm',
@@ -48,19 +44,56 @@ export const settingsForm = createComponent({
 			</div>
 		  </span>
 		</div>
-	  `,
+		`,
 
 	attachEvents: async (el) => {
 		const oauth_null = await checkOAuthStatus();
+		const settingsForm = document.getElementById('settings-form');
+		settingsForm.classList.remove('d-none');
+		const form = el.querySelector('form');
+
 		if (oauth_null === false) {
-			handleRoute('/settings/delete-account');
+			const fieldsets = form.querySelectorAll('fieldset');
+			if (fieldsets[1]) fieldsets[1].remove();
+			if (form.querySelectorAll('fieldset')[1]) form.querySelectorAll('fieldset')[1].remove();
+
+			form.addEventListener('submit', async (e) => {
+				e.preventDefault();
+				const newUsername = form.querySelector('#new-username').value;
+				if (!newUsername) return;
+				const formData = { newUsername };
+				try {
+					console.log('formData: ', formData);
+					const response = await fetch('/api/user-service/update_info_42/', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(formData),
+						credentials: 'include',
+					});
+					const data = await response.json();
+					if (data.success) {
+						await pushInfo('registered_user', newUsername);
+						await pushInfo('username', newUsername);
+						createNotificationMessage(`Hello again, ${newUsername}!`, 2500, false);
+						form.querySelector('#new-username').value = '';
+					} else {
+						console.error('Error updating username: ', data);
+						usernameError(data);
+					}
+				} catch (error) {
+					console.error('Error updating username: ', error);
+				}
+			});
+
+			el.querySelector('#delete-account-link').addEventListener('click', (e) => {
+				e.preventDefault();
+				handleRoute('/settings/delete-account');
+			});
+
 			return;
 		}
 
-		const settingsForm = document.getElementById('settings-form');
-		settingsForm.classList.remove('d-none');
-
-		el.querySelector('form').addEventListener('submit', async (e) => {
+		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
 			const formData = await collectFormData(el);
 			resetErrorMessages();
@@ -187,7 +220,7 @@ function emailError(data) {
 		document.getElementById('error-message-mail-format').style.display = 'none';
 	}
 
-	if (data.message.includes('You\'re already using this email')) {
+	if (data.message.includes("You're already using this email")) {
 		document.getElementById('error-same-as-old-email').style.display = 'block';
 	} else {
 		document.getElementById('error-same-as-old-email').style.display = 'none';
@@ -208,7 +241,6 @@ function emptyFields() {
 	document.getElementById('new-email').value = '';
 	document.getElementById('confirm-new-email').value = '';
 }
-
 
 function createFormGroup(id, type, label, maxLength) {
 	return `
@@ -254,7 +286,6 @@ function getAutocompleteValue(id) {
 			return 'off';
 	}
 }
-
 
 async function collectFormData(el) {
 	return {
