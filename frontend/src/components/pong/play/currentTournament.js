@@ -49,6 +49,9 @@ export const currentTournament = createComponent({
 });
 
 export async function renderBracket() {
+	if (!currentTournament.el) {
+		return;
+	}
 	const el = currentTournament.el;
 	const username = (await getInfo('username')).success ? (await getInfo('username')).value : null;
 	const data = await getBracketData();

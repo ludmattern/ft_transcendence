@@ -274,7 +274,6 @@ class GameManager {
 			this.endGame();
 			if (Store.pongScene) Store.pongScene.clear();
 			const previousPongPlaySubRoute = getPreviousPongPlaySubRoute();
-			emit('updateBracket');
 			handleRoute(previousPongPlaySubRoute);
 		}
 	}
