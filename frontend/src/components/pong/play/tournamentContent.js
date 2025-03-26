@@ -97,6 +97,7 @@ export const tournamentContent = createComponent({
 		});
 
 		const joinWithCodeButton = el.querySelector('#joinWithCode');
+		const tournamentRoomCodeInput = el.querySelector('#tournamentRoomCode');
 		joinWithCodeButton.addEventListener('click', async () => {
 			const roomCode = document.getElementById('tournamentRoomCode').value;
 			if (!roomCode) {
@@ -130,6 +131,12 @@ export const tournamentContent = createComponent({
 				}
 			} catch (error) {
 				console.error('Error joining tournament: ', error);
+			}
+		});
+
+		tournamentRoomCodeInput.addEventListener('keyup', (event) => {
+			if (event.key === 'Enter') {
+				joinWithCodeButton.click();
 			}
 		});
 

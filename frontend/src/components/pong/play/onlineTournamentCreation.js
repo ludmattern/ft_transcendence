@@ -3,9 +3,8 @@ import { subscribe } from '/src/services/eventEmitter.js';
 import { ws } from '/src/services/websocket.js';
 import { fetchUserId } from '/src/components/hud/centralWindow/otherProfileForm.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
-import { handleRoute } from '/src/services/router.js';
-import { getCurrentTournamentInformation } from '/src/services/router.js';
-import { pushInfo,getInfo } from '/src/services/infoStorage.js';
+import { handleRoute, getCurrentTournamentInformation } from '/src/services/router.js';
+import { pushInfo, getInfo } from '/src/services/infoStorage.js';
 
 export const onlineTournamentCreation = createComponent({
 	tag: 'onlineTournamentCreation',
@@ -231,7 +230,7 @@ export function updateOnlinePlayersUI(data) {
 				inviteContainer.className = 'w-50 mb-4';
 				inviteContainer.innerHTML = `
 					<div class="input-group">
-						<input id="invite-input" type="text" class="form-control" placeholder="Enter pilot username" aria-label="Invitation">
+						<input id="invite-input" maxlength="20" type="text" class="form-control" placeholder="Enter pilot username" aria-label="Invitation">
 						<button id="send-invite" class="btn btn-pong-blue" type="button">Send Invitation</button>
 					</div>
 				`;
