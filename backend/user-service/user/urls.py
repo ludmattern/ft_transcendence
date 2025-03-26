@@ -13,6 +13,7 @@ from service.views import (
     update_info,
     delete_account,
     check_oauth_id,
+    update_info_42,
 )
 from service.friends import get_relationship_status, get_friends
 from service.profile import profile_info
@@ -24,6 +25,7 @@ from service.views_info_storage import (
 )
 
 urlpatterns = [
+    path("update_info_42/", update_info_42, name="update_info_42"),
     path("register/", register_user, name="register_user"),
     path("generate-qr/<str:username>/", generate_qr_code, name="generate_qr"),
     path("update/", update_info, name="update_info"),
