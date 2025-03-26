@@ -233,9 +233,6 @@ def delete_account(request):
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
 
-
-
-
 @require_POST
 @jwt_required
 def update_info_42(request):
@@ -245,12 +242,12 @@ def update_info_42(request):
 
         if not new_username:
             return JsonResponse({"success": False, "message": "Username is required"}, status=400)
-        
+
         user = request.user
-        
+
         if not user.oauth_id:
             return JsonResponse({"success": False, "message": "User is not connected to 42"}, status=400)
-        
+
         if new_username:
             if ManualUser.objects.filter(username=new_username).exists():
                 return JsonResponse({"success": False, "message": "Username already taken"}, status=200)
@@ -258,6 +255,78 @@ def update_info_42(request):
             if new_username_error:
                 return JsonResponse({"success": False, "message": new_username_error}, status=200)
             user.username = new_username
+
+        user.save()
+        return JsonResponse({"success": True, "message": "Information updated successfully"})
+    except Exception as e:
+        logging.error("Error in update_info_42: %s", str(e))
+        return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
+
+
+@require_POST
+@jwt_required
+def update_info(request):
+    try:
+        body = json.loads(request.body.decode("utf-8"))
+        old_password = body.get("oldPassword", "")
+        new_username = body.get("newUsername", "").strip()
+        new_password = body.get("newPassword", "").strip()
+        confirm_password = body.get("confirmPassword", "").strip()
+        new_email = body.get("newEmail", "").strip()
+        confirm_email = body.get("confirmEmail", "").strip()
+
+        user = request.user
+        if not user or not user.password:
+            return JsonResponse({"success": False, "message": "Unauthorized"}, status=200)
+
+        if not old_password:
+            return JsonResponse({"success": False, "message": "Please enter current password"}, status=200)
+
+        if not bcrypt.checkpw(old_password.encode("utf-8"), user.password.encode("utf-8")):
+            return JsonResponse({"success": False, "message": "Current password is incorrect"}, status=200)
+
+        if not any([new_username, new_email, new_password]):
+            return JsonResponse({"success": False, "message": "No changes to update"}, status=200)
+
+        if new_username:
+            if ManualUser.objects.filter(username=new_username).exists():
+                return JsonResponse({"success": False, "message": "Username already taken"}, status=200)
+            new_username_error = validate_username(new_username)
+            if new_username_error:
+                return JsonResponse({"success": False, "message": new_username_error}, status=200)
+            user.username = new_username
+
+        if new_email:
+            if new_email != confirm_email:
+                return JsonResponse({"success": False, "message": "Emails do not match"}, status=200)
+            decrypted_email = decrypt_thing(user.email)
+            if new_email == decrypted_email:
+                return JsonResponse({"success": False, "message": "You're already using this email"}, status=200)
+            else:
+                if ManualUser.objects.exclude(id=user.id).filter(email=encrypt_thing(new_email)).exists():
+                    return JsonResponse({"success": False, "message": "Email already in use"}, status=200)
+                new_email_error_or_encrypted = validate_email(new_email)
+                if (
+                    new_email_error_or_encrypted == "Email decryption failed"
+                    or new_email_error_or_encrypted == "Email already in use"
+                    or new_email_error_or_encrypted == "Email must be less than 50 characters"
+                    or new_email_error_or_encrypted == "Invalid email format"
+                ):
+                    logging.error("Email error: %s", new_email_error_or_encrypted)
+                    return JsonResponse({"success": False, "message": new_email_error_or_encrypted}, status=200)
+
+            user.email = encrypt_thing(new_email)
+
+        if new_password == old_password:
+            return JsonResponse({"success": False, "message": "New password cannot be the same as old password"}, status=200)
+
+        if new_password:
+            if new_password != confirm_password:
+                return JsonResponse({"success": False, "message": "Passwords do not match"}, status=200)
+            new_password_error = validate_password(new_password)
+            if new_password_error:
+                return JsonResponse({"success": False, "message": new_password_error}, status=200)
+            user.password = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
         user.save()
         return JsonResponse({"success": True, "message": "Information updated successfully"})
@@ -316,7 +385,9 @@ def get_game_history(request):
         except ManualUser.DoesNotExist:
             return JsonResponse({"error": "User not found"}, status=404)
 
-        history_entries = ManualGameHistory.objects.filter(Q(winner_id=user_id) | Q(loser_id=user_id)).order_by("-created_at")[:20]
+        history_entries = ManualGameHistory.objects.filter(Q(winner_id=user_id) | Q(loser_id=user_id)).order_by("-created_at")[
+            :20
+        ]
         history_list = []
         wins = 0
         total_games = history_entries.count()
@@ -426,7 +497,13 @@ def search_pilots(request):
         if not user:
             return JsonResponse({"success": False, "error": "Unauthorized"}, status=200)
         blocked_users = ManualBlockedRelations.objects.filter(blocked_user=user).values_list("user_id", flat=True)
-        pilots = ManualUser.objects.filter(username__icontains=query).exclude(id__in=blocked_users).exclude(id=user.id).annotate(username_length=Length("username")).order_by("username_length", "username")
+        pilots = (
+            ManualUser.objects.filter(username__icontains=query)
+            .exclude(id__in=blocked_users)
+            .exclude(id=user.id)
+            .annotate(username_length=Length("username"))
+            .order_by("username_length", "username")
+        )
         results = [{"username": pilot.username, "user_id": pilot.id, "is_connected": pilot.is_connected} for pilot in pilots]
         return JsonResponse({"success": True, "pilots": results}, status=200)
 
