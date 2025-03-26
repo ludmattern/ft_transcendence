@@ -41,7 +41,6 @@ async function checkImageExists(url) {
 	  const resp = await fetch(url, { method: 'HEAD' });
 	  return resp.ok;
 	} catch (err) {
-	  console.error("checkImageExists: Erreur fetch HEAD: ", err);
 	  return false;
 	}
   }
@@ -100,7 +99,7 @@ export const commMessage = createComponent({
 		  const candidateUrl = item.profilePicture
 			? `/media${item.profilePicture}`
 			: fallback;
-	
+			
 		  const exists = await checkImageExists(candidateUrl);
 		  imgElem.src = exists ? candidateUrl : fallback;
 		}
