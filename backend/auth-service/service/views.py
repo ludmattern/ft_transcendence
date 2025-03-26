@@ -311,7 +311,7 @@ def verify_2fa_view(request):
                 return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
         elif bcrypt.checkpw(code.encode("utf-8"), user.temp_2fa_code.encode("utf-8")):
             if datetime.datetime.utcnow() > user.reset_2fa_expiry:
-                return JsonResponse({"success": False, "message": "Invalid 2FA code"}, status=401)
+                return JsonResponse({"success": False, "message": "2FA code expired"}, status=401)
             token_str, expiry = generate_session_token(user)
             user.token_expiry = expiry
             user.session_token = token_str
