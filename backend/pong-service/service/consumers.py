@@ -8,12 +8,12 @@ from django.db.models import Q  # type: ignore
 from service.models import ManualUser, TournamentMatch, ManualTournamentParticipants, ManualGameHistory
 from service.utils import calculate_elo
 from .game_manager import game_manager
+import time
 
 from .bot import AIPaddle
 
 logger = logging.getLogger(__name__)
 
-import time
 
 class PongGroupConsumer(AsyncWebsocketConsumer):
     running_games = {}
