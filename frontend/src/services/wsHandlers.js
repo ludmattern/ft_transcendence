@@ -21,13 +21,12 @@ const handleGameState = (data) => {
 const handleGameOver = async (data) => {
 	emit('gameOver');
 	if (data.game_id.startsWith('tournLocal_')) {
+		emit('updateBracket');
 		await handleLocalTournamentGameEnding(data);
 	} else if (data.game_id.startsWith('tournOnline_')) {
 		emit('updateBracket');
 	}
-	else if (data.game_id.startsWith('tournLocal_')) {
-		emit('updateBracket');
-	}
+	
 	gameManager.handleGameUpdate(data);
 };
 

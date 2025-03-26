@@ -41,6 +41,7 @@ export async function handleLocalTournamentGameEnding(data) {
 			.catch((err) => {
 				console.error('Error updating match result:', err);
 			});
+			
 	} catch (error) {
 		console.error('Error parsing gameId: ', error);
 	}
