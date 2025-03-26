@@ -25,6 +25,9 @@ const handleGameOver = async (data) => {
 	} else if (data.game_id.startsWith('tournOnline_')) {
 		emit('updateBracket');
 	}
+	else if (data.game_id.startsWith('tournLocal_')) {
+		emit('updateBracket');
+	}
 	gameManager.handleGameUpdate(data);
 };
 
