@@ -162,8 +162,9 @@ export async function renderBracket() {
 	}
 
 	const abandonTournamentButton = document.getElementById('abandon-tournament');
-	if (abandonTournamentButton) {
-		abandonTournamentButton.addEventListener('click', async () => {
+	if (abandonTournamentButton && !abandonTournamentButton.dataset.listenerAttached) {
+			abandonTournamentButton.dataset.listenerAttached = "true";
+			abandonTournamentButton.addEventListener('click', async () => {
 			try {
 				if (mode === 'local') {
 					const response = await fetch('/api/tournament-service/abandon_local_tournament/', {
@@ -192,7 +193,7 @@ export async function renderBracket() {
 			} catch (error) {
 				console.error('Error abandoning tournament: ', error);
 			}
-		});
+		}, { once: true });
 	}
 
 	const joinButtons = el.querySelectorAll('.join-match');
