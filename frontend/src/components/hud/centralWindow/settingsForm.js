@@ -63,7 +63,6 @@ export const settingsForm = createComponent({
 				if (!newUsername) return;
 				const formData = { newUsername };
 				try {
-					console.log('formData: ', formData);
 					const response = await fetch('/api/user-service/update_info_42/', {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
