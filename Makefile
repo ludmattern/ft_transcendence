@@ -1,4 +1,4 @@
-.PHONY: up down re
+.PHONY: up down clean re
 
 up:
 	docker compose --env-file ./secret/.env -f docker-compose.yml up --build -d
