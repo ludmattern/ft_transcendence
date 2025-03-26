@@ -49,7 +49,7 @@ export const twoFAForm = createComponent({
 					handleRoute('/');
 				} else if (data.message === 'Invalid 2FA code') {
 					const twofaExpired = el.querySelector('#twofa-expired');
-					if (twofaExpired) {
+					if (twofaExpired) {	
 						twofaExpired.style.display = 'none';
 					}
 					const twofaError = el.querySelector('#twofa-error');
