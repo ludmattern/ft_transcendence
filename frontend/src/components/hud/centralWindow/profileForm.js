@@ -81,7 +81,11 @@ function attachProfilePicUpload() {
 		fileInput.addEventListener('change', async (e) => {
 			const file = e.target.files[0];
 			if (!file) return;
-
+			if (file.size > 2 * 1024 * 1024) {
+				console.log("Image too large");
+				return;
+			}
+			
 			const formData = new FormData();
 			formData.append('profile_picture', file);
 
