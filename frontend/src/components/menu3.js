@@ -49,5 +49,6 @@ function initM3() {
 		map: videoTexture,
 	});
 
-	Store.screenObject2.material = newMaterial;
+	if (Store.screenObject2)
+		Store.screenObject2.material = newMaterial;
 }

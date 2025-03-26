@@ -1,5 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
+import { validatePassword, checkPasswordConfirmation } from '/src/components/hud/centralWindow/subscribeForm.js';
 
 export const forgotPassword = (() => {
 	const initialState = {
@@ -17,7 +18,7 @@ export const forgotPassword = (() => {
     <div id="forgot-password-form" class="form-container flex-column justify-content-around text-center active">
       <h5>PASSWORD RECOVERY</h5>
       <span class="background-central-span">
-        <form id="email-form" action="#" method="post" class="w-100">
+        <form id="email-form" method="post" class="w-100">
           <div class="form-group">
             <label for="email" class="mb-3">Enter your email</label>
             <input type="email" id="email" name="email" class="form-control" maxlength="50" required />
@@ -34,7 +35,7 @@ export const forgotPassword = (() => {
     <div id="code-verification-form" class="form-container flex-column justify-content-around text-center active">
       <h5>CODE VERIFICATION</h5>
       <span class="background-central-span">
-        <form id="code-form" action="#" method="post" class="w-100">
+        <form id="code-form" method="post" class="w-100">
           <div class="form-group">
             <label for="code" class="mb-3">Enter the code</label>
             <input type="text" id="code" name="code" class="form-control" maxlength="6" required />
@@ -52,15 +53,21 @@ export const forgotPassword = (() => {
     <div id="change-password-form" class="form-container flex-column justify-content-around text-center active">
       <h5>CHANGE PASSWORD</h5>
       <span class="background-central-span">
-        <form id="change-password-form-element" action="#" method="post" class="w-100">
+        <form id="change-password-form-element" method="post" class="w-100">
           <div class="form-group">
             <label for="new-password" class="mb-3">New password</label>
-            <input type="password" id="new-password" name="new-password" class="form-control" required />
+			<input type="text" id="username" name="username" autocomplete="username" value="currentUsername" hidden />
+            <input type="password" id="new-password" name="new-password" autocomplete="new-password" class="form-control" maxlength="20" required />
+            <div id="bad-pass-size" class="text-danger mt-2" style="display: none;">Password must contain between 6 and 20 char</div>
+            <div id="bad-pass-upper" class="text-danger mt-2" style="display: none;">Password must have at least one uppercase char</div>
+            <div id="bad-pass-lower" class="text-danger mt-2" style="display: none;">Password must have at least one lowercase char</div>
+            <div id="bad-pass-number" class="text-danger mt-2" style="display: none;">Password must have at least one digit</div>
+            <div id="bad-pass-special" class="text-danger mt-2" style="display: none;">Password must have at least one special char</div>
           </div>
           <div class="form-group">
             <label for="confirm-password" class="mb-3">Confirm password</label>
-            <input type="password" id="confirm-password" name="confirm-password" class="form-control" required />
-            <div id="error-message" class="text-danger mt-2 d-none">Passwords do not match</div>
+            <input type="password" id="confirm-password" name="confirm-password" autocomplete="new-password" class="form-control" maxlength="20" required />
+            <div id="error-message-pass" class="text-danger mt-2" style="display: none;">Password does not match</div>
           </div>
           <button type="submit" class="btn">Submit</button>
         </form>
@@ -213,30 +220,48 @@ export const forgotPassword = (() => {
 		const form = container.querySelector('#change-password-form-element');
 		const newPassword = container.querySelector('#new-password');
 		const confirmPassword = container.querySelector('#confirm-password');
-		const errorMessage = container.querySelector('#error-message');
+		const errorMessage = container.querySelector('#error-message-pass');
 		if (!form || !newPassword || !confirmPassword || !errorMessage) return;
+
 		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
-			if (newPassword.value !== confirmPassword.value) {
+
+			resetErrorMessages();
+
+			if (!validatePassword(newPassword.value)) {
+				return;
+			}
+
+			if (!checkPasswordConfirmation(newPassword.value, confirmPassword.value)) {
 				errorMessage.classList.remove('d-none');
-			} else {
-				try {
-					const response = await fetch('/api/auth-service/change-password/', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							new_password: newPassword.value,
-							reset_token: state.resetToken,
-						}),
-					});
-					const data = await response.json();
-					if (data && data.success) {
-						resetState();
-						handleRoute('/login');
-					}
-				} catch (error) {
-					console.error('Error: ', error);
+				return;
+			}
+
+			try {
+				const response = await fetch('/api/auth-service/change-password/', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						new_password: newPassword.value,
+						confirmPassword: confirmPassword.value,
+						reset_token: state.resetToken,
+					}),
+				});
+
+				if (response.status === 401) {
+					errorMessage.textContent = 'Your session has expired. Request a new code.';
+					errorMessage.classList.remove('d-none');
+					errorMessage.style.display = 'block';
+					return;
 				}
+
+				const data = await response.json();
+				if (data && data.success) {
+					resetState();
+					handleRoute('/login');
+				}
+			} catch (error) {
+				console.error('Error: ', error);
 			}
 		});
 	};
@@ -277,4 +302,13 @@ function validateMail(email) {
 	if (email.length > 50) return false;
 	const re = /\S+@\S+\.\S+/;
 	return re.test(email);
+}
+
+function resetErrorMessages() {
+	const errorIds = ['bad-pass-size', 'bad-pass-upper', 'bad-pass-number', 'bad-pass-lower', 'bad-pass-special'];
+
+	errorIds.forEach((errId) => {
+		const el = document.getElementById(errId);
+		if (el) el.style.display = 'none';
+	});
 }

@@ -1,4 +1,5 @@
 import json
+import re
 import bcrypt
 import datetime
 from datetime import timedelta
@@ -177,7 +178,6 @@ def login_view(request):
         body = json.loads(request.body.decode("utf-8"))
         username = body.get("username")
         password = body.get("password")
-
 
         if not username or not password:
             return JsonResponse({"success": False, "message": "Username and password are required."}, status=400)
@@ -476,8 +476,9 @@ def request_password_reset(request):
             return JsonResponse({"success": False, "message": "User not found"})
 
         current_time = now()
-        if user.reset_code_expiry and user.reset_code_expiry > current_time:
-            remaining = (user.reset_code_expiry - current_time).total_seconds()
+        reset_expiry = make_aware(user.reset_code_expiry) if user.reset_code_expiry and not is_aware(user.reset_code_expiry) else user.reset_code_expiry
+        if reset_expiry and reset_expiry > current_time:
+            remaining = (reset_expiry - current_time).total_seconds()
             return JsonResponse({"success": False, "message": f"Please wait {int(remaining)} seconds before requesting a new code"}, status=429)
 
         code = generate_2fa_code()
@@ -505,10 +506,10 @@ def verify_reset_code(request):
         code = body.get("code")
         if not email or not code:
             return JsonResponse({"success": False, "message": "Missing email or code"}, status=400)
-        
+
         if len(email) > 50:
             return JsonResponse({"success": False, "message": "Invalid email"}, status=400)
-        
+
         if len(code) != 6:
             return JsonResponse({"success": False, "message": "Invalid code"}, status=400)
 
@@ -552,14 +553,31 @@ def verify_reset_code(request):
         return JsonResponse({"success": False, "message": "An internal error has occurred!"}, status=500)
 
 
+def is_strong_password(password):
+    """
+    Vérifie que le mot de passe contient entre 6 et 20 caractères,
+    au moins une minuscule, une majuscule, un chiffre et un caractère spécial.
+    """
+    pattern = re.compile(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,20}$")
+    return bool(pattern.match(password))
+
+
 @require_POST
 def change_password(request):
     try:
         body = json.loads(request.body.decode("utf-8"))
         new_password = body.get("new_password")
+        confirm_password = body.get("confirmPassword")
         reset_token = body.get("reset_token")
-        if not new_password or not reset_token:
-            return JsonResponse({"success": False, "message": "Missing new_password or reset_token"}, status=400)
+
+        if not new_password or not confirm_password or not reset_token:
+            return JsonResponse({"success": False, "message": "Missing new_password, confirmPassword or reset_token"}, status=400)
+
+        if new_password != confirm_password:
+            return JsonResponse({"success": False, "message": "Passwords do not match"}, status=400)
+
+        if not is_strong_password(new_password):
+            return JsonResponse({"success": False, "message": "Le mot de passe ne respecte pas les critères de complexité"}, status=400)
 
         try:
             payload = jwt.decode(reset_token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
