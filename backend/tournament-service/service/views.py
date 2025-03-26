@@ -432,7 +432,7 @@ def try_join_random_tournament(request):
             tournament_size = int(tournament_size)
         except ValueError:
             return JsonResponse({"message": "Invalid tournament size"}, status=400)
-        
+
         if tournament_size not in [4, 8, 16]:
             return JsonResponse({"message": "Invalid tournament size"}, status=400)
 
@@ -446,7 +446,16 @@ def try_join_random_tournament(request):
         if participant_count >= tournament_size:
             return JsonResponse({"message": "Tournament is full"}, status=400)
 
-        ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
+        participant = ManualTournamentParticipants.objects.filter(tournament=tournament, user=user).first()
+
+        if participant:
+            if participant.status == "rejected":
+                participant.status = "pending"
+                participant.save()
+            else:
+                return JsonResponse({"message": f"User already in tournament with status {participant.status}"}, status=400)
+        else:
+            ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
 
         return JsonResponse({"success": True, "message": "User found a random tournament", "payload": {"userId": str(user.id), "tournament_id": str(tournament.id)}})
 
@@ -473,7 +482,7 @@ def try_join_tournament_with_room_code(request):
         room_code = body.get("roomCode")
         if not room_code:
             return JsonResponse({"message": "roomCode is required"}, status=400)
-        
+
         if len(str(room_code)) != 8:
             return JsonResponse({"message": "Invalid room code"}, status=400)
 
@@ -490,7 +499,16 @@ def try_join_tournament_with_room_code(request):
         if participant_count >= tournament.size:
             return JsonResponse({"message": "Tournament is full"}, status=400)
 
-        ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
+        participant = ManualTournamentParticipants.objects.filter(tournament=tournament, user=user).first()
+
+        if participant:
+            if participant.status == "rejected":
+                participant.status = "pending"
+                participant.save()
+            else:
+                return JsonResponse({"message": f"User already in tournament with status {participant.status}"}, status=400)
+        else:
+            ManualTournamentParticipants.objects.create(tournament=tournament, user=user, status="pending")
 
         return JsonResponse({"success": True, "message": "User joined the tournament", "payload": {"userId": user.id, "tournament_id": tournament.id}})
     except json.JSONDecodeError:
