@@ -4,6 +4,7 @@ import ComponentManager from '/src/utils/component.js';
 import { CacheDB } from '/src/utils/IndexedDBCache.js';
 import { onWindowResize } from '/src/3d/main.js';
 import { closeCentralWindow } from '/src/components/hud/utils/utils.js';
+import { emit } from '/src/services/eventEmitter.js';
 
 const componentManagers = {
 	HUD: new ComponentManager('HUD'),
@@ -28,7 +29,7 @@ async function initializeApp() {
 
 		await setDatabaseID();
 	} catch (error) {
-		console.error("Init error : IndexedDB is not available: ", error);
+		console.error('Init error : IndexedDB is not available: ', error);
 	}
 
 	let targetRoute = window.location.pathname;
@@ -43,6 +44,10 @@ async function initializeApp() {
 	const blurScreenEffect = document.querySelector('#blur-screen-effect');
 	blurScreenEffect.addEventListener('click', () => {
 		closeCentralWindow();
+	});
+
+	window.addEventListener('beforeunload', function (e) {
+		emit('routing');
 	});
 }
 

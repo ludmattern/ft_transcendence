@@ -2,6 +2,9 @@ import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
 import { gameModeSelector, cancelMode } from '/src/services/gameModeHandler.js';
 import { getInfo } from '/src/services/infoStorage.js';
+import { subscribe } from '/src/services/eventEmitter.js';
+
+let currentConfig = null;	
 
 export const pongTuto = (config) =>
 	createComponent({
@@ -51,27 +54,34 @@ export const pongTuto = (config) =>
 			const usernamePlaceholder = el.querySelector('#username-placeholder');
 			const player2Element = el.querySelector('#p2 strong');
 			if (config.gameMode && config.gameMode === 'local-tournament') {
-				if (usernamePlaceholder) 
-				  usernamePlaceholder.textContent = config.player1;
-				if (player2Element) 
-				  player2Element.textContent = config.player2;
-			} 
-			else {
-				if (usernamePlaceholder) 
-				  usernamePlaceholder.textContent = username;
+				if (usernamePlaceholder) usernamePlaceholder.textContent = config.player1;
+				if (player2Element) player2Element.textContent = config.player2;
+			} else {
+				if (usernamePlaceholder) usernamePlaceholder.textContent = username;
 			}
 
 			const readyButton = el.querySelector('#ready');
 			readyButton.focus();
 
+			subscribe('routing', () => {
+				console.log('pongTuto routing');
+				const info = getCurrentConfig();
+				if (info) {
+					cancelMode(info);
+					setCurrentConfig(null);
+				}
+			});
+
 			el.querySelector('#close').addEventListener('click', (e) => {
 				e.preventDefault();
 				cancelMode(config);
+				setCurrentConfig(null);
 				handleRoute('/topong');
 			});
 
 			readyButton.addEventListener('click', () => {
 				gameModeSelector(config);
+				setCurrentConfig(config);
 				readyButton.remove();
 				el.querySelector('.ready-question').remove();
 				el.querySelector('.pong-loader').classList.remove('d-none');
@@ -79,3 +89,11 @@ export const pongTuto = (config) =>
 			});
 		},
 	});
+
+	function getCurrentConfig() {
+		return currentConfig;
+	}
+
+	function setCurrentConfig(config) {
+		currentConfig = config;
+	}

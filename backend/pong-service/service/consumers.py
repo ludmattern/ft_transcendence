@@ -34,7 +34,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         logger.info(f"player1_id: {player1_id}, player2_id: {player2_id} for game_id: {game_id} for action: {action}")
         user_id = event.get("user_id")
         difficulty = event.get("difficulty")
-        if action == "leave_game":
+        if action == "leave_game" or action == "game_giveup":
             game = game_manager.get_game(game_id)
         else:
             game = game_manager.get_or_create_game(game_id, player1_id, player2_id)
@@ -81,6 +81,8 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 else:
                     game.quitter_id = user_id 
             else:
+                if not game:
+                    return
                 game.quitter_id = user_id 
 
             game.game_over = True
@@ -315,7 +317,12 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             or str(game_id).startswith("tournLocal_")
             or str(game_id).startswith("solo_")
         ):
-
+            try:
+                winner_id = int(winner_id)
+                loser_id = int(loser_id)
+            except ValueError:
+                return
+            
             await sync_to_async(ManualGameHistory.objects.create)(
                 winner_id=winner_id,
                 loser_id=loser_id,

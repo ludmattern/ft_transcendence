@@ -9,6 +9,7 @@ import { tournamentCreation } from '/src/components/pong/play/tournamentCreation
 import { emit } from '/src/services/eventEmitter.js';
 import { updateOnlinePlayersUI } from '/src/components/pong/play/onlineTournamentCreation.js';
 import { playGame } from '/src/components/pong/play/utils.js';
+import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 
 const handleLogout = () => {
 	handleRoute('/');
@@ -20,13 +21,33 @@ const handleGameState = (data) => {
 
 const handleGameOver = async (data) => {
 	emit('gameOver');
+
+	console.log(data);
+
+	const winner = data.winner_id;
+	const userid = await getUserIdFromCookieAPI();
+
+	if (data.game_id.startsWith('tourn')) emit('updateBracket');
+
 	if (data.game_id.startsWith('tournLocal_')) {
-		emit('updateBracket');
+		createNotificationMessage(`Congrats to ${data.winner_id}, you won !`, 5000);
 		await handleLocalTournamentGameEnding(data);
-	} else if (data.game_id.startsWith('tournOnline_')) {
-		emit('updateBracket');
+	} else if (data.game_id.startsWith('game_') || data.game_id.startsWith('solo_')) {
+		if (winner === 'Player 1') {
+			createNotificationMessage('Good Game, you won !', 5000);
+		} else {
+			createNotificationMessage('Bad Game, looser !', 5000);
+		}
+	} else {
+		if (winner && userid) {
+			if (winner === userid) {
+				createNotificationMessage('Good Game, you won !', 5000);
+			} else {
+				createNotificationMessage('Bad Game, looser !', 5000);
+			}
+		}
 	}
-	
+
 	gameManager.handleGameUpdate(data);
 };
 

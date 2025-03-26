@@ -127,8 +127,8 @@ class GameManager {
 		return this.activeGame !== null;
 	}
 
-	startGame(gameConfig) {
-		this.initClientData();
+	async startGame(gameConfig) {
+		await this.initClientData();
 		componentManagers['HUD'].unloadComponent('pongTuto');
 		this.gameMode = gameConfig.mode;
 		if (this.activeGame) this.endGame();
@@ -148,8 +148,8 @@ class GameManager {
 		if (gameConfig.mode === 'local') {
 			document.addEventListener('keydown', this.localKeydownHandler);
 			document.addEventListener('keyup', this.localKeyupHandler);
-			this.username1 = 'Player Left';
-			this.username2 = ' Player Right';
+			this.username1 = this.clientName;
+			this.username2 = ' Guest';
 			if (gameConfig.subMode === 'local-tournament') {
 				this.username1 = gameConfig.player1;
 				this.username2 = gameConfig.player2;

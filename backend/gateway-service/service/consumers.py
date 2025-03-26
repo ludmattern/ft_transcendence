@@ -39,7 +39,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 except Exception as e:
                     logger.exception("Failed to fetch user ID: %s", e)
                     return await self.close()
-                    
+
                 if not self.user_id:
                     return await self.close()
 
@@ -55,7 +55,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                 group_name = f"tournament_{serial_key}"
                 await self.channel_layer.group_add(group_name, self.channel_name)
             return None
-            
+
         except Exception as e:
             logger.exception("Error during WebSocket connect: %s", e)
             await self.close()
@@ -64,9 +64,8 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         try:
             if self.user_id:
                 await update_user_status(self.user_id, False)
-                await self.channel_layer.group_send(
-                    "pong_service", {"type": "game_event", "action": "game_giveup", "user_id": self.user_id, "game_id": self.game_id}
-                )
+                await self.channel_layer.group_send("pong_service", {"type": "game_event", "action": "game_giveup", "user_id": self.user_id, "game_id": self.game_id})
+                await self.channel_layer.group_send("matchmaking_service", {"type": "matchmaking_event", "action": "leave", "user_id": str(self.user_id), "room_code": "None"})
                 await self.channel_layer.group_discard(f"user_{self.user_id}", self.channel_name)
 
             await self.channel_layer.group_discard("gateway", self.channel_name)
@@ -148,7 +147,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
                         "player_id": data.get("player_id"),
                         "user_id": self.user_id,
                         "local_player": data.get("local_player"),
-                        "local_leave" : data.get("local_leave"),
+                        "local_leave": data.get("local_leave"),
                         "difficulty": data.get("difficulty"),
                     },
                 )
@@ -179,7 +178,6 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             logger.exception("Failed to send private message: %s", e)
 
-
     async def info_message(self, event):
         try:
             """This method handles friend request sending events delivered to this consumer."""
@@ -208,7 +206,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
             logger.exception("Failed to send tournament message: %s", e)
 
     async def error_message(self, event):
-        try: 
+        try:
             """This method handles error_message events delivered to this consumer."""
             await self.send(json.dumps(event))
         except Exception as e:
@@ -262,14 +260,13 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             logger.exception("Failed to send logout: %s", e)
 
+
 ca_cert_path = "/data/certs/selfsigned.crt"
+
 
 async def fetch_user_id(cookies):
     try:
-        async with httpx.AsyncClient(
-            base_url="https://auth-service:3001",
-            verify=ca_cert_path
-        ) as client:
+        async with httpx.AsyncClient(base_url="https://auth-service:3001", verify=ca_cert_path) as client:
             response = await client.get("/get_user_id_from_cookie/", cookies=cookies)
 
             if response.status_code == 200:

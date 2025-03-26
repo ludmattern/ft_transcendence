@@ -111,6 +111,7 @@ export const midScreen = createComponent({
 });
 
 export function sendDisconnectionEvent() {
+	console.log('sendDisconnectionEvent');
 	if (gameManager.isGameActive()) {
 		const payload = { type: 'game_event', action: 'game_giveup' };
 		ws.send(JSON.stringify(payload));
