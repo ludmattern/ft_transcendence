@@ -22,8 +22,6 @@ const handleGameState = (data) => {
 const handleGameOver = async (data) => {
 	emit('gameOver');
 
-	console.log(data);
-
 	const winner = data.winner_id;
 	const userid = await getUserIdFromCookieAPI();
 
