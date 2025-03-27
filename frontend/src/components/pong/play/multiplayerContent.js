@@ -68,7 +68,7 @@ export const multiplayerContent = createComponent({
 		localButton.addEventListener('click', () => {
 			const currentWindow = getCurrentWindow();
 			if (currentWindow === 'game') {
-				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+				createNotificationMessage('Stay focus on the game pilot !', 2500, true);
 				return;
 			}
 			const config = {
@@ -83,7 +83,7 @@ export const multiplayerContent = createComponent({
 		matchButton.addEventListener('click', () => {
 			const currentWindow = getCurrentWindow();
 			if (currentWindow === 'game') {
-				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+				createNotificationMessage('Stay focus on the game pilot !', 2500, true);
 				return;
 			}
 			const config = {
@@ -104,7 +104,7 @@ export const multiplayerContent = createComponent({
 		createPrivateButton.addEventListener('click', async () => {
 			const currentWindow = getCurrentWindow();
 			if (currentWindow === 'game') {
-				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+				createNotificationMessage('Stay focus on the game pilot !', 2500, true);
 				return;
 			}
 			const opponentUsername = privateGameInput.value.trim();

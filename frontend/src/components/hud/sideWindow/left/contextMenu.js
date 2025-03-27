@@ -77,7 +77,7 @@ async function handleBlockAction(author, is_blocked) {
 async function handleInviteAction(author) {
 	const currentWindow = getCurrentWindow();
 	if (currentWindow === 'game') {
-		createNotificationMessage('stay focus on the game pilot !', 2500, true);
+		createNotificationMessage('Stay focus on the game pilot !', 2500, true);
 		return;
 	}
 	sendWsInfoMessage('private_game_invite', author);
@@ -93,12 +93,12 @@ async function handleInviteAction(author) {
 async function handleProfileAction(author) {
 	const currentWindow = getCurrentWindow();
 	if (currentWindow === 'game') {
-		createNotificationMessage('stay focus on the game pilot !', 2500, true);
+		createNotificationMessage('Stay focus on the game pilot !', 2500, true);
 		return;
 	}
 	const username = await getUsername(author);
 	if (!username) {
-		createNotificationMessage('this user left the Space Force', 2500, true);
+		createNotificationMessage('This user left the Space Force', 2500, true);
 		return;
 	}
 	handleRoute(`/social/pilot=${username}`);
@@ -185,11 +185,11 @@ export async function getRelationshipStatus(otherUserId) {
 		if (data.success) {
 			return data;
 		} else {
-			createNotificationMessage('this user left the Space Force', 2500, true);
+			createNotificationMessage('This user left the Space Force', 2500, true);
 			return null;
 		}
 	} catch (error) {
-		createNotificationMessage('this user left the Space Force', 2500, true);
+		createNotificationMessage('This user left the Space Force', 2500, true);
 		return null;
 	}
 }

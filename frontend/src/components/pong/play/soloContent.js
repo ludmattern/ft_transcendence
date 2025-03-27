@@ -52,7 +52,7 @@ export const soloContent = createComponent({
 		launchButton.addEventListener('click', () => {
 			const currentWindow = getCurrentWindow();
 			if (currentWindow === 'game') {
-				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+				createNotificationMessage('Stay focus on the game pilot !', 2500, true);
 				return;
 			}
 			const config = {

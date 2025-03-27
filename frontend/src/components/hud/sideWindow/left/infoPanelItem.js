@@ -93,7 +93,7 @@ function behaviorTournament(el, item) {
 		acceptButton.addEventListener('click', () => {
 			const currentWindow = getCurrentWindow();
 			if (currentWindow === 'game') {
-				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+				createNotificationMessage('Stay focus on the game pilot !', 2500, true);
 				return;
 			} else {
 				handleTournamentAction(true, item);
@@ -144,7 +144,7 @@ function behaviorPrivateGame(el, item) {
 		acceptButton.addEventListener('click', () => {
 			const currentWindow = getCurrentWindow();
 			if (currentWindow === 'game') {
-				createNotificationMessage('stay focus on the game pilot !', 2500, true);
+				createNotificationMessage('Stay focus on the game pilot !', 2500, true);
 			} else {
 				const payload = {
 					type: 'info_message',
