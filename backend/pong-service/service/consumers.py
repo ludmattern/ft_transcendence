@@ -323,6 +323,9 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             except ValueError:
                 return
             
+            winner_id = str(winner_id)
+            loser_id = str(loser_id)
+            
             await sync_to_async(ManualGameHistory.objects.create)(
                 winner_id=winner_id,
                 loser_id=loser_id,
