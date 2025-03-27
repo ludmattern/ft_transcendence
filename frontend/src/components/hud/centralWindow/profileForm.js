@@ -109,8 +109,11 @@ function attachProfilePicUpload() {
 						profilePicImg.src = data.profile_picture;
 					}
 				}
+				if (data.error.startsWith('Unauthorized')) {
+					createNotificationMessage("Space Force does not approve your trash...", 2500, true);
+				}
 			} catch (error) {
-				createNotificationMessage("Image not valid", 2500, true);
+				console.log('Error uploading profile picture: ', error);
 			}
 		});
 	}
