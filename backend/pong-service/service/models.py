@@ -1,5 +1,6 @@
 from django.db import models  # type: ignore
 
+
 class ManualGameHistory(models.Model):
     id = models.AutoField(primary_key=True)
     winner_id = models.IntegerField(default=0)
@@ -12,9 +13,7 @@ class ManualGameHistory(models.Model):
         db_table = "game_history"
 
     def __str__(self):
-        return (
-            f"ManualGameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
-        )
+        return f"ManualGameHistory {self.id}: Winner {self.winner_id} vs Loser {self.loser_id}"
 
 
 class ManualUser(models.Model):
@@ -48,12 +47,8 @@ class ManualTournament(models.Model):
 
 class ManualTournamentParticipants(models.Model):
     id = models.AutoField(primary_key=True)
-    tournament = models.ForeignKey(
-        ManualTournament, on_delete=models.CASCADE, related_name="participants"
-    )
-    user = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="tournaments"
-    )
+    tournament = models.ForeignKey(ManualTournament, on_delete=models.CASCADE, related_name="participants")
+    user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="tournaments")
     status = models.CharField(
         max_length=20,
         choices=[
@@ -69,11 +64,7 @@ class ManualTournamentParticipants(models.Model):
     class Meta:
         db_table = "tournament_participants"
         managed = True
-        constraints = [
-            models.UniqueConstraint(
-                fields=["tournament", "user"], name="unique_tournament_participant"
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=["tournament", "user"], name="unique_tournament_participant")]
 
     def __str__(self):
         return f"{self.user.username} in {self.tournament.name} ({self.status})"
@@ -83,7 +74,7 @@ class TournamentMatch(models.Model):
     id = models.AutoField(primary_key=True)
     tournament = models.ForeignKey("ManualTournament", on_delete=models.CASCADE, related_name="matches")
     round_number = models.IntegerField()
-    match_order = models.IntegerField() 
+    match_order = models.IntegerField()
 
     player1_id = models.IntegerField(blank=True, null=True)
     player2_id = models.IntegerField(blank=True, null=True)

@@ -9,7 +9,7 @@ from .models import (
     ManualPrivateGames,
 )
 from service.views import jwt_required
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET  # type: ignore
 
 
 logger = logging.getLogger(__name__)

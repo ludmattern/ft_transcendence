@@ -35,8 +35,6 @@ class ManualUser(models.Model):
         return self.username
 
 
-
-
 class ManualFriendsRelations(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friends_initiated")
@@ -63,7 +61,7 @@ class ManualFriendsRelations(models.Model):
 
 
 class ManualBlockedRelations(models.Model):
-    id = models.AutoField(primary_key=True) 
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="blocked_users")
     blocked_user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="blocked_by")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -141,11 +139,12 @@ class ManualGameHistory(models.Model):
     def __str__(self):
         return f"Game {self.id}: {self.winner.username} vs {self.loser.username}"
 
+
 class TournamentMatch(models.Model):
     id = models.AutoField(primary_key=True)
     tournament = models.ForeignKey("ManualTournament", on_delete=models.CASCADE, related_name="matches")
     round_number = models.IntegerField()
-    match_order = models.IntegerField() 
+    match_order = models.IntegerField()
 
     player1_id = models.IntegerField(blank=True, null=True)
     player2_id = models.IntegerField(blank=True, null=True)
@@ -159,7 +158,6 @@ class TournamentMatch(models.Model):
 
     def __str__(self):
         return f"Round {self.round_number}, Match {self.match_order} (IDs: {self.player1_id} vs {self.player2_id})"
-
 
 
 class ManualPrivateGames(models.Model):

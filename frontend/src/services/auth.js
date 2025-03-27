@@ -142,7 +142,7 @@ export async function getUserIdFromCookieAPI() {
 			return null;
 		}
 	} catch (error) {
-		console.error("Error when fetching user ID: ", error);
+		console.error('Error when fetching user ID: ', error);
 		return null;
 	}
 }

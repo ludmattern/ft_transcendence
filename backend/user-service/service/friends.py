@@ -5,7 +5,7 @@ from django.http import JsonResponse  # type: ignore
 from django.db.models import Q  # type: ignore
 from .models import ManualUser, ManualFriendsRelations, ManualBlockedRelations
 from service.views import jwt_required
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_POST, require_GET # type: ignore
 
 logger = logging.getLogger(__name__)
 

@@ -111,13 +111,13 @@ export const subscribeForm = createComponent({
 			if (canRegister && !checkPasswordConfirmation(password, confirmPassword)) canRegister = false;
 			if (canRegister && !checkEmailConfirmation(mail, confirmMail)) canRegister = false;
 			if (is2FAEnabled && twoFAMethod === 'sms' && !validatePhoneNumber(phoneNumber)) {
-					canRegister = false;
+				canRegister = false;
 			}
 			if (canRegister) {
 				try {
 					const check_register = await registerUser(id, password, mail, is2FAEnabled, twoFAMethod, phoneNumber);
 					if (check_register && twoFAMethod === 'authenticator-app') {
-						sessionStorage.setItem("registered_user", id);
+						sessionStorage.setItem('registered_user', id);
 						handleRoute('/register/qr');
 					} else if (check_register) {
 						handleRoute('/login');
@@ -130,7 +130,6 @@ export const subscribeForm = createComponent({
 	},
 });
 
-
 function getFormValues(el) {
 	return {
 		id: el.querySelector('#new-pilot-id').value,
@@ -141,7 +140,6 @@ function getFormValues(el) {
 		phoneNumber: el.querySelector('#phone-number').value || null,
 	};
 }
-
 
 function resetErrorMessages() {
 	const errorIds = [
@@ -155,7 +153,7 @@ function resetErrorMessages() {
 		'error-message-mail',
 		'error-message-mail-format',
 		'error-message-mail2',
-		'error-message-pass'
+		'error-message-pass',
 	];
 
 	errorIds.forEach((errId) => {
@@ -163,8 +161,6 @@ function resetErrorMessages() {
 		if (el) el.style.display = 'none';
 	});
 }
-
-
 
 export function validateId(id) {
 	if (id.length < 6 || id.length > 20) {
@@ -243,7 +239,7 @@ export function checkEmailConfirmation(mail, confirmMail) {
 }
 
 export function validatePhoneNumber(phoneNumber) {
-	if(!phoneNumber) {
+	if (!phoneNumber) {
 		document.getElementById('error-message-phone').style.display = 'block';
 		return false;
 	}

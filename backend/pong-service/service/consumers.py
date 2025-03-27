@@ -51,7 +51,7 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             if game.game_over:
                 return
             direction = event.get("direction")
-            moving = (action == "start_move")
+            moving = action == "start_move"
 
             if (game.player1_id == "Player 1" and game.player2_id == "Player 2") or game.game_id.startswith("tournLocal_"):
                 if game.game_id.startswith("solo_"):
@@ -69,7 +69,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     return
                 game.set_movement(paddle_number, direction, moving)
 
-
         elif action == "game_giveup":
             local_leave = event.get("local_leave")
 
@@ -79,15 +78,13 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 elif int(local_leave) == 2:
                     game.quitter_id = game.player2_id
                 else:
-                    game.quitter_id = user_id 
+                    game.quitter_id = user_id
             else:
                 if not game:
                     return
-                game.quitter_id = user_id 
+                game.quitter_id = user_id
 
             game.game_over = True
-
-
 
         elif action == "leave_game":
             current_game = game_manager.get_game(game_id)
@@ -99,17 +96,16 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                     del self.running_games[game_id]
                     game_manager.cleanup_game(game_id)
 
-
     async def game_loop(self, game_id, difficulty="hard"):
         """Main game loop."""
         game = game_manager.get_game(game_id)
         try:
             if game.is_solo_mode():
                 ai_paddle = AIPaddle(2, game, difficulty=difficulty)
-            tick_time = 0.0167  
+            tick_time = 0.0167
             next_tick = time.time() + tick_time
             previous_time = time.time()
-            
+
             while True:
                 game = game_manager.get_game(game_id)
                 if not game:
@@ -151,8 +147,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 del self.running_games[game_id]
             game_manager.cleanup_game(game_id)
 
-
-
     async def determine_winner(self, game):
         """Determine the winner of the game."""
         if game.quitter_id:
@@ -178,20 +172,14 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 logger.warning("No user found")
                 return
 
-            match = await sync_to_async(
-                TournamentMatch.objects.filter(match_key=game_id).first
-            )()
+            match = await sync_to_async(TournamentMatch.objects.filter(match_key=game_id).first)()
             if not match:
                 logger.warning(f"No match found with match_key={game_id}")
                 return
 
             tournament_id = match.tournament_id
 
-            participant = await sync_to_async(
-                ManualTournamentParticipants.objects.filter(
-                    tournament_id=tournament_id, user=loser, status="accepted"
-                ).first
-            )()
+            participant = await sync_to_async(ManualTournamentParticipants.objects.filter(tournament_id=tournament_id, user=loser, status="accepted").first)()
             if participant:
                 participant.status = "eliminated"
                 await sync_to_async(participant.save)()
@@ -201,7 +189,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
             match.winner_id = winner.id
 
-            
             if match.player1_id == winner.id:
                 match.score = f"{game.user_scores[winner_id]}-{game.user_scores[loser_id]}"
             else:
@@ -212,14 +199,8 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
 
             next_round = match.round_number + 1
             next_match_order = (match.match_order + 1) // 2
-            next_match = await sync_to_async(
-                TournamentMatch.objects.filter(
-                    tournament_id=tournament_id,
-                    round_number=next_round,
-                    match_order=next_match_order
-                ).first
-            )()
-           
+            next_match = await sync_to_async(TournamentMatch.objects.filter(tournament_id=tournament_id, round_number=next_round, match_order=next_match_order).first)()
+
             if next_match:
                 if match.match_order % 2 == 1:
                     next_match.player1_id = winner.id
@@ -237,17 +218,10 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             else:
                 next_match_player_ids = []
 
-            participant_list = await sync_to_async(
-                lambda: list(
-                    ManualTournamentParticipants.objects.filter(tournament_id=tournament_id)
-                    .exclude(Q(status="rejected") | Q(status="left"))
-                    .values_list("user_id", flat=True) 
-                )
-            )()
+            participant_list = await sync_to_async(lambda: list(ManualTournamentParticipants.objects.filter(tournament_id=tournament_id).exclude(Q(status="rejected") | Q(status="left")).values_list("user_id", flat=True)))()
             if not participant_list:
                 logger.warning("No participant list found")
                 return
-
 
             payload = {
                 "type": "info_message",
@@ -259,14 +233,13 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
             }
             await self.channel_layer.group_send(f"user_{0}", payload)
 
-        except Exception as e:
+        except Exception:
             logger.exception("Error in process_tournament:")
-
 
     async def process_matchmaking(self, game_id, game, winner_id, loser_id):
         """finalize matchmaking game."""
         winner = await sync_to_async(ManualUser.objects.get)(id=winner_id)
-        if not winner: 
+        if not winner:
             logger.warning("No user found")
             return
         loser = await sync_to_async(ManualUser.objects.get)(id=loser_id)
@@ -312,20 +285,16 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
         )
         await asyncio.sleep(0.01)
 
-        if not (
-            str(game_id).startswith("game_")
-            or str(game_id).startswith("tournLocal_")
-            or str(game_id).startswith("solo_")
-        ):
+        if not (str(game_id).startswith("game_") or str(game_id).startswith("tournLocal_") or str(game_id).startswith("solo_")):
             try:
                 winner_id = int(winner_id)
                 loser_id = int(loser_id)
             except ValueError:
                 return
-            
+
             winner_id = str(winner_id)
             loser_id = str(loser_id)
-            
+
             await sync_to_async(ManualGameHistory.objects.create)(
                 winner_id=winner_id,
                 loser_id=loser_id,

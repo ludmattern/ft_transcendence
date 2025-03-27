@@ -1,6 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { playGame } from '/src/components/pong/play/utils.js';
-import { pushInfo,getInfo } from '/src/services/infoStorage.js';
+import { pushInfo, getInfo } from '/src/services/infoStorage.js';
 import { getCurrentWindow } from '/src/3d/animation.js';
 
 export const soloContent = createComponent({
@@ -37,16 +37,15 @@ export const soloContent = createComponent({
   `,
 
 	attachEvents: async () => {
-    const difficulty = document.getElementById('difficulty');
-    
-    const savedDifficulty = (await getInfo('difficulty')).success ? (await getInfo('difficulty')).value : null;
-    
+		const difficulty = document.getElementById('difficulty');
+
+		const savedDifficulty = (await getInfo('difficulty')).success ? (await getInfo('difficulty')).value : null;
+
 		if (savedDifficulty) difficulty.value = savedDifficulty;
 
-    difficulty.addEventListener('change', () => {
-      pushInfo('difficulty', difficulty.value);
-  });
-  
+		difficulty.addEventListener('change', () => {
+			pushInfo('difficulty', difficulty.value);
+		});
 
 		const launchButton = document.getElementById('launch');
 

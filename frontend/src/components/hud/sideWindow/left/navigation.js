@@ -2,7 +2,7 @@
 
 /**
  * @param {string} label
- * @param {boolean} active 
+ * @param {boolean} active
  * @returns {string}
  */
 export function createNavItem(label, active = false) {

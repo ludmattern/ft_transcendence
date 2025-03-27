@@ -1,20 +1,6 @@
 # user-service/urls.py
 from django.urls import path  # type: ignore
-from service.views import (
-    get_leaderboard,
-    search_pilots,
-    get_user_id,
-    upload_profile_picture,
-    get_profile,
-    get_game_history,
-    getUsername,
-    register_user,
-    generate_qr_code,
-    update_info,
-    delete_account,
-    check_oauth_id,
-    update_info_42,
-)
+from service.views import get_leaderboard, search_pilots, get_user_id, upload_profile_picture, get_profile, get_game_history, getUsername, register_user, generate_qr_code, update_info, delete_account, check_oauth_id, update_info_42
 from service.friends import get_relationship_status, get_friends
 from service.profile import profile_info
 from service.info import info_getter

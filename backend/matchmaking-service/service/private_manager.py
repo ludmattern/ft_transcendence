@@ -2,6 +2,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class PrivateManager:
     def __init__(self):
         self.waiting_rooms = {}

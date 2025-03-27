@@ -1,5 +1,6 @@
 from django.db import models  # type: ignore
 
+
 class ManualUser(models.Model):
     id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50, unique=True)
@@ -20,6 +21,7 @@ class ManualUser(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     session_token = models.CharField(max_length=255, null=True, default=None)
+
     class Meta:
         db_table = "users"
         managed = True
@@ -48,10 +50,10 @@ class ManualTournament(models.Model):
         choices=[("local", "Local"), ("online", "Online")],
         default="local",
     )
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
+
     class Meta:
         db_table = "tournaments"
         managed = True
@@ -90,7 +92,7 @@ class TournamentMatch(models.Model):
     id = models.AutoField(primary_key=True)
     tournament = models.ForeignKey("ManualTournament", on_delete=models.CASCADE, related_name="matches")
     round_number = models.IntegerField()
-    match_order = models.IntegerField() 
+    match_order = models.IntegerField()
 
     player1_id = models.IntegerField(blank=True, null=True)
     player2_id = models.IntegerField(blank=True, null=True)

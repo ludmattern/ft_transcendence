@@ -109,11 +109,11 @@ export const midScreen = createComponent({
 
 function giveUpButtonsRoutine(data) {
 	if (data === 'local' || (data && data.mode === 'local')) {
-	  showGiveUpButtons('local');
+		showGiveUpButtons('local');
 	} else {
-	  showGiveUpButtons('online');
+		showGiveUpButtons('online');
 	}
-  }
+}
 
 export function sendDisconnectionEvent() {
 	if (gameManager.isGameActive()) {

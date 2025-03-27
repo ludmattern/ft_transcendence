@@ -4,7 +4,7 @@ import { emit } from '/src/services/eventEmitter.js';
 let notificationBuffer = [];
 
 /**
- * @param {string} message 
+ * @param {string} message
  * @param {number} [duration=5000]
  */
 function collapseNotification(notification) {
@@ -20,7 +20,6 @@ function collapseNotification(notification) {
 	});
 }
 
-
 function processNotificationBuffer() {
 	const container = document.getElementById('bottom-notification-container');
 	while (container.childElementCount < 3 && notificationBuffer.length > 0) {
@@ -30,7 +29,7 @@ function processNotificationBuffer() {
 }
 
 /**
- * @param {string} message 
+ * @param {string} message
  * @param {number} [duration=2500]
  */
 export function createNotificationMessage(message, duration = 2500, error = false) {
@@ -71,8 +70,8 @@ export function removePrivateNotifications() {
 export async function updateAndCompareInfoData() {
 	try {
 		const response = await fetch(`/api/user-service/info-getter/`, {
-			method: "GET",
-			credentials: "include",
+			method: 'GET',
+			credentials: 'include',
 		});
 		const result = await response.json();
 

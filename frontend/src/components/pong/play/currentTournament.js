@@ -166,37 +166,41 @@ export async function renderBracket() {
 
 	const abandonTournamentButton = document.getElementById('abandon-tournament');
 	if (abandonTournamentButton && !abandonTournamentButton.dataset.listenerAttached) {
-			abandonTournamentButton.dataset.listenerAttached = "true";
-			abandonTournamentButton.addEventListener('click', async () => {
-			try {
-				if (mode === 'local') {
-					const response = await fetch('/api/tournament-service/abandon_local_tournament/', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify({ tournament_id: tournament_id }),
-						credentials: 'include',
-					});
+		abandonTournamentButton.dataset.listenerAttached = 'true';
+		abandonTournamentButton.addEventListener(
+			'click',
+			async () => {
+				try {
+					if (mode === 'local') {
+						const response = await fetch('/api/tournament-service/abandon_local_tournament/', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({ tournament_id: tournament_id }),
+							credentials: 'include',
+						});
 
-					const result = await response.json();
+						const result = await response.json();
 
-					if (result.success) {
+						if (result.success) {
+							handleRoute('/pong/play');
+						}
+					} else if (mode === 'online') {
+						const payload = {
+							type: 'tournament_message',
+							action: 'leave_online_tournament',
+						};
+
+						ws.send(JSON.stringify(payload));
 						handleRoute('/pong/play');
 					}
-				} else if (mode === 'online') {
-					const payload = {
-						type: 'tournament_message',
-						action: 'leave_online_tournament',
-					};
-
-					ws.send(JSON.stringify(payload));
-					handleRoute('/pong/play');
+				} catch (error) {
+					console.error('Error abandoning tournament: ', error);
 				}
-			} catch (error) {
-				console.error('Error abandoning tournament: ', error);
-			}
-		}, { once: true });
+			},
+			{ once: true }
+		);
 	}
 
 	const joinButtons = el.querySelectorAll('.join-match');

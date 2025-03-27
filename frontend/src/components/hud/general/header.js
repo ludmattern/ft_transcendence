@@ -99,16 +99,16 @@ function createNavItem(text, id = '') {
 }
 
 /**
- * @param {HTMLElement} el 
+ * @param {HTMLElement} el
  * @param {string} route
  */
 export function updateActiveLink(el, route) {
-	let currentPath = route || window.location.pathname; 
+	let currentPath = route || window.location.pathname;
 
-	const firstSegment = currentPath.split('/')[1] || ''; 
+	const firstSegment = currentPath.split('/')[1] || '';
 
 	const activeLinkId = Object.keys(navigationLinks).find((key) => {
-		const path = navigationLinks[key].replace('/', ''); 
+		const path = navigationLinks[key].replace('/', '');
 		return firstSegment === path;
 	});
 

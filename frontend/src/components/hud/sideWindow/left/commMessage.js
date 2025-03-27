@@ -26,24 +26,18 @@ function formatTimestamp(timestamp) {
 	return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-
 export function escapeHtml(unsafe) {
-    return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+	return unsafe.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
 async function checkImageExists(url) {
 	try {
-	  const resp = await fetch(url, { method: 'HEAD' });
-	  return resp.ok;
+		const resp = await fetch(url, { method: 'HEAD' });
+		return resp.ok;
 	} catch (err) {
-	  return false;
+		return false;
 	}
-  }
+}
 
 export const commMessage = createComponent({
 	tag: 'commMessage',
@@ -87,25 +81,19 @@ export const commMessage = createComponent({
 	attachEvents: async (el, item) => {
 		const authorElem = el.querySelector('.author');
 		if (authorElem && !authorElem.classList.contains('me')) {
-		  authorElem.addEventListener('click', (e) => {
-			e.preventDefault();
-			showContextMenu(item, e);
-		  });
+			authorElem.addEventListener('click', (e) => {
+				e.preventDefault();
+				showContextMenu(item, e);
+			});
 		}
-	
+
 		const imgElem = el.querySelector('img.profile-picture');
 		if (imgElem) {
-		  const fallback = '/media/profile_pics/default-profile-150.png';
-		  const candidateUrl = item.profilePicture
-			? `/media${item.profilePicture}`
-			: fallback;
-			
-		  const exists = await checkImageExists(candidateUrl);
-		  imgElem.src = exists ? candidateUrl : fallback;
-		}
-	  },
-});
-	
-  
+			const fallback = '/media/profile_pics/default-profile-150.png';
+			const candidateUrl = item.profilePicture ? `/media${item.profilePicture}` : fallback;
 
-	
+			const exists = await checkImageExists(candidateUrl);
+			imgElem.src = exists ? candidateUrl : fallback;
+		}
+	},
+});

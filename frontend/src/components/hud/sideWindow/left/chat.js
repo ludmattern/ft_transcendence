@@ -86,7 +86,7 @@ export async function setupChatInput() {
 					const trimmedMessage = inputField.value.trim();
 					if (trimmedMessage !== '' && trimmedMessage.length <= 150) {
 						sendMessage(trimmedMessage);
-						historyIndex = messageHistory.length; 
+						historyIndex = messageHistory.length;
 						inputField.value = '';
 					} else if (trimmedMessage.length > 150) {
 						createNotificationMessage('Message is too long, 150 chars max', 2500, true);
@@ -103,7 +103,7 @@ export async function setupChatInput() {
 			const trimmedMessage = inputField.value.trim();
 			if (trimmedMessage !== '' && trimmedMessage.length <= 150) {
 				sendMessage(trimmedMessage);
-				historyIndex = messageHistory.length; 
+				historyIndex = messageHistory.length;
 				inputField.value = '';
 			} else if (trimmedMessage.length > 150) {
 				createNotificationMessage('Message is too long, 150 chars max', 2500, true);

@@ -1,5 +1,5 @@
-from django.db import models # type: ignore
-from django.core.validators import FileExtensionValidator # type: ignore
+from django.db import models  # type: ignore
+from django.core.validators import FileExtensionValidator  # type: ignore
 
 
 class ManualUser(models.Model):
@@ -8,9 +8,7 @@ class ManualUser(models.Model):
     profile_picture = models.ImageField(
         upload_to="profile_pics/",
         default="profile_pics/default-profile-150.png",
-        validators=[
-            FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "webp"])
-        ],
+        validators=[FileExtensionValidator(allowed_extensions=["jpg", "jpeg", "png", "webp"])],
     )
 
     class Meta:
@@ -20,17 +18,12 @@ class ManualUser(models.Model):
     def __str__(self):
         return self.username
 
+
 class ManualFriendsRelations(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="friends_initiated"
-    )
-    friend = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="friends_received"
-    )
-    initiator = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="friend_requests_sent"
-    )
+    user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friends_initiated")
+    friend = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friends_received")
+    initiator = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="friend_requests_sent")
     status = models.CharField(
         max_length=20,
         choices=[
@@ -45,9 +38,7 @@ class ManualFriendsRelations(models.Model):
     class Meta:
         db_table = "friends"
         managed = True
-        constraints = [
-            models.UniqueConstraint(fields=["user", "friend"], name="unique_friendship")
-        ]
+        constraints = [models.UniqueConstraint(fields=["user", "friend"], name="unique_friendship")]
 
     def __str__(self):
         return f"{self.user.username} - {self.friend.username} ({self.status})"
@@ -55,23 +46,15 @@ class ManualFriendsRelations(models.Model):
 
 class ManualBlockedRelations(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="blocked_users"
-    )
-    blocked_user = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="blocked_by"
-    )
+    user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="blocked_users")
+    blocked_user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="blocked_by")
     initiator_id = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "blocks"
         managed = True
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "blocked_user"], name="unique_block"
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=["user", "blocked_user"], name="unique_block")]
 
     def __str__(self):
         return f"{self.user.username} blocked {self.blocked_user.username}"
@@ -103,12 +86,8 @@ class ManualTournament(models.Model):
 
 class ManualTournamentParticipants(models.Model):
     id = models.AutoField(primary_key=True)
-    tournament = models.ForeignKey(
-        ManualTournament, on_delete=models.CASCADE, related_name="participants"
-    )
-    user = models.ForeignKey(
-        ManualUser, on_delete=models.CASCADE, related_name="tournaments"
-    )
+    tournament = models.ForeignKey(ManualTournament, on_delete=models.CASCADE, related_name="participants")
+    user = models.ForeignKey(ManualUser, on_delete=models.CASCADE, related_name="tournaments")
     status = models.CharField(
         max_length=20,
         choices=[
@@ -123,11 +102,7 @@ class ManualTournamentParticipants(models.Model):
     class Meta:
         db_table = "tournament_participants"
         managed = True
-        constraints = [
-            models.UniqueConstraint(
-                fields=["tournament", "user"], name="unique_tournament_participant"
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=["tournament", "user"], name="unique_tournament_participant")]
 
     def __str__(self):
         return f"{self.user.username} in {self.tournament.name} ({self.status})"

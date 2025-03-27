@@ -37,7 +37,7 @@ export const twoFAForm = createComponent({
 			e.preventDefault();
 
 			const code = el.querySelector('#twofa-code').value;
-			
+
 			try {
 				if (!username || !code) {
 					throw new Error('Missing username or code');
@@ -49,15 +49,14 @@ export const twoFAForm = createComponent({
 					handleRoute('/');
 				} else if (data.message === 'Invalid 2FA code') {
 					const twofaExpired = el.querySelector('#twofa-expired');
-					if (twofaExpired) {	
+					if (twofaExpired) {
 						twofaExpired.style.display = 'none';
 					}
 					const twofaError = el.querySelector('#twofa-error');
 					if (twofaError) {
 						twofaError.style.display = 'block';
 					}
-				}
-				else if (data.message === '2FA code expired') {
+				} else if (data.message === '2FA code expired') {
 					const twofaError = el.querySelector('#twofa-error');
 					if (twofaError) {
 						twofaError.style.display = 'none';

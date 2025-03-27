@@ -1,7 +1,7 @@
 import json
 import redis
 from django.http import JsonResponse  # type: ignore
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_POST, require_GET  # type: ignore
 from functools import wraps
 import os
 

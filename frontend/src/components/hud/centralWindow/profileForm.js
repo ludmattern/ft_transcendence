@@ -2,7 +2,6 @@ import { createComponent } from '/src/utils/component.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 
-
 export const profileForm = createComponent({
 	tag: 'profileForm',
 
@@ -69,7 +68,6 @@ export const profileForm = createComponent({
 	},
 });
 
-
 function attachProfilePicUpload() {
 	const profilePicLink = document.getElementById('profile-pic-link');
 	const fileInput = document.getElementById('profile-image-input');
@@ -87,7 +85,7 @@ function attachProfilePicUpload() {
 				createNotificationMessage("Image too large, stop overloading our server", 2500, true);
 				return;
 			}
-			
+
 			const formData = new FormData();
 			formData.append('profile_picture', file);
 
@@ -121,9 +119,9 @@ function attachProfilePicUpload() {
 export async function loadMatchHistory(userId) {
 	try {
 		const response = await fetch(`/api/user-service/get_game_history/?user_id=${userId}`, {
-			credentials: 'include'
-		  });
-			if (!response.ok) {
+			credentials: 'include',
+		});
+		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
 		const data = await response.json();
@@ -155,7 +153,7 @@ export async function loadMatchHistory(userId) {
 				} else {
 					opponentUsername = `${match.winner_username} vs ${match.loser_username}`;
 				}
-				
+
 				if (!opponentUsername) {
 					opponentUsername = 'deleted_user';
 				}
@@ -186,9 +184,9 @@ function createMatchItem(outcome, date, opponents, outcomeClass, score) {
 export async function loadUserProfile(userId) {
 	try {
 		const response = await fetch(`/api/user-service/get_profile/?user_id=${userId}`, {
-			credentials: 'include'
-		  });
-		  
+			credentials: 'include',
+		});
+
 		if (!response.ok) {
 			throw new Error(`HTTP error ${response.status}`);
 		}
@@ -222,7 +220,6 @@ export async function loadUserProfile(userId) {
 					statusIndicator.classList.add('text-danger');
 				}
 			}
-
 		}
 	} catch (error) {
 		console.error('Error loading user profile: ', error);

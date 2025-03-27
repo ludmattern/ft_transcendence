@@ -117,9 +117,9 @@ export const hudPages = {
 };
 
 /**
- * @param {Array} centralComponents 
- * @param {boolean} [includeNavBar=true] 
- * @returns {Object} 
+ * @param {Array} centralComponents
+ * @param {boolean} [includeNavBar=true]
+ * @returns {Object}
  */
 const createPongPage = (centralComponents = [], includeNavBar = true) => ({
 	components: [

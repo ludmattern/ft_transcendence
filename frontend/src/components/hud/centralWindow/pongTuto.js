@@ -4,7 +4,7 @@ import { gameModeSelector, cancelMode } from '/src/services/gameModeHandler.js';
 import { getInfo } from '/src/services/infoStorage.js';
 import { subscribe } from '/src/services/eventEmitter.js';
 
-let currentConfig = null;	
+let currentConfig = null;
 
 export const pongTuto = (config) =>
 	createComponent({
@@ -83,18 +83,18 @@ export const pongTuto = (config) =>
 		},
 	});
 
-	function getCurrentConfig() {
-		return currentConfig;
-	}
+function getCurrentConfig() {
+	return currentConfig;
+}
 
-	function setCurrentConfig(config) {
-		currentConfig = config;
-	}
+function setCurrentConfig(config) {
+	currentConfig = config;
+}
 
-	function pongTutoRoutine() {
-		const info = getCurrentConfig();
-		if (info) {
-			cancelMode(info);
-			setCurrentConfig(null);
-		}
+function pongTutoRoutine() {
+	const info = getCurrentConfig();
+	if (info) {
+		cancelMode(info);
+		setCurrentConfig(null);
 	}
+}
