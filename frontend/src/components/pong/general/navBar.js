@@ -41,7 +41,10 @@ export const navBar = createComponent({
 
 		updateActiveLink(el, window.location.pathname);
 
-		subscribe('routeChanged', (route) => updateActiveLink(el, route));
+		function handleRouteChanged(route) {
+			updateActiveLink(el, route);
+		}
+		subscribe('routeChanged', handleRouteChanged);
 	},
 });
 

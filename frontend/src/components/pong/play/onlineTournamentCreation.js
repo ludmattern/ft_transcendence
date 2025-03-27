@@ -47,12 +47,12 @@ export const onlineTournamentCreation = createComponent({
 			console.error('Error when fetching tournament: ', error);
 		}
 
-		subscribe('leavingLobby', () => {
+		function handleLeavingLobby() {
 			handleRoute('/pong/play/tournament');
-		});
-		subscribe('updatePlayerList', (data) => {
-			updateOnlinePlayersUI(data);
-		});
+		}
+
+		subscribe('leavingLobby', handleLeavingLobby);
+		subscribe('updatePlayerList', updateOnlinePlayersUI);
 
 		await checkOrCreateLobby();
 

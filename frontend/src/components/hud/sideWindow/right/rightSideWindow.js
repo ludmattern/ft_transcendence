@@ -76,12 +76,13 @@ export const rightSideWindow = createComponent({
 			});
 		});
 
-		subscribe('freeViewDisabled', () => {
+		function freeviewDisabled() {
 			const overviewLink = el.querySelector('a[data-tab="overview"]');
 			if (overviewLink) {
 				overviewLink.click();
 			}
-		});
+		}
+		subscribe('freeViewDisabled', freeviewDisabled);
 
 		const parentContainer = el.parentElement;
 		startAnimation(parentContainer, 'light-animation', 1000);

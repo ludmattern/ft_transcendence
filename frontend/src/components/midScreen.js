@@ -100,18 +100,22 @@ export const midScreen = createComponent({
 	`,
 
 	attachEvents: () => {
-		subscribe('gameStarted', (data) => {
-			if (data === 'local' || (data && data.mode === 'local')) showGiveUpButtons('local');
-			else showGiveUpButtons('online');
-		});
+		subscribe('gameStarted', giveUpButtonsRoutine);
 		subscribe('gameOver', removeGiveUpButtons);
 		subscribe('routing', sendDisconnectionEvent);
 		initM2();
 	},
 });
 
+function giveUpButtonsRoutine(data) {
+	if (data === 'local' || (data && data.mode === 'local')) {
+	  showGiveUpButtons('local');
+	} else {
+	  showGiveUpButtons('online');
+	}
+  }
+
 export function sendDisconnectionEvent() {
-	console.log('sendDisconnectionEvent');
 	if (gameManager.isGameActive()) {
 		const payload = { type: 'game_event', action: 'game_giveup' };
 		ws.send(JSON.stringify(payload));

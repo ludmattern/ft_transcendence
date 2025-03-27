@@ -98,10 +98,12 @@ export const pongMenu = createComponent({
 
 		updateActiveTab(el, window.location.pathname);
 
-		subscribe('routeChanged', (route) => updateActiveTab(el, route));
+		function handleRouteChanged(route) {
+			updateActiveTab(el, route);
+		}
+		subscribe('routeChanged', handleRouteChanged);
 	},
 });
-
 
 function updateDateTime() {
 	const timeElement = document.getElementById('current-time');
@@ -120,15 +122,12 @@ function updateDateTime() {
 	dateElement.textContent = `${day}/${month}/${year}`;
 }
 
-
-
-
 import * as THREE from 'https://esm.sh/three';
 
 function initM1() {
 	Store.menuElement2 = document.getElementById('pong-screen-container');
 	if (!Store.menuElement2) {
-		console.error('The element with ID \'pong-screen-container\' was not found');
+		console.error("The element with ID 'pong-screen-container' was not found");
 		return;
 	}
 

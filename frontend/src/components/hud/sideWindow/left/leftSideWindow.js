@@ -80,12 +80,13 @@ export const leftSideWindow = createComponent({
 		const usernameData = await getInfo('username');
 		createNotificationMessage(`Welcome to your spaceship ${usernameData.success ? usernameData.value : 'Guest'} !`, 15000);
 
-		subscribe('updatenotifications', (data) => {
+		function handleUpdateNotifications(data) {
 			const activeTab = el.querySelector('.nav-link.active');
 			if (activeTab && activeTab.dataset.tab === 'info') {
 				updateNotifications(data.toAdd, data.toRemove, tabContentContainer);
 			}
-		});
+		}
+		subscribe('updatenotifications', handleUpdateNotifications);
 	},
 });
 

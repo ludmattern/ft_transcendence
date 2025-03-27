@@ -70,7 +70,10 @@ export const header = createComponent({
 
 		updateActiveLink(el, window.location.pathname);
 
-		subscribe('routeChanged', (route) => updateActiveLink(el, route));
+		function handleRouteChanged(route) {
+			updateActiveLink(el, route);
+		}
+		subscribe('routeChanged', handleRouteChanged);
 
 		const navItems = el.querySelectorAll('.nav-item');
 		const homeLink = el.querySelectorAll('#home-link');

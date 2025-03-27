@@ -8,9 +8,7 @@ import { createNotificationMessage } from '/src/components/hud/sideWindow/left/n
 export const socialForm = createComponent({
 	tag: 'socialForm',
 
-	// Générer le HTML du composant
 	render: () => {
-		// Le contenu HTML initial. La liste d'amis sera mise à jour après rendu.
 		return `
       <div id="social-form" class="form-container">
         <h5 class="text-center">Social</h5>
@@ -43,19 +41,14 @@ export const socialForm = createComponent({
     `;
 	},
 
-	// Ajouter les événements après le chargement du composant dans le DOM
 	attachEvents: async (el) => {
-		// Subscribe to the event to update the friends list dynamically
-		subscribe('updateFriendsList', async () => {
-			getFriends();
-		});
+		subscribe('updateFriendsList', updateFriendsListRoutine);
 
 		getFriends();
 
 		el.addEventListener('click', async (e) => {
 			e.preventDefault();
 
-			// Handle "View Profile" button click
 			if (e.target.matches('#other-profile-link')) {
 				const item = e.target.closest('.friend-item') || e.target.closest('.pilot-item');
 				if (item) {
@@ -68,7 +61,6 @@ export const socialForm = createComponent({
 				return;
 			}
 
-			// Handle "Add Friend" button click
 			if (e.target.matches('#add-link')) {
 				const pilotItem = e.target.closest('.pilot-item');
 				const authorElement = pilotItem?.querySelector('.profile-pseudo');
@@ -89,7 +81,6 @@ export const socialForm = createComponent({
 				return;
 			}
 
-			// Handle "Remove Friend" button click
 			if (e.target.matches('#remove-link')) {
 				const item = e.target.closest('.friend-item');
 				if (item) {
@@ -109,7 +100,6 @@ export const socialForm = createComponent({
 				return;
 			}
 
-			// Handle "Search" button click
 			if (e.target.matches('#search-link')) {
 				const searchBar = el.querySelector('#search-bar');
 				if (searchBar) {
@@ -193,6 +183,10 @@ async function getFriends() {
 	} catch (error) {
 		console.error('Error while fetching friend list: ', error);
 	}
+}
+
+async function updateFriendsListRoutine() {
+	await getFriends();
 }
 
 async function fetchPilot(query, container) {

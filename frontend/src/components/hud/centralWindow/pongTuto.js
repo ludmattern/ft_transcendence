@@ -63,14 +63,7 @@ export const pongTuto = (config) =>
 			const readyButton = el.querySelector('#ready');
 			readyButton.focus();
 
-			subscribe('routing', () => {
-				console.log('pongTuto routing');
-				const info = getCurrentConfig();
-				if (info) {
-					cancelMode(info);
-					setCurrentConfig(null);
-				}
-			});
+			subscribe('routing', pongTutoRoutine);
 
 			el.querySelector('#close').addEventListener('click', (e) => {
 				e.preventDefault();
@@ -96,4 +89,12 @@ export const pongTuto = (config) =>
 
 	function setCurrentConfig(config) {
 		currentConfig = config;
+	}
+
+	function pongTutoRoutine() {
+		const info = getCurrentConfig();
+		if (info) {
+			cancelMode(info);
+			setCurrentConfig(null);
+		}
 	}
