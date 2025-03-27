@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer  # type: ignore
 
 logger = logging.getLogger(__name__)
 
+
 class AuthConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         try:
@@ -22,9 +23,6 @@ class AuthConsumer(AsyncWebsocketConsumer):
 
     async def logout_message(self, event):
         try:
-            await self.send_json({
-                "type": "z",
-                "message": "Your session has been invalidated.",
-            })
+            await self.send_json({"type": "z", "message": "Your session has been invalidated."})
         except Exception as e:
             logger.exception("Failed to send logout message: %s", e)
