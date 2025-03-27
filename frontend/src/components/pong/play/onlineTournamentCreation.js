@@ -162,12 +162,19 @@ export const onlineTournamentCreation = createComponent({
 async function checkOrCreateLobby() {
 	try {
 		const tournamentSizeResult = await getInfo('tournamentSize');
+		console.log('tournamentSizeResult: ', tournamentSizeResult);
 		const tournamentSize = parseInt(tournamentSizeResult.success ? tournamentSizeResult.value : NaN, 10);
 		const data = await getCurrentTournamentInformation();
 
 		if (data.tournament !== null && data.status === 'upcoming') {
 			updateOnlinePlayersUI(data);
 		} else {
+			if (tournamentSize !== 4 && tournamentSize !== 8 && tournamentSize !== 16) {
+				console.error('error trying to join a tournament with an invalid size');
+				createNotificationMessage('An error occured, try again', 5000, true);
+				handleRoute('/pong/play/tournament');
+				return;
+			}
 			await createNewLobby(data.user_id, tournamentSize);
 		}
 	} catch (error) {

@@ -12,7 +12,7 @@ export const twoFAForm = createComponent({
         <form action="#" method="post" class="w-100">
           <div class="form-group">
             <label class="mb-3" for="twofa-code">Enter your 2FA code</label>
-            <input type="text" id="twofa-code" name="twofa-code" class="form-control" required />
+            <input type="text" id="twofa-code" name="twofa-code" maxlength="6" class="form-control" required />
             <div id="twofa-error" class="text-danger mt-2" style="display: none;">Invalid 2FA code</div>
             <div id="twofa-expired" class="text-danger mt-2" style="display: none;">2FA code expired</div>
           </div>
