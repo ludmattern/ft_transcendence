@@ -136,7 +136,7 @@ export const settingsForm = createComponent({
 						emptyFormError(data);
 					}
 				} catch (error) {
-					console.error('Error updating information: ', error);
+					console.log('Error updating information: ', error);
 				}
 			}
 		});
