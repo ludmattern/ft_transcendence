@@ -1,5 +1,7 @@
 import { createComponent } from '/src/utils/component.js';
 import { getUserIdFromCookieAPI } from '/src/services/auth.js';
+import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
+
 
 export const profileForm = createComponent({
 	tag: 'profileForm',
@@ -82,7 +84,8 @@ function attachProfilePicUpload() {
 			const file = e.target.files[0];
 			if (!file) return;
 			if (file.size > 2 * 1024 * 1024) {
-				console.log("Image too large");
+
+				createNotificationMessage("Image too large", 2500, true);
 				return;
 			}
 			
@@ -107,7 +110,7 @@ function attachProfilePicUpload() {
 					}
 				}
 			} catch (error) {
-				console.log("Image not valid");
+				createNotificationMessage("Image not valid", 2500, true);
 			}
 		});
 	}
