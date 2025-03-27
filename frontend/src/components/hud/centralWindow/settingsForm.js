@@ -1,6 +1,6 @@
 import { createComponent } from '/src/utils/component.js';
 import { handleRoute } from '/src/services/router.js';
-import { validatePassword, validateId, checkPasswordConfirmation, checkEmailConfirmation, validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
+import { validatePassword, checkPasswordConfirmation, checkEmailConfirmation, validateMail } from '/src/components/hud/centralWindow/subscribeForm.js';
 import { getInfo, pushInfo } from '/src/services/infoStorage.js';
 import { createNotificationMessage } from '/src/components/hud/sideWindow/left/notifications.js';
 

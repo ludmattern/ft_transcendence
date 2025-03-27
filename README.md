@@ -2,6 +2,8 @@
 
 ft_transcendence is a 3D Pong game with an elegant multiplayer interface. The project combines advanced 3D techniques with real-time gameplay, robust security, and a microservices architecture to deliver a unique and immersive gaming experience.
 
+![preview](media/preview.png)
+
 ---
 
 ## Table of Contents

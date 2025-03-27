@@ -110,7 +110,6 @@ export const socialForm = createComponent({
 						createNotificationMessage('Pilot username must be at most 20 characters long', 2500, true);
 						return;
 					}
-					console.log('Searching for pilot:', query);
 					const pilotListContainer = el.querySelector('.pilot-list-container');
 					fetchPilot(query, pilotListContainer);
 				}
