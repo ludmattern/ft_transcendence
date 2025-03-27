@@ -23,6 +23,8 @@ ft_transcendence is a 3D Pong game with an elegant multiplayer interface. The pr
 
 ft_transcendence is designed as a modern, real-time 3D Pong game where players can compete both locally and remotely. The game offers advanced multiplayer features such as live chat, tournament matchmaking, and even an AI opponent. The backend is developed using Django (with Django Channels for real-time communications) and is split into multiple microservices, while the frontend leverages Vanilla JavaScript, Three.js/OpenGL, and Bootstrap for a responsive and visually engaging experience.
 
+![architecture](media/architecture.png)
+
 ---
 
 ## Key Features
