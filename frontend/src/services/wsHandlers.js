@@ -32,12 +32,14 @@ const handleGameOver = async (data) => {
 	if (data.game_id.startsWith('tournLocal_')) {
 		createNotificationMessage(`Congrats to ${data.winner_id}, you won !`, 5000);
 		await handleLocalTournamentGameEnding(data);
-	} else if (data.game_id.startsWith('game_') || data.game_id.startsWith('solo_')) {
+	} else if (data.game_id.startsWith('game_')) {
 		if (winner === 'Player 1') {
-			createNotificationMessage('Good Game, you won !', 5000);
+			createNotificationMessage(`I guess you were against worst than yourself...`, 5000);
 		} else {
-			createNotificationMessage('Bad Game, looser !', 5000);
+			createNotificationMessage(`Can't even beat your friend...`, 5000);
 		}
+	} else if (data.game_id.startsWith('solo_')) {
+		createNotificationMessage('You lost, what were you thinking ?', 5000);
 	} else {
 		if (winner && userid) {
 			if (winner === userid) {
