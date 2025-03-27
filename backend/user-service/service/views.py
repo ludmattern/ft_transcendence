@@ -14,7 +14,7 @@ import datetime
 from PIL import Image  # type: ignore
 from cryptography.fernet import Fernet
 from django.http import JsonResponse, HttpResponse  # type: ignore
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_POST, require_GET  # type: ignore
 
 
 from django.db.models import Q  # type: ignore
@@ -306,12 +306,7 @@ def update_info(request):
                 if ManualUser.objects.exclude(id=user.id).filter(email=encrypt_thing(new_email)).exists():
                     return JsonResponse({"success": False, "message": "Email already in use"}, status=200)
                 new_email_error_or_encrypted = validate_email(new_email)
-                if (
-                    new_email_error_or_encrypted == "Email decryption failed"
-                    or new_email_error_or_encrypted == "Email already in use"
-                    or new_email_error_or_encrypted == "Email must be less than 50 characters"
-                    or new_email_error_or_encrypted == "Invalid email format"
-                ):
+                if new_email_error_or_encrypted == "Email decryption failed" or new_email_error_or_encrypted == "Email already in use" or new_email_error_or_encrypted == "Email must be less than 50 characters" or new_email_error_or_encrypted == "Invalid email format":
                     logging.error("Email error: %s", new_email_error_or_encrypted)
                     return JsonResponse({"success": False, "message": new_email_error_or_encrypted}, status=200)
 
@@ -385,9 +380,7 @@ def get_game_history(request):
         except ManualUser.DoesNotExist:
             return JsonResponse({"error": "User not found"}, status=404)
 
-        history_entries = ManualGameHistory.objects.filter(Q(winner_id=user_id) | Q(loser_id=user_id)).order_by("-created_at")[
-            :20
-        ]
+        history_entries = ManualGameHistory.objects.filter(Q(winner_id=user_id) | Q(loser_id=user_id)).order_by("-created_at")[:20]
         history_list = []
         wins = 0
         total_games = history_entries.count()
@@ -497,13 +490,7 @@ def search_pilots(request):
         if not user:
             return JsonResponse({"success": False, "error": "Unauthorized"}, status=200)
         blocked_users = ManualBlockedRelations.objects.filter(blocked_user=user).values_list("user_id", flat=True)
-        pilots = (
-            ManualUser.objects.filter(username__icontains=query)
-            .exclude(id__in=blocked_users)
-            .exclude(id=user.id)
-            .annotate(username_length=Length("username"))
-            .order_by("username_length", "username")
-        )
+        pilots = ManualUser.objects.filter(username__icontains=query).exclude(id__in=blocked_users).exclude(id=user.id).annotate(username_length=Length("username")).order_by("username_length", "username")
         results = [{"username": pilot.username, "user_id": pilot.id, "is_connected": pilot.is_connected} for pilot in pilots]
         return JsonResponse({"success": True, "pilots": results}, status=200)
 

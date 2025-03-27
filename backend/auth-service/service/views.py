@@ -12,13 +12,13 @@ from functools import wraps
 
 
 from cryptography.fernet import Fernet
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_POST, require_GET # type: ignore
 from django.http import JsonResponse  # type: ignore
 from django.conf import settings  # type: ignore
 from django.core.mail import send_mail  # type: ignore
 from django.utils.timezone import now, is_aware, make_aware  # type: ignore
 from django.shortcuts import redirect, render  # type: ignore
-from django.core.signing import Signer
+from django.core.signing import Signer # type: ignore
 
 
 import requests
@@ -28,8 +28,8 @@ from twilio.rest import Client  # type: ignore
 
 from service.models import ManualUser
 
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer # type: ignore
+from asgiref.sync import async_to_sync # type: ignore
 
 import logging
 
@@ -341,7 +341,7 @@ def get_user_id_from_cookie(request):
             return JsonResponse({"error": "User ID not found in token"}, status=400)
 
         return JsonResponse({"success": True, "user_id": user_id})
-    except Exception as e:
+    except Exception:
         return JsonResponse({"Internal server error"}, status=400)
 
 

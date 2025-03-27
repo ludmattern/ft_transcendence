@@ -36,12 +36,10 @@ export async function handleLocalTournamentGameEnding(data) {
 			body: JSON.stringify(payload),
 		})
 			.then((res) => res.json())
-			.then((result) => {
-			})
+			.then((result) => {})
 			.catch((err) => {
 				console.error('Error updating match result:', err);
 			});
-			
 	} catch (error) {
 		console.error('Error parsing gameId: ', error);
 	}

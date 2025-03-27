@@ -3,10 +3,10 @@ import { renderPage } from '/src/utils/componentRenderer.js';
 import { hudPages, pongPages } from '/src/pages/pages.js';
 
 /**
- * @param {string} type 
- * @param {string} pageKey 
- * @param {boolean} blurEffect 
- * @param {string|null} windowType 
+ * @param {string} type
+ * @param {string} pageKey
+ * @param {boolean} blurEffect
+ * @param {string|null} windowType
  */
 
 function navigateTo(type, pageKey, blurEffect = true, waitingScreen = false, windowType = null) {

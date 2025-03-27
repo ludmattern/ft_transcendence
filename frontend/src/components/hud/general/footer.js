@@ -29,7 +29,6 @@ export const footer = createComponent({
 	},
 });
 
-
 function generateCompassHTML() {
 	const points = [
 		'N', '', '15', '', '30', '', 'NE', '', '60', '', '75',
@@ -74,9 +73,9 @@ function initializeCompass(el) {
 }
 
 /**
- * @param {NodeList} points 
+ * @param {NodeList} points
  * @param {HTMLElement} compass
- * @param {number} radius 
+ * @param {number} radius
  * @param {number} baseHeight
  * @param {number} [offset=180]
  */

@@ -26,13 +26,13 @@ export const qrcode = createComponent({
 	attachEvents: async (el) => {
 		el.querySelector('#back').addEventListener('click', async (e) => {
 			e.preventDefault();
-			sessionStorage.removeItem("registered_user");
+			sessionStorage.removeItem('registered_user');
 			handleRoute('/login');
 		});
-		const username = sessionStorage.getItem("registered_user");
+		const username = sessionStorage.getItem('registered_user');
 		const qrCodeContainer = el.querySelector('#qr-code-container');
 		const qrCodeImage = el.querySelector('#qr-code');
-			
+
 		try {
 			const response = await fetch(`/api/user-service/generate-qr/${username}/`);
 			if (response.ok) {

@@ -1,6 +1,7 @@
 import time
 import random
 
+
 class AIPaddle:
     def __init__(self, player_num, game, difficulty):
         self.player_num = player_num
@@ -45,12 +46,10 @@ class AIPaddle:
         vel_x, vel_y, vel_z = ball.velocity.x, ball.velocity.y, ball.velocity.z
 
         ball_coming_towards_ia = (self.player_num == 1 and vel_x < 0) or (self.player_num == 2 and vel_x > 0)
-        
-
 
         if ball_coming_towards_ia:
             if vel_x == 0:
-                return  
+                return
 
             time_to_impact = abs((scoring_x - ball_x) / vel_x)
             time_step = 0.0167
@@ -75,10 +74,10 @@ class AIPaddle:
                 elif ball_z - self.game.BALL_SIZE <= -self.game.TUNNEL_DEPTH / 2:
                     ball_z = -self.game.TUNNEL_DEPTH / 2 + self.game.BALL_SIZE
                     vel_z *= -1
-            
+
             opponent_score = self.game.state.scores[opponent_num]
             max_score = self.game.MAX_SCORE
-            
+
             risk_factor = 1 - (opponent_score / max_score)
 
             max_risk = 0.99 * risk_factor
@@ -107,7 +106,7 @@ class AIPaddle:
 
     def move_towards_target(self):
         paddle = self.game.state.players[self.player_num]
-        threshold = 0.03 
+        threshold = 0.03
 
         if paddle.paddle_position.y < self.target_y - threshold:
             self.game.set_movement(self.player_num, "up", True)

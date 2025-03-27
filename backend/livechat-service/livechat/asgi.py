@@ -1,6 +1,6 @@
 # asgi.py
 import os
-import django # type: ignore
+import django  # type: ignore
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "livechat.settings")
 django.setup()

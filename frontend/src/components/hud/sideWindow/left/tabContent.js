@@ -67,79 +67,74 @@ function renderInfoTab(tabItems, container) {
 	});
 }
 
-
 function renderCommMessage(item, container, currentUserId) {
 	const authorAsString = item.author ? item.author.toString() : '';
-  
+
 	let isUser = authorAsString === currentUserId;
 	const displayAuthor = isUser ? 'USER' : authorAsString;
-  
+
 	let displayChannel = 'General';
 	let conversationId = 'General';
-  
+
 	if (item.channel && item.channel.toLowerCase() === 'private') {
-	  displayChannel = 'Private';
-	  conversationId = item.recipient_id ? `private-${item.recipient_id}` : 'private';
+		displayChannel = 'Private';
+		conversationId = item.recipient_id ? `private-${item.recipient_id}` : 'private';
 	}
-  
+
 	const extendedItem = {
-	  ...item,
-	  isUser,
-	  author: displayAuthor,
-	  channel: displayChannel,
-	  conversationId,
-	  timestamp: item.timestamp,
-	  username: item.username,
+		...item,
+		isUser,
+		author: displayAuthor,
+		channel: displayChannel,
+		conversationId,
+		timestamp: item.timestamp,
+		username: item.username,
 	};
-  
+
 	const lastChild = container.lastElementChild;
-	let isSameAuthorAndConversation =
-	  lastChild &&
-	  lastChild.dataset &&
-	  lastChild.dataset.author === displayAuthor &&
-	  lastChild.dataset.conversation === conversationId;
-  
+	let isSameAuthorAndConversation = lastChild && lastChild.dataset && lastChild.dataset.author === displayAuthor && lastChild.dataset.conversation === conversationId;
+
 	if (isSameAuthorAndConversation) {
-	  const lastTimeStr = lastChild.dataset.rawtimestamp;
-	  if (lastTimeStr) {
-		const lastDate = new Date(lastTimeStr);
-		const newDate = new Date(extendedItem.timestamp);
-		if (!isNaN(lastDate) && !isNaN(newDate)) {
-		  const diffMs = newDate - lastDate;
-		  if (diffMs > 60_000) {
-			isSameAuthorAndConversation = false;
-		  }
+		const lastTimeStr = lastChild.dataset.rawtimestamp;
+		if (lastTimeStr) {
+			const lastDate = new Date(lastTimeStr);
+			const newDate = new Date(extendedItem.timestamp);
+			if (!isNaN(lastDate) && !isNaN(newDate)) {
+				const diffMs = newDate - lastDate;
+				if (diffMs > 60_000) {
+					isSameAuthorAndConversation = false;
+				}
+			}
 		}
-	  }
 	}
-  
+
 	if (isSameAuthorAndConversation) {
-	  const msgText = `
+		const msgText = `
 		<div class="message-text" style="margin-top: 0.5rem;">
 			${escapeHtml(extendedItem.message)}
 		</div>
 	  `;
-	  lastChild.querySelector('.message-content-wrapper').insertAdjacentHTML('beforeend', msgText);
+		lastChild.querySelector('.message-content-wrapper').insertAdjacentHTML('beforeend', msgText);
 	} else {
-	  const panelItem = commMessage.render(extendedItem);
-	  container.insertAdjacentHTML('beforeend', panelItem);
-  
-	  const appendedItem = container.lastElementChild;
-	  appendedItem.dataset.author = displayAuthor;
-	  appendedItem.dataset.channel = displayChannel;
-	  appendedItem.dataset.conversation = conversationId;
-  
-	  const newDate = new Date(extendedItem.timestamp);
-	  if (!isNaN(newDate)) {
-		appendedItem.dataset.timestamp = newDate.toISOString();
-	  }
-  
-	  commMessage.attachEvents(appendedItem, extendedItem);
+		const panelItem = commMessage.render(extendedItem);
+		container.insertAdjacentHTML('beforeend', panelItem);
+
+		const appendedItem = container.lastElementChild;
+		appendedItem.dataset.author = displayAuthor;
+		appendedItem.dataset.channel = displayChannel;
+		appendedItem.dataset.conversation = conversationId;
+
+		const newDate = new Date(extendedItem.timestamp);
+		if (!isNaN(newDate)) {
+			appendedItem.dataset.timestamp = newDate.toISOString();
+		}
+
+		commMessage.attachEvents(appendedItem, extendedItem);
 	}
-  
+
 	container.scrollTop = container.scrollHeight;
-  }
-  
+}
+
 export async function storeMessageInSessionStorage(msg) {
 	try {
 		const historyString = sessionStorage.getItem('chatHistory');

@@ -9,7 +9,7 @@ WSGI_APPLICATION = "user.wsgi.application"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media") # noqa: F405
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")  # noqa: F405
 
 JWT_ALGORITHM = "HS256"
 JWT_EXP_DELTA_SECONDS = 3600

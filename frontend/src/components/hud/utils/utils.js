@@ -2,8 +2,8 @@ import { getCurrentWindow } from '/src/3d/animation.js';
 import { handleRoute, getPreviousPongPlaySubRoute } from '/src/services/router.js';
 
 /**
- * @param {HTMLElement} target 
- * @param {string} animation 
+ * @param {HTMLElement} target
+ * @param {string} animation
  * @param {number} delay
  */
 export async function startAnimation(target, animation, delay = 0) {
@@ -27,9 +27,9 @@ export async function startAnimation(target, animation, delay = 0) {
 }
 
 /**
- * @param {string} selector 
- * @param {number} timeout 
- * @returns {Promise<HTMLElement>} 
+ * @param {string} selector
+ * @param {number} timeout
+ * @returns {Promise<HTMLElement>}
  */
 export function waitForElement(selector, timeout = 5000) {
 	return new Promise((resolve, reject) => {
@@ -43,7 +43,7 @@ export function waitForElement(selector, timeout = 5000) {
 				clearInterval(interval);
 				reject(new Error(`Element "${selector}" not found within timeout`));
 			}
-		}, 50); 
+		}, 50);
 	});
 }
 

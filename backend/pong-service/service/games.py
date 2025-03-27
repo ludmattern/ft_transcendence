@@ -89,11 +89,7 @@ class BasePongGame:
             random.uniform(-1, 1),
             random.uniform(-1, 1),
         )
-        ball = Ball(
-            position=Vector3D(0, 0, 0),
-            velocity=ball_velocity,
-            size=self.BALL_SIZE
-        )
+        ball = Ball(position=Vector3D(0, 0, 0), velocity=ball_velocity, size=self.BALL_SIZE)
 
         players = {
             1: Player(
@@ -120,13 +116,11 @@ class BasePongGame:
     def is_solo_mode(self) -> bool:
         return self.solo_mode
 
-
     def set_movement(self, player_num: int, direction: str, moving: bool) -> None:
         """set movement"""
         if player_num not in self.movement_state:
             self.movement_state[player_num] = {"up": False, "down": False, "left": False, "right": False}
         self.movement_state[player_num][direction] = moving
-        
 
     def move_paddle(self, player_num: int, direction: str, dt: float = 1.0) -> None:
         """move paddle"""
@@ -174,10 +168,8 @@ class BasePongGame:
         self._handle_wall_collisions()
         self._handle_paddle_collisions_and_scoring()
 
-        if (self.user_scores[self.player1_id] >= self.MAX_SCORE or
-            self.user_scores[self.player2_id] >= self.MAX_SCORE):
+        if self.user_scores[self.player1_id] >= self.MAX_SCORE or self.user_scores[self.player2_id] >= self.MAX_SCORE:
             self.game_over = True
-
 
     def _update_ball_waiting(self, now: float) -> None:
         """update ball waiting"""
@@ -259,55 +251,42 @@ class BasePongGame:
     def _handle_paddle_collisions_and_scoring(self) -> None:
         """handle paddle collisions and scoring"""
         ball = self.state.ball
-        radius = ball.size / 2 
+        radius = ball.size / 2
         p1 = self.state.players[1]
         p2 = self.state.players[2]
-        margin = 0.1 
+        margin = 0.1
 
         if ball.position.x - radius <= p1.paddle_position.x + self.PADDLE_WIDTH:
-            if ((p1.paddle_position.y - self.PADDLE_HEIGHT / 2 - radius
-                <= ball.position.y
-                <= p1.paddle_position.y + self.PADDLE_HEIGHT / 2 + radius)
-                and (p1.paddle_position.z - self.PADDLE_DEPTH / 2 - radius
-                    <= ball.position.z
-                    <= p1.paddle_position.z + self.PADDLE_DEPTH / 2 + radius)):
-
-                impact_y = ((ball.position.y - p1.paddle_position.y) / (self.PADDLE_HEIGHT / 2))
-                impact_z = ((ball.position.z - p1.paddle_position.z) / (self.PADDLE_DEPTH / 2))
+            if (p1.paddle_position.y - self.PADDLE_HEIGHT / 2 - radius <= ball.position.y <= p1.paddle_position.y + self.PADDLE_HEIGHT / 2 + radius) and (p1.paddle_position.z - self.PADDLE_DEPTH / 2 - radius <= ball.position.z <= p1.paddle_position.z + self.PADDLE_DEPTH / 2 + radius):
+                impact_y = (ball.position.y - p1.paddle_position.y) / (self.PADDLE_HEIGHT / 2)
+                impact_z = (ball.position.z - p1.paddle_position.z) / (self.PADDLE_DEPTH / 2)
 
                 ball.velocity.x = abs(ball.velocity.x) * 1.05
                 ball.velocity.y += impact_y * 0.75
                 ball.velocity.z += impact_z * 0.75
                 self.ball_hit_paddle = True
 
-            elif ball.position.x  <= p1.paddle_position.x - margin:
+            elif ball.position.x <= p1.paddle_position.x - margin:
                 scoring_player_id = self.player2_id
                 self.user_scores[scoring_player_id] += 1
                 self.state.scores[self.player_mapping[scoring_player_id]] += 1
                 self._reset_ball("right")
 
         if ball.position.x + radius >= p2.paddle_position.x - self.PADDLE_WIDTH:
-            if ((p2.paddle_position.y - self.PADDLE_HEIGHT / 2 - radius
-                <= ball.position.y
-                <= p2.paddle_position.y + self.PADDLE_HEIGHT / 2 + radius)
-                and (p2.paddle_position.z - self.PADDLE_DEPTH / 2 - radius
-                    <= ball.position.z
-                    <= p2.paddle_position.z + self.PADDLE_DEPTH / 2 + radius)):
-
-                impact_y = ((ball.position.y - p2.paddle_position.y) / (self.PADDLE_HEIGHT / 2))
-                impact_z = ((ball.position.z - p2.paddle_position.z) / (self.PADDLE_DEPTH / 2))
+            if (p2.paddle_position.y - self.PADDLE_HEIGHT / 2 - radius <= ball.position.y <= p2.paddle_position.y + self.PADDLE_HEIGHT / 2 + radius) and (p2.paddle_position.z - self.PADDLE_DEPTH / 2 - radius <= ball.position.z <= p2.paddle_position.z + self.PADDLE_DEPTH / 2 + radius):
+                impact_y = (ball.position.y - p2.paddle_position.y) / (self.PADDLE_HEIGHT / 2)
+                impact_z = (ball.position.z - p2.paddle_position.z) / (self.PADDLE_DEPTH / 2)
 
                 ball.velocity.x = -abs(ball.velocity.x) * 1.07
                 ball.velocity.y += impact_y * 0.75
                 ball.velocity.z += impact_z * 0.75
                 self.ball_hit_paddle = True
 
-            elif ball.position.x  >= p2.paddle_position.x + margin:
+            elif ball.position.x >= p2.paddle_position.x + margin:
                 scoring_player_id = self.player1_id
                 self.user_scores[scoring_player_id] += 1
                 self.state.scores[self.player_mapping[scoring_player_id]] += 1
                 self._reset_ball("left")
-
 
     def _reset_ball(self, direction: str = "right") -> None:
         """reset ball"""

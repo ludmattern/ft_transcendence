@@ -11,9 +11,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
         try:
             await self.accept()
             await self.channel_layer.group_add("matchmaking_service", self.channel_name)
-            logger.info(
-                f" Connected on 'matchmaking_service' (channel={self.channel_name})"
-            )
+            logger.info(f" Connected on 'matchmaking_service' (channel={self.channel_name})")
         except Exception as e:
             logger.exception("Error on connection: %s", e)
 
@@ -55,9 +53,7 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                                 "opponent_id": match_info_p1["opponent_id"],
                             },
                         )
-                        logger.info(
-                            f" Private match (room={room_code}) ! notif send to user_{p1}"
-                        )
+                        logger.info(f" Private match (room={room_code}) ! notif send to user_{p1}")
 
                         await self.channel_layer.group_send(
                             f"user_{p2}",
@@ -70,19 +66,13 @@ class MatchmakingConsumer(AsyncWebsocketConsumer):
                                 "opponent_id": match_info_p2["opponent_id"],
                             },
                         )
-                        logger.info(
-                            f" Private match (room={room_code}) ! notif send to user_{p2}"
-                        )
+                        logger.info(f" Private match (room={room_code}) ! notif send to user_{p2}")
                     else:
-                        logger.info(
-                            f"🔎 user_id={user_id} waiting in private room {room_code}"
-                        )
+                        logger.info(f"🔎 user_id={user_id} waiting in private room {room_code}")
 
                 elif action == "leave":
                     private_manager.remove_from_room(room_code, user_id)
-                    logger.info(
-                        f"user_id={user_id} leave private room {room_code}"
-                    )
+                    logger.info(f"user_id={user_id} leave private room {room_code}")
 
             elif not room_code or room_code == "None":
                 if action == "join":

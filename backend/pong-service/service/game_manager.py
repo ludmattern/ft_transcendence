@@ -3,6 +3,8 @@ from .games import BasePongGame
 import logging
 
 logger = logging.getLogger(__name__)
+
+
 class GameManager:
     def __init__(self):
         self.games = {}

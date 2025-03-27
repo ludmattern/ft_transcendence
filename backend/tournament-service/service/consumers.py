@@ -161,11 +161,11 @@ class TournamentConsumer(AsyncWebsocketConsumer):
                 return
 
             tournament_size = int(tournament_size)
-            
+
             if tournament_size not in [4, 8, 16]:
                 logger.warning("Invalid tournament size")
                 return
-            
+
             user = await self.get_user(user_id)
             serial_key = await self.generate_unique_serial_key()
             tournament = await self.create_tournament(serial_key, user, tournament_size)

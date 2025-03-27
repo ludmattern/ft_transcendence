@@ -1,17 +1,6 @@
 # auth-service/urls.py
 from django.urls import path  # type: ignore
-from service.views import (
-    get_42_auth_url,
-    oauth_callback,
-    get_user_id_from_cookie,
-    login_view,
-    check_auth_view,
-    logout_view,
-    verify_2fa_view,
-    request_password_reset,
-    verify_reset_code,
-    change_password
-)
+from service.views import get_42_auth_url, oauth_callback, get_user_id_from_cookie, login_view, check_auth_view, logout_view, verify_2fa_view, request_password_reset, verify_reset_code, change_password
 
 urlpatterns = [
     path("logindb/", login_view, name="logindb"),

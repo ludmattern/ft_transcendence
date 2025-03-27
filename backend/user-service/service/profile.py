@@ -2,7 +2,7 @@ import json
 from django.http import JsonResponse  # type: ignore
 from .models import ManualUser
 from service.views import jwt_required
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET # type: ignore
 
 
 @require_GET
