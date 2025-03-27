@@ -332,7 +332,6 @@ class PongGroupConsumer(AsyncWebsocketConsumer):
                 winner_score=game.user_scores.get(winner_id),
                 loser_score=game.user_scores.get(loser_id),
             )
-            logger.info("scores : " + str(game.user_scores.get(winner_id)) + " - " + str(game.user_scores.get(loser_id)))
             logger.info("Table game history maj")
         else:
             logger.info("Table game history non maj")
