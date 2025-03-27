@@ -59,6 +59,7 @@ class GatewayConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             logger.exception("Error during WebSocket connect: %s", e)
             await self.close()
+            return None
 
     async def disconnect(self, close_code):
         try:
