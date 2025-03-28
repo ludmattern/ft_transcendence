@@ -167,6 +167,15 @@ export async function handleIncomingMessage(data) {
 		}
 	}
 
+	if (activeTab && activeTab.dataset.tab !== 'comm' && data.type !== 'error_message') {
+		const infoTab = document.querySelector('.nav-link[data-tab="comm"]');
+		if (infoTab && 
+			!infoTab.classList.contains('active') && 
+			!infoTab.classList.contains('flashing-menu')) {
+			infoTab.classList.add('flashing-menu');
+		}
+	}
+
 	storeMessageInSessionStorage(data);
 }
 

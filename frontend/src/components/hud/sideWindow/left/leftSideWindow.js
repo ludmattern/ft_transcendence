@@ -60,6 +60,7 @@ export const leftSideWindow = createComponent({
 
 				if (tabName === 'comm') {
 					removePrivateNotifications();
+					tab.classList.remove('flashing-menu');
 				}
 
 				if (tabName === 'info') {
