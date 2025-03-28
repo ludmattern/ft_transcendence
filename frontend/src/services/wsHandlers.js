@@ -96,6 +96,7 @@ const handleInfoMessage = async (data) => {
 		emit('updateBracket');
 	}
 	if (data.action) {
+		console.log("data action", data.action);
 		await updateAndCompareInfoData();
 		emit('updateFriendsList');
 	} else {
