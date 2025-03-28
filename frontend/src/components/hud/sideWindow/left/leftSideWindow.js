@@ -62,6 +62,10 @@ export const leftSideWindow = createComponent({
 					removePrivateNotifications();
 				}
 
+				if (tabName === 'info') {
+					tab.classList.remove('flashing-menu');
+				}
+
 				tabs.forEach((t) => t.classList.remove('active'));
 				tab.classList.add('active');
 
@@ -91,6 +95,7 @@ export const leftSideWindow = createComponent({
 });
 
 function updateNotifications(messagesToAdd, messagesToRemove, container) {
+
 	messagesToRemove.forEach((msg) => {
 		const notificationId = `${msg.type}-${msg.inviter_id}`;
 		const existingNotification = container.querySelector(`[data-notification-id="${notificationId}"]`);

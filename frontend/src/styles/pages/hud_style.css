@@ -583,6 +583,22 @@ body {
 	transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
+@keyframes flashMenu {
+	0% {
+		color: var(--menu-color);
+	}
+	50% {
+		color: var(--success-color);
+	}
+	100% {
+		color: var(--menu-color);
+	}
+}
+
+#hud-body .l-side-window .nav-tabs .flashing-menu > a {
+	animation: flashMenu 1s infinite;
+}
+
 #hud-body .r-side-window,
 #hud-body .l-side-window {
 	pointer-events: none;

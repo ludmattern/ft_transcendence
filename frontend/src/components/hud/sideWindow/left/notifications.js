@@ -95,6 +95,15 @@ export async function updateAndCompareInfoData() {
 				emit('updatenotifications', { toAdd: messagesToAdd, toRemove: messagesToRemove });
 			}
 
+			if (messagesToAdd.length > 0) {
+				const infoTab = document.querySelector('.nav-link[data-tab="info"]');
+				if (infoTab && 
+					!infoTab.classList.contains('active') && 
+					!infoTab.classList.contains('flashing-menu')) {
+					infoTab.classList.add('flashing-menu');
+				}
+			}
+
 			sessionStorage.setItem('infoTabData', JSON.stringify(serverInfo));
 		}
 	} catch (error) {
