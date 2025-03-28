@@ -269,6 +269,7 @@ function createCompletedMatchHtml(match, displayHtml) {
 }
 
 function getCompletedMatchHtml(match) {
+	console.log('match: ', match);
 	if (!match.score) {
 		return `${match.player1} vs ${match.player2}`;
 	}
@@ -279,7 +280,7 @@ function getCompletedMatchHtml(match) {
 	if (match.score.split('-').length - 1 >= 2) {
 		if (match.score.endsWith('-1')) {
 			return `<span class="text-success fw-bold">${match.player1}</span> vs <span class="text-danger">${match.player2}</span>`;
-		} else if (match.score.startsWith('-1')) {
+		} else {
 			return `<span class="text-danger">${match.player1}</span> vs <span class="text-success fw-bold">${match.player2}</span>`;
 		}
 	}
