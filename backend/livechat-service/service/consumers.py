@@ -166,12 +166,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             event["recipient_id"] = recipient_id
 
             if str(author_id) == str(recipient_id):
-                message = {"type": "error_message", "error": "You can't send a message to yourself."}
+                message = {"type": "error_message", "error": "You can't send a message to yourself"}
                 await self.channel_layer.group_send(f"user_{author_id}", message)
                 return
 
             if await is_blocked(author_id, recipient_id):
-                message = {"type": "error_message", "error": "You cannot send a message to this user."}
+                message = {"type": "error_message", "error": "You cannot send a message to this user"}
                 await self.channel_layer.group_send(f"user_{author_id}", message)
                 return
 
@@ -188,7 +188,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             logger.exception("Failed to handle private_message: %s", e)
             try:
-                error_event = {"type": "error_message", "error": "An error occurred while sending your message."}
+                error_event = {"type": "error_message", "error": "An error occurred while sending your message"}
                 await self.channel_layer.group_send(f"user_{event.get('author')}", error_event)
             except Exception as inner_e:
                 logger.exception("Also failed to send fallback error message: %s", inner_e)
@@ -230,7 +230,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     user, friend = initiator, recipient_user
 
                 if await is_blocked(author_id, recipient_id):
-                    message = {"type": "error_message", "error": "You cannot send a friend request to this user."}
+                    message = {"type": "error_message", "error": "You cannot send a friend request to this user"}
                     await safe_group_send(self, author_id, message)
                     return
 
@@ -277,21 +277,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     relation = await database_sync_to_async(qs.first)()
                     if relation.status == "pending":
                         await database_sync_to_async(relation.delete)()
-                        await safe_group_send(self, recipient_id, {"type": "info_message", "info": f"{author_username} rejected your friend request."})
-                        await safe_group_send(self, author_id, {"type": "info_message", "info": f"Friend request from {recipient_username} rejected."})
+                        await safe_group_send(self, recipient_id, {"type": "info_message", "info": f"{author_username} rejected your friend request"})
+                        await safe_group_send(self, author_id, {"type": "info_message", "info": f"Friend request from {recipient_username} rejected"})
                         await safe_group_send(self, recipient_id, event)
                         await safe_group_send(self, author_id, event)
                     elif relation.status == "accepted":
                         await database_sync_to_async(relation.delete)()
-                        await safe_group_send(self, recipient_id, {"type": "info_message", "info": f"{author_username} removed you from friends."})
-                        await safe_group_send(self, author_id, {"type": "info_message", "info": f"You removed {recipient_username} from friends."})
+                        await safe_group_send(self, recipient_id, {"type": "info_message", "info": f"{author_username} removed you from friends"})
+                        await safe_group_send(self, author_id, {"type": "info_message", "info": f"You removed {recipient_username} from friends"})
                         await safe_group_send(self, recipient_id, event)
                         await safe_group_send(self, author_id, event)
                     else:
                         logger.info(f"Invalid action: {action}")
 
                 else:
-                    await safe_group_send(self, author_id, {"type": "error_message", "error": "No friend relationship found."})
+                    await safe_group_send(self, author_id, {"type": "error_message", "error": "No friend relationship found"})
                 return
 
             elif str(action) == "back_tournament_invite":
@@ -309,14 +309,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 initiator_tournament = await get_initiator_tournament(initiator)
                 if not initiator_tournament:
                     logger.warning(f"No active tournament found for initiator {initiator.username}")
-                    await safe_group_send(self, author_id, {"type": "error_message", "error": "No active tournament upcoming found."})
+                    await safe_group_send(self, author_id, {"type": "error_message", "error": "No active tournament upcoming found"})
                     return
 
                 participants = await get_accepted_participants(initiator_tournament.id)
 
                 for participant_id in participants:
                     if participant_id != recipient_id and participant_id != author_id:
-                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"{author_username} invited {recipient_username} to the tournament."})
+                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"{author_username} invited {recipient_username} to the tournament"})
                         await safe_group_send(self, participant_id, {"type": "info_message", "action": "updatePlayerList", "tournament_id": initiator_tournament.id, "player": recipient_username})
 
                 await safe_group_send(self, author_id, {"type": "info_message", "action": "updatePlayerList", "tournament_id": initiator_tournament.id, "player": recipient_username})
@@ -335,12 +335,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                 for participant_id in participants:
                     if str(participant_id) != recipient_id:
-                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"{recipient_username} has joined the tournament."})
+                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"{recipient_username} has joined the tournament"})
                         await safe_group_send(self, participant_id, {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id, "player": recipient_username})
 
                 await safe_group_send(self, recipient_id, {"type": "info_message", "action": "tournament_invite", "subaction": "join_tournament"})
 
-                await safe_group_send(self, recipient_id, {"type": "info_message", "info": "You have joined the tournament."})
+                await safe_group_send(self, recipient_id, {"type": "info_message", "info": "You have joined the tournament"})
 
             elif str(action) == "back_reject_tournament":
                 recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
@@ -356,9 +356,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     if participant_id != int(recipient_id):
                         await safe_group_send(self, participant_id, {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id, "player": recipient_username})
 
-                await safe_group_send(self, tournament.organizer_id, {"type": "info_message", "info": f"{recipient_username} refused your tournament invite."})
-                await safe_group_send(self, recipient_id, {"type": "info_message", "info": "You refused the tournament invite."})
-                await safe_group_send(self, recipient_id, {"type": "info_message", "action": "You refused the tournament invite."})
+                await safe_group_send(self, tournament.organizer_id, {"type": "info_message", "info": f"{recipient_username} refused your tournament invite"})
+                await safe_group_send(self, recipient_id, {"type": "info_message", "info": "You refused the tournament invite"})
+                await safe_group_send(self, recipient_id, {"type": "info_message", "action": "You refused the tournament invite"})
 
             elif str(action) == "back_cancel_tournament_invite":
                 logger.info("Cancelling tournament invite")
@@ -373,11 +373,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                 for participant_id in participants:
                     if participant_id != int(recipient_id):
-                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"invite of {recipient_username} has been cancelled."})
+                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"invite of {recipient_username} has been cancelled"})
                         await safe_group_send(self, participant_id, {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id, "player": recipient_username})
 
                 await safe_group_send(self, recipient_id, {"type": "info_message", "action": "Your invite has been cancelled"})
-                await safe_group_send(self, recipient_id, {"type": "info_message", "info": "Your invite has been cancelled."})
+                await safe_group_send(self, recipient_id, {"type": "info_message", "info": "Your invite has been cancelled"})
 
             elif str(action) == "back_kick_tournament":
                 recipient_user = await database_sync_to_async(ManualUser.objects.get)(id=recipient_id)
@@ -391,11 +391,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                 for participant_id in participants:
                     if participant_id != int(recipient_id):
-                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"{recipient_username} has been kicked."})
+                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"{recipient_username} has been kicked"})
                         await safe_group_send(self, participant_id, {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id, "player": recipient_username})
 
                 await safe_group_send(self, recipient_id, {"type": "info_message", "action": "leavingLobby", "tournament_id": tournament_id, "player": recipient_username})
-                await safe_group_send(self, recipient_id, {"type": "info_message", "info": "You have been kicked."})
+                await safe_group_send(self, recipient_id, {"type": "info_message", "info": "You have been kicked"})
 
             elif str(action) == "back_cancel_tournament":
                 logger.info("Cancelling tournament", event)
@@ -405,7 +405,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 for participant in participant_list:
                     participant_username = await get_username(participant)
                     await safe_group_send(self, participant, {"type": "info_message", "action": "leavingLobby", "tournament_id": tournament_id, "player": participant_username})
-                    await safe_group_send(self, participant, {"type": "info_message", "info": "Tournament has been cancelled."})
+                    await safe_group_send(self, participant, {"type": "info_message", "info": "Tournament has been cancelled"})
 
             elif str(action) == "back_tournament_game_over":
                 logger.info("Tournament game over", event)
@@ -421,7 +421,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                 for next_match_player_id in next_match_player_ids:
                     await safe_group_send(self, next_match_player_id, {"type": "info_message", "action": "next_match_ready"})
-                    await safe_group_send(self, next_match_player_id, {"type": "info_message", "info": "Your next game is ready."})
+                    await safe_group_send(self, next_match_player_id, {"type": "info_message", "info": "Your next game is ready"})
 
                 for current_match_player_id in current_match_player_ids:
                     await safe_group_send(self, current_match_player_id, {"type": "info_message", "action": "gameover"})
@@ -440,10 +440,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                 for participant_id in participants:
                     if participant_id != int(initiator_id):
-                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"{initiator_username} has left the lobby."})
+                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"{initiator_username} has left the lobby"})
                         await safe_group_send(self, participant_id, {"type": "info_message", "action": "updatePlayerList", "tournament_id": tournament.id, "player": initiator_username})
 
-                await safe_group_send(self, initiator_id, {"type": "info_message", "info": "You have left the lobby."})
+                await safe_group_send(self, initiator_id, {"type": "info_message", "info": "You have left the lobby"})
                 await safe_group_send(self, initiator_id, {"type": "info_message", "action": "leavingLobby", "tournament_id": tournament.id, "player": initiator_username})
 
             elif str(action) == "back_create_online_tournament":
@@ -456,7 +456,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
                 for participant_id in participant_list:
                     if participant_id != int(initiator_id):
-                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"{initiator_username} has started the tournament."})
+                        await safe_group_send(self, participant_id, {"type": "info_message", "info": f"{initiator_username} has started the tournament"})
                         await safe_group_send(self, participant_id, {"type": "info_message", "action": "startTournament"})
 
                 await safe_group_send(self, initiator_id, {"type": "info_message", "info": "You have started the tournament"})
@@ -490,13 +490,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         initiator_id = await database_sync_to_async(lambda: relation.initiator_id)()
 
                         if initiator_id != author_id:
-                            await safe_group_send(self, author_id, {"type": "info_message", "info": f"You have already been blocked by {recipient_user.username}."})
+                            await safe_group_send(self, author_id, {"type": "info_message", "info": f"You have already been blocked by {recipient_user.username}"})
                         else:
-                            await safe_group_send(self, author_id, {"type": "info_message", "info": f"You have already blocked {recipient_user.username}."})
+                            await safe_group_send(self, author_id, {"type": "info_message", "info": f"You have already blocked {recipient_user.username}"})
 
                     else:
                         await database_sync_to_async(ManualBlockedRelations.objects.create)(user=author_user, blocked_user=recipient_user, initiator_id=author_user.id)
-                        await safe_group_send(self, author_id, {"type": "info_message", "info": f"You have blocked {recipient_user.username}."})
+                        await safe_group_send(self, author_id, {"type": "info_message", "info": f"You have blocked {recipient_user.username}"})
 
                     await database_sync_to_async(lambda: ManualFriendsRelations.objects.filter(models.Q(user=author_user, friend=recipient_user) | models.Q(user=recipient_user, friend=author_user)).delete())()
 
@@ -525,9 +525,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     if await database_sync_to_async(qs.exists)():
                         await database_sync_to_async(qs.delete)()
 
-                        await safe_group_send(self, author_id, {"type": "info_message", "info": f"You have unblocked {recipient_user.username}."})
+                        await safe_group_send(self, author_id, {"type": "info_message", "info": f"You have unblocked {recipient_user.username}"})
                     else:
-                        await safe_group_send(self, author_id, {"type": "error_message", "error": f"You cannot unblock {recipient_user.username}."})
+                        await safe_group_send(self, author_id, {"type": "error_message", "error": f"You cannot unblock {recipient_user.username}"})
                 except ManualUser.DoesNotExist:
                     await safe_group_send(self, author_id, {"type": "error_message", "error": "User not found"})
                 except Exception as e:
@@ -573,13 +573,13 @@ async def private_game_invite(self, event):
     try:
         inviter = await database_sync_to_async(ManualUser.objects.get)(id=inviter_id)
     except ManualUser.DoesNotExist:
-        await safe_group_send(self, inviter_id, {"type": "error_message", "error": "Inviter not found."})
+        await safe_group_send(self, inviter_id, {"type": "error_message", "error": "Inviter not found"})
         return
 
     try:
         invitee = await database_sync_to_async(ManualUser.objects.get)(id=invitee_id)
     except ManualUser.DoesNotExist:
-        await safe_group_send(self, inviter_id, {"type": "error_message", "error": "Invitee not found."})
+        await safe_group_send(self, inviter_id, {"type": "error_message", "error": "Invitee not found"})
         return
 
     sorted_users = sorted([inviter, invitee], key=lambda u: u.id)
@@ -614,20 +614,20 @@ async def private_game_invite_action(self, event, action):
     try:
         actor_user = await database_sync_to_async(ManualUser.objects.get)(id=actor_id)
     except ManualUser.DoesNotExist:
-        await safe_group_send(self, actor_id, {"type": "error_message", "error": "Your user record was not found. Invitation cancelled."})
+        await safe_group_send(self, actor_id, {"type": "error_message", "error": "Your user record was not found. Invitation cancelled"})
         return
 
     try:
         inviter_user = await database_sync_to_async(ManualUser.objects.get)(id=inviter_id)
     except ManualUser.DoesNotExist:
-        await safe_group_send(self, actor_id, {"type": "error_message", "error": "Inviter not found. Invitation cancelled."})
+        await safe_group_send(self, actor_id, {"type": "error_message", "error": "Inviter not found. Invitation cancelled"})
         return
 
     sorted_users = sorted([actor_user, inviter_user], key=lambda u: u.id)
     user, recipient = sorted_users[0], sorted_users[1]
     invite = await database_sync_to_async(ManualPrivateGames.objects.filter(user=user, recipient=recipient).first)()
     if not invite:
-        await safe_group_send(self, actor_id, {"type": "error_message", "error": "No pending game invite found."})
+        await safe_group_send(self, actor_id, {"type": "error_message", "error": "No pending game invite found"})
         return
 
     if invite.status == "pending":
