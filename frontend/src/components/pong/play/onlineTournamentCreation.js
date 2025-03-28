@@ -162,7 +162,6 @@ export const onlineTournamentCreation = createComponent({
 async function checkOrCreateLobby() {
 	try {
 		const tournamentSizeResult = await getInfo('tournamentSize');
-		console.log('tournamentSizeResult: ', tournamentSizeResult);
 		const tournamentSize = parseInt(tournamentSizeResult.success ? tournamentSizeResult.value : NaN, 10);
 		const data = await getCurrentTournamentInformation();
 

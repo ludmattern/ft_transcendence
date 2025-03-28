@@ -272,7 +272,6 @@ function getCompletedMatchHtml(match) {
 	if (!match.score) {
 		return `${match.player1} vs ${match.player2}`;
 	}
-	console.log(match.score);
 	if (match.score === 'Forfeit' && (match.player1 === 'TBD' || match.player2 === 'TBD')) {
 		return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
 	}
