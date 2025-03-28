@@ -94,7 +94,7 @@ export const settingsForm = createComponent({
 
 		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
-			const formData = await collectFormData(el);
+			const formData = await collectFormData(zel);
 			resetErrorMessages();
 
 			let canUpdate = true;

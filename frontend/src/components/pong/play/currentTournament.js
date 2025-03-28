@@ -272,7 +272,6 @@ function getCompletedMatchHtml(match) {
 	if (!match.score) {
 		return `${match.player1} vs ${match.player2}`;
 	}
-
 	if (match.score === 'Forfeit' && (match.player1 === 'TBD' || match.player2 === 'TBD')) {
 		return `<span class="text-white">${match.player1}</span> vs <span class="text-white">${match.player2}</span>`;
 	}
@@ -280,7 +279,7 @@ function getCompletedMatchHtml(match) {
 	if (match.score.split('-').length - 1 >= 2) {
 		if (match.score.endsWith('-1')) {
 			return `<span class="text-success fw-bold">${match.player1}</span> vs <span class="text-danger">${match.player2}</span>`;
-		} else {
+		} else if (match.score.startsWith('-1')) {
 			return `<span class="text-danger">${match.player1}</span> vs <span class="text-success fw-bold">${match.player2}</span>`;
 		}
 	}

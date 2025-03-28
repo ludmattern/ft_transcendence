@@ -106,8 +106,10 @@ function attachProfilePicUpload() {
 						profilePicImg.src = data.profile_picture;
 					}
 				}
-				if (data.error.startsWith('Unauthorized')) {
-					createNotificationMessage("Space Force does not approve your trash...", 2500, true);
+				if (data.error) {
+					if (data.error.startsWith('Unauthorized')) {
+						createNotificationMessage("Space Force does not approve your trash...", 2500, true);
+					}
 				}
 			} catch (error) {
 				console.log('Error uploading profile picture: ', error);
