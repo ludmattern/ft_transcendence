@@ -224,6 +224,8 @@ def delete_account(request):
         user = request.user
         if not user:
             return JsonResponse({"success": False, "message": "Unauthorized"}, status=401)
+        if user.current_tournament_id:
+            return JsonResponse({"success": False, "message": "Cannot delete account while in a tournament"}, status=400)
         user_id = user.id
         username = user.username
         user.delete()
