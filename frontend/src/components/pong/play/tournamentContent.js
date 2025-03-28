@@ -125,6 +125,7 @@ export const tournamentContent = createComponent({
 						tournamentId: data.payload.tournament_id,
 					};
 					ws.send(JSON.stringify(payload));
+					await new Promise((resolve) => setTimeout(resolve, 500));
 					handleRoute('/pong/play/tournament-creation');
 				} else {
 					createNotificationMessage(data.message, 2500, true);
@@ -169,6 +170,7 @@ export const tournamentContent = createComponent({
 						tournamentId: data.payload.tournament_id,
 					};
 					ws.send(JSON.stringify(payload));
+					await new Promise((resolve) => setTimeout(resolve, 500));
 					handleRoute('/pong/play/tournament-creation');
 				} else {
 					createNotificationMessage(data.message, 2500, true);

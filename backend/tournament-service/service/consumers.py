@@ -481,7 +481,8 @@ class TournamentConsumer(AsyncWebsocketConsumer):
 
                     if next_match.player1_id is not None and next_match.player2_id is not None:
                         next_match_player_ids = [next_match.player1_id, next_match.player2_id]
-
+                    
+                    next_match.status = "ready"
                     await sync_to_async(next_match.save)()
 
             user.current_tournament_id = 0
