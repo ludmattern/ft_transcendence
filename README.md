@@ -48,6 +48,29 @@ ft_transcendence is designed as a modern, real-time 3D Pong game where players c
 
 ---
 
+## Subject Modules Chosen
+
+-   **Web**  
+    Major module: Use a framework to build the backend -- (Django)  
+    Minor module: Use a framework or a toolkit to build the frontend -- (bootstrap)  
+    Minor module: Use a database for the backend -- (PostgreSQL)  
+-   **User Management**  
+    Major module: Standard user management, authentication, users across tournaments  
+    Major module: Implementing a remote authentication -- (42 API)  
+-   **Gameplay and user experience**  
+    Major module: Remote players  
+    Major module: Live chat  
+-   **AI-Algo**  
+    Major module: Introduce an AI opponent  
+-   **Cybersecurity**  
+    Major module: Implement Two-Factor Authentication (2FA) and JWT  
+-   **Devops**  
+    Major module: Designing the backend as microservices  
+-   **Graphics**  
+    Major module: Use advanced 3D techniques -- (Three.js / WebGL)  
+
+---
+
 ## Architecture & Project Structure
 
 Below is the commented architecture of the project. Each main directory and file group is organized to clearly separate concerns and responsibilities:
